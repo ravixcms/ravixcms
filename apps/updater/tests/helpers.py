@@ -77,11 +77,14 @@ class FakeRunner:
         return "Applying fakeapp... OK"
 
 
+SITE_VERSION = "0.6.1"
+
+
 class UpdaterCase(TestCase):
     def setUp(self):
         self.base = Path(tempfile.mkdtemp(prefix="ravix-upd-"))
         self.addCleanup(shutil.rmtree, self.base, ignore_errors=True)
-        self.root = make_tree(self.base / "site", "0.6.1")  # «سایت» در حال ارتقا
+        self.root = make_tree(self.base / "site", SITE_VERSION)  # «سایت» در حال ارتقا
         self.src = self.base / "source"
         self.dist = self.base / "dist"
         ov = override_settings(RAVIX_UPDATE_DIR=str(self.dist), RAVIX_UPDATE_URL="", RAVIX_UPDATE_APP_ROOT=str(self.root),
@@ -89,6 +92,13 @@ class UpdaterCase(TestCase):
                                RAVIX_TRUSTED_PUBLIC_KEYS=[f"test:{PUB}"], RAVIX_UPDATE_REQUIRE_SIGNED_INDEX=False, RAVIX_UPDATE_WEB_APPLY=True)
         ov.enable()
         self.addCleanup(ov.disable)
+        # «سایت در حال اجرا» در این آزمون‌ها همیشه SITE_VERSION است، مستقل از نسخهٔ واقعی مخزن
+        from unittest import mock
+
+        for target in ("apps.updater.versions.RAVIX_VERSION",):
+            p = mock.patch(target, SITE_VERSION)
+            p.start()
+            self.addCleanup(p.stop)
         from django.core.cache import cache
 
         cache.clear()

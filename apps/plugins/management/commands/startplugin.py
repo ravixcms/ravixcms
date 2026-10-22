@@ -39,7 +39,7 @@ class Command(BaseCommand):
         (target / "templates").mkdir(parents=True)
         manifest = {
             "slug": slug, "name": options["name"] or re.sub(r"_+", " ", slug).title(), "version": "0.1.0", "description": "توضیح افزونه را اینجا بنویسید.",
-            "author": options["author"], "api_version": 1, "ravix": ">=0.5.0,<1.0.0", "models": options["models"],
+            "author": options["author"], "api_version": 1, "ravix": ">=0.9,<2.0", "models": options["models"],
             "capabilities": {f"{slug}.use": "استفاده از افزونه"},
             "settings": [{"key": "greeting", "label": "پیام خوش‌آمد", "type": "text", "default": "سلام!", "max_len": 100}],
             "admin_pages": [{"key": "home", "title": options["name"] or slug, "view": "views:hello", "capability": f"{slug}.use", "icon": "puzzle"}],
