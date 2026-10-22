@@ -1,51 +1,48 @@
 # Ravix (راویکس)
 
-سیستم مدیریت محتوای فارسی و راست‌چین با Python / Django 5.2 / DRF — نسخهٔ هسته: `0.6.1`.
+**سیستم مدیریت محتوای فارسی و راست‌چین** برای وبلاگ، سایت شرکتی و فروشگاه کوچک — با Python و Django. نسخهٔ `0.6.1`.
 
-**امکانات:** احراز هویت و نقش‌ها، پنل مدیریت، نوشته/صفحه/رسانه، سایت عمومی با قالب‌ها، صفحه‌ساز، افزونه‌ها (نصب فقط توسط مدیرکل)،
-چندسایتی (اختیاری)، فروشگاه با فایل دیجیتال (اختیاری)، API نسخه ۱، به‌روزرسانی امضاشده با پشتیبان و بازگشت خودکار.
+سایت را نصب می‌کنید، با پنل فارسی می‌نویسید و منتشر می‌کنید؛ تاریخ شمسی، راست‌چین و فونت فارسی از همان ابتدا هست.
 
-> **صادقانه:** درگاه پرداخت واقعی، منبع رسمی به‌روزرسانی، دامنه و گواهی SSL از قبل متصل نیستند؛ فقط درگاه آزمایشی (sandbox) وجود دارد.
-> وضعیت آزمون‌ها و محدودیت‌ها: [`docs/STATUS.md`](docs/STATUS.md)، [`docs/hosting.md`](docs/hosting.md).
-
-## نصب سریع برای توسعه
+## نصب با یک دستور
+در پوشهٔ برنامه (به Docker نیاز دارد):
 ```bash
-python3 -m venv .venv && .venv/bin/pip install -r requirements.lock
-mkdir -p media
-.venv/bin/python manage.py migrate
-.venv/bin/python manage.py createsuperuser
-.venv/bin/python manage.py runserver
+docker compose up -d --build
 ```
-پنل: `http://127.0.0.1:8000/panel/` — SQLite فقط برای توسعه.
+سپس `http://localhost/install/` را باز کنید: نام سایت و مدیرکل را وارد کنید، تمام. (کد امنیتی نصب: `docker compose exec ravix python manage.py ravix_install_token`.)
 
-## نصب در تولید
-معماری: Nginx (HTTPS) → Gunicorn (سوکت یونیکس) → Django → PostgreSQL.
-راهنمای گام‌به‌گام Ubuntu: [`docs/deployment.md`](docs/deployment.md). خلاصه:
-1. `cp .env.example /etc/ravix/ravix.env` و پر کردن `DJANGO_SETTINGS_MODULE=config.settings.production`، `DJANGO_SECRET_KEY` (≥۳۲ نویسه)، `DJANGO_ALLOWED_HOSTS`، `DJANGO_CSRF_TRUSTED_ORIGINS`، `DATABASE_URL` (PostgreSQL).
-2. `pip install -r requirements.lock`، `mkdir media`، `manage.py migrate`، `collectstatic`، `createsuperuser`.
-3. `manage.py ravix_preflight` و `manage.py check --deploy` باید بدون خطا/هشدار باشند.
-4. Gunicorn با `deploy/gunicorn.conf.py` (یا `deploy/ravix.service`)، Nginx با `deploy/nginx-ravix.conf`، سپس certbot.
+سرور اوبونتو ۲۲/۲۴ با دامنه و HTTPS رایگان: `sudo ./install.sh` — پیش از هر تغییر می‌پرسد و اجرای دوباره‌اش بی‌خطر است. جزئیات و سرور واقعی با Docker: [`docs/installer.md`](docs/installer.md).
+
+> این دستورها در سندباکس با PostgreSQL، Gunicorn و Nginx واقعی آزموده شده‌اند؛ **ساخت image داکر، certbot/Let's Encrypt و Ubuntu 22.04 هنوز روی سرور واقعی آزموده نشده‌اند.** ([`docs/STATUS.md`](docs/STATUS.md))
+
+## فرق با وردپرس
+| | Ravix | وردپرس |
+|---|---|---|
+| زبان و پایه | Python / Django؛ بدون PHP | PHP |
+| فارسی | پنل و سایت فارسی، راست‌چین و تاریخ شمسی از پایه | ترجمهٔ فارسی و راست‌چین هست؛ تاریخ شمسی معمولاً با افزونه |
+| **قالب** | فقط HTML/CSS/JS؛ **هیچ کدی روی سرور اجرا نمی‌کند** و به دیتابیس و کاربر دسترسی ندارد | قالب کد PHP است |
+| **افزونه** | هرگز خودکار نصب یا روشن نمی‌شود؛ مدیر مشخصات و فایل‌ها را می‌بیند و تأیید می‌کند؛ تغییر فایل بعد از تأیید افزونه را متوقف می‌کند؛ بستهٔ مخزن باید امضا داشته باشد | نصب با یک کلیک از مخزن رسمی |
+| **به‌روزرسانی** | بسته با امضای ناشر و SHA-256 بررسی می‌شود، پیش از ارتقا پشتیبان گرفته می‌شود و خرابی وسط کار خودکار برمی‌گردد (ارتقا به‌طور پیش‌فرض با دستور روی سرور، نه دکمه) | از پنل با یک کلیک |
+| **همراه هسته** | سئو و Open Graph، ریدایرکت، دیدگاه با ضداسپم، صفحه‌ساز، «سلامت سایت»، پشتیبان‌گیری روزانه، API نسخهٔ ۱؛ فروشگاه و چندسایتی اختیاری | ویرایشگر بلوکی و دیدگاه در هسته؛ سئو، ریدایرکت، پشتیبان و فروشگاه معمولاً با افزونه |
+| اکوسیستم | **کوچک و جوان**: یک قالب، سه افزونهٔ نمونه | بسیار بزرگ |
+
+**صادقانه، Ravix هنوز:** با قالب و افزونهٔ وردپرس سازگار نیست و ابزار انتقال از وردپرس ندارد؛ درگاه پرداخت واقعی ندارد (فقط درگاه آزمایشی؛ درگاه واقعی افزونه است)؛ سرور رسمی به‌روزرسانی و مخزن افزونه را خودتان باید راه بیندازید ([`docs/release.md`](docs/release.md)، [`docs/registry.md`](docs/registry.md)).
+اگر اکوسیستم بزرگ و ابزارهای آمادهٔ فراوان برایتان مهم‌تر است، فعلاً وردپرس انتخاب بهتری است.
 
 ## مستندات
-| موضوع | فایل |
+| | |
 |---|---|
-| استقرار، پشتیبان‌گیری و بازیابی | [`docs/deployment.md`](docs/deployment.md) |
-| ارتقا (به‌روزرسانی امضاشده، بازگشت) | [`docs/upgrade.md`](docs/upgrade.md) |
-| توسعهٔ قالب | [`docs/themes.md`](docs/themes.md) |
-| توسعهٔ افزونه | [`docs/plugins.md`](docs/plugins.md)، [`docs/installer.md`](docs/installer.md) |
-| امنیت (چک‌لیست) | [`docs/security-checklist.md`](docs/security-checklist.md)، [`SECURITY.md`](SECURITY.md) |
-| میزبانی سازگار | [`docs/hosting.md`](docs/hosting.md) |
-| فروشگاه و درگاه‌ها | [`docs/shop.md`](docs/shop.md)، [`docs/payment-gateways.md`](docs/payment-gateways.md) |
-| API | [`docs/api.md`](docs/api.md) |
-| انتشار نسخه | [`docs/release.md`](docs/release.md) |
+| **برای مدیر سایت** (زبان ساده: نصب، نوشتن، رسانه، قالب، افزونه، پشتیبان، به‌روزرسانی) | [`docs/admin/`](docs/admin/README.md) |
+| **برای توسعه‌دهنده** (ساخت قالب، ساخت افزونه، API) | [`docs/developer/`](docs/developer/README.md) |
+| فهرست همهٔ مستندات (استقرار، امنیت، فروشگاه، انتشار…) | [`docs/README.md`](docs/README.md) |
 
-## آزمون
+## توسعه و مشارکت
 ```bash
-.venv/bin/python manage.py test --parallel 4                      # فروشگاه روشن
-RAVIX_SHOP_ENABLED=false .venv/bin/python manage.py test          # فروشگاه خاموش (ترتیبی)
-E2E_PG_URL='postgresql://USER:PASS@127.0.0.1:5432' python scripts/e2e_backup_restore.py
+python3 -m venv .venv && .venv/bin/pip install -r requirements.lock
+.venv/bin/python manage.py migrate && .venv/bin/python manage.py runserver   # SQLite؛ فقط توسعه
+.venv/bin/python manage.py test
 ```
-سایر مسیرها: `scripts/e2e_*.py`. مشارکت: [`CONTRIBUTING.md`](CONTRIBUTING.md). تغییرات: [`CHANGELOG.md`](CHANGELOG.md).
+مشارکت: [`CONTRIBUTING.md`](CONTRIBUTING.md) · تغییرات: [`CHANGELOG.md`](CHANGELOG.md) · امنیت: [`SECURITY.md`](SECURITY.md) و گزارش آسیب‌پذیری.
 
 ## مجوز
 MIT — [`LICENSE`](LICENSE). اعلان‌های شخص ثالث (فونت‌ها): [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).

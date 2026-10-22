@@ -2,6 +2,28 @@
 قالب: [Keep a Changelog](https://keepachangelog.com/)، نسخه‌بندی [SemVer](https://semver.org/).
 
 ## [Unreleased]
+### Added (سرور رسمی به‌روزرسانی و مخزن)
+- `apps/core/official.py`: تنها نقطهٔ ویرایش ناشر برای آدرس‌های پیش‌فرض (`OFFICIAL_UPDATE_URL`، `OFFICIAL_REGISTRY_URL`)، کلیدهای عمومی رسمی (`OFFICIAL_PUBLIC_KEYS`) و کلیدهای ابطال‌شده (`REVOKED_KEY_IDS`). `RAVIX_UPDATE_URL` و `RAVIX_OFFICIAL_REGISTRY_URL` پیش‌فرض را عوض می‌کنند (مقدار خالیِ صریح = خاموش). همه خالی ارسال می‌شوند.
+- ابطال کلید: `RAVIX_REVOKED_KEY_IDS` (env) و `official.REVOKED_KEY_IDS` بر همهٔ منبع‌های کلید (کد، env، پنل) غالب‌اند؛ پنل «کلیدهای مورد اعتماد» کلید رسمی داخل کد و کلیدهای ابطال‌شده را نشان می‌دهد. `ravix_release keygen` اکنون `key_id` را هم چاپ می‌کند (کلید عمومی همچنان آخرین خط است).
+- مستند: راهنمای کامل راه‌اندازی سرور رسمی به‌روزرسانی (`docs/release.md`) و مخزن افزونه‌ها (`docs/registry.md`): کلید آفلاین، قراردادن کلید در کد، چرخش، ابطال، آدرس و env، رفتار هنگام قطع.
+### Fixed (سرور رسمی)
+- **دانلود بستهٔ هسته/قالب از `RAVIX_UPDATE_URL` با فهرست ساخته‌شده توسط `ravix_release` کار نمی‌کرد**: `download_url` فقط نام فایل بود و به‌اشتباه «دامنهٔ دیگر» شمرده می‌شد. اکنون نسبت به `<URL>/updates/v1/` حل می‌شود (نشانی مطلق باید همان دامنه و https باشد).
+- قطع بودن سرور به‌روزرسانی هر بازشدن صفحهٔ «به‌روزرسانی‌ها» را تا ۳۰ ثانیه معطل می‌کرد: اکنون سقف انتظار فهرست ۸ ثانیه و شکست ۵ دقیقه کش می‌شود (دکمهٔ «بررسی» کش را دور می‌زند).
+### Changed (CI و انتشار)
+- `ci.yml`: ماتریس Python 3.12/3.13 × SQLite/PostgreSQL 16 (+ بدون فروشگاه)، job جداگانهٔ بررسی migration جاافتاده، E2E روی PG16، `pip-audit --strict`، `bandit` با baseline (`scripts/bandit_check.sh`، `.bandit-baseline.json`)، `check --deploy` و ساخت/بررسی image داکر. `workflow_call` برای استفادهٔ release.
+- `release.yml`: preflight (تگ = نسخه، بخش CHANGELOG، commit روی main) ← CI کامل ← zip + `SHA256SUMS` + `verify_release.py` و image GHCR (provenance/SBOM) ← GitHub Release (pre-release برای تگ دارای `-`). **امضا در CI نیست**؛ امضای دستی و آفلاین در `docs/release.md`.
+### Added (بعد از نصب)
+- **محتوای نمونه** (`apps/content/samples.py`): هنگام نصب وب/CLI یک نوشته («به راویکس خوش آمدید») و برگه‌های «درباره ما» و «تماس با ما» ساخته می‌شود و دو برگه به منوی سربرگ می‌روند. `Post.is_sample`/`Page.is_sample` (مهاجرت `content.0005`)؛ با اولین ویرایش در پنل، علامت نمونه برمی‌افتد. دکمهٔ «حذف محتوای نمونه» در داشبورد فقط نمونه‌های ویرایش‌نشده را پاک می‌کند (نیازمند `content.publish` و `pages.manage`، ثبت در گزارش ممیزی). خطا در ساخت نمونه نصب را خراب نمی‌کند.
+- **راهنمای شروع** در داشبورد (لوگو ← اولین نوشته ← قالب): وضعیت هر گام از داده‌های واقعی تشخیص داده می‌شود (نوشتهٔ نمونه حساب نمی‌شود)، با «بستن راهنما» (`SiteSettings.onboarding_dismissed`، مهاجرت `core.0008`). فقط برای `settings.manage`.
+- **صفحه‌های خطا:** ۴۰۴ قالب پیش‌فرض بازطراحی شد؛ ۵۰۰ و حالت تعمیر اکنون صفحهٔ HTML فارسی **مستقل** هستند (CSS درون‌خطی؛ بدون دیتابیس، static و context processor، پس وقتی همه‌چیز خراب است هم نمایش داده می‌شوند). حالت تعمیر ۵۰۳ با `Retry-After` و بازخوانی خودکار برمی‌گرداند؛ درخواست‌های غیر HTML همان متن ساده را می‌گیرند.
+- **سلامت سایت** (`/panel/site-health/`، capability تازهٔ `health.view` برای مدیر/مدیرکل): بررسی HTTPS/HSTS/DEBUG، ایمیل، کش، دیتابیس، پوشهٔ رسانه و دیسک، timerهای systemd (+ نوشتهٔ زمان‌بندی‌شدهٔ عقب‌افتاده)، تازگی پشتیبان (`BACKUP_DIR`، `/var/backups/ravix`، `/backups/.last_ok`)، نسخهٔ پایتون/Django/راویکس، مهاجرت‌های اجرانشده، قالب و افزونه. سطح‌ها: خوب/پیشنهادی/بحرانی/نامشخص (وقتی چیزی قابل سنجش نیست، مثل systemd در Docker). دکمهٔ «ارسال ایمیل آزمایشی» فقط به ایمیل خود کاربر و با محدودیت ۳۰ ثانیه.
+### Added (روش‌های نصب)
+- **نصب‌کنندهٔ وب** (`apps/installer`، `/install/`): نام سایت، مدیرکل، زبان و منطقهٔ زمانی؛ مهاجرت‌ها در صورت نیاز همان‌جا اجرا می‌شوند؛ مدیرکل و تنظیمات در یک تراکنش ساخته می‌شوند و صفحه پس از نصب برای همیشه ۴۰۴ است. در production با توکن نصب (`RAVIX_INSTALL_TOKEN` یا فایل/لاگ؛ `manage.py ravix_install_token`). سایتی که کاربر دارد هرگز نصب‌پذیر نیست. دستور بدون‌وب `ravix_install`. خاموش‌کردن: `RAVIX_INSTALLER_ENABLED=false`. مهاجرت `core.0007` (`SiteSettings.language/timezone/installed_at`).
+- **زبان و منطقهٔ زمانی سایت** در «تنظیمات سایت» و در هر درخواست فعال می‌شود (`SiteRegionalMiddleware`؛ ذخیرهٔ تاریخ‌ها UTC می‌ماند). فرم‌های قدیمی که این دو را نمی‌فرستند مقدار فعلی را نگه می‌دارند.
+- **Docker:** `Dockerfile` چندمرحله‌ای (کاربر غیر root، کد فقط‌خواندنی)، `docker-compose.yml` (ravix + PostgreSQL 17 + Redis + Nginx + سرویس پشتیبان دوره‌ای با volumeهای media/data/backups)، `docker-compose.tls.yml` (HTTPS با Let's Encrypt میزبان)، `docker/init-env.sh` (رمزهای تصادفی). کلید Django از فایل هم خوانده می‌شود (`RAVIX_SECRET_KEY_FILE`).
+- **`install.sh`** برای Ubuntu 22.04/24.04: پایتون، PostgreSQL، کاربر سیستمی، systemd، Nginx و certbot؛ idempotent، پیش از هر تغییر می‌پرسد، `--dry-run`/`--yes`.
+- `deploy/nginx-ravix.conf`: محدودیت نرخ برای `/install/`.
+- مستند: `docs/installer.md` (جزئیات و آنچه تأیید نشده). نصب‌کنندهٔ **افزونه‌ها** که قبلاً این نام را داشت به `docs/plugin-installer.md` منتقل شد.
 ### Changed (تغییر نام ravin → ravix)
 - نام محصول در همهٔ کد، فایل‌های استقرار و مستندات `ravix` شد (دستورهای `ravix_*`، `ravix.service`، `RAVIX_*`، `{% load ravix_theme %}`/`ravix_ui`، …). **نام‌های قدیمی تا 2.0 با `RavixDeprecationWarning` کار می‌کنند** (متغیرهای `RAVIN_*`، دستورهای `ravin_*`، تگ‌های `ravin_theme`/`ravin_ui`، کلید `ravin` در manifest/`requires`، تایمرها و مسیرهای قدیمی). فهرست کامل و راهنمای مهاجرت: `docs/upgrade.md` §۹.
 - ناسازگار (بدون شیم): `settings.RAVIN_*`، نام لاگرها، کلیدهای نشست، `static/css/ravin.css` و `static/js/ravin.js`.
