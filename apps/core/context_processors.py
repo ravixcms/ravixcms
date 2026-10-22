@@ -7,10 +7,12 @@ from .navigation import SECTIONS, get_nav_items
 
 def site_settings(request):
     """تنظیمات سایت و منوی کناری را در همه قالب‌ها در دسترس می‌گذارد."""
-    try:
-        site = SiteSettings.load()
-    except (OperationalError, ProgrammingError):  # پیش از اجرای migrate
-        site = SiteSettings()
+    site = getattr(request, "site_settings", None)  # SiteRegionalMiddleware همین درخواست خوانده است
+    if site is None:
+        try:
+            site = SiteSettings.load()
+        except (OperationalError, ProgrammingError):  # پیش از اجرای migrate
+            site = SiteSettings()
 
     sidebar = []
     user = getattr(request, "user", None)

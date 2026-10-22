@@ -35,6 +35,10 @@ class SiteSettings(models.Model):
     contact_phone = models.CharField("تلفن تماس", max_length=30, blank=True)
     address = models.CharField("نشانی", max_length=300, blank=True)
     footer_text = models.CharField("متن پانویس", max_length=300, blank=True)
+    language = models.CharField("زبان", max_length=10, default="fa")
+    timezone = models.CharField("منطقهٔ زمانی", max_length=64, default="Asia/Tehran")
+    installed_at = models.DateTimeField("زمان تکمیل نصب", null=True, blank=True, editable=False)
+    onboarding_dismissed = models.BooleanField("راهنمای شروع بسته شده", default=False, editable=False)
     registration_open = models.BooleanField(
         "ثبت‌نام عمومی فعال باشد",
         default=settings.REGISTRATION_DEFAULT_OPEN,

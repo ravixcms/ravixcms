@@ -10,6 +10,7 @@ admin.site.has_permission = lambda request: bool(request.user.is_active and requ
 
 urlpatterns = [
     path("healthz", healthz, name="healthz"),
+    path("install/", include("apps.installer.urls")),  # پیش از سایت عمومی؛ پس از نصب ۴۰۴
     path("panel/", include("apps.dashboard.urls")),
     path("accounts/", include("apps.accounts.urls")),
     path("panel/", include("apps.core.urls")),

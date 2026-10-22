@@ -1,0 +1,18 @@
+# افزونهٔ HTTPS برای docker-compose.yml:
+#   docker compose -f docker-compose.yml -f docker-compose.tls.yml up -d --build
+# پیش‌نیاز: گواهی در /etc/letsencrypt میزبان (مثلاً: sudo certbot certonly --standalone -d example.com — پیش از بالا آوردن compose، چون پورت ۸۰ باید آزاد باشد).
+# مسیر گواهی: /etc/letsencrypt/live/$RAVIX_DOMAIN/{fullchain,privkey}.pem  (تمدید: certbot renew + docker compose exec nginx nginx -s reload)
+services:
+  ravix:
+    environment:
+      DJANGO_SECURE_SSL_REDIRECT: "true"
+  backup:
+    environment:
+      DJANGO_SECURE_SSL_REDIRECT: "true"
+  nginx:
+    ports:
+      - "${RAVIX_HTTP_PORT:-80}:80"
+      - "${RAVIX_HTTPS_PORT:-443}:443"
+    volumes:
+      - ./docker/nginx/tls.conf.template:/etc/nginx/templates/default.conf.template:ro
+      - ${LETSENCRYPT_DIR:-/etc/letsencrypt}:/etc/letsencrypt:ro

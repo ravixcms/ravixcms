@@ -1,0 +1,65 @@
+# قالب nginx برای Docker Compose (envsubst فقط ${RAVIX_DOMAIN} را جایگزین می‌کند؛ متغیرهای nginx دست‌نخورده‌اند).
+limit_req_zone $binary_remote_addr zone=ravix_login:10m rate=10r/m;
+limit_req_zone $binary_remote_addr zone=ravix_checkout:10m rate=30r/m;
+limit_req_zone $binary_remote_addr zone=ravix_themeup:10m rate=6r/m;
+limit_req_zone $binary_remote_addr zone=ravix_install:10m rate=10r/m;
+
+upstream ravix_app {
+    server ravix:8000 fail_timeout=0;
+}
+
+# اگر جلوی این nginx یک پایان‌دهندهٔ TLS دیگر (Cloudflare، nginx میزبان، ...) هست و X-Forwarded-Proto را می‌فرستد، همان را بپذیر.
+map $http_x_forwarded_proto $ravix_proto {
+    default $scheme;
+    https   https;
+}
+
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    server_name _;
+
+    client_max_body_size 6m;
+    server_tokens off;
+    gzip on;
+    gzip_types text/css application/javascript application/json image/svg+xml;
+    gzip_min_length 512;
+
+    # فایل‌های آپلودشده (volume مشترک با برنامه، فقط‌خواندنی)؛ هرگز اجرا نمی‌شوند و CSP بسته دارند
+    location /media/ {
+        alias /srv/media/;
+        expires 30d;
+        add_header Cache-Control "public";
+        add_header X-Content-Type-Options nosniff;
+        add_header Content-Security-Policy "default-src 'none'; img-src 'self'; style-src 'none'; sandbox";
+        location ~* \.(php|py|pl|cgi|sh|html?|js)$ { return 403; }
+    }
+    location /panel/media/ {
+        client_max_body_size 60m;
+        include /etc/nginx/ravix-proxy.conf;
+    }
+    location /panel/shop/ {
+        client_max_body_size 210m;
+        include /etc/nginx/ravix-proxy.conf;
+    }
+    location = /accounts/login/ {
+        limit_req zone=ravix_login burst=10 nodelay;
+        include /etc/nginx/ravix-proxy.conf;
+    }
+    location = /install/ {
+        limit_req zone=ravix_install burst=5 nodelay;
+        include /etc/nginx/ravix-proxy.conf;
+    }
+    location = /panel/themes/upload/ {
+        client_max_body_size 11m;
+        limit_req zone=ravix_themeup burst=3 nodelay;
+        include /etc/nginx/ravix-proxy.conf;
+    }
+    location = /shop/checkout/ {
+        limit_req zone=ravix_checkout burst=10 nodelay;
+        include /etc/nginx/ravix-proxy.conf;
+    }
+    location / {
+        include /etc/nginx/ravix-proxy.conf;
+    }
+}
