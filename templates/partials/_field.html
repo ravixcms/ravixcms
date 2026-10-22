@@ -1,0 +1,47 @@
+{% load ravin_ui %}
+{% with kind=field|field_type %}
+{% if kind == "CheckboxInput" %}
+  <div class="field-check">
+    {{ field }}
+    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+  </div>
+  {% if field.help_text %}<p class="help" style="margin-top:-.8rem;margin-bottom:1rem">{{ field.help_text }}</p>{% endif %}
+{% elif kind == "ClearableFileInput" %}
+  <div class="field {% if field.errors %}has-error{% endif %}">
+    <span class="field-label">{{ field.label }}</span>
+    {% if field.initial %}
+      <div class="current-image">
+        <img src="{{ field.initial.url }}" alt="تصویر فعلی {{ field.label }}">
+        {% if not field.field.required %}
+          <label class="clear-box"><input type="checkbox" class="check" name="{{ field.html_name }}-clear" id="{{ field.html_name }}-clear"> حذف تصویر فعلی</label>
+        {% endif %}
+      </div>
+    {% endif %}
+    <div class="current-image"><img id="preview-{{ field.html_name }}" alt="پیش‌نمایش تصویر جدید" hidden></div>
+    <input type="file" class="file" name="{{ field.html_name }}" id="{{ field.id_for_label }}" accept="image/jpeg,image/png,image/gif,image/webp" data-preview="preview-{{ field.html_name }}">
+    {% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% else %}<p class="help">فرمت‌های مجاز: JPEG، PNG، GIF، WEBP — حداکثر ۲ مگابایت</p>{% endif %}
+    {% for error in field.errors %}<p class="error-text">{{ error }}</p>{% endfor %}
+  </div>
+{% elif kind == "CheckboxSelectMultiple" or kind == "RadioSelect" %}
+  <div class="field {% if field.errors %}has-error{% endif %}">
+    <span class="field-label">{{ field.label }}</span>
+    {{ field }}
+    {% if field.help_text %}<div class="help">{{ field.help_text }}</div>{% endif %}
+    {% for error in field.errors %}<p class="error-text">{{ error }}</p>{% endfor %}
+  </div>
+{% else %}
+  <div class="field {% if field.errors %}has-error{% endif %}">
+    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+    {% if kind == "PasswordInput" %}
+      <div class="password-wrap">
+        {{ field }}
+        <button type="button" class="password-toggle" data-password-toggle aria-label="نمایش رمز عبور" aria-pressed="false">{% icon "eye" 18 %}</button>
+      </div>
+    {% else %}
+      {{ field }}
+    {% endif %}
+    {% if field.help_text %}<div class="help">{{ field.help_text|safe }}</div>{% endif %}
+    {% for error in field.errors %}<p class="error-text">{{ error }}</p>{% endfor %}
+  </div>
+{% endif %}
+{% endwith %}

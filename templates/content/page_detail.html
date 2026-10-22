@@ -1,0 +1,24 @@
+{% extends "layouts/panel.html" %}
+{% load ravin_ui %}
+{% block title %}{{ page.title }}{% endblock %}
+{% block page_title %}مشاهده صفحه{% endblock %}
+{% block content_class %}content-narrow{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1>{{ page.title }}</h1><p><span class="badge badge-{{ page.status }}">{{ page.get_status_display }}</span></p></div>
+  <div class="form-actions" style="margin:0">
+    <a href="{% url 'content:page_update' page.pk %}" class="btn">{% icon "edit" 18 %} ویرایش</a>
+    <a href="{% url 'content:page_delete' page.pk %}" class="btn btn-light">{% icon "trash" 18 %} حذف</a>
+    <a href="{% url 'content:page_list' %}" class="btn btn-light">بازگشت</a>
+  </div>
+</div>
+<article class="card"><div class="card-body"><div class="prose">{{ page.body_html|safe }}</div></div>
+<div class="card-body meta-list">
+  <div><span class="muted">نامک:</span> <span class="ltr">{{ page.slug }}</span></div>
+  <div><span class="muted">عنوان سئو:</span> {{ page.effective_title_tag }}</div>
+  <div><span class="muted">توضیحات سئو:</span> {{ page.seo_description|default:"—" }}</div>
+  <div><span class="muted">نویسنده:</span> {{ page.author.display_name|default:"—" }}</div>
+  <div><span class="muted">ایجاد:</span> {{ page.created_at|jalali_datetime }}</div>
+  <div><span class="muted">آخرین ویرایش:</span> {{ page.updated_at|jalali_datetime }}</div>
+</div></article>
+{% endblock %}

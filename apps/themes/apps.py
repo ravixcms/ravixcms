@@ -1,0 +1,25 @@
+from django.apps import AppConfig
+
+
+class ThemesConfig(AppConfig):
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "apps.themes"
+    verbose_name = "قالب‌های سایت"
+
+    def ready(self):
+        from apps.core.navigation import NavItem, register_nav_item
+
+        register_nav_item(
+            NavItem(
+                key="themes.list", label="قالب‌ها", url_name="themes:list", icon="palette", section="appearance", order=10,
+                capability="themes.manage",
+                active_urls=("themes:list",),
+            )
+        )
+        register_nav_item(
+            NavItem(
+                key="themes.customize", label="سفارشی‌سازی ظاهر", url_name="themes:customize", icon="brush", section="appearance", order=20,
+                capability="themes.manage",
+                active_urls=("themes:customize", "themes:layout", "themes:menus", "themes:home"),
+            )
+        )

@@ -1,0 +1,16 @@
+{% load ravin_ui %}
+{% with m=manifest %}
+<dl class="kv">
+  <dt>نامک</dt><dd class="ltr">{{ m.slug }}</dd>
+  <dt>نسخه</dt><dd class="ltr">{{ m.version }}</dd>
+  <dt>سازنده</dt><dd>{{ m.author|default:"—" }}</dd>
+  <dt>سازگاری با Ravin CMS</dt><dd class="ltr">{{ m.ravin }} (API {{ m.api_version }})</dd>
+  {% if m.requires %}<dt>وابستگی‌ها</dt><dd class="ltr">{% for k, v in m.requires.items %}{{ k }} {{ v }}{% if not forloop.last %}، {% endif %}{% endfor %}</dd>{% endif %}
+  <dt>جدول در دیتابیس</dt><dd>{% if m.models %}بله — جدول‌هایی با پیشوند <span class="ltr">plugin_{{ m.slug }}_</span> ساخته می‌شود{% else %}خیر{% endif %}</dd>
+  <dt>صفحات مدیریتی</dt><dd>{% for p in m.admin_pages %}{{ p.title }} (مجوز: <span class="ltr">{{ p.capability }}</span>){% if not forloop.last %}<br>{% endif %}{% empty %}—{% endfor %}</dd>
+  <dt>مسیرهای عمومی</dt><dd>{% for r in m.public_routes %}<span class="ltr">/ext/{{ m.slug }}/{{ r.path }}</span> ({{ r.methods|join:", " }}){% if not forloop.last %}<br>{% endif %}{% empty %}—{% endfor %}</dd>
+  <dt>Hookها</dt><dd>{% for h in m.hooks %}<span class="ltr">{{ h.name }}</span>{% if not forloop.last %}، {% endif %}{% empty %}—{% endfor %}</dd>
+  <dt>مجوزهای جدید</dt><dd>{% for k, v in m.capabilities.items %}<span class="ltr">{{ k }}</span> — {{ v }}{% if not forloop.last %}<br>{% endif %}{% empty %}—{% endfor %}{% if m.capabilities %}<br><span class="muted">(فقط به نقش مدیر و مدیرکل داده می‌شود)</span>{% endif %}</dd>
+  <dt>تنظیمات</dt><dd>{{ m.settings|length|fa_digits }} مورد</dd>
+</dl>
+{% endwith %}

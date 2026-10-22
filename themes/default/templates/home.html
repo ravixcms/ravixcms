@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load ravin_theme %}
+{% block body_class %}page-home{% endblock %}
+{% block content %}
+{% with first=sections.0 %}{% if first.type != "hero" %}<h1 class="sr-only">{{ site.name }}</h1>{% endif %}{% endwith %}
+
+{% for s in sections %}
+  {% if s.type == "hero" %}
+  <section class="hero">
+    <div class="container">
+      <div class="hero-inner">
+        {% if forloop.first %}<h1 class="hero-title">{{ s.title }}</h1>{% else %}<h2 class="hero-title">{{ s.title }}</h2>{% endif %}
+        {% if s.subtitle %}<p class="hero-sub">{{ s.subtitle }}</p>{% endif %}
+        {% if s.body_html %}<div class="hero-body">{{ s.body_html }}</div>{% endif %}
+        {% if s.button_url %}<p><a class="btn btn-lg" href="{{ s.button_url }}">{{ s.button_label }}</a></p>{% endif %}
+      </div>
+    </div>
+  </section>
+
+  {% elif s.type == "latest_posts" or s.type == "category_posts" %}
+  <section class="band" aria-labelledby="sec-{{ forloop.counter }}">
+    <div class="container">
+      <div class="band-head">
+        <h2 id="sec-{{ forloop.counter }}">{% if s.title %}{{ s.title }}{% else %}نوشته‌ها{% endif %}</h2>
+        {% if s.button_url %}<a class="more" href="{{ s.button_url }}">{% if s.button_label %}{{ s.button_label }}{% else %}مشاهده همه{% endif %}</a>{% endif %}
+      </div>
+      {% for post in s.posts %}{% if forloop.first %}
+      <article class="lead{% if post.image_url %} has-media{% endif %}">
+        {% if post.image_url %}<a class="lead-media" href="{{ post.url }}" tabindex="-1" aria-hidden="true"><img src="{{ post.image_url }}" alt="" decoding="async" fetchpriority="high"></a>{% endif %}
+        <div class="lead-body">
+          {% if post.categories %}<ul class="chips" aria-label="دسته‌بندی‌ها">{% for c in post.categories %}<li><a href="{{ c.url }}">{{ c.name }}</a></li>{% endfor %}</ul>{% endif %}
+          <h3 class="lead-title"><a href="{{ post.url }}">{{ post.title }}</a></h3>
+          {% if post.excerpt %}<p class="lead-excerpt">{{ post.excerpt }}</p>{% endif %}
+          <ul class="meta">{% if post.author_name %}<li>{{ post.author_name }}</li>{% endif %}<li><time datetime="{{ post.date_iso }}">{{ post.date_display }}</time></li></ul>
+        </div>
+      </article>
+      {% endif %}{% endfor %}
+      {% if s.posts|length > 1 %}
+      <div class="river river-two">
+        {% for post in s.posts|slice:"1:" %}{% include "partials/post_row.html" with post=post hlevel=3 %}{% endfor %}
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
+  {% elif s.type == "categories" %}
+  <section class="band" aria-labelledby="sec-{{ forloop.counter }}">
+    <div class="container">
+      <div class="band-head"><h2 id="sec-{{ forloop.counter }}">{% if s.title %}{{ s.title }}{% else %}دسته‌بندی‌ها{% endif %}</h2></div>
+      <ul class="cat-list">
+        {% for c in s.categories %}
+        <li><a href="{{ c.url }}"><strong>{{ c.name }}</strong><span>{{ c.post_count|fa_digits }} نوشته</span>{% if c.description %}<small>{{ c.description }}</small>{% endif %}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </section>
+
+  {% elif s.type == "page" %}
+  <section class="band" aria-labelledby="sec-{{ forloop.counter }}">
+    <div class="container">
+      <div class="article">
+        <h2 id="sec-{{ forloop.counter }}">{{ s.title }}</h2>
+        <div class="prose">{{ s.page.body_html }}</div>
+        <p><a class="more" href="{{ s.page.url }}">ادامه در صفحهٔ «{{ s.page.title }}»</a></p>
+      </div>
+    </div>
+  </section>
+
+  {% elif s.type == "text" %}
+  <section class="band"{% if s.title %} aria-labelledby="sec-{{ forloop.counter }}"{% endif %}>
+    <div class="container">
+      <div class="article">
+        {% if s.title %}<h2 id="sec-{{ forloop.counter }}">{{ s.title }}</h2>{% endif %}
+        <div class="prose">{{ s.body_html }}</div>
+        {% if s.button_url %}<p><a class="btn" href="{{ s.button_url }}">{{ s.button_label }}</a></p>{% endif %}
+      </div>
+    </div>
+  </section>
+  {% endif %}
+{% empty %}
+  <section class="band"><div class="container empty-state">
+    <p>صفحهٔ اصلی هنوز بخشی ندارد.</p>
+    {% if viewer.customize_url %}<p><a class="btn" href="{{ viewer.customize_url }}">بخش‌های صفحهٔ اصلی را تنظیم کنید</a></p>{% endif %}
+  </div></section>
+{% endfor %}
+{% endblock %}

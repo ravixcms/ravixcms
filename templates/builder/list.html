@@ -1,0 +1,37 @@
+{% extends "layouts/panel.html" %}
+{% load ravin_ui %}
+{% block title %}صفحه‌ساز{% endblock %}
+{% block page_title %}صفحه‌ساز{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1>صفحه‌ساز تصویری</h1><p>صفحه‌های ثابت سایت را بدون کدنویسی طراحی کنید. طرح تا زمان تأیید و انتشار، در سایت دیده نمی‌شود.</p></div>
+</div>
+<div class="card">
+  <form method="get" class="toolbar" role="search">
+    <input type="search" name="q" value="{{ q }}" class="input grow" placeholder="جستجوی عنوان یا نامک صفحه" aria-label="جستجو">
+    <label class="check"><input type="checkbox" name="pending" value="1" {% if only_pending %}checked{% endif %}> فقط در انتظار تأیید</label>
+    <button type="submit" class="btn">{% icon "search" 18 %} اعمال</button>
+  </form>
+  {% if pages %}
+  <div class="table-wrap"><table class="table">
+    <thead><tr><th>صفحه</th><th>وضعیت صفحه</th><th>طرح</th><th>آخرین تغییر طرح</th><th></th></tr></thead>
+    <tbody>
+    {% for page in pages %}
+      <tr>
+        <td><strong>{{ page.title }}</strong><div class="muted ltr">/{{ page.slug }}/</div></td>
+        <td><span class="badge badge-{{ page.status }}">{{ page.get_status_display }}</span></td>
+        <td>
+          {% if page.design.published_version_id %}<span class="badge badge-published">طرح منتشر شده</span>
+          {% elif page.design %}<span class="badge badge-draft">فقط پیش‌نویس</span>
+          {% else %}<span class="muted">بدون طرح</span>{% endif %}
+          {% if page.pending %}<span class="badge badge-scheduled">در انتظار تأیید</span>{% endif %}
+        </td>
+        <td>{% if page.design %}{{ page.design.updated_at|jalali_datetime }}{% else %}—{% endif %}</td>
+        <td><a class="btn btn-sm" href="{% url 'builder:editor' page.pk %}">{% icon "layout" 16 %} {% if page.design %}ویرایش طرح{% else %}طراحی{% endif %}</a></td>
+      </tr>
+    {% endfor %}
+    </tbody></table></div>
+  {% include "partials/_pagination.html" %}
+  {% else %}<div class="empty">صفحه‌ای پیدا نشد. ابتدا از بخش «صفحات» یک صفحه ثابت بسازید.</div>{% endif %}
+</div>
+{% endblock %}

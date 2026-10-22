@@ -1,0 +1,17 @@
+{% extends "layouts/auth.html" %}
+{% load ravin_ui %}
+{% block title %}ورود{% endblock %}
+{% block auth_content %}
+<h2 style="margin-bottom:1.25rem">ورود به حساب</h2>
+<form method="post" novalidate data-once>
+  {% csrf_token %}
+  {% include "partials/_form_errors.html" %}
+  {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+  {% for field in form %}{% include "partials/_field.html" %}{% endfor %}
+  <button type="submit" class="btn btn-block">{% icon "login" 18 %} ورود</button>
+</form>
+<p class="auth-switch" style="margin-top:.75rem"><a href="{% url 'accounts:password_reset' %}">رمز عبور را فراموش کرده‌اید؟</a></p>
+{% if site.registration_open %}
+  <p class="auth-switch">حساب ندارید؟ <a href="{% url 'accounts:register' %}">ثبت‌نام کنید</a></p>
+{% endif %}
+{% endblock %}

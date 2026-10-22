@@ -1,0 +1,41 @@
+{% extends "layouts/panel.html" %}
+{% load ravin_ui %}
+{% block title %}صفحات{% endblock %}
+{% block page_title %}صفحات{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1>صفحات ثابت</h1><p>صفحاتی مانند «درباره ما» و «تماس با ما»</p></div>
+  <a href="{% url 'content:page_create' %}" class="btn">{% icon "plus" 18 %} صفحه جدید</a>
+</div>
+<div class="card">
+  <form method="get" class="toolbar" role="search">
+    <input type="search" name="q" value="{{ q }}" class="input grow" placeholder="جستجوی عنوان، نامک یا متن" aria-label="جستجو">
+    <select name="status" class="input" aria-label="وضعیت">
+      <option value="">همه وضعیت‌ها</option>
+      <option value="published" {% if selected_status == "published" %}selected{% endif %}>منتشرشده</option>
+      <option value="draft" {% if selected_status == "draft" %}selected{% endif %}>پیش‌نویس</option>
+    </select>
+    <button type="submit" class="btn">{% icon "search" 18 %} اعمال</button>
+  </form>
+  {% if pages %}
+  <div class="table-wrap"><table class="table">
+    <thead><tr><th>عنوان</th><th>نامک</th><th>وضعیت</th><th>آخرین ویرایش</th><th></th></tr></thead>
+    <tbody>
+    {% for page in pages %}
+      <tr>
+        <td><a href="{% url 'content:page_detail' page.pk %}"><strong>{{ page.title }}</strong></a></td>
+        <td class="ltr">{{ page.slug }}</td>
+        <td><span class="badge badge-{{ page.status }}">{{ page.get_status_display }}</span></td>
+        <td>{{ page.updated_at|jalali_datetime }}</td>
+        <td>
+          <a class="btn btn-light btn-sm" href="{% url 'content:page_detail' page.pk %}">{% icon "eye" 16 %}</a>
+          <a class="btn btn-light btn-sm" href="{% url 'content:page_update' page.pk %}" title="ویرایش">{% icon "edit" 16 %}</a>
+          <a class="btn btn-light btn-sm" href="{% url 'content:page_delete' page.pk %}" title="حذف">{% icon "trash" 16 %}</a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody></table></div>
+  {% include "partials/_pagination.html" %}
+  {% else %}<div class="empty">صفحه‌ای پیدا نشد.</div>{% endif %}
+</div>
+{% endblock %}

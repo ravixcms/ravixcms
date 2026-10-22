@@ -1,0 +1,45 @@
+{% extends "layouts/panel.html" %}
+{% load ravin_ui %}
+{% block title %}{{ heading }}{% endblock %}
+{% block page_title %}{{ heading }}{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>{{ heading }}</h1></div></div>
+<form method="post" enctype="multipart/form-data" novalidate data-once>
+  {% csrf_token %}
+  {% include "partials/_form_errors.html" %}
+  <div class="editor-layout">
+    <div class="card"><div class="card-body">
+      {% include "partials/_field.html" with field=form.title %}
+      {% include "partials/_field.html" with field=form.slug %}
+      {% include "partials/_field.html" with field=form.excerpt %}
+      {% include "partials/_md_editor.html" with field=form.body %}
+    </div></div>
+    <aside class="editor-side">
+      <div class="card">
+        <div class="card-header"><h2>انتشار</h2></div>
+        <div class="card-body">
+          {% include "partials/_field.html" with field=form.status %}
+          {% if form.publish_at %}{% include "partials/_field.html" with field=form.publish_at %}{% endif %}
+          {% if form.author %}{% include "partials/_field.html" with field=form.author %}{% endif %}
+          {% if object.pk %}<p class="help">ایجاد: {{ object.created_at|jalali_datetime }}<br>آخرین ویرایش: {{ object.updated_at|jalali_datetime }}</p>{% endif %}
+          <div class="form-actions"><button type="submit" class="btn">{% icon "check" 18 %} ذخیره</button><a href="{{ cancel_url }}" class="btn btn-light">انصراف</a></div>
+        </div>
+      </div>
+      <div class="card"><div class="card-header"><h2>تصویر شاخص</h2></div><div class="card-body">{% include "partials/_field.html" with field=form.featured_image %}</div></div>
+      <div class="card"><div class="card-header"><h2>دیدگاه‌ها</h2></div><div class="card-body">{% include "partials/_field.html" with field=form.comments_open %}</div></div>
+      <div class="card"><div class="card-header"><h2>سئو و اشتراک‌گذاری</h2></div><div class="card-body">
+        {% include "partials/_field.html" with field=form.seo_title %}
+        {% include "partials/_field.html" with field=form.seo_description %}
+        {% include "partials/_field.html" with field=form.noindex %}
+        <p class="help">تصویر شاخص به‌عنوان تصویر پیش‌نمایش در شبکه‌های اجتماعی (og:image) استفاده می‌شود.</p>
+      </div></div>
+      <div class="card"><div class="card-header"><h2>دسته‌بندی‌ها</h2></div><div class="card-body">
+        {% if form.categories.field.queryset %}{% include "partials/_field.html" with field=form.categories %}{% else %}<p class="muted" style="margin:0">هنوز دسته‌بندی‌ای وجود ندارد.</p>{% endif %}
+      </div></div>
+      <div class="card"><div class="card-header"><h2>برچسب‌ها</h2></div><div class="card-body">
+        {% if form.tags.field.queryset %}{% include "partials/_field.html" with field=form.tags %}{% else %}<p class="muted" style="margin:0">هنوز برچسبی وجود ندارد.</p>{% endif %}
+      </div></div>
+    </aside>
+  </div>
+</form>
+{% endblock %}

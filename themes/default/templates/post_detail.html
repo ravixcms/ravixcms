@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load ravin_theme %}
+{% block body_class %}page-post{% endblock %}
+{% block content %}
+<div class="container">
+  {% include "partials/breadcrumbs.html" %}
+  <article class="article" itemscope itemtype="https://schema.org/Article">
+    <header class="article-head">
+      {% if post.categories %}<ul class="chips" aria-label="دسته‌بندی‌ها">{% for c in post.categories %}<li><a href="{{ c.url }}">{{ c.name }}</a></li>{% endfor %}</ul>{% endif %}
+      <h1 itemprop="headline">{{ post.title }}</h1>
+      {% if post.excerpt %}<p class="article-lead">{{ post.excerpt }}</p>{% endif %}
+      <ul class="meta">
+        {% if post.author_name %}<li><span itemprop="author">{{ post.author_name }}</span></li>{% endif %}
+        <li><time datetime="{{ post.date_iso }}" itemprop="datePublished">{{ post.date_display }}</time></li>
+        {% if post.reading_time %}<li>{{ post.reading_time }}</li>{% endif %}
+      </ul>
+    </header>
+    {% if post.image_url %}<figure class="article-cover"><img src="{{ post.image_url }}" alt="" decoding="async" fetchpriority="high"></figure>{% endif %}
+    <div class="prose" itemprop="articleBody">{{ post.body_html }}</div>
+    {% if post.tags %}
+    <footer class="article-foot">
+      <p class="footer-head">برچسب‌ها</p>
+      <ul class="chips">{% for t in post.tags %}<li><a href="{{ t.url }}" rel="tag">{{ t.name }}</a></li>{% endfor %}</ul>
+    </footer>
+    {% endif %}
+  </article>
+
+  {% if comments %}{% include "partials/comments.html" %}{% endif %}
+
+  {% if related %}
+  <section class="related" aria-labelledby="related-title">
+    <h2 id="related-title">نوشته‌های مرتبط</h2>
+    <div class="river river-two">{% for p in related %}{% include "partials/post_row.html" with post=p hlevel=3 %}{% endfor %}</div>
+  </section>
+  {% endif %}
+</div>
+{% endblock %}

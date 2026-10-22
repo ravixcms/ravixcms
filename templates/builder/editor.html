@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static ravin_ui %}
+{% block title %}صفحه‌ساز: {{ page.title }}{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'builder/builder.css' %}">
+<style>{{ base_css }}</style>
+{% endblock %}
+{% block body_class %}bx-body{% endblock %}
+{% block body %}
+<div class="bx-app" id="bx-app">
+  <header class="bx-top">
+    <a class="bx-btn-ghost" href="{% url 'builder:list' %}" title="بازگشت به فهرست">{% icon "arrow-right" 18 %}<span>خروج</span></a>
+    <div class="bx-title"><strong>{{ page.title }}</strong><span id="bx-status" class="bx-status" role="status" aria-live="polite">در حال بارگذاری…</span></div>
+    <div class="bx-group" role="group" aria-label="واگرد">
+      <button type="button" class="bx-icon-btn" id="bx-undo" title="واگرد (Ctrl+Z)" aria-label="واگرد" disabled>{% icon "undo" 18 %}</button>
+      <button type="button" class="bx-icon-btn" id="bx-redo" title="ازنو (Ctrl+Y)" aria-label="ازنو" disabled>{% icon "redo" 18 %}</button>
+    </div>
+    <div class="bx-group" role="radiogroup" aria-label="اندازه‌ی نمایش">
+      <button type="button" class="bx-icon-btn is-on" data-device="desktop" role="radio" aria-checked="true" title="دسکتاپ" aria-label="دسکتاپ">{% icon "monitor" 18 %}</button>
+      <button type="button" class="bx-icon-btn" data-device="tablet" role="radio" aria-checked="false" title="تبلت (۷۶۸)" aria-label="تبلت">{% icon "tablet" 18 %}</button>
+      <button type="button" class="bx-icon-btn" data-device="mobile" role="radio" aria-checked="false" title="موبایل (۳۷۵)" aria-label="موبایل">{% icon "phone-s" 18 %}</button>
+    </div>
+    <div class="bx-group" role="group" aria-label="حالت">
+      <button type="button" class="bx-seg is-on" id="bx-mode-edit" aria-pressed="true">ویرایش</button>
+      <button type="button" class="bx-seg" id="bx-mode-preview" aria-pressed="false">{% icon "eye" 16 %} پیش‌نمایش سایت</button>
+    </div>
+    <div class="bx-spacer"></div>
+    <button type="button" class="bx-btn-ghost" id="bx-save">{% icon "save" 16 %}<span>ذخیره</span></button>
+    <button type="button" class="bx-btn-ghost" id="bx-versions">{% icon "history" 16 %}<span>نسخه‌ها</span></button>
+    <button type="button" class="bx-btn-main" id="bx-publish"></button>
+  </header>
+
+  <aside class="bx-left" aria-label="عناصر">
+    <h2>ساختار</h2>
+    <p class="bx-hint">بکشید و روی بوم رها کنید، یا روی مورد کلیک کنید.</p>
+    <div class="bx-palette" id="bx-palette-structure"></div>
+    <h2>عناصر</h2>
+    <div class="bx-palette" id="bx-palette-elements"></div>
+    <p class="bx-hint">میان‌بُرها: Ctrl+S ذخیره · Ctrl+Z واگرد · Delete حذف مورد انتخاب‌شده</p>
+  </aside>
+
+  <main class="bx-stage" id="bx-stage">
+    <div class="bx-frame" id="bx-frame" data-device="desktop">
+      <div id="bx-canvas" class="bx-page bx-canvas" data-device="desktop" aria-label="بوم طراحی"></div>
+      <iframe id="bx-preview" title="پیش‌نمایش صفحه در سایت" hidden sandbox="allow-same-origin"></iframe>
+    </div>
+  </main>
+
+  <aside class="bx-right" aria-label="تنظیمات" id="bx-settings"></aside>
+</div>
+
+<div id="bx-toasts" class="bx-toasts" aria-live="polite"></div>
+
+<dialog id="bx-dlg-media" class="bx-dlg" aria-labelledby="bx-dlg-media-t">
+  <h2 id="bx-dlg-media-t">انتخاب تصویر از کتابخانه رسانه</h2>
+  <form method="dialog" class="bx-dlg-search" id="bx-media-search"><input type="search" class="bx-in" placeholder="جستجو…" aria-label="جستجوی تصویر" id="bx-media-q"><button class="bx-btn-ghost" type="submit">جستجو</button></form>
+  <div class="bx-media-grid" id="bx-media-grid"></div>
+  <div class="bx-dlg-foot"><button type="button" class="bx-btn-ghost" id="bx-media-more" hidden>بیشتر</button><a class="bx-link" href="{% url 'media_library:media_list' %}" target="_blank" rel="noopener">بارگذاری تصویر جدید در کتابخانه</a><button type="button" class="bx-btn-ghost" data-close>بستن</button></div>
+</dialog>
+
+<dialog id="bx-dlg-note" class="bx-dlg bx-dlg-sm" aria-labelledby="bx-dlg-note-t">
+  <h2 id="bx-dlg-note-t"></h2>
+  <p class="bx-hint" id="bx-dlg-note-d"></p>
+  <label class="bx-lab">یادداشت (اختیاری)<input type="text" class="bx-in" id="bx-note" maxlength="200"></label>
+  <div class="bx-errors" id="bx-dlg-errors" role="alert" hidden></div>
+  <div class="bx-dlg-foot"><button type="button" class="bx-btn-ghost" data-close>انصراف</button><button type="button" class="bx-btn-main" id="bx-note-ok">تأیید</button></div>
+</dialog>
+
+<dialog id="bx-dlg-versions" class="bx-dlg" aria-labelledby="bx-dlg-versions-t">
+  <h2 id="bx-dlg-versions-t">نسخه‌های طرح</h2>
+  <p class="bx-hint">هر نسخه یک تصویر ثابت از صفحه است. «بازیابی» نسخه را در پیش‌نویس می‌گذارد (از وضعیت فعلی خودکار نسخه گرفته می‌شود)؛ سایت عمومی تا انتشار تغییری نمی‌کند.</p>
+  <div class="bx-vlist" id="bx-vlist"></div>
+  <div class="bx-dlg-foot"><button type="button" class="bx-btn-ghost" id="bx-save-version">{% icon "save" 16 %} ذخیره‌ی نسخه‌ی جدید</button><button type="button" class="bx-btn-ghost" id="bx-unpublish" hidden>لغو انتشار طرح</button><button type="button" class="bx-btn-ghost" data-close>بستن</button></div>
+</dialog>
+
+<div hidden id="bx-icons">
+  <span data-icon="grip">{% icon "grip" 16 %}</span><span data-icon="up">{% icon "arrow-up" 16 %}</span><span data-icon="down">{% icon "arrow-down" 16 %}</span>
+  <span data-icon="left">{% icon "arrow-left" 16 %}</span><span data-icon="right">{% icon "arrow-right" 16 %}</span>
+  <span data-icon="copy">{% icon "copy" 16 %}</span><span data-icon="trash">{% icon "trash" 16 %}</span><span data-icon="plus">{% icon "plus" 16 %}</span>
+  <span data-icon="image">{% icon "image" 22 %}</span><span data-icon="heading">{% icon "heading" 22 %}</span><span data-icon="text">{% icon "text" 22 %}</span>
+  <span data-icon="button">{% icon "cursor" 22 %}</span><span data-icon="section">{% icon "layers" 22 %}</span><span data-icon="row">{% icon "columns" 22 %}</span>
+</div>
+{{ config|json_script:"bx-config" }}
+{% endblock %}
+{% block scripts %}<script src="{% static 'builder/builder.js' %}" defer></script>{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "layouts/panel.html" %}
+{% load ravin_ui %}
+{% block title %}Plugin Directory{% endblock %}
+{% block page_title %}Plugin Directory{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>Plugin Directory</h1><p>افزونه‌های منتشرشده در مخزن. دریافت و نصب خودکار انجام نمی‌شود: هر افزونه پس از دریافت، در «افزونه‌ها» بازبینی و با تأیید صریح شما نصب می‌شود.</p></div>
+  <a class="btn btn-light" href="{% url 'plugins:list' %}">{% icon "puzzle" 18 %} افزونه‌های نصب‌شده</a></div>
+<div class="card">
+  <form method="get" class="toolbar" role="search">
+    <input type="search" name="q" value="{{ q }}" class="input grow" placeholder="جستجوی نام، شناسه یا توضیح" aria-label="جستجو">
+    <select name="category" class="input" aria-label="دسته"><option value="">همهٔ دسته‌ها</option>{% for c in categories %}<option value="{{ c.slug }}" {% if c.slug == category %}selected{% endif %}>{{ c.name }}</option>{% endfor %}</select>
+    <label class="check"><input type="checkbox" name="compatible" value="1" {% if compatible %}checked{% endif %}> فقط سازگار با این نسخه</label>
+    <button class="btn">{% icon "search" 18 %} جستجو</button>
+  </form>
+  {% if page_obj %}
+  <div class="table-wrap"><table class="table"><thead><tr><th>افزونه</th><th>دسته</th><th>ناشر</th><th>آخرین نسخه</th><th>سازگاری</th><th></th></tr></thead><tbody>
+  {% for r in page_obj %}<tr>
+    <td style="white-space:normal;min-width:220px"><strong>{{ r.plugin.name }}</strong><br><span class="muted ltr">{{ r.plugin.slug }}</span><br>{{ r.plugin.summary }}</td>
+    <td>{{ r.plugin.category.name|default:"—" }}</td>
+    <td>{{ r.plugin.publisher.display_name }}{% if r.plugin.publisher.is_verified %} <span class="badge badge-published">تأییدشده</span>{% endif %}</td>
+    <td class="ltr">{{ r.latest.version }}{% if r.installed %}<br><span class="muted">نصب‌شده: {{ r.installed.version }}</span>{% endif %}</td>
+    <td>{% if r.compat_latest %}<span class="badge badge-published">سازگار ({{ r.compat_latest.version }})</span>{% else %}<span class="badge badge-inactive">ناسازگار</span>{% endif %}</td>
+    <td><a class="btn btn-light btn-sm" href="{% url 'pluginhub:directory_detail' r.plugin.slug %}">جزئیات</a></td></tr>{% endfor %}
+  </tbody></table></div>{% include "partials/_pagination.html" %}
+  {% else %}<div class="empty">افزونه‌ای پیدا نشد.</div>{% endif %}
+</div>
+{% endblock %}

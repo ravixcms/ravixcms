@@ -1,0 +1,7 @@
+{% extends "layouts/auth.html" %}
+{% block title %}درخواست ثبت شد{% endblock %}
+{% block auth_content %}
+<h2 style="margin-bottom:.75rem">درخواست ثبت شد</h2>
+<p>اگر حسابی با این ایمیل وجود داشته باشد و هنوز تأیید نشده باشد، پیوند تأیید تا دقایقی دیگر به صندوق ایمیل شما می‌رسد.</p>
+<p class="auth-switch"><a href="{% url 'accounts:login' %}">بازگشت به ورود</a></p>
+{% endblock %}

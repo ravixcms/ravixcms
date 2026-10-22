@@ -1,0 +1,12 @@
+{% extends "layouts/panel.html" %}
+{% block title %}ناشران{% endblock %}
+{% block page_title %}مدیریت مخزن{% endblock %}
+{% block content %}
+{% include "pluginhub/_admin_tabs.html" with active="publishers" %}
+<form method="post">{% csrf_token %}<input type="hidden" name="op" value="add"><div class="card" style="margin-bottom:1.25rem"><div class="card-body"><h2>مجاز کردن ناشر</h2>{% include "partials/_form_errors.html" with form=form %}{% for field in form %}{% include "partials/_field.html" with field=field %}{% endfor %}<button class="btn">افزودن</button></div></div></form>
+<div class="card"><div class="table-wrap"><table class="table"><thead><tr><th>ناشر</th><th>کاربر</th><th>وضعیت</th><th></th></tr></thead><tbody>
+{% for p in publishers %}<tr><td>{{ p.display_name }}</td><td class="ltr">{{ p.user.username }}</td>
+<td>{% if p.is_active %}<span class="badge badge-published">فعال</span>{% else %}<span class="badge badge-inactive">لغوشده</span>{% endif %}{% if p.is_verified %} <span class="badge badge-published">تأییدشده</span>{% endif %}</td>
+<td style="display:flex;gap:.4rem"><form method="post">{% csrf_token %}<input type="hidden" name="pk" value="{{ p.pk }}"><input type="hidden" name="op" value="toggle_active"><button class="btn btn-light btn-sm">{% if p.is_active %}لغو مجوز{% else %}فعال‌سازی{% endif %}</button></form>
+<form method="post">{% csrf_token %}<input type="hidden" name="pk" value="{{ p.pk }}"><input type="hidden" name="op" value="toggle_verified"><button class="btn btn-light btn-sm">{% if p.is_verified %}لغو تأیید{% else %}تأیید هویت{% endif %}</button></form></td></tr>{% endfor %}
+</tbody></table></div></div>{% endblock %}

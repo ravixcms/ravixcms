@@ -1,0 +1,10 @@
+{% extends "layouts/panel.html" %}
+{% block title %}افزونه‌های مخزن{% endblock %}
+{% block page_title %}مدیریت مخزن{% endblock %}
+{% block content %}
+{% include "pluginhub/_admin_tabs.html" with active="plugins" %}
+<div class="card"><div class="table-wrap"><table class="table"><thead><tr><th>افزونه</th><th>ناشر</th><th>نسخه‌ها</th><th></th></tr></thead><tbody>
+{% for p in plugins %}<tr><td><strong>{{ p.name }}</strong><br><span class="muted ltr">{{ p.slug }}</span></td><td>{{ p.publisher.display_name }}</td>
+<td style="white-space:normal">{% for v in p.versions.all %}<form method="post" style="display:inline">{% csrf_token %}<span class="ltr">{{ v.version }}</span> ({{ v.status }}){% if v.status == 'published' %}<input type="hidden" name="op" value="yank"><input type="hidden" name="pk" value="{{ v.pk }}"><button class="btn btn-danger btn-sm">پس‌گرفتن</button>{% endif %}</form> {% endfor %}</td>
+<td><form method="post">{% csrf_token %}<input type="hidden" name="op" value="toggle_listed"><input type="hidden" name="pk" value="{{ p.pk }}"><button class="btn btn-light btn-sm">{% if p.is_listed %}خروج از فهرست{% else %}بازگرداندن به فهرست{% endif %}</button></form></td></tr>{% endfor %}
+</tbody></table></div></div>{% endblock %}

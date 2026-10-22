@@ -1,0 +1,7 @@
+{% load static %}
+<p>در حال انتقال به درگاه پرداخت… اگر منتقل نشدید دکمهٔ زیر را بزنید.</p>
+<form method="post" action="{{ redirect.url }}" id="gw-form">
+  {% for k, v in redirect.fields.items %}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endfor %}
+  <button class="btn btn-primary" type="submit">رفتن به درگاه</button>
+</form>
+<script src="{% static 'shop/redirect.js' %}" defer></script>

@@ -1,0 +1,11 @@
+{% extends "plugins/page.html" %}
+{% block plugin_content %}
+<form method="post" novalidate data-once>
+  {% csrf_token %}<input type="hidden" name="kind" value="{{ kind }}"><input type="hidden" name="id" value="{{ obj_id }}">
+  {% include "partials/_form_errors.html" %}
+  <div class="card" style="margin-bottom:1.25rem"><div class="card-body">
+    {% for field in form %}{% include "partials/_field.html" with field=field %}{% endfor %}
+  </div></div>
+  <button class="btn" type="submit">ذخیره</button> <a class="btn btn-light" href="{% url 'plugins:page' plugin_slug 'overview' %}">بازگشت</a>
+</form>
+{% endblock %}

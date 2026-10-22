@@ -1,0 +1,29 @@
+{% extends "layouts/panel.html" %}
+{% load ravin_ui %}
+{% block title %}اجرای به‌روزرسانی #{{ run.pk }}{% endblock %}
+{% block page_title %}اجرای #{{ run.pk }}{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>اجرای #{{ run.pk }} — {{ run.get_component_display }}{% if run.slug %} <span class="ltr">{{ run.slug }}</span>{% endif %}
+  <span class="badge {% if run.status == 'succeeded' %}badge-published{% elif run.status == 'rolled_back' or run.status == 'reverted' or run.status == 'running' %}badge-warn{% else %}badge-inactive{% endif %}">{{ run.get_status_display }}</span></h1>
+  <p class="ltr">{{ run.from_version }} → {{ run.to_version }}</p></div><a class="btn btn-light" href="{% url 'updater:home' %}">بازگشت</a></div>
+{% if run.error %}<div class="form-errors" role="alert"><p><strong>خطا:</strong></p><pre class="ltr" style="white-space:pre-wrap;font-size:.85rem">{{ run.error }}</pre></div>{% endif %}
+{% if run.recovery %}<div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>بازیابی / گام بعدی</h2></div><div class="card-body"><pre style="white-space:pre-wrap">{{ run.recovery }}</pre></div></div>{% endif %}
+<div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>مشخصات</h2></div><div class="card-body">
+  <p>شروع: {{ run.started_at|jalali_datetime }}{% if run.finished_at %} — پایان: {{ run.finished_at|jalali_datetime }}{% endif %}{% if run.started_by %} — توسط {{ run.started_by }}{% endif %}</p>
+  {% if run.sha256 %}<p>SHA-256 بسته: <span class="ltr">{{ run.sha256 }}</span></p>{% endif %}
+  {% if run.signer_key_id %}<p>امضاکننده: <span class="ltr">{{ run.signer_key_id }}</span> ({{ run.signer_label }}) — امضا اصالت بسته را تأیید می‌کند، نه بی‌خطر بودن کد.</p>{% endif %}
+  {% if run.backup.dir %}<p>پشتیبان: <span class="ltr">{{ run.backup.dir }}</span></p>{% endif %}
+  {% if run.parent %}<p>مربوط به <a href="{% url 'updater:run' run.parent.pk %}">اجرای #{{ run.parent.pk }}</a></p>{% endif %}
+  {% if run.migrations_applied %}<p>مهاجرت‌های اعمال‌شده:</p><ul class="ltr">{% for m in run.migrations_applied %}<li>{{ m }}</li>{% endfor %}</ul>{% endif %}
+</div></div>
+<div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>مراحل</h2></div>
+  <div class="table-wrap"><table class="table"><thead><tr><th>مرحله</th><th>نتیجه</th><th>زمان</th><th>جزئیات</th></tr></thead><tbody>
+  {% for s in run.steps %}<tr><td class="ltr">{{ s.name }}</td><td>{% if s.ok %}<span class="badge badge-published">موفق</span>{% else %}<span class="badge badge-inactive">ناموفق</span>{% endif %}</td><td class="ltr">{{ s.at }}</td><td style="white-space:normal">{{ s.detail }}</td></tr>{% empty %}<tr><td colspan="4">—</td></tr>{% endfor %}
+  </tbody></table></div></div>
+{% if run.migration_output %}<details class="card" style="margin-bottom:1.25rem"><summary class="card-header">خروجی مهاجرت</summary><pre class="ltr" style="white-space:pre-wrap;font-size:.8rem;padding:1rem">{{ run.migration_output }}</pre></details>{% endif %}
+{% if can_rollback and can_manage and web_apply %}
+<div class="card"><div class="card-header"><h2>بازگشت به نسخهٔ قبل</h2></div><div class="card-body">
+  <p>فایل‌ها و دیتابیس به لحظهٔ پیش از این ارتقا برمی‌گردند؛ <strong>داده‌های ثبت‌شده پس از ارتقا از بین می‌رود</strong>. پیش از بازگشت از وضعیت فعلی هم پشتیبان گرفته می‌شود.</p>
+  <form method="post" action="{% url 'updater:rollback' run.pk %}">{% csrf_token %}<label><input type="checkbox" name="confirm_data_loss"> متوجه‌ام و تأیید می‌کنم</label> <button class="btn btn-light" type="submit">بازگشت</button></form></div></div>
+{% endif %}
+{% endblock %}

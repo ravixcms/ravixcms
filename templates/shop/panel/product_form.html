@@ -1,0 +1,19 @@
+{% extends "layouts/panel.html" %}
+{% block title %}{% if obj %}ویرایش{% else %}محصول جدید{% endif %}{% endblock %}
+{% block page_title %}{% if obj %}ویرایش محصول{% else %}محصول جدید{% endif %}{% endblock %}
+{% block content_class %}content-narrow{% endblock %}
+{% block content %}
+<form method="post" enctype="multipart/form-data" novalidate data-once>{% csrf_token %}
+  {% include "partials/_form_errors.html" %}
+  <div class="card" style="margin-bottom:1.25rem"><div class="card-body">{% for field in form %}{% include "partials/_field.html" with field=field %}{% endfor %}</div></div>
+  <button class="btn" type="submit">ذخیره</button> <a class="btn btn-light" href="{% url 'shop_panel:products' %}">انصراف</a>
+</form>
+{% if obj %}
+<div class="card" style="margin-top:1.25rem"><div class="card-header"><h2>گالری تصاویر</h2></div><div class="card-body">
+  {% for g in gallery %}<form method="post" action="{% url 'shop_panel:gallery_delete' obj.pk g.pk %}" style="display:inline-block;margin:.25rem">{% csrf_token %}
+    <img src="{{ g.image.url }}" alt="{{ g.alt }}" width="80" height="60" style="object-fit:cover"><button class="btn btn-danger btn-sm" type="submit">حذف</button></form>{% empty %}<p>تصویری ثبت نشده است.</p>{% endfor %}
+  <form method="post" enctype="multipart/form-data" action="{% url 'shop_panel:gallery_add' obj.pk %}" style="margin-top:1rem">{% csrf_token %}
+    {% for field in image_form %}{% include "partials/_field.html" with field=field %}{% endfor %}<button class="btn" type="submit">افزودن تصویر</button></form>
+</div></div>
+{% endif %}
+{% endblock %}

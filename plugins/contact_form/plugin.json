@@ -1,0 +1,25 @@
+{
+  "slug": "contact_form",
+  "name": "فرم تماس",
+  "version": "1.0.0",
+  "description": "فرم تماس عمومی در /ext/contact_form/ که پیام‌ها را در دیتابیس ذخیره می‌کند و صندوق پیام در پنل دارد.",
+  "author": "Ravin CMS",
+  "api_version": 1,
+  "ravin": ">=0.5.0,<1.0.0",
+  "models": true,
+  "capabilities": {
+    "contact_form.view": "مشاهده و مدیریت پیام‌های فرم تماس"
+  },
+  "settings": [
+    {"key": "success_message", "label": "پیام پس از ارسال", "type": "text", "default": "پیام شما ثبت شد. به‌زودی پاسخ می‌دهیم.", "max_len": 200},
+    {"key": "notify_email", "label": "ایمیل اطلاع‌رسانی (اختیاری)", "type": "email", "default": "", "help": "اگر پر شود، با هر پیام جدید ایمیل اطلاع‌رسانی ارسال می‌شود."},
+    {"key": "max_per_hour", "label": "حداکثر پیام در ساعت از هر IP", "type": "int", "default": 5, "min": 1, "max": 100},
+    {"key": "intro", "label": "متن بالای فرم", "type": "textarea", "default": "", "max_len": 500}
+  ],
+  "admin_pages": [
+    {"key": "inbox", "title": "پیام‌های تماس", "view": "views:inbox", "capability": "contact_form.view", "icon": "mail", "section": "content", "order": 70}
+  ],
+  "public_routes": [
+    {"path": "", "view": "views:form", "methods": ["GET", "POST"]}
+  ]
+}

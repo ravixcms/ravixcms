@@ -1,0 +1,9 @@
+[Unit]
+Description=Ravin CMS - cancel expired unpaid orders and release stock
+
+[Service]
+Type=oneshot
+User=ravin
+EnvironmentFile=/etc/ravin/ravin.env
+WorkingDirectory=/srv/ravin/app
+ExecStart=/srv/ravin/venv/bin/python manage.py shop_expire_orders

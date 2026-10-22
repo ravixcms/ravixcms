@@ -1,0 +1,99 @@
+{% extends "layouts/panel.html" %}
+{% load ravin_ui %}
+{% block title %}داشبورد{% endblock %}
+{% block page_title %}داشبورد{% endblock %}
+{% block content %}
+<section class="card welcome">
+  <div class="card-body">
+    <div>
+      <h1>{{ request.user.display_name }}، خوش آمدید 👋</h1>
+      <p>شما با نقش «{{ request.user.get_role_display }}» وارد {{ site.site_name }} شده‌اید.{% if request.user.last_login %} آخرین ورود: {{ request.user.last_login|jalali_datetime }}{% endif %}</p>
+    </div>
+    <div>
+      <div style="font-size:.85rem">تکمیل پروفایل: {{ profile_completeness|fa_digits }}٪</div>
+      <div class="progress" role="progressbar" aria-valuenow="{{ profile_completeness }}" aria-valuemin="0" aria-valuemax="100"><i style="width: {{ profile_completeness }}%"></i></div>
+    </div>
+  </div>
+</section>
+
+{% if stats %}
+<section class="stats-grid" aria-label="آمار کاربران">
+  <div class="card stat"><span class="stat-icon">{% icon "users" 24 %}</span><div><strong>{{ stats.total_users|fa_digits }}</strong><span>کل کاربران</span></div></div>
+  <div class="card stat"><span class="stat-icon green">{% icon "check" 24 %}</span><div><strong>{{ stats.active_users|fa_digits }}</strong><span>کاربران فعال</span></div></div>
+  <div class="card stat"><span class="stat-icon amber">{% icon "calendar" 24 %}</span><div><strong>{{ stats.new_users_7d|fa_digits }}</strong><span>عضو جدید در ۷ روز اخیر</span></div></div>
+  <div class="card stat"><span class="stat-icon red">{% icon "lock" 24 %}</span><div><strong>{{ stats.inactive_users|fa_digits }}</strong><span>حساب غیرفعال</span></div></div>
+</section>
+{% endif %}
+
+{% if content_stats %}
+<section class="stats-grid" aria-label="آمار محتوا">
+  <div class="card stat"><span class="stat-icon">{% icon "file" 24 %}</span><div><strong>{{ content_stats.posts_total|fa_digits }}</strong><span>{% if content_stats.scope_own %}نوشته‌های من{% else %}کل نوشته‌ها{% endif %}</span></div></div>
+  <div class="card stat"><span class="stat-icon green">{% icon "check" 24 %}</span><div><strong>{{ content_stats.posts_live|fa_digits }}</strong><span>منتشرشده</span></div></div>
+  <div class="card stat"><span class="stat-icon amber">{% icon "edit" 24 %}</span><div><strong>{{ content_stats.posts_draft|fa_digits }}</strong><span>پیش‌نویس</span></div></div>
+  <div class="card stat"><span class="stat-icon red">{% icon "clock" 24 %}</span><div><strong>{{ content_stats.posts_scheduled|fa_digits }}</strong><span>در انتظار انتشار</span></div></div>
+</section>
+{% endif %}
+
+<div class="grid-2">
+  <div style="display:grid;gap:1.25rem">
+    {% if latest_users %}
+    <section class="card">
+      <div class="card-header"><h2>آخرین کاربران ثبت‌نام‌شده</h2><a href="{% url 'accounts:user_list' %}" class="btn btn-light btn-sm">همه کاربران</a></div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>کاربر</th><th>نقش</th><th>تاریخ عضویت</th></tr></thead>
+          <tbody>
+          {% for u in latest_users %}
+            <tr>
+              <td><div class="cell-user"><span class="avatar">{% if u.avatar %}<img src="{{ u.avatar.url }}" alt="">{% else %}{{ u.display_name|slice:":1"|upper }}{% endif %}</span><strong>{{ u.display_name }}</strong></div></td>
+              <td><span class="badge badge-{{ u.role }}">{{ u.get_role_display }}</span></td>
+              <td>{{ u.date_joined|jalali }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+    {% else %}
+    <section class="card">
+      <div class="card-header"><h2>حساب من</h2></div>
+      <div class="card-body">
+        <p>نام کاربری: <span class="ltr">@{{ request.user.username }}</span></p>
+        <p>ایمیل: <span class="ltr">{{ request.user.email }}</span></p>
+        <p style="margin:0">عضویت از: {{ request.user.date_joined|jalali }}</p>
+      </div>
+    </section>
+    {% endif %}
+  </div>
+
+  <div style="display:grid;gap:1.25rem">
+    <section class="card">
+      <div class="card-header"><h2>میانبرها</h2></div>
+      <div class="card-body shortcuts">
+        <a class="shortcut" href="{% url 'accounts:profile' %}">{% icon "user" 20 %} ویرایش پروفایل</a>
+        <a class="shortcut" href="{% url 'accounts:password_change' %}">{% icon "key" 20 %} تغییر رمز عبور</a>
+        {% if content_stats %}<a class="shortcut" href="{% url 'content:post_create' %}">{% icon "plus" 20 %} نوشته جدید</a>{% endif %}
+        {% if content_stats.media_total is not None %}<a class="shortcut" href="{% url 'media_library:media_upload' %}">{% icon "upload" 20 %} بارگذاری رسانه</a>{% endif %}
+        {% if request.user.is_staff %}
+          <a class="shortcut" href="{% url 'content:page_create' %}">{% icon "pages" 20 %} صفحه جدید</a>
+          <a class="shortcut" href="{% url 'accounts:user_list' %}">{% icon "users" 20 %} مدیریت کاربران</a>
+          <a class="shortcut" href="{% url 'core:site_settings' %}">{% icon "settings" 20 %} تنظیمات سایت</a>
+        {% endif %}
+      </div>
+    </section>
+    {% if stats %}
+    <section class="card">
+      <div class="card-header"><h2>توزیع نقش‌ها</h2></div>
+      <div class="card-body role-bars">
+        {% for role in stats.roles %}
+          <div class="role-row">
+            <div class="role-row-head"><span>{{ role.label }}</span><strong>{{ role.count|fa_digits }}</strong></div>
+            <div class="bar"><i style="width: {% if stats.total_users %}{% widthratio role.count stats.total_users 100 %}{% else %}0{% endif %}%"></i></div>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

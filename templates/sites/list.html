@@ -1,0 +1,14 @@
+{% extends "layouts/panel.html" %}
+{% block title %}سایت‌ها{% endblock %}
+{% block page_title %}سایت‌ها{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>سایت‌ها</h1><p>هر سایت داده‌های مستقل (فروشگاه و ...) و اعضای خودش را دارد. چندسایتی با <span class="ltr">RAVIN_MULTISITE_ENABLED=true</span> فعال می‌شود.</p></div></div>
+<div class="card" style="margin-bottom:1.25rem"><div class="table-wrap"><table class="table"><thead><tr><th>نام</th><th>مالک</th><th>دامنه‌ها</th><th>وضعیت</th><th></th></tr></thead><tbody>
+{% for s in sites %}<tr><td>{{ s.name }} {% if s.is_default %}<span class="badge badge-draft">پیش‌فرض</span>{% endif %}</td><td>{{ s.owner|default:"—" }}</td>
+<td class="ltr">{% for d in s.domains.all %}{{ d.domain }}{% if not forloop.last %}, {% endif %}{% empty %}—{% endfor %}</td>
+<td>{% if s.is_active %}فعال{% else %}غیرفعال{% endif %}</td><td><a class="btn btn-light btn-sm" href="{% url 'sites:detail' s.pk %}">مدیریت</a></td></tr>{% endfor %}</tbody></table></div></div>
+<div class="card"><div class="card-header"><h2>سایت جدید</h2></div><div class="card-body"><form method="post" class="form-grid">{% csrf_token %}
+<div class="field"><label for="n">نام</label><input id="n" class="input" name="name" required maxlength="100"></div>
+<div class="field"><label for="s">شناسه (لاتین)</label><input id="s" class="input ltr" name="slug" maxlength="50"></div>
+<div><button class="btn" type="submit">ایجاد (شما مالک می‌شوید)</button></div></form></div></div>
+{% endblock %}

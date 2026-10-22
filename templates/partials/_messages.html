@@ -1,0 +1,10 @@
+{% load ravin_ui %}
+<div class="toasts" role="region" aria-label="پیام‌های سامانه" aria-live="polite">
+  {% for message in messages %}
+    <div class="toast toast-{% if message.tags == 'debug' %}info{% else %}{{ message.tags|default:'info' }}{% endif %}" data-toast role="{% if message.level >= 40 %}alert{% else %}status{% endif %}">
+      {% if message.tags == "success" %}{% icon "check" 20 %}{% elif message.tags == "error" %}{% icon "error" 20 %}{% elif message.tags == "warning" %}{% icon "alert" 20 %}{% else %}{% icon "info" 20 %}{% endif %}
+      <div class="toast-body">{{ message }}</div>
+      <button type="button" class="toast-close" data-toast-close aria-label="بستن پیام">{% icon "close" 16 %}</button>
+    </div>
+  {% endfor %}
+</div>

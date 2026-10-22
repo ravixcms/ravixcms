@@ -1,0 +1,28 @@
+{% extends "layouts/panel.html" %}
+{% load ravin_ui %}
+{% block title %}سفارش {{ order.number }}{% endblock %}
+{% block page_title %}سفارش {{ order.number }}{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>سفارش <span class="ltr">{{ order.number }}</span> <span class="badge badge-warn">{{ order.get_status_display }}</span></h1></div><a class="btn btn-light" href="{% url 'shop_panel:orders' %}">بازگشت</a></div>
+<div class="card" style="margin-bottom:1.25rem"><div class="card-body">
+  <dl class="kv"><dt>مشتری</dt><dd>{{ order.customer_name }}</dd><dt>حساب کاربری</dt><dd>{% if order.user %}{{ order.user.display_name }} ({{ order.user.email }}){% else %}خرید مهمان{% endif %}</dd>
+  <dt>تلفن</dt><dd class="ltr">{{ order.phone }}</dd><dt>ایمیل</dt><dd class="ltr">{{ order.email|default:"—" }}</dd>
+  <dt>نشانی</dt><dd>{% if order.needs_shipping %}{{ order.address|linebreaksbr }}{% else %}— (فقط دیجیتال){% endif %}</dd><dt>توضیح مشتری</dt><dd>{{ order.note|default:"—" }}</dd><dt>زمان ثبت</dt><dd>{{ order.created_at|jalali_datetime }}</dd>
+  <dt>زمان پرداخت</dt><dd>{% if order.paid_at %}{{ order.paid_at|jalali_datetime }}{% else %}—{% endif %}</dd><dt>یادداشت سیستم</dt><dd>{{ order.admin_note|default:"—" }}</dd></dl>
+  {% if next_statuses %}<form method="post" style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center">{% csrf_token %}<label class="sr-only" for="st-note">یادداشت تغییر وضعیت</label><input id="st-note" class="input" name="note" maxlength="250" placeholder="یادداشت (اختیاری)">{% for v, l in next_statuses %}<button class="btn {% if v == 'cancelled' or v == 'refunded' %}btn-danger{% endif %}" name="status" value="{{ v }}">{{ l }}</button>{% endfor %}</form>
+  <p class="muted">«استرداد» فقط وضعیت را ثبت می‌کند؛ برگشت وجه از درگاه به‌صورت خودکار انجام نمی‌شود.</p>{% endif %}
+</div></div>
+<div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>اقلام</h2></div><div class="table-wrap"><table class="table"><thead><tr><th>محصول</th><th>نوع</th><th>قیمت واحد</th><th>تعداد</th><th>جمع</th></tr></thead><tbody>
+{% for i in order.items.all %}<tr><td>{{ i.name }}</td><td>{{ i.get_kind_display }}{% if i.kind == 'digital' %} ({{ i.download_count|fa_digits }} دانلود){% endif %}</td><td>{{ i.unit_price|money }}</td><td>{{ i.quantity|fa_digits }}</td><td>{{ i.line_total|money }}</td></tr>{% endfor %}</tbody>
+<tfoot>{% if order.discount_total %}<tr><th colspan="4">تخفیف</th><td>{{ order.discount_total|money }}</td></tr>{% endif %}<tr><th colspan="4">جمع کل</th><th>{{ order.total|money }}</th></tr></tfoot></table></div></div>
+<div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>پرداخت‌ها</h2></div><div class="card-body">
+{% for p in order.payments.all %}<div style="margin-bottom:1rem"><strong>{{ p.gateway }}</strong>{% if p.is_test %} <span class="badge badge-warn">آزمایشی</span>{% endif %} — {{ p.amount|money }} {{ p.currency }} — <span class="badge {% if p.status == 'succeeded' %}badge-published{% elif p.status == 'needs_review' %}badge-warn{% else %}badge-inactive{% endif %}">{{ p.get_status_display }}</span>
+  <span class="ltr muted">{{ p.reference }}{% if p.gateway_ref %} / {{ p.gateway_ref }}{% endif %}</span>
+  {% if p.status == 'initiated' %}<form method="post" action="{% url 'shop_panel:payment_inquire' order.pk p.pk %}" style="display:inline">{% csrf_token %}<button class="btn btn-light btn-sm" type="submit">استعلام وضعیت از درگاه</button></form>{% endif %}
+  {% if p.status == 'needs_review' %}<p class="errors">این پرداخت نیاز به بررسی دستی دارد (مغایرت مبلغ/شناسه یا پرداخت برای سفارش غیرقابل‌پذیرش). پیش از هر اقدامی با پشتیبانی درگاه تطبیق دهید.</p>{% endif %}
+  <ul class="muted">{% for e in p.events.all %}<li>{{ e.created_at|jalali_datetime }} — {{ e.get_kind_display }}{% if e.to_status %}: {{ e.from_status|default:"—" }} ← {{ e.to_status }}{% endif %}{% if e.message %} — {{ e.message }}{% endif %}</li>{% endfor %}</ul></div>{% empty %}<p>—</p>{% endfor %}
+</div></div>
+<div class="card"><div class="card-header"><h2>تاریخچهٔ تغییرات</h2></div><div class="card-body"><ul>
+{% for e in events %}<li>{{ e.created_at|jalali_datetime }} — {{ e.get_kind_display }}{% if e.to_status %}: {{ e.from_status|default:"—" }} ← {{ e.to_status }}{% endif %}{% if e.message %} — {{ e.message }}{% endif %}{% if e.actor %} ({{ e.actor.display_name }}){% endif %}</li>{% empty %}<li>—</li>{% endfor %}</ul>
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="note"><label class="sr-only" for="n-note">یادداشت</label><input id="n-note" class="input" name="note" maxlength="250" placeholder="یادداشت داخلی"> <button class="btn" type="submit">ثبت یادداشت</button></form></div></div>
+{% endblock %}

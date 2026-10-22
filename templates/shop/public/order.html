@@ -1,0 +1,12 @@
+{% load ravin_ui %}
+<p>شمارهٔ سفارش: <strong>{{ order.number }}</strong> — وضعیت: <span class="badge">{{ order.get_status_display }}</span></p>
+{% if order.status == 'pending_payment' %}<p class="errors">پرداخت این سفارش هنوز تأیید نشده است.</p>
+<form method="post" action="{% url 'shop:order_pay' order.number order.token %}">{% csrf_token %}{% if gateway_choices|length > 1 %}<fieldset><legend>درگاه پرداخت</legend>{% for v, l in gateway_choices %}<label><input type="radio" name="gateway" value="{{ v }}"{% if forloop.first %} checked{% endif %}> {{ l }}</label> {% endfor %}</fieldset>{% endif %}<button class="btn btn-primary" type="submit">پرداخت سفارش</button></form>
+{% elif order.status == 'cancelled' %}<p>این سفارش لغو شده است.</p>
+{% elif order.status == 'refunded' %}<p>این سفارش مسترد شده است؛ دانلود دیگر فعال نیست.</p>
+{% elif can_download %}<p>پرداخت شما با موفقیت تأیید شد. سپاسگزاریم.</p>{% endif %}
+<table><thead><tr><th>محصول</th><th>تعداد</th><th>جمع</th></tr></thead><tbody>
+{% for i in items %}<tr><td>{{ i.name }}{% if i.kind == 'digital' and can_download %} — <a href="{% url 'shop:download' order.number order.token i.pk %}" rel="nofollow">دانلود</a>{% endif %}</td><td>{{ i.quantity|fa_digits }}</td><td>{{ i.line_total|money }}</td></tr>{% endfor %}</tbody>
+<tfoot>{% if order.discount_total %}<tr><th colspan="2">تخفیف</th><td>{{ order.discount_total|money }}</td></tr>{% endif %}<tr><th colspan="2">جمع کل</th><th>{{ order.total|money }} {{ currency }}</th></tr></tfoot></table>
+{% if events %}<h2 style="font-size:1.05rem">تاریخچهٔ سفارش</h2><ul>{% for e in events %}<li>{{ e.created_at|date:"Y/m/d H:i" }} — {{ e.message|default:e.get_kind_display }}</li>{% endfor %}</ul>{% endif %}
+<p class="muted">این نشانی را برای پیگیری سفارش نگه دارید؛ هر کس نشانی را داشته باشد سفارش را می‌بیند.</p>

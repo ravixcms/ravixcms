@@ -1,0 +1,4 @@
+<nav class="tabs" aria-label="بخش‌های حساب کاربری">
+  <a class="tab {% if tab == 'profile' %}active{% endif %}" href="{% url 'accounts:profile' %}">اطلاعات پروفایل</a>
+  <a class="tab {% if tab == 'password' %}active{% endif %}" href="{% url 'accounts:password_change' %}">تغییر رمز عبور</a>
+</nav>

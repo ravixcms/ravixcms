@@ -1,0 +1,14 @@
+{% extends "layouts/auth.html" %}
+{% load ravin_ui %}
+{% block title %}ارسال دوبارهٔ ایمیل تأیید{% endblock %}
+{% block auth_content %}
+<h2 style="margin-bottom:.5rem">ارسال دوبارهٔ ایمیل تأیید</h2>
+<p class="muted" style="margin-bottom:1.25rem">ایمیل حساب خود را وارد کنید.</p>
+<form method="post" novalidate data-once>
+  {% csrf_token %}
+  {% include "partials/_form_errors.html" %}
+  {% for field in form %}{% include "partials/_field.html" %}{% endfor %}
+  <button type="submit" class="btn btn-block">{% icon "check" 18 %} ارسال</button>
+</form>
+<p class="auth-switch"><a href="{% url 'accounts:login' %}">بازگشت به ورود</a></p>
+{% endblock %}

@@ -1,0 +1,168 @@
+"""
+کتابخانه تگ مخصوص قالب‌های سایت: ``{% load ravin_theme %}``.
+
+این تنها کتابخانه‌ای است که قالب‌ها اجازه بارگذاری آن را دارند. تگ‌های ``theme_head`` و ``theme_toolbar`` برای
+هر قالب الزامی هستند تا سئوی پایه، فونت‌ها، رنگ‌های سفارشی و نوار پیش‌نمایش همه‌جا یکسان کار کنند.
+"""
+import json
+import re
+
+from django import template
+from django.templatetags.static import static
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
+
+from apps.core.templatetags.ravin_ui import fa_digits as _fa_digits
+
+register = template.Library()
+
+_HEX_RE = re.compile(r"^#[0-9a-f]{6}$")
+_STATIC_PATH_RE = re.compile(r"^[A-Za-z0-9._\-/]+$")
+_SLUG_RE = re.compile(r"^[a-z0-9][a-z0-9_-]{0,48}$")
+_VERSION_RE = re.compile(r"^[0-9A-Za-z.+\-]{1,45}$")
+_JSON_ESCAPES = {ord(">"): "\\u003E", ord("<"): "\\u003C", ord("&"): "\\u0026", ord(" "): "\\u2028", ord(" "): "\\u2029"}
+
+
+@register.filter(name="fa_digits")
+def fa_digits(value):
+    return _fa_digits(value)
+
+
+@register.simple_tag(takes_context=True)
+def theme_static(context, path):
+    """نشانی فایل استاتیک همین قالب: ``{% theme_static 'css/theme.css' %}``."""
+    theme = context.get("theme") or {}
+    slug = theme.get("slug", "") if isinstance(theme, dict) else ""
+    version = theme.get("version", "") if isinstance(theme, dict) else ""
+    path = str(path)
+    if not _SLUG_RE.match(slug or "") or not _STATIC_PATH_RE.match(path) or ".." in path or path.startswith("/"):
+        return ""
+    url = static(f"themes/{slug}/{path}")
+    # ?v=<نسخه قالب>: با افزایش نسخه در theme.json کش مرورگر خودکار نو می‌شود (فایل‌ها نام ثابت دارند).
+    return f"{url}?v={version}" if _VERSION_RE.match(version or "") else url
+
+
+def _css_vars(vars_: dict) -> str:
+    """بدنه ``:root{...}``؛ فقط مقادیر اعتبارسنجی‌شده وارد می‌شوند (رنگ hex، فونت از فهرست سفید، اندازه عددی)."""
+    out = []
+    for key, css_name in (
+        ("primary", "--rv-primary"),
+        ("on_primary", "--rv-on-primary"),
+        ("primary_soft", "--rv-primary-soft"),
+        ("background", "--rv-bg"),
+        ("surface", "--rv-surface"),
+        ("border", "--rv-border"),
+        ("text", "--rv-text"),
+        ("muted", "--rv-muted"),
+    ):
+        value = vars_.get(key, "")
+        if _HEX_RE.match(value):
+            out.append(f"{css_name}:{value}")
+    stack = vars_.get("font_stack", "")
+    if stack and re.fullmatch(r"[A-Za-z0-9 ,'\-]+", stack):
+        out.append(f"--rv-font:{stack}")
+    size = vars_.get("font_size_px")
+    if isinstance(size, int) and 12 <= size <= 24:
+        out.append(f"--rv-font-size:{size}px")
+    return ":root{" + ";".join(out) + "}"
+
+
+def _json_ld(data) -> str:
+    return json.dumps(data, ensure_ascii=False, separators=(",", ":")).translate(_JSON_ESCAPES)
+
+
+@register.simple_tag(takes_context=True)
+def theme_head(context):
+    """عنوان صفحه، متاتگ‌های سئو، Open Graph، JSON-LD، فونت و رنگ‌های سفارشی. باید اولین مورد داخل <head> باشد."""
+    seo = context.get("seo") or {}
+    site = context.get("site") or {}
+    vars_ = context.get("theme_vars") or {}
+    parts = [
+        mark_safe('<meta charset="utf-8">'),
+        mark_safe('<meta name="viewport" content="width=device-width, initial-scale=1">'),
+        format_html("<title>{}</title>", seo.get("title", "")),
+    ]
+    if seo.get("description"):
+        parts.append(format_html('<meta name="description" content="{}">', seo["description"]))
+    if seo.get("robots"):
+        parts.append(format_html('<meta name="robots" content="{}">', seo["robots"]))
+    if seo.get("canonical"):
+        parts.append(format_html('<link rel="canonical" href="{}">', seo["canonical"]))
+    for feed in context.get("feeds") or ():  # autodiscovery فید RSS/Atom
+        parts.append(format_html('<link rel="alternate" type="{}" title="{}" href="{}">', feed.type, feed.title, feed.url))
+    for rel in ("prev", "next"):
+        if seo.get(rel):
+            parts.append(format_html('<link rel="{}" href="{}">', rel, seo[rel]))
+    og = [
+        ("og:type", seo.get("og_type", "website")),
+        ("og:site_name", site.get("name", "")),
+        ("og:title", seo.get("title", "")),
+        ("og:description", seo.get("description", "")),
+        ("og:url", seo.get("canonical", "")),
+        ("og:locale", "fa_IR"),
+        ("og:image", seo.get("og_image", "")),
+    ]
+    for prop, value in og:
+        if value:
+            parts.append(format_html('<meta property="{}" content="{}">', prop, value))
+    if seo.get("og_type") == "article":
+        for prop, key in (("article:published_time", "published_time"), ("article:modified_time", "modified_time")):
+            if seo.get(key):
+                parts.append(format_html('<meta property="{}" content="{}">', prop, seo[key]))
+    twitter = [
+        ("twitter:card", "summary_large_image" if seo.get("og_image") else "summary"),
+        ("twitter:title", seo.get("title", "")),
+        ("twitter:description", seo.get("description", "")),
+        ("twitter:image", seo.get("og_image", "")),
+    ]
+    for name, value in twitter:
+        if value:
+            parts.append(format_html('<meta name="{}" content="{}">', name, value))
+    favicon = site.get("favicon_url")
+    if favicon:
+        parts.append(format_html('<link rel="icon" href="{}">', favicon))
+    else:
+        parts.append(mark_safe('<link rel="icon" href="data:,">'))  # از درخواست بی‌فایده /favicon.ico جلوگیری می‌کند
+    preload = vars_.get("font_preload_url")
+    if preload:
+        parts.append(format_html('<link rel="preload" href="{}" as="font" type="font/woff2" crossorigin>', preload))
+    parts.append(format_html('<link rel="stylesheet" href="{}">', static("public/fonts.css")))
+    parts.append(mark_safe('<style id="rv-theme-vars">' + _css_vars(vars_) + "</style>"))
+    for data in seo.get("jsonld") or []:
+        parts.append(mark_safe('<script type="application/ld+json">' + _json_ld(data) + "</script>"))
+    return mark_safe("\n".join(parts))
+
+
+_TOOLBAR_CSS = (
+    "#rv-toolbar{position:relative;z-index:10000;font:14px/1.6 system-ui,Tahoma,sans-serif;background:#151a2d;color:#fff;"
+    "padding:.4rem 1rem;display:flex;gap:1rem;align-items:center;flex-wrap:wrap}"
+    "#rv-toolbar a{color:#fff;text-decoration:underline}#rv-toolbar a:hover{color:#c7d2fe}"
+    "#rv-toolbar.rv-preview{background:#b45309}"
+)
+
+
+@register.simple_tag(takes_context=True)
+def theme_toolbar(context):
+    """نوار مدیریت برای کاربران وارد‌شده + هشدار حالت پیش‌نمایش. بلافاصله بعد از <body> قرار می‌گیرد."""
+    viewer = context.get("viewer")
+    if not viewer or context.get("embedded"):
+        return ""
+    is_preview = bool(context.get("is_preview"))
+    links = []
+    if viewer.get("edit_url"):
+        links.append(format_html('<a href="{}">ویرایش این مورد</a>', viewer["edit_url"]))
+    if viewer.get("customize_url"):
+        links.append(format_html('<a href="{}">{}</a>', viewer["customize_url"], "بازگشت به ویرایشگر قالب" if is_preview else "سفارشی‌سازی ظاهر"))
+    links.append(format_html('<a href="{}">پنل مدیریت</a>', viewer.get("panel_url", "/panel/")))
+    message = (
+        mark_safe("<strong>حالت پیش‌نمایش:</strong> این تغییرات هنوز منتشر نشده‌اند و بازدیدکنندگان آن‌ها را نمی‌بینند.")
+        if is_preview
+        else format_html("وارد شده‌اید: {}", viewer.get("name", ""))
+    )
+    return format_html(
+        '<style>{}</style><div id="rv-toolbar" class="{}" role="region" aria-label="نوار مدیریت"><span>{}</span>{}</div>',
+        mark_safe(_TOOLBAR_CSS),
+        "rv-preview" if is_preview else "",
+        message,
+        mark_safe(" ".join(links)),
+    )

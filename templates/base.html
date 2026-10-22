@@ -1,0 +1,19 @@
+{% load static ravin_ui %}<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>{% block title %}{% endblock %}{% if site.site_name %} | {{ site.site_name }}{% endif %}</title>
+  {% if site.favicon %}<link rel="icon" href="{{ site.favicon.url }}">{% endif %}
+  <link rel="preload" href="{% static 'fonts/Vazirmatn-Variable.woff2' %}" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{% static 'css/ravin.css' %}">
+  {% block head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+  {% include "partials/_messages.html" %}
+  {% block body %}{% endblock %}
+  <script src="{% static 'js/ravin.js' %}" defer></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,29 @@
+{% extends "layouts/panel.html" %}
+{% load ravin_ui %}
+{% block title %}{{ heading }}{% endblock %}
+{% block page_title %}{{ heading }}{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>{{ heading }}</h1></div></div>
+<form method="post" novalidate data-once>
+  {% csrf_token %}
+  {% include "partials/_form_errors.html" %}
+  <div class="editor-layout">
+    <div class="card"><div class="card-body">
+      {% include "partials/_field.html" with field=form.title %}
+      {% include "partials/_field.html" with field=form.slug %}
+      {% include "partials/_md_editor.html" with field=form.body %}
+    </div></div>
+    <aside class="editor-side">
+      <div class="card"><div class="card-header"><h2>انتشار</h2></div><div class="card-body">
+        {% include "partials/_field.html" with field=form.status %}
+        {% if object.pk %}<p class="help">آخرین ویرایش: {{ object.updated_at|jalali_datetime }}</p>{% endif %}
+        <div class="form-actions"><button type="submit" class="btn">{% icon "check" 18 %} ذخیره</button><a href="{{ cancel_url }}" class="btn btn-light">انصراف</a></div>
+      </div></div>
+      <div class="card"><div class="card-header"><h2>سئو (SEO)</h2></div><div class="card-body">
+        {% include "partials/_field.html" with field=form.seo_title %}
+        {% include "partials/_field.html" with field=form.seo_description %}
+      </div></div>
+    </aside>
+  </div>
+</form>
+{% endblock %}

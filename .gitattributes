@@ -1,0 +1,17 @@
+# بستهٔ انتشار کاربر نهایی (git archive در .github/workflows/release.yml) با «بستهٔ توسعه» فرق دارد:
+# هر مسیر زیر در zip نمی‌آید. (در مخزن می‌ماند؛ فقط از آرشیو حذف می‌شود.)
+# درستی نتیجه را scripts/verify_release.py در همان گردش‌کار بررسی می‌کند.
+
+# زیرساخت توسعه و CI
+.github export-ignore
+.gitattributes export-ignore
+
+# آزمون‌های خودکار (هر برنامه)
+apps/*/tests export-ignore
+
+# اسکریپت‌های آزمایش و انتشار (فقط توسعه‌دهنده/ناشر)
+scripts/e2e_*.py export-ignore
+scripts/verify_release.py export-ignore
+scripts/vps_theme_install_check.py export-ignore
+# نگه‌داری‌شده در بسته: scripts/vps_smoke.sh و vps_smoke_check_log.sh (ابزار اعتبارسنجی میزبان برای مدیر سرور؛
+# docs/deployment.md، docs/hosting.md و docs/vps-smoke-runbook.md به آن‌ها ارجاع می‌دهند).
