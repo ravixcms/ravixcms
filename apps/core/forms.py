@@ -1,6 +1,7 @@
 from django import forms
 
 from .models import SiteSettings
+from .regional import language_choices, timezone_choices
 
 
 class StyledFormMixin:
@@ -22,6 +23,17 @@ class StyledFormMixin:
 
 
 class SiteSettingsForm(StyledFormMixin, forms.ModelForm):
+    # اختیاری: فرم‌ها/کلاینت‌های قدیمی که این دو را نمی‌فرستند، مقدار فعلی را نگه می‌دارند (نه خطا).
+    language = forms.ChoiceField(label="زبان", choices=language_choices, required=False)
+    timezone = forms.ChoiceField(label="منطقهٔ زمانی", choices=timezone_choices, required=False,
+                                 help_text="تاریخ و ساعت‌ها در پنل و سایت با این منطقه نمایش داده می‌شوند.")
+
+    def clean_language(self):
+        return self.cleaned_data.get("language") or self.instance.language
+
+    def clean_timezone(self):
+        return self.cleaned_data.get("timezone") or self.instance.timezone
+
     class Meta:
         model = SiteSettings
         fields = (
@@ -31,6 +43,8 @@ class SiteSettingsForm(StyledFormMixin, forms.ModelForm):
             "logo",
             "favicon",
             "default_share_image",
+            "language",
+            "timezone",
             "admin_email",
             "contact_phone",
             "address",

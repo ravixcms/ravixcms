@@ -23,3 +23,30 @@ class SecurityHeadersMiddleware:
             response[name] = csp
         response.setdefault("Permissions-Policy", PERMISSIONS_POLICY)
         return response
+
+
+class SiteRegionalMiddleware:
+    """زبان و منطقهٔ زمانی سایت (SiteSettings) را برای این درخواست فعال می‌کند؛ ورودی/نمایش تاریخ‌ها در پنل با همین منطقه است.
+    خطا (مثلاً قبل از migrate) هرگز درخواست را نمی‌شکند."""
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        from zoneinfo import ZoneInfo
+
+        from django.utils import timezone, translation
+
+        from .regional import load_site_settings, regional_for
+
+        language, tz = regional_for(load_site_settings(request))
+        try:
+            timezone.activate(ZoneInfo(tz))
+            translation.activate(language)
+        except Exception:  # noqa: BLE001
+            timezone.deactivate()
+        try:
+            return self.get_response(request)
+        finally:
+            timezone.deactivate()
+            translation.deactivate()

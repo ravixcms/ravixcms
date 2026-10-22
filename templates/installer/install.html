@@ -1,0 +1,21 @@
+{% extends "layouts/auth.html" %}
+{% load ravix_ui %}
+{% block title %}نصب{% endblock %}
+{% block auth_content %}
+<h2 style="margin-bottom:.5rem">نصب Ravix</h2>
+<p class="help" style="margin-bottom:1rem">چند مشخصهٔ ساده؛ بعد از ثبت، مدیرکل ساخته می‌شود، این صفحه برای همیشه بسته می‌شود و وارد پنل می‌شوید.</p>
+{% if checks.db_error %}
+  <div class="form-errors" role="alert"><p>اتصال به دیتابیس برقرار نیست ({{ checks.db_error }}). <code>DATABASE_URL</code> را بررسی کنید؛ تا آن زمان نصب ممکن نیست.</p></div>
+{% elif checks.pending %}
+  <p class="help">دیتابیس خالی/قدیمی است؛ مهاجرت‌ها هنگام ثبت این فرم اجرا می‌شوند ({{ checks.pending|length }} مورد).</p>
+{% endif %}
+{% if not checks.media_ok %}
+  <div class="form-errors" role="alert"><p>پوشهٔ media (<code class="ltr">{{ checks.media_dir }}</code>) وجود ندارد یا قابل‌نوشتن نیست؛ بارگذاری فایل کار نخواهد کرد.</p></div>
+{% endif %}
+<form method="post" novalidate data-once>
+  {% csrf_token %}
+  {% include "partials/_form_errors.html" %}
+  {% for field in form %}{% include "partials/_field.html" %}{% endfor %}
+  <button type="submit" class="btn btn-block"{% if checks.db_error %} disabled{% endif %}>{% icon "check" 18 %} نصب</button>
+</form>
+{% endblock %}
