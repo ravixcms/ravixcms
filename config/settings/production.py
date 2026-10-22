@@ -34,6 +34,8 @@ SECURE_HSTS_SECONDS = int(env("DJANGO_HSTS_SECONDS", "31536000"))
 SECURE_HSTS_INCLUDE_SUBDOMAINS = env_bool("DJANGO_HSTS_INCLUDE_SUBDOMAINS", False)
 # preload تقریباً برگشت‌ناپذیر است (حذف از فهرست مرورگرها ماه‌ها طول می‌کشد)؛ پیش‌فرض خاموش، فقط با انتخاب آگاهانه روشن شود
 SECURE_HSTS_PRELOAD = env_bool("DJANGO_HSTS_PRELOAD", False)
+# W005/W021 («include_subdomains»/«preload» روشن نیست) عمداً: هر دو برگشت‌ناپذیرند و باید آگاهانه روشن شوند (بالا)؛ هشدار فقط وقتی خاموش است ساکت می‌شود
+SILENCED_SYSTEM_CHECKS = [c for c, on in (("security.W005", SECURE_HSTS_INCLUDE_SUBDOMAINS), ("security.W021", SECURE_HSTS_PRELOAD)) if not on]
 
 EMAIL_BACKEND = env("DJANGO_EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
 EMAIL_HOST = env("EMAIL_HOST", "localhost")

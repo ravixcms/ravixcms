@@ -33,6 +33,7 @@ FORBIDDEN = [
     (r"^\.gitattributes$", ".gitattributes"),
     (r"^scripts/(e2e_[^/]*|verify_release\.py|vps_theme_install_check\.py|bandit_check\.sh)$", "اسکریپت آزمایش/انتشار"),
     (r"^\.bandit-baseline\.json$", "baseline ابزار توسعه"),
+    (r"^\.gitleaks\.toml$", "پیکربندی ابزار توسعه"),
     (r"(^|/)\.env$", "فایل .env"),
     (r"(^|/)db\.sqlite3$", "پایگاه‌دادهٔ SQLite"),
     (r"^media(/|$)", "پوشهٔ media"),

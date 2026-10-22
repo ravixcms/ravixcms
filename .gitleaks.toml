@@ -1,0 +1,12 @@
+# gitleaks: بررسی راز در کل تاریخچهٔ git (CI: job «secrets»). موارد مجاز فقط دادهٔ ساختگی آزمون‌ها هستند.
+title = "Ravix gitleaks"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "رمزها و کلیدهای ساختگی داخل آزمون‌ها (هیچ‌کدام راز واقعی نیست) و کش بایت‌کد پایتون"
+paths = [
+  '''(^|/)tests/.*\.py$''',
+  '''__pycache__/''',
+]

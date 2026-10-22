@@ -91,7 +91,7 @@ def _resolve(meta) -> tuple[str | None, str]:
 
 
 def client_ip(request) -> str | None:
-    cached = getattr(request, _ATTR, False)
+    cached = getattr(request, "__dict__", {}).get(_ATTR, False)  # فقط مقدار واقعاً ذخیره‌شده (نه صفت خودکار ساختگی)
     if cached is not False:
         return cached
     ip, state = _resolve(request.META)

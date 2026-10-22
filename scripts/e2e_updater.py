@@ -80,6 +80,7 @@ def main():
     try:
         site = tmp / "site"
         shutil.copytree(ROOT, site, ignore=IGNORE)
+        set_version(site, "0.6.0")  # «سایت در حال ارتقا» همیشه 0.6.0 است، مستقل از نسخهٔ واقعی مخزن (بسته‌های 0.7.0/0.8.0 باید جدیدتر باشند)
         db = site / "db.sqlite3"
         env = {**os.environ, "DJANGO_SETTINGS_MODULE": "config.settings.development", "PYTHONDONTWRITEBYTECODE": "1",
                "RAVIX_UPDATE_DIR": str(tmp / "dist"), "RAVIX_UPDATE_WORK_DIR": str(tmp / "work"), "RAVIX_UPDATE_BACKUP_DIR": str(tmp / "backups"),

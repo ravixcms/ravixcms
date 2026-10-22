@@ -17,3 +17,4 @@ scripts/bandit_check.sh export-ignore
 scripts/vps_theme_install_check.py export-ignore
 # نگه‌داری‌شده در بسته: scripts/vps_smoke.sh و vps_smoke_check_log.sh (ابزار اعتبارسنجی میزبان برای مدیر سرور؛
 # docs/deployment.md، docs/hosting.md و docs/vps-smoke-runbook.md به آن‌ها ارجاع می‌دهند).
+.gitleaks.toml export-ignore
