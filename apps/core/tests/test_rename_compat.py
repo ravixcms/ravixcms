@@ -232,7 +232,7 @@ class NoStrayNamesTests(SimpleTestCase):
         "apps/updater/versions.py", "apps/updater/release.py", "apps/updater/package.py", "apps/updater/pipeline.py",
         "apps/pluginhub/api.py", "apps/pluginhub/services.py", "apps/pluginhub/models.py",
         "apps/core/management/commands/ravin_", "apps/updater/management/commands/ravin_",
-        "apps/core/management/commands/ravix_preflight.py", "apps/updater/management/commands/ravix_release.py",
+        "apps/core/management/commands/ravix_preflight.py", "apps/core/sitehealth.py", "apps/updater/management/commands/ravix_release.py",
         "config/settings/", "deploy/", "scripts/", "docs/", "CHANGELOG.md", "migrations/", "/tests/", ".github/",
         "apps/updater/signing.py", "apps/accounts/emailing.py", "apps/shop/payments/vault.py",  # ثابت‌های پروتکل/رمزنگاری
         "templates/pluginhub/",  # فیلد مدل ravin_spec (ستون دیتابیس)

@@ -21,3 +21,15 @@ class CoreConfig(AppConfig):
                 active_urls=("core:site_settings",),
             )
         )
+        register_nav_item(
+            NavItem(
+                key="core.health",
+                label="سلامت سایت",
+                url_name="core:site_health",
+                icon="shield",
+                section="system",
+                order=91,
+                capability="health.view",
+                active_urls=("core:site_health",),
+            )
+        )
