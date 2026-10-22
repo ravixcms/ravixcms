@@ -3,6 +3,7 @@ import logging
 from xml.sax.saxutils import escape
 
 from django.conf import settings
+from apps.core.params import safe_id
 from django.db.models import Q
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -118,7 +119,7 @@ class PostDetailView(PublicView):
 
     def get(self, request, slug):
         reply = request.GET.get("reply", "")
-        return self.render_post(request, self.get_post(slug), notice=request.GET.get("cm", ""), reply_to=int(reply) if reply.isdigit() else 0)
+        return self.render_post(request, self.get_post(slug), notice=request.GET.get("cm", ""), reply_to=safe_id(reply) or 0)
 
     def render_post(self, request, post, *, state=None, notice="", reply_to=0, status=200):
         item = b.post_item(post, full=True)

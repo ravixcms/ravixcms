@@ -99,6 +99,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "apps.core.middleware.NumericOverflowMiddleware",  # عدد بزرگ در query ← ۴۰۰ به‌جای ۵۰۰
     "apps.core.middleware.SecurityHeadersMiddleware",  # CSP برای پنل/حساب‌ها/API + Permissions-Policy
     "django.middleware.http.ConditionalGetMiddleware",  # ETag/304 برای صفحات عمومی
     "apps.updater.middleware.MaintenanceMiddleware",  # ۵۰۳ فقط در بازهٔ اعمال ارتقا

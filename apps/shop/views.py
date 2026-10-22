@@ -4,6 +4,7 @@ from urllib.parse import urlsplit
 from urllib.parse import urlencode
 
 from django.conf import settings
+from apps.core.params import safe_id, safe_int
 from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.contrib.auth.views import redirect_to_login
@@ -135,8 +136,10 @@ class CartAddView(ShopView):
 
     def post(self, request):
         try:
-            pid, qty = int(request.POST.get("product", "")), int(request.POST.get("qty", "1"))
+            pid, qty = safe_id(request.POST.get("product", "")), safe_int(request.POST.get("qty", "1"), 1, hi=10**6)
         except ValueError:
+            raise Http404
+        if pid is None:
             raise Http404
         p = get_object_or_404(Product, pk=pid, site=self.site, is_active=True)  # محصول سایت دیگر ← ۴۰۴
         current = int(services.cart_raw(request, self.site).get(str(p.pk), 0))
@@ -152,13 +155,13 @@ class CartUpdateView(ShopView):
 
     def post(self, request):
         for key, value in request.POST.items():
-            if key.startswith("qty_") and key[4:].isdigit():
+            if key.startswith("qty_") and safe_id(key[4:]) is not None:
                 try:
-                    qty = int(value)
+                    qty = max(-1, min(int(value), 10**6))
                 except ValueError:
                     continue
-                if Product.objects.filter(pk=int(key[4:]), site=self.site, is_active=True).exists() or qty <= 0:
-                    services.cart_set(request, self.site, int(key[4:]), qty)
+                if Product.objects.filter(pk=safe_id(key[4:]), site=self.site, is_active=True).exists() or qty <= 0:
+                    services.cart_set(request, self.site, safe_id(key[4:]), qty)
         return redirect("shop:cart")
 
 

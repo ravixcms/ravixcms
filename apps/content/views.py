@@ -1,4 +1,5 @@
 from django.core.exceptions import PermissionDenied
+from apps.core.params import safe_id
 from django.db.models import Count, Q
 from django.http import JsonResponse
 from django.utils import timezone
@@ -43,12 +44,12 @@ class PostListView(CapabilityRequiredMixin, QueryStringMixin, ListView):
             qs = qs.filter(Q(status=PublishStatus.PUBLISHED) | Q(status=PublishStatus.SCHEDULED, publish_at__lte=now))
         elif status == "scheduled":
             qs = qs.filter(status=PublishStatus.SCHEDULED, publish_at__gt=now)
-        if g.get("category", "").isdigit():
-            qs = qs.filter(categories__pk=int(g["category"]))
-        if g.get("tag", "").isdigit():
-            qs = qs.filter(tags__pk=int(g["tag"]))
-        if g.get("author", "").isdigit() and user.has_cap("content.publish"):
-            qs = qs.filter(author__pk=int(g["author"]))
+        if safe_id(g.get("category")) is not None:
+            qs = qs.filter(categories__pk=safe_id(g.get("category")))
+        if safe_id(g.get("tag")) is not None:
+            qs = qs.filter(tags__pk=safe_id(g.get("tag")))
+        if safe_id(g.get("author")) is not None and user.has_cap("content.publish"):
+            qs = qs.filter(author__pk=safe_id(g.get("author")))
         return qs.distinct()
 
     def get_context_data(self, **kwargs):

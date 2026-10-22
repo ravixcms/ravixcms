@@ -3,6 +3,7 @@ import logging
 from datetime import timedelta
 
 from django.conf import settings
+from apps.core.params import safe_ids
 from django.db import transaction
 from django.db.models import F
 from django.utils import timezone
@@ -60,7 +61,7 @@ def cart_clear(request, site):
 def cart_lines(request, site):
     """[{product, qty, unit_price, line_total, line_discount, ok}] فقط محصولات فعالِ **همین سایت**؛ قیمت (با تخفیف) همیشه از دیتابیس."""
     raw = cart_raw(request, site)
-    ids = [int(k) for k in raw if str(k).isdigit()]
+    ids = safe_ids((str(k) for k in raw), 500)
     products = {p.pk: p for p in Product.objects.filter(site=site, is_active=True, pk__in=ids)}
     lines = []
     for pid in ids:

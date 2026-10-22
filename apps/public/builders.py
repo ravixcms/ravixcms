@@ -7,6 +7,7 @@ import re
 from urllib.parse import urlencode
 
 from django.conf import settings
+from apps.core.params import safe_id
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Count, Q
 from django.db.models.functions import Substr
@@ -141,8 +142,8 @@ def build_comments(post, *, state: dict | None = None, notice: str = "", reply_t
     items = tuple(node(c) for c in children.get(None, []))
     target = next((c for c in rows if c.pk == reply_to and c.depth < settings.RAVIX_COMMENT_MAX_DEPTH), None) if can_reply else None
     values = dict(state.get("values", {}))
-    if target is None and state.get("values", {}).get("parent", "").isdigit():
-        target = next((c for c in rows if c.pk == int(values["parent"]) and c.depth < settings.RAVIX_COMMENT_MAX_DEPTH), None)
+    if target is None and safe_id(state.get("values", {}).get("parent", "")) is not None:
+        target = next((c for c in rows if c.pk == safe_id(values["parent"]) and c.depth < settings.RAVIX_COMMENT_MAX_DEPTH), None)
     return CommentsSection(
         count=len(rows), items=items, open=post.comments_open, action_url=reverse("public:comment_submit", args=[post.slug]),
         honeypot_name="website", notice=notice if notice in ("pending", "ok") else "", errors=state.get("errors", {}),
