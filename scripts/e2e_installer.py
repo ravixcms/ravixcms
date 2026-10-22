@@ -4,16 +4,16 @@ import io, json, os, re, shutil, subprocess, sys, tempfile, zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-tmp = Path(tempfile.mkdtemp(prefix="ravin-e2e-"))
-env = {**os.environ, "DJANGO_SETTINGS_MODULE": "config.settings.development", "RAVIN_PLUGIN_WEB_INSTALL": "true",
-       "RAVIN_PLUGIN_INSTALL_DIR": str(tmp / "installed"), "RAVIN_PLUGIN_BACKUP_DIR": str(tmp / "backups"),
+tmp = Path(tempfile.mkdtemp(prefix="ravix-e2e-"))
+env = {**os.environ, "DJANGO_SETTINGS_MODULE": "config.settings.development", "RAVIX_PLUGIN_WEB_INSTALL": "true",
+       "RAVIX_PLUGIN_INSTALL_DIR": str(tmp / "installed"), "RAVIX_PLUGIN_BACKUP_DIR": str(tmp / "backups"),
        "DATABASE_URL": "sqlite:///e2e_tmp.sqlite3"}  # مسیر sqlite نسبت به پروژه است؛ در پایان پاک می‌شود
 py = sys.executable
 run = lambda *a, **k: subprocess.run([py, "manage.py", *a], cwd=ROOT, env={**env, **k.pop("extra_env", {})}, capture_output=True, text=True, check=k.pop("check", True))
 
 def build_zip(version):
     """افزونهٔ حداقلی e2e_hello (نه نمونه‌های مخزن، چون آن‌ها از قبل در plugins/ هستند و نصب‌کننده بازنویسی نمی‌کند)."""
-    manifest = {"slug": "e2e_hello", "name": "سلام", "version": version, "description": "e2e", "api_version": 1, "ravin": ">=0.5.0,<1.0.0",
+    manifest = {"slug": "e2e_hello", "name": "سلام", "version": version, "description": "e2e", "api_version": 1, "ravix": ">=0.5.0,<1.0.0",
                 "public_routes": [{"path": "", "view": "views:home"}]}
     views = f"from django.http import HttpResponse\n\n\ndef home(request, api):\n    return HttpResponse('hello {version}')\n"
     buf = io.BytesIO()
@@ -33,7 +33,7 @@ keyfile = tmp / "dev.key"
 out = run("plugin_keygen", "--out", str(keyfile)).stdout
 pub = re.search(r"کلید عمومی[^:]*: (\S+)", out).group(1)
 step("keygen: کلید خصوصی 600 و چاپ‌نشده", oct(keyfile.stat().st_mode & 0o777) == "0o600" and keyfile.read_text().strip() not in out)
-env["RAVIN_TRUSTED_PUBLIC_KEYS"] = f"dev:{pub}"
+env["RAVIX_TRUSTED_PUBLIC_KEYS"] = f"dev:{pub}"
 
 def sign(version):
     z = tmp / f"cf-{version}.zip"
@@ -59,7 +59,7 @@ import json, sys
 z1, s1, k1 = json.loads(sys.argv[1])
 r = upload(z1, s1, k1)
 print("UPLOAD", r.status_code, r["Location"]); from django.contrib.messages import get_messages; print("MSG", [str(m) for m in get_messages(r.wsgi_request)])
-d = settings.RAVIN_PLUGIN_INSTALL_DIR / "e2e_hello"
+d = settings.RAVIX_PLUGIN_INSTALL_DIR / "e2e_hello"
 print("PLACED", d.is_dir(), "RECORD", PluginRecord.objects.filter(slug="e2e_hello").exists())
 services.install("e2e_hello", admin, fingerprint(d)); services.activate("e2e_hello", admin)
 print("ACTIVE", PluginRecord.objects.get().is_active)

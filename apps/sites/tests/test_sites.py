@@ -2,7 +2,7 @@ import unittest
 
 from django.conf import settings
 
-if not settings.SHOP_ENABLED:  # ماژول فروشگاه خاموش است (RAVIN_SHOP_ENABLED=false)؛ این تست‌ها موضوعیت ندارند
+if not settings.SHOP_ENABLED:  # ماژول فروشگاه خاموش است (RAVIX_SHOP_ENABLED=false)؛ این تست‌ها موضوعیت ندارند
     raise unittest.SkipTest("فروشگاه غیرفعال است")
 
 from django.test import Client, override_settings
@@ -16,7 +16,7 @@ from apps.sites.access import accessible_sites, can_access_site, create_site
 from apps.sites.models import Site, SiteDomain, SiteMember
 
 
-@override_settings(RAVIN_MULTISITE_ENABLED=True, ALLOWED_HOSTS=["a.test", "b.test", "c.test", "testserver"])
+@override_settings(RAVIX_MULTISITE_ENABLED=True, ALLOWED_HOSTS=["a.test", "b.test", "c.test", "testserver"])
 class IsolationTests(ShopTestCase):
     def setUp(self):
         super().setUp()
@@ -109,13 +109,13 @@ class IsolationTests(ShopTestCase):
     def test_cannot_switch_to_foreign_site(self):
         ca = self.login(self.a_owner)
         self.assertEqual(ca.post(reverse("sites:switch"), {"site": self.site_b.pk}).status_code, 403)
-        self.assertNotIn("ravin_active_site", ca.session)
+        self.assertNotIn("ravix_active_site", ca.session)
         self.assertContains(ca.get(reverse("shop_panel:products")), "محصول الف")
 
     def test_session_value_is_revalidated(self):
         ca = self.login(self.a_owner)
         s = ca.session
-        s["ravin_active_site"] = self.site_b.pk  # دست‌کاری نشست
+        s["ravix_active_site"] = self.site_b.pk  # دست‌کاری نشست
         s.save()
         self.assertNotContains(ca.get(reverse("shop_panel:products")), "محصول ب")
 

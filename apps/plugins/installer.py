@@ -35,7 +35,7 @@ from .models import PluginBackup, PluginOperationLock, PluginPackage, PluginReco
 from .package import PackageError, extract_to, inspect
 from .services import PluginError, check_compat, run_migrations
 
-logger = logging.getLogger("ravin.plugins")
+logger = logging.getLogger("ravix.plugins")
 LOCK_STALE = timedelta(minutes=15)
 
 
@@ -45,7 +45,7 @@ class InstallError(PluginError):
 
 # ------------------------------------------------------------------ پیش‌نیازها و قفل
 def install_root() -> Path:
-    return Path(settings.RAVIN_PLUGIN_INSTALL_DIR)
+    return Path(settings.RAVIX_PLUGIN_INSTALL_DIR)
 
 
 def _require_admin(user):
@@ -54,10 +54,10 @@ def _require_admin(user):
 
 
 def _require_web_install():
-    if not settings.RAVIN_PLUGIN_WEB_INSTALL:
-        raise InstallError("نصب از طریق وب خاموش است. برای فعال‌سازی، RAVIN_PLUGIN_WEB_INSTALL=true را در تنظیمات سرور بگذارید "
+    if not settings.RAVIX_PLUGIN_WEB_INSTALL:
+        raise InstallError("نصب از طریق وب خاموش است. برای فعال‌سازی، RAVIX_PLUGIN_WEB_INSTALL=true را در تنظیمات سرور بگذارید "
                            "(فقط وقتی پوشهٔ نصب را برای سرویس قابل‌نوشتن کرده‌اید).")
-    if not settings.RAVIN_PLUGINS_ENABLED:
+    if not settings.RAVIX_PLUGINS_ENABLED:
         raise InstallError("سیستم افزونه‌ها خاموش است.")
 
 
@@ -135,7 +135,7 @@ def stage(data: bytes, *, source: str, source_ref: str = "", expected_slug=None,
     ver = signing.verify(m.slug, m.version, info.sha256, info.fingerprint, signature, key_id)
     if ver.state == "invalid":
         raise InstallError(f"امضای دیجیتال نامعتبر است: {ver.reason}")
-    if ver.state == "unsigned" and (source == PluginPackage.Source.REGISTRY or not settings.RAVIN_PLUGINS_ALLOW_UNSIGNED):
+    if ver.state == "unsigned" and (source == PluginPackage.Source.REGISTRY or not settings.RAVIX_PLUGINS_ALLOW_UNSIGNED):
         raise InstallError("بسته امضای دیجیتال معتبر ندارد و سیاست این سایت بستهٔ بدون امضا را نمی‌پذیرد "
                            "(بسته‌های مخزن همیشه باید امضا داشته باشند).")
     return Staged(data, m, info.sha256, info.fingerprint, ver, source, source_ref)
@@ -176,7 +176,7 @@ def place_new(staged: Staged, user, *, root: Path | None = None) -> PluginPackag
             root.mkdir(parents=True, exist_ok=True)
             tmp = Path(tempfile.mkdtemp(prefix=".staging-", dir=root))
         except OSError as exc:
-            raise InstallError(f"پوشهٔ نصب قابل‌نوشتن نیست ({exc.strerror}). مجوزهای RAVIN_PLUGIN_INSTALL_DIR را بررسی کنید.")
+            raise InstallError(f"پوشهٔ نصب قابل‌نوشتن نیست ({exc.strerror}). مجوزهای RAVIX_PLUGIN_INSTALL_DIR را بررسی کنید.")
         target = root / slug
         try:
             pdir = _extract_verified(staged, tmp)
@@ -208,7 +208,7 @@ def _applied_last_migration(slug) -> str:
 
 
 def _backup_dir() -> Path:
-    d = Path(settings.RAVIN_PLUGIN_BACKUP_DIR)
+    d = Path(settings.RAVIX_PLUGIN_BACKUP_DIR)
     d.mkdir(parents=True, exist_ok=True, mode=0o700)
     return d
 
@@ -234,14 +234,14 @@ def make_backup(rec: PluginRecord, source_dir: Path, user, reason: str, *, was_a
 
 
 def _prune_backups(slug):
-    keep = max(1, int(getattr(settings, "RAVIN_PLUGIN_BACKUPS_KEEP", 5)))
+    keep = max(1, int(getattr(settings, "RAVIX_PLUGIN_BACKUPS_KEEP", 5)))
     for b in list(PluginBackup.objects.filter(slug=slug, restored_at__isnull=True))[keep:]:
-        (Path(settings.RAVIN_PLUGIN_BACKUP_DIR) / b.archive).unlink(missing_ok=True)
+        (Path(settings.RAVIX_PLUGIN_BACKUP_DIR) / b.archive).unlink(missing_ok=True)
         b.delete()
 
 
 def _archive_bytes(b: PluginBackup) -> bytes:
-    base = Path(settings.RAVIN_PLUGIN_BACKUP_DIR).resolve()
+    base = Path(settings.RAVIX_PLUGIN_BACKUP_DIR).resolve()
     path = (base / b.archive).resolve()
     if base not in path.parents:
         raise InstallError("مسیر پشتیبان نامعتبر است.")
@@ -318,7 +318,7 @@ def upgrade(staged: Staged, user) -> PluginBackup:
                 raise
         except InstallError:
             backup.delete()  # عملیات انجام نشد؛ پشتیبان بی‌مصرف است
-            (Path(settings.RAVIN_PLUGIN_BACKUP_DIR) / backup.archive).unlink(missing_ok=True)
+            (Path(settings.RAVIX_PLUGIN_BACKUP_DIR) / backup.archive).unlink(missing_ok=True)
             raise
         finally:
             shutil.rmtree(tmp, ignore_errors=True)

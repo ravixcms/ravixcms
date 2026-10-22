@@ -30,9 +30,9 @@ class Command(BaseCommand):
             raise CommandError(f"قالب مبدأ «{options['source']}» پیدا نشد.")
         if slug in themes:
             raise CommandError(f"قالبی با نامک «{slug}» از قبل وجود دارد.")
-        dirs = [Path(d) for d in getattr(settings, "RAVIN_THEME_DIRS", [])]
+        dirs = [Path(d) for d in getattr(settings, "RAVIX_THEME_DIRS", [])]
         if not dirs:
-            raise CommandError("RAVIN_THEME_DIRS خالی است.")
+            raise CommandError("RAVIX_THEME_DIRS خالی است.")
         target = dirs[0] / slug
         if target.exists():
             raise CommandError(f"مسیر {target} از قبل وجود دارد.")

@@ -4,8 +4,8 @@ API_VERSION = 1
 DEFAULT_THEME = "default"
 THEME_MANIFEST = "theme.json"
 
-# قالب‌ها فقط می‌توانند این کتابخانه تگ را بارگذاری کنند ({% load ravin_theme %}).
-ALLOWED_LIBRARIES = frozenset({"ravin_theme"})
+# قالب‌ها فقط می‌توانند این کتابخانه تگ را بارگذاری کنند ({% load ravix_theme %}).
+ALLOWED_LIBRARIES = frozenset({"ravix_theme", "ravin_theme"})  # «ravin_theme»: نام منسوخ؛ تا 2.0
 
 # قالب‌هایی که هر قالب حتماً باید داشته باشد.
 REQUIRED_TEMPLATES = (

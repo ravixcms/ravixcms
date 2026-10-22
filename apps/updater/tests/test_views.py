@@ -44,7 +44,7 @@ class PanelTests(UpdaterCase):
 
     def test_web_apply_disabled_by_default(self):
         self.publish("0.7.0")
-        with override_settings(RAVIN_UPDATE_WEB_APPLY=False):
+        with override_settings(RAVIX_UPDATE_WEB_APPLY=False):
             c = self.client_for(self.superadmin)
             r = c.post(reverse("updater:apply", args=["core"]), follow=True)
             self.assertContains(r, "خاموش است")
@@ -87,7 +87,7 @@ class PanelTests(UpdaterCase):
         self.assertContains(r, "اعتبارسنجی شد")
 
     def test_check_view_reports_bad_source_without_crashing(self):
-        with override_settings(RAVIN_UPDATE_DIR=str(self.base / "empty")):
+        with override_settings(RAVIX_UPDATE_DIR=str(self.base / "empty")):
             r = self.client_for(self.admin).get(reverse("updater:home"))
             self.assertEqual(r.status_code, 200)
             self.assertContains(r, "index.json")
@@ -134,7 +134,7 @@ class ApiTests(UpdaterCase):
 class CommandTests(UpdaterCase):
     def run_cmd(self, *args):
         out = io.StringIO()
-        call_command("ravin_update", *args, stdout=out)
+        call_command("ravix_update", *args, stdout=out)
         return out.getvalue()
 
     def test_status_history_check(self):
@@ -163,18 +163,18 @@ class CommandTests(UpdaterCase):
 
         kf = self.base / "release.key"
         out = io.StringIO()
-        call_command("ravin_release", "keygen", "--key-file", str(kf), stdout=out)
+        call_command("ravix_release", "keygen", "--key-file", str(kf), stdout=out)
         pub = out.getvalue().strip().splitlines()[-1]
         seed = kf.read_text()
         self.assertNotIn(seed, out.getvalue())  # کلید خصوصی چاپ نمی‌شود
         if os.name == "posix":
             self.assertEqual(oct(kf.stat().st_mode & 0o777), "0o600")
         with self.assertRaises(FileExistsError):  # کلید موجود هرگز بازنویسی نمی‌شود
-            call_command("ravin_release", "keygen", "--key-file", str(kf), stdout=io.StringIO())
+            call_command("ravix_release", "keygen", "--key-file", str(kf), stdout=io.StringIO())
         src = self.base / "relsrc"
         from .helpers import make_tree
 
         make_tree(src, "0.9.0")
-        call_command("ravin_release", "core", "--source", str(src), "--out", str(self.dist), "--key-file", str(kf), stdout=io.StringIO())
-        with override_settings(RAVIN_TRUSTED_PUBLIC_KEYS=[f"rel:{pub}"]):
+        call_command("ravix_release", "core", "--source", str(src), "--out", str(self.dist), "--key-file", str(kf), stdout=io.StringIO())
+        with override_settings(RAVIX_TRUSTED_PUBLIC_KEYS=[f"rel:{pub}"]):
             self.assertEqual(self.apply("0.9.0").status, "succeeded")

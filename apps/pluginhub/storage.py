@@ -8,7 +8,7 @@ from django.core.files.storage import FileSystemStorage
 class PackageStorage(FileSystemStorage):
     @property
     def base_location(self):
-        return str(settings.RAVIN_REGISTRY_STORAGE)
+        return str(settings.RAVIX_REGISTRY_STORAGE)
 
     @property
     def location(self):

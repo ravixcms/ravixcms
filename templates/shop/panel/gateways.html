@@ -3,7 +3,7 @@
 {% block page_title %}درگاه‌های پرداخت{% endblock %}
 {% block content %}
 <div class="page-head"><div><h1>درگاه‌های پرداخت</h1><p>سایت: {{ site_obj.name }}. هر درگاه یک افزونهٔ مستقل است؛ هیچ درگاه واقعی‌ای به‌صورت پیش‌فرض متصل نیست.</p></div></div>
-{% if not key_configured %}<div class="alert alert-warn" role="alert">کلید رمزنگاری <code>RAVIN_SECRETS_KEY</code> تنظیم نشده است؛ در تولید ذخیرهٔ کلیدهای درگاه بدون آن ممکن نیست.</div>{% endif %}
+{% if not key_configured %}<div class="alert alert-warn" role="alert">کلید رمزنگاری <code>RAVIX_SECRETS_KEY</code> تنظیم نشده است؛ در تولید ذخیرهٔ کلیدهای درگاه بدون آن ممکن نیست.</div>{% endif %}
 <div class="card">{% if items %}<div class="table-wrap"><table class="table"><thead><tr><th>درگاه</th><th>نوع</th><th>وضعیت</th><th>تنظیمات</th><th></th></tr></thead><tbody>
 {% for g in items %}<tr>
   <td><strong>{{ g.label }}</strong><br><span class="ltr muted">{{ g.name }}</span>{% if g.description %}<br><span class="muted">{{ g.description }}</span>{% endif %}</td>

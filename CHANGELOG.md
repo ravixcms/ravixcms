@@ -2,6 +2,10 @@
 قالب: [Keep a Changelog](https://keepachangelog.com/)، نسخه‌بندی [SemVer](https://semver.org/).
 
 ## [Unreleased]
+### Changed (تغییر نام ravin → ravix)
+- نام محصول در همهٔ کد، فایل‌های استقرار و مستندات `ravix` شد (دستورهای `ravix_*`، `ravix.service`، `RAVIX_*`، `{% load ravix_theme %}`/`ravix_ui`، …). **نام‌های قدیمی تا 2.0 با `RavixDeprecationWarning` کار می‌کنند** (متغیرهای `RAVIN_*`، دستورهای `ravin_*`، تگ‌های `ravin_theme`/`ravin_ui`، کلید `ravin` در manifest/`requires`، تایمرها و مسیرهای قدیمی). فهرست کامل و راهنمای مهاجرت: `docs/upgrade.md` §۹.
+- ناسازگار (بدون شیم): `settings.RAVIN_*`، نام لاگرها، کلیدهای نشست، `static/css/ravin.css` و `static/js/ravin.js`.
+- دو مهاجرت تازه فقط برای `verbose_name`/پیش‌فرض (`core.0006`، `pluginhub.0004`)؛ جدول `ravin_cache`، فیلد `ravin_spec` و ثابت‌های امضا/رمزنگاری عمداً تغییر نکردند.
 ### Fixed
 - ورود به پنل با کش اصلی خراب (پوشهٔ `/var/cache/ravin` نبود/قابل‌نوشتن نبود، Redis قطع بود) خطای ۵۰۰ می‌داد، چون محدودسازی ورود (`apps/accounts/throttle.py`) در هر تلاش از کش می‌خواند. اکنون در این حالت به کش جدولی دیتابیس (`throttle_fallback`، جدول `ravin_cache`) برمی‌گردد و هشدار لاگ می‌دهد (حداکثر یک بار در دقیقه)؛ محافظت در برابر حدس رمز خاموش نمی‌شود. اگر کش جایگزین هم خراب باشد خطا بالا می‌آید.
 ### Changed

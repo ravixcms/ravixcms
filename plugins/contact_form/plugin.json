@@ -3,9 +3,9 @@
   "name": "فرم تماس",
   "version": "1.0.0",
   "description": "فرم تماس عمومی در /ext/contact_form/ که پیام‌ها را در دیتابیس ذخیره می‌کند و صندوق پیام در پنل دارد.",
-  "author": "Ravin CMS",
+  "author": "Ravix",
   "api_version": 1,
-  "ravin": ">=0.5.0,<1.0.0",
+  "ravix": ">=0.5.0,<1.0.0",
   "models": true,
   "capabilities": {
     "contact_form.view": "مشاهده و مدیریت پیام‌های فرم تماس"

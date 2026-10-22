@@ -13,7 +13,7 @@ from apps.updater.errors import UpdateError
 from .helpers import make_tree
 
 
-def zipped(files: dict, root="ravin-0.7.0", raw=()):
+def zipped(files: dict, root="ravix-0.7.0", raw=()):
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
         for rel, content in files.items():
@@ -50,17 +50,17 @@ class PackageSafetyTests(SimpleTestCase):
 
     def test_zip_slip_rejected(self):
         with self.assertRaisesRegex(UpdateError, "ناامن|نامعتبر"):
-            self.extract(zipped({}, raw=[("ravin-0.7.0/../../evil.py", "x=1")]))
+            self.extract(zipped({}, raw=[("ravix-0.7.0/../../evil.py", "x=1")]))
 
     def test_absolute_and_backslash_rejected(self):
-        for name in ("/etc/passwd", "ravin-0.7.0\\..\\evil", "C:/x"):
+        for name in ("/etc/passwd", "ravix-0.7.0\\..\\evil", "C:/x"):
             with self.assertRaises(UpdateError, msg=name):
                 self.extract(zipped({}, raw=[(name, "x")]))
 
     def test_symlink_rejected(self):
         buf = io.BytesIO()
         with zipfile.ZipFile(buf, "w") as zf:
-            info = zipfile.ZipInfo("ravin-0.7.0/link")
+            info = zipfile.ZipInfo("ravix-0.7.0/link")
             info.external_attr = (stat.S_IFLNK | 0o777) << 16
             zf.writestr(info, "/etc/passwd")
         with self.assertRaisesRegex(UpdateError, "symlink"):
@@ -104,8 +104,8 @@ class PackageSafetyTests(SimpleTestCase):
         with self.assertRaisesRegex(UpdateError, "یکی نیست"):
             self.validate(good_files(), version="0.9.0")
         files = good_files()
-        files["apps/core/version.py"] = 'RAVIN_VERSION = "0.1.0"\n'
-        with self.assertRaisesRegex(UpdateError, "RAVIN_VERSION"):
+        files["apps/core/version.py"] = 'RAVIX_VERSION = "0.1.0"\n'
+        with self.assertRaisesRegex(UpdateError, "RAVIX_VERSION"):
             self.validate(files)
 
     def test_missing_release_or_required(self):

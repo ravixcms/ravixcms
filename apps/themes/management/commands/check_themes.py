@@ -13,7 +13,7 @@ class Command(BaseCommand):
         themes = registry.get_themes(refresh=True)
         slugs = options["slugs"] or list(themes)
         if not themes:
-            raise CommandError("هیچ قالبی در مسیرهای RAVIN_THEME_DIRS پیدا نشد.")
+            raise CommandError("هیچ قالبی در مسیرهای RAVIX_THEME_DIRS پیدا نشد.")
         bad = 0
         for slug in slugs:
             info = themes.get(slug)

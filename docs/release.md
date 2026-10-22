@@ -2,11 +2,11 @@
 
 > گردش‌کارهای `.github/workflows/*.yml` روی GitHub واقعی اجرا **نشده‌اند**؛ مراحل ساخت/بررسی بسته در یک شبیه‌سازی محلی (همان دستورها، بدون GitHub) آزموده شد. اولین اجرا را روی یک تگ آزمایشی (`v0.0.0-test`) امتحان کنید.
 
-1. `apps/core/version.py` → `RAVIN_VERSION` را بالا ببرید و `CHANGELOG.md` را تکمیل کنید.
+1. `apps/core/version.py` → `RAVIX_VERSION` را بالا ببرید و `CHANGELOG.md` را تکمیل کنید.
 2. تست‌ها و `python scripts/e2e_updater.py` / `scripts/e2e_backup_restore.py` را اجرا کنید.
 3. کامیت و تگ: `git tag -a vX.Y.Z -m "Ravix X.Y.Z" && git push origin vX.Y.Z`.
-4. `release.yml` خودکار: تطبیق تگ با `RAVIN_VERSION`، اجرای تست‌ها، ساخت `ravix-X.Y.Z.zip` (با `TZ=UTC` برای هش یکسان) + `SHA256SUMS`، راستی‌آزمایی با `sha256sum -c` و `scripts/verify_release.py`، ساخت Release در GitHub.
-5. (اختیاری) بستهٔ امضاشدهٔ به‌روزرسانی: `ravin_release core --out dist/ --key-file <کلید خصوصی>` روی ماشین امن ناشر؛ کلید خصوصی را هرگز در مخزن یا Secrets عمومی نگذارید مگر آگاهانه.
+4. `release.yml` خودکار: تطبیق تگ با `RAVIX_VERSION`، اجرای تست‌ها، ساخت `ravix-X.Y.Z.zip` (با `TZ=UTC` برای هش یکسان) + `SHA256SUMS`، راستی‌آزمایی با `sha256sum -c` و `scripts/verify_release.py`، ساخت Release در GitHub.
+5. (اختیاری) بستهٔ امضاشدهٔ به‌روزرسانی: `ravix_release core --out dist/ --key-file <کلید خصوصی>` روی ماشین امن ناشر؛ کلید خصوصی را هرگز در مخزن یا Secrets عمومی نگذارید مگر آگاهانه.
 6. بررسی وابستگی‌ها: `pip-audit -r requirements.lock` (CI هفتگی هم اجرا می‌کند).
 
 ## بستهٔ کاربر نهایی ≠ بستهٔ توسعه

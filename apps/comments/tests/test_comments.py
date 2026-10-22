@@ -103,7 +103,7 @@ class SubmitTests(Base):
         self.assertNotIn('"><b>x</b>', r.content.decode())  # مقدار برگردانده‌شده escape می‌شود
 
     def test_too_long_body(self):
-        with override_settings(RAVIN_COMMENT_MAX_LENGTH=10):
+        with override_settings(RAVIX_COMMENT_MAX_LENGTH=10):
             self.assertEqual(self.send(body="x" * 11).status_code, 400)
 
     def test_duplicate_rejected(self):
@@ -135,7 +135,7 @@ class AntiSpamTests(Base):
         page = self.client.get(self.page).content.decode()
         self.assertRegex(page, r'name="website"[^>]*tabindex="-1"')
 
-    @override_settings(RAVIN_COMMENT_LIMIT_PER_IP=3)
+    @override_settings(RAVIX_COMMENT_LIMIT_PER_IP=3)
     def test_rate_limit_per_ip(self):
         for i in range(3):
             self.assertEqual(self.send(body=f"متن {i}").status_code, 302)
@@ -144,7 +144,7 @@ class AntiSpamTests(Base):
         self.assertIn("زیاد است", r.content.decode())
         self.assertEqual(Comment.objects.count(), 3)
 
-    @override_settings(RAVIN_COMMENT_LIMIT_PER_IP=1)
+    @override_settings(RAVIX_COMMENT_LIMIT_PER_IP=1)
     def test_rate_limit_counts_honeypot_and_invalid_attempts_not(self):
         self.assertEqual(self.send(website="x").status_code, 302)  # honeypot پیش از شمارش رد می‌شود
         self.assertEqual(self.send().status_code, 302)

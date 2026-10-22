@@ -12,7 +12,7 @@ class PublicApiTests(HubTestCase):
         super().setUp()
         self.v1 = self.publish_version("alpha_plugin", "1.0.0")
         self.v2 = self.publish_version("alpha_plugin", "1.2.0")
-        self.publish_version("beta_plugin", "2.0.0", man=manifest("beta_plugin", "2.0.0", ravin=">=3.0.0,<4.0.0", category="seo", description="جستجوی ویژه"))
+        self.publish_version("beta_plugin", "2.0.0", man=manifest("beta_plugin", "2.0.0", ravix=">=3.0.0,<4.0.0", category="seo", description="جستجوی ویژه"))
         self.c = Client()
 
     def get(self, url, **kw):
@@ -82,7 +82,7 @@ class PublicApiTests(HubTestCase):
     def test_download_requires_https(self):
         r = self.c.get("/registry/v1/plugins/alpha_plugin/versions/1.2.0/download/")  # بدون secure
         self.assertEqual(r.status_code, 403)
-        with override_settings(RAVIN_REGISTRY_ALLOW_INSECURE_DOWNLOAD=True):
+        with override_settings(RAVIX_REGISTRY_ALLOW_INSECURE_DOWNLOAD=True):
             self.assertEqual(self.c.get("/registry/v1/plugins/alpha_plugin/versions/1.2.0/download/").status_code, 200)
 
     def test_download_urls_are_https(self):
@@ -116,7 +116,7 @@ class PublicApiTests(HubTestCase):
         self.assertEqual(self.get("/registry/v1/plugins/").json()["count"], 0)
 
     def test_registry_can_be_disabled(self):
-        with override_settings(RAVIN_REGISTRY_ENABLED=False):
+        with override_settings(RAVIX_REGISTRY_ENABLED=False):
             self.assertEqual(self.get("/registry/v1/plugins/").status_code, 404)
 
     def test_write_methods_not_allowed_on_read_endpoints(self):
@@ -182,7 +182,7 @@ class PublishApiTests(HubTestCase):
         tok = self.token()
         r = Client().post("/registry/v1/publish/", {}, secure=True, HTTP_AUTHORIZATION=f"Bearer {tok}")
         self.assertEqual(r.status_code, 400)
-        with override_settings(RAVIN_REGISTRY_MAX_PACKAGE_BYTES=100):
+        with override_settings(RAVIX_REGISTRY_MAX_PACKAGE_BYTES=100):
             self.assertEqual(self.api_publish(make_zip(), token=tok).status_code, 400)
 
     def test_get_not_allowed(self):

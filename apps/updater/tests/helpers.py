@@ -24,7 +24,7 @@ def make_tree(base: Path, version: str, *, extra: dict | None = None, requiremen
     files = {
         "manage.py": "#!/usr/bin/env python\nprint('manage')\n",
         "apps/__init__.py": "", "apps/core/__init__.py": "",
-        "apps/core/version.py": f'RAVIN_VERSION = "{version}"\nPLUGIN_API_VERSION = 1\n',
+        "apps/core/version.py": f'RAVIX_VERSION = "{version}"\nPLUGIN_API_VERSION = 1\n',
         "config/__init__.py": "", "config/settings.py": "X = 1\n", "requirements.txt": requirements,
         "static/app.css": f"/* {version} */", "templates/base.html": f"<p>{version}</p>", "docs/readme.md": f"v{version}",
     }
@@ -79,14 +79,14 @@ class FakeRunner:
 
 class UpdaterCase(TestCase):
     def setUp(self):
-        self.base = Path(tempfile.mkdtemp(prefix="ravin-upd-"))
+        self.base = Path(tempfile.mkdtemp(prefix="ravix-upd-"))
         self.addCleanup(shutil.rmtree, self.base, ignore_errors=True)
         self.root = make_tree(self.base / "site", "0.6.1")  # «سایت» در حال ارتقا
         self.src = self.base / "source"
         self.dist = self.base / "dist"
-        ov = override_settings(RAVIN_UPDATE_DIR=str(self.dist), RAVIN_UPDATE_URL="", RAVIN_UPDATE_APP_ROOT=str(self.root),
-                               RAVIN_UPDATE_WORK_DIR=self.base / "work", RAVIN_UPDATE_BACKUP_DIR=self.base / "backups",
-                               RAVIN_TRUSTED_PUBLIC_KEYS=[f"test:{PUB}"], RAVIN_UPDATE_REQUIRE_SIGNED_INDEX=False, RAVIN_UPDATE_WEB_APPLY=True)
+        ov = override_settings(RAVIX_UPDATE_DIR=str(self.dist), RAVIX_UPDATE_URL="", RAVIX_UPDATE_APP_ROOT=str(self.root),
+                               RAVIX_UPDATE_WORK_DIR=self.base / "work", RAVIX_UPDATE_BACKUP_DIR=self.base / "backups",
+                               RAVIX_TRUSTED_PUBLIC_KEYS=[f"test:{PUB}"], RAVIX_UPDATE_REQUIRE_SIGNED_INDEX=False, RAVIX_UPDATE_WEB_APPLY=True)
         ov.enable()
         self.addCleanup(ov.disable)
         from django.core.cache import cache

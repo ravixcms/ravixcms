@@ -20,7 +20,7 @@ class Command(BaseCommand):
         parser.add_argument("--registry", required=True, help="نشانی پایهٔ مخزن، مثلاً https://registry.example.com")
         parser.add_argument("--plugin-version", dest="plugin_version", help="نسخه (پیش‌فرض: آخرین نسخهٔ سازگار)")
         parser.add_argument("--sha256", help="هش مورد انتظار (از صفحهٔ Directory) برای بررسی مستقل")
-        parser.add_argument("--dest", help="پوشهٔ مقصد (پیش‌فرض: RAVIN_PLUGIN_INSTALL_DIR)")
+        parser.add_argument("--dest", help="پوشهٔ مقصد (پیش‌فرض: RAVIX_PLUGIN_INSTALL_DIR)")
         parser.add_argument("--allow-insecure", action="store_true", help="فقط توسعهٔ محلی: اجازهٔ http")
 
     def handle(self, *args, slug, registry, plugin_version, sha256, dest, allow_insecure, **opts):

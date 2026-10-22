@@ -6,7 +6,7 @@ from datetime import timedelta
 from django.conf import settings
 from django.utils import timezone
 
-logger = logging.getLogger("ravin.plugins")
+logger = logging.getLogger("ravix.plugins")
 
 
 def log_event(slug, kind, message, *, level="info", detail="", actor=None):
@@ -42,8 +42,8 @@ def record_error(slug, where, exc):
     logger.error("خطای افزونه %s (%s): %r", slug, where, exc)
     log_event(slug, "error", f"{where}: {type(exc).__name__}: {exc}"[:400], level="error", detail=detail)
     try:
-        limit = int(getattr(settings, "RAVIN_PLUGIN_ERROR_LIMIT", 5))
-        window = int(getattr(settings, "RAVIN_PLUGIN_ERROR_WINDOW", 600))
+        limit = int(getattr(settings, "RAVIX_PLUGIN_ERROR_LIMIT", 5))
+        window = int(getattr(settings, "RAVIX_PLUGIN_ERROR_WINDOW", 600))
         since = timezone.now() - timedelta(seconds=window)
         recent = PluginEvent.objects.filter(slug=slug, kind="error", created_at__gte=since).count()
         if limit > 0 and recent >= limit:

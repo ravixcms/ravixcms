@@ -102,14 +102,14 @@ def extract_to(data: bytes, dest: Path) -> str:
 
 
 def inspect(data: bytes) -> Inspected:
-    max_bytes = getattr(settings, "RAVIN_REGISTRY_MAX_PACKAGE_BYTES", 5 * 1024 * 1024)
+    max_bytes = getattr(settings, "RAVIX_REGISTRY_MAX_PACKAGE_BYTES", 5 * 1024 * 1024)
     if not data:
         raise PackageError("فایلی ارسال نشد.")
     if len(data) > max_bytes:
         raise PackageError(f"حجم بسته بیشتر از {max_bytes // 1024} کیلوبایت است.")
     import json
 
-    with tempfile.TemporaryDirectory(prefix="ravin-pkg-") as tmp:
+    with tempfile.TemporaryDirectory(prefix="ravix-pkg-") as tmp:
         dest = Path(tmp)
         root = extract_to(data, dest)
         pdir = dest / root

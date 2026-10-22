@@ -1,5 +1,5 @@
 {% extends "layouts/panel.html" %}
-{% load ravin_ui %}
+{% load ravix_ui %}
 {% block title %}{{ p.name }}{% endblock %}
 {% block page_title %}{{ p.name }}{% endblock %}
 {% block content %}
@@ -12,12 +12,12 @@
 </div></div>
 <div class="card" style="margin-top:1rem"><div class="card-body">
   <h2>نسخه‌ها و سازگاری</h2>
-  <div class="table-wrap"><table class="table"><thead><tr><th>نسخه</th><th>وضعیت</th><th>سازگاری با این Ravin</th><th>SHA-256</th><th>حجم</th></tr></thead><tbody>
+  <div class="table-wrap"><table class="table"><thead><tr><th>نسخه</th><th>وضعیت</th><th>سازگاری با این Ravix</th><th>SHA-256</th><th>حجم</th></tr></thead><tbody>
   {% for r in rows %}<tr>
     <td class="ltr">{{ r.v.version }}</td>
     <td>{% if r.v.status == 'published' %}<span class="badge badge-published">منتشرشده</span>{% else %}<span class="badge badge-inactive">پس‌گرفته‌شده</span>{% if r.v.yank_reason %}<br>{{ r.v.yank_reason }}{% endif %}{% endif %}</td>
     <td style="white-space:normal">{% if r.compat.ok %}<span class="badge badge-published">سازگار</span>{% else %}<span class="badge badge-inactive">ناسازگار</span><ul class="theme-errors">{% for pr in r.compat.problems %}<li>{{ pr }}</li>{% endfor %}</ul>{% endif %}
-      <br><span class="muted ltr">Ravin {{ r.v.ravin_spec }}</span></td>
+      <br><span class="muted ltr">Ravix {{ r.v.ravin_spec }}</span></td>
     <td class="ltr" style="word-break:break-all;max-width:260px"><code>{{ r.v.sha256 }}</code></td>
     <td class="ltr">{{ r.v.size }} B</td></tr>{% endfor %}
   </tbody></table></div>
@@ -30,5 +30,5 @@
   <p class="muted">یا از خط فرمان:</p>
   <pre class="ltr" dir="ltr" style="overflow:auto"><code>python manage.py plugin_fetch {{ p.slug }} --plugin-version {{ latest.version }} --registry {{ registry_url }} --sha256 {{ latest.sha256 }}</code></pre>
 </div></div>
-{% else %}<div class="form-errors warn" role="status"><p>هیچ نسخهٔ سازگاری با این Ravin وجود ندارد.</p></div>{% endif %}
+{% else %}<div class="form-errors warn" role="status"><p>هیچ نسخهٔ سازگاری با این Ravix وجود ندارد.</p></div>{% endif %}
 {% endblock %}

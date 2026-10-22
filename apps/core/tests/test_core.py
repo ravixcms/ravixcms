@@ -8,7 +8,7 @@ from PIL import Image
 from apps.accounts.permissions import Role
 from apps.accounts.tests.test_auth import make_user
 from apps.core.models import SiteSettings
-from apps.core.templatetags.ravin_ui import fa_digits, icon, jalali
+from apps.core.templatetags.ravix_ui import fa_digits, icon, jalali
 
 
 def png_bytes(size=(20, 20)):

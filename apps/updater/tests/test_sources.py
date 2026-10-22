@@ -68,7 +68,7 @@ class HttpSourceTests(UpdaterCase):
             http_get("http://u.example.com/x", 10)
 
     def test_no_source_configured(self):
-        with override_settings(RAVIN_UPDATE_DIR="", RAVIN_UPDATE_URL=""):
+        with override_settings(RAVIX_UPDATE_DIR="", RAVIX_UPDATE_URL=""):
             self.assertFalse(sources.has_source())
             with self.assertRaisesRegex(UpdateError, "تنظیم نشده"):
                 sources.get_source()

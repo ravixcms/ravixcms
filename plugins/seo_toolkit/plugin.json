@@ -3,9 +3,9 @@
   "name": "ابزار سئو",
   "version": "1.0.0",
   "description": "عنوان، توضیحات متا، noindex، canonical و تصویر اشتراک‌گذاری هر صفحه/نوشته را مدیریت می‌کند و الگوی عنوان سراسری دارد.",
-  "author": "Ravin CMS",
+  "author": "Ravix",
   "api_version": 1,
-  "ravin": ">=0.5.0,<1.0.0",
+  "ravix": ">=0.5.0,<1.0.0",
   "models": true,
   "capabilities": {
     "seo_toolkit.manage": "مدیریت تنظیمات سئوی صفحات"

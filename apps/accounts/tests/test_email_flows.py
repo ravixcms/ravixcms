@@ -94,13 +94,13 @@ class PasswordResetTests(TestCase):
         self.assertEqual(r.status_code, 302)
         self.assertEqual(len(mail.outbox), 0)
 
-    @override_settings(RAVIN_MAIL_LIMIT_PER_EMAIL=2, RAVIN_MAIL_LIMIT_PER_IP=100)
+    @override_settings(RAVIX_MAIL_LIMIT_PER_EMAIL=2, RAVIX_MAIL_LIMIT_PER_IP=100)
     def test_per_email_rate_limit_is_silent_and_uniform(self):
         responses = [self.request_reset("ali@example.com") for _ in range(4)]
         self.assertEqual(len({(r.status_code, r.url) for r in responses}), 1)  # کاربر محدودیت را نمی‌بیند
         self.assertEqual(len(mail.outbox), 2)
 
-    @override_settings(RAVIN_MAIL_LIMIT_PER_EMAIL=100, RAVIN_MAIL_LIMIT_PER_IP=3)
+    @override_settings(RAVIX_MAIL_LIMIT_PER_EMAIL=100, RAVIX_MAIL_LIMIT_PER_IP=3)
     def test_per_ip_rate_limit_applies_across_different_emails(self):
         for i in range(6):
             make_user(f"u{i}")
@@ -162,7 +162,7 @@ class EmailVerificationTests(TestCase):
 
     def test_expired_link_rejected(self):
         url = self.verify_url()
-        with override_settings(RAVIN_EMAIL_VERIFY_MAX_AGE=-1):
+        with override_settings(RAVIX_EMAIL_VERIFY_MAX_AGE=-1):
             r = self.client.post(url)
         self.assertContains(r, "پیوند معتبر نیست")
         self.user.refresh_from_db()
@@ -217,13 +217,13 @@ class EmailVerificationTests(TestCase):
         self.client.post(url, {"email": "sara@example.com"})
         self.assertEqual(len(mail.outbox), 1)  # تأییدشده: ایمیل نمی‌رود، پاسخ همان است
 
-    @override_settings(RAVIN_MAIL_LIMIT_PER_EMAIL=2, RAVIN_MAIL_LIMIT_PER_IP=100)
+    @override_settings(RAVIX_MAIL_LIMIT_PER_EMAIL=2, RAVIX_MAIL_LIMIT_PER_IP=100)
     def test_resend_rate_limited(self):
         for _ in range(5):
             self.client.post(reverse("accounts:verify_resend"), {"email": "sara@example.com"})
         self.assertEqual(len(mail.outbox), 2)
 
-    @override_settings(RAVIN_REQUIRE_EMAIL_VERIFICATION=True)
+    @override_settings(RAVIX_REQUIRE_EMAIL_VERIFICATION=True)
     def test_login_blocked_until_verified_when_required(self):
         r = self.client.post(reverse("accounts:login"), {"username": "sara", "password": STRONG})
         self.assertEqual(r.status_code, 200)
@@ -232,7 +232,7 @@ class EmailVerificationTests(TestCase):
         r = self.client.post(reverse("accounts:login"), {"username": "sara", "password": STRONG})
         self.assertEqual(r.status_code, 302)
 
-    @override_settings(RAVIN_REQUIRE_EMAIL_VERIFICATION=True)
+    @override_settings(RAVIX_REQUIRE_EMAIL_VERIFICATION=True)
     def test_registration_does_not_auto_login_when_required(self):
         data = {"username": "newbie", "first_name": "ن", "last_name": "ر", "email": "newbie@example.com", "password1": STRONG, "password2": STRONG}
         r = self.client.post(reverse("accounts:register"), data)

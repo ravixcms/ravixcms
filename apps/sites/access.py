@@ -20,7 +20,7 @@ def default_site() -> Site:
 
 
 def multisite_enabled() -> bool:
-    return bool(getattr(settings, "RAVIN_MULTISITE_ENABLED", False))
+    return bool(getattr(settings, "RAVIX_MULTISITE_ENABLED", False))
 
 
 def can_access_site(user, site, *, roles=None) -> bool:
@@ -54,7 +54,7 @@ def models_q(user):
     return Q(owner=user) | Q(members__user=user)
 
 
-SESSION_KEY = "ravin_active_site"
+SESSION_KEY = "ravix_active_site"
 
 
 def panel_site(request):

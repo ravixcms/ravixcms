@@ -34,7 +34,7 @@ class LoginForm(StyledFormMixin, AuthenticationForm):
 
     def confirm_login_allowed(self, user):
         super().confirm_login_allowed(user)
-        if settings.RAVIN_REQUIRE_EMAIL_VERIFICATION and not user.email_verified_at:
+        if settings.RAVIX_REQUIRE_EMAIL_VERIFICATION and not user.email_verified_at:
             raise forms.ValidationError(self.error_messages["unverified"], code="unverified")
 
     def clean(self):

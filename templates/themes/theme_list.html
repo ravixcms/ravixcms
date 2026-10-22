@@ -1,5 +1,5 @@
 {% extends "layouts/panel.html" %}
-{% load ravin_ui static %}
+{% load ravix_ui static %}
 {% block title %}قالب‌ها{% endblock %}
 {% block page_title %}قالب‌ها{% endblock %}
 {% block content %}
@@ -39,7 +39,7 @@
       <span id="upload-status" class="muted" role="status" aria-live="polite" hidden>در حال بارگذاری و بررسی؛ لطفاً صبر کنید…</span>
     </form>
     {% else %}
-    <p class="muted">نصب قالب از پنل در این سرور <strong>خاموش</strong> است. مدیر سرور باید آگاهانه <span class="ltr">RAVIN_THEME_WEB_INSTALL=true</span> را تنظیم کند و پوشهٔ <span class="ltr">RAVIN_THEME_INSTALL_DIR</span> را برای سرویس قابل‌نوشتن کند. راهنما: <span class="ltr">docs/themes.md</span>.</p>
+    <p class="muted">نصب قالب از پنل در این سرور <strong>خاموش</strong> است. مدیر سرور باید آگاهانه <span class="ltr">RAVIX_THEME_WEB_INSTALL=true</span> را تنظیم کند و پوشهٔ <span class="ltr">RAVIX_THEME_INSTALL_DIR</span> را برای سرویس قابل‌نوشتن کند. راهنما: <span class="ltr">docs/themes.md</span>.</p>
     {% endif %}
   </div>
 </section>

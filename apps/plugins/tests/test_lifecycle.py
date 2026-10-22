@@ -37,7 +37,7 @@ class DiscoveryTests(PluginTestCase):
         services.overview()
         discovery.discover()
         self.assertFalse(marker.exists())
-        self.assertNotIn("ravin_plugins.sneaky", sys.modules)
+        self.assertNotIn("ravix_plugins.sneaky", sys.modules)
 
     def test_symlink_rejected(self):
         root = self.write_plugin("linky")
@@ -118,10 +118,10 @@ class InstallSecurityTests(PluginTestCase):
     def test_unapproved_plugin_cannot_be_imported(self):
         self.write_plugin("ghost")
         with self.assertRaises(ImportError):
-            __import__("ravin_plugins.ghost")
+            __import__("ravix_plugins.ghost")
 
     def test_incompatible_plugin_refused(self):
-        self.write_plugin("future", manifest=base_manifest("future", ravin=">=9.0.0"))
+        self.write_plugin("future", manifest=base_manifest("future", ravix=">=9.0.0"))
         with self.assertRaises(PluginError) as cm:
             self.install("future")
         self.assertIn("ناسازگار", str(cm.exception))
@@ -144,12 +144,12 @@ class InstallSecurityTests(PluginTestCase):
         self.write_plugin("demo")
         self.install_activate("demo")
         self.assertEqual(Client().get("/ext/demo/ping").status_code, 200)
-        with override_settings(RAVIN_PLUGINS_SAFE_MODE=True):
+        with override_settings(RAVIX_PLUGINS_SAFE_MODE=True):
             self.invalidate()
             self.assertEqual(Client().get("/ext/demo/ping").status_code, 404)
             self.login(self.admin)
             self.assertEqual(self.client.get(reverse("plugins:list")).status_code, 200)  # مدیریت در دسترس می‌ماند
-        with override_settings(RAVIN_PLUGINS_ENABLED=False):
+        with override_settings(RAVIX_PLUGINS_ENABLED=False):
             self.invalidate()
             self.assertEqual(Client().get("/ext/demo/ping").status_code, 404)
         self.invalidate()
@@ -344,7 +344,7 @@ def ping(request, api):
     def test_circuit_breaker_auto_disables(self):
         self.write_plugin("bad", views=self.BAD_VIEWS)
         self.install_activate("bad")
-        with override_settings(RAVIN_PLUGIN_ERROR_LIMIT=3, RAVIN_PLUGIN_ERROR_WINDOW=600):
+        with override_settings(RAVIX_PLUGIN_ERROR_LIMIT=3, RAVIX_PLUGIN_ERROR_WINDOW=600):
             for _ in range(3):
                 Client().get("/ext/bad/ping")
         rec = PluginRecord.objects.get(slug="bad")
@@ -378,7 +378,7 @@ def ping(request, api):
             services.activate("nofunc", self.admin)
 
     def test_relative_module_refs_cannot_reach_stdlib(self):
-        # «os:system» به ravin_ups.<slug>.os اشاره می‌کند (نه ماژول os) و وجود ندارد ← بارگذاری رد می‌شود
+        # «os:system» به ravix_ups.<slug>.os اشاره می‌کند (نه ماژول os) و وجود ندارد ← بارگذاری رد می‌شود
         m = base_manifest("evil", public_routes=[{"path": "x", "view": "os:system"}])
         self.write_plugin("evil", manifest=m)
         self.install("evil")

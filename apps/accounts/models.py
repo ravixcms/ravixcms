@@ -16,7 +16,7 @@ class UserManager(DjangoUserManager):
 
 
 class User(AbstractUser):
-    """کاربر سفارشی Ravin با نقش، پروفایل و ایمیل یکتا."""
+    """کاربر سفارشی Ravix با نقش، پروفایل و ایمیل یکتا."""
 
     email = models.EmailField(
         "ایمیل",

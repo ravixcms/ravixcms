@@ -16,7 +16,7 @@ class Command(BaseCommand):
                     v.save(update_fields=["signature", "signature_key_id"])
                     n += 1
                 else:
-                    raise CommandError("کلید امضای مخزن تنظیم نشده است (RAVIN_REGISTRY_SIGNING_KEY_FILE یا RAVIN_REGISTRY_SIGNING_KEY).")
+                    raise CommandError("کلید امضای مخزن تنظیم نشده است (RAVIX_REGISTRY_SIGNING_KEY_FILE یا RAVIX_REGISTRY_SIGNING_KEY).")
             except services.HubError as exc:
                 raise CommandError(str(exc))
         self.stdout.write(f"{n} نسخه امضا شد.")

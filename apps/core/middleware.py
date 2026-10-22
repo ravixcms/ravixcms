@@ -17,9 +17,9 @@ class SecurityHeadersMiddleware:
 
     def __call__(self, request):
         response = self.get_response(request)
-        csp = getattr(settings, "RAVIN_CSP", DEFAULT_CSP)
+        csp = getattr(settings, "RAVIX_CSP", DEFAULT_CSP)
         if csp and "Content-Security-Policy" not in response:
-            name = "Content-Security-Policy-Report-Only" if getattr(settings, "RAVIN_CSP_REPORT_ONLY", False) else "Content-Security-Policy"
+            name = "Content-Security-Policy-Report-Only" if getattr(settings, "RAVIX_CSP_REPORT_ONLY", False) else "Content-Security-Policy"
             response[name] = csp
         response.setdefault("Permissions-Policy", PERMISSIONS_POLICY)
         return response

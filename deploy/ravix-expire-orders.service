@@ -1,0 +1,9 @@
+[Unit]
+Description=Ravix - cancel expired unpaid orders and release stock
+
+[Service]
+Type=oneshot
+User=ravix
+EnvironmentFile=/etc/ravix/ravix.env
+WorkingDirectory=/srv/ravix/app
+ExecStart=/srv/ravix/venv/bin/python manage.py shop_expire_orders

@@ -1,5 +1,5 @@
-"""فروشگاه اختیاری است: با RAVIN_SHOP_ENABLED=false هسته (سایت، پنل، API، نقشهٔ سایت) بدون فروشگاه کار می‌کند.
-اجرا: RAVIN_SHOP_ENABLED=false python manage.py test apps.core.tests.test_shop_optional"""
+"""فروشگاه اختیاری است: با RAVIX_SHOP_ENABLED=false هسته (سایت، پنل، API، نقشهٔ سایت) بدون فروشگاه کار می‌کند.
+اجرا: RAVIX_SHOP_ENABLED=false python manage.py test apps.core.tests.test_shop_optional"""
 import unittest
 
 from django.apps import apps

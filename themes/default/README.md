@@ -1,6 +1,6 @@
-# قالب پیش‌فرض راوین (`default`)
+# قالب پیش‌فرض راویکس (`default`)
 
-قالب مرجع Ravin CMS. برای ساخت قالب جدید از روی آن:
+قالب مرجع Ravix. برای ساخت قالب جدید از روی آن:
 
 ```bash
 python manage.py startheme my-theme

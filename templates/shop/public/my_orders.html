@@ -1,4 +1,4 @@
-{% load ravin_ui %}
+{% load ravix_ui %}
 {% if orders %}<table><thead><tr><th>شماره</th><th>تاریخ</th><th>وضعیت</th><th>مبلغ</th></tr></thead><tbody>
 {% for o in orders %}<tr><td><a href="{{ o.get_public_url }}">{{ o.number }}</a></td><td>{{ o.created_at|date:"Y/m/d" }}</td><td>{{ o.get_status_display }}</td><td>{{ o.total|money }} {{ currency }}</td></tr>{% endfor %}</tbody></table>
 {% else %}<p>هنوز سفارشی ثبت نکرده‌اید.</p>{% endif %}

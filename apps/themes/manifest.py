@@ -12,6 +12,8 @@ from pathlib import Path
 
 from django.template import TemplateSyntaxError
 
+from apps.core.deprecation import upgrade_legacy_key, warn_legacy
+
 from .constants import (
     ALLOWED_EXTENSIONS,
     ALLOWED_LIBRARIES,
@@ -44,7 +46,7 @@ class ThemeInfo:
     description: str = ""
     screenshot: str = ""
     home_sections: tuple[str, ...] = tuple(HOME_SECTION_TYPES)
-    ravin: str = ""  # بازهٔ سازگاری با هسته (اختیاری)، مثل ">=0.6,<1.0"
+    ravix: str = ""  # بازهٔ سازگاری با هسته (اختیاری)، مثل ">=0.6,<1.0"
     errors: tuple[str, ...] = field(default_factory=tuple)
 
     @property
@@ -130,8 +132,10 @@ def _scan_templates(theme_dir: Path, errors: list) -> None:
             parts = match.group(1).split()
             libs = parts[parts.index("from") + 1 :] if "from" in parts else parts
             for lib in libs:
+                if lib == "ravin_theme":
+                    warn_legacy("{% load ravin_theme %}", "{% load ravix_theme %}")
                 if lib not in ALLOWED_LIBRARIES:
-                    errors.append(f"بارگذاری کتابخانه «{lib}» در «{rel}» مجاز نیست (فقط ravin_theme).")
+                    errors.append(f"بارگذاری کتابخانه «{lib}» در «{rel}» مجاز نیست (فقط ravix_theme).")
         if DEBUG_TAG_RE.search(source):
             errors.append(f"تگ {{% debug %}} در «{rel}» مجاز نیست.")
         try:
@@ -173,7 +177,7 @@ def inspect_theme_dir(theme_dir: Path) -> ThemeInfo:
         except (ValueError, UnicodeDecodeError) as exc:
             errors.append(f"theme.json معتبر نیست: {exc}")
 
-    name = version = author = description = screenshot = ravin = ""
+    name = version = author = description = screenshot = ravix = ""
     home_sections = tuple(HOME_SECTION_TYPES)
     if data:
         if data.get("api_version") != API_VERSION:
@@ -185,13 +189,14 @@ def inspect_theme_dir(theme_dir: Path) -> ThemeInfo:
         if version and not VERSION_RE.match(version):
             errors.append("«version» باید به شکل نسخه‌دهی معنایی باشد (مثلاً 1.0.0).")
         author = _str_field(data, "author", errors, max_len=80)
-        ravin = _str_field(data, "ravin", errors, max_len=50, required=False)
-        if ravin:
+        data = upgrade_legacy_key(data, f"theme.json ({slug})")
+        ravix = _str_field(data, "ravix", errors, max_len=50, required=False)
+        if ravix:
             from apps.plugins.versions import is_valid_spec
 
-            if not is_valid_spec(ravin):
-                errors.append("«ravin» باید بازهٔ نسخه باشد (مثلاً >=0.6,<1.0).")
-                ravin = ""
+            if not is_valid_spec(ravix):
+                errors.append("«ravix» باید بازهٔ نسخه باشد (مثلاً >=0.6,<1.0).")
+                ravix = ""
         description = _str_field(data, "description", errors, max_len=300, required=False)
         screenshot = _str_field(data, "screenshot", errors, max_len=100, required=False)
         if screenshot:
@@ -224,6 +229,6 @@ def inspect_theme_dir(theme_dir: Path) -> ThemeInfo:
         description=description,
         screenshot=screenshot,
         home_sections=home_sections,
-        ravin=ravin,
+        ravix=ravix,
         errors=tuple(dict.fromkeys(errors)),
     )

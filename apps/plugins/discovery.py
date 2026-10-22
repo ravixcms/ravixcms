@@ -1,5 +1,5 @@
 """
-شناسایی افزونه‌های معتبر. فقط پوشه‌های فهرست‌شده در ``RAVIN_PLUGIN_DIRS`` (تنظیم سرور، نه ورودی کاربر) بررسی می‌شوند و فقط
+شناسایی افزونه‌های معتبر. فقط پوشه‌های فهرست‌شده در ``RAVIX_PLUGIN_DIRS`` (تنظیم سرور، نه ورودی کاربر) بررسی می‌شوند و فقط
 ``plugin.json`` خوانده می‌شود؛ هیچ کدی import نمی‌شود. افزونهٔ نامعتبر در فهرست با دلیل خطا نمایش داده می‌شود.
 """
 from dataclasses import dataclass, field
@@ -27,7 +27,7 @@ class Discovered:
 
 
 def plugin_dirs() -> list[Path]:
-    return [Path(p) for p in getattr(settings, "RAVIN_PLUGIN_DIRS", [])]
+    return [Path(p) for p in getattr(settings, "RAVIX_PLUGIN_DIRS", [])]
 
 
 def _inspect(path: Path) -> Discovered:

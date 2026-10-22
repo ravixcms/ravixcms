@@ -73,7 +73,7 @@ class PackageValidationTests(HubTestCase):
 
     def test_zip_bomb_and_limits(self):
         big = make_zip(extra={"demo_plugin/big.bin": b"\0" * (9 * 1024 * 1024)})
-        with override_settings(RAVIN_REGISTRY_MAX_PACKAGE_BYTES=5 * 1024 * 1024):
+        with override_settings(RAVIX_REGISTRY_MAX_PACKAGE_BYTES=5 * 1024 * 1024):
             self.assertLess(len(big), 5 * 1024 * 1024)  # فشرده کوچک، بازشده بزرگ
             self.bad(big, "حجم")
 

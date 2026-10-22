@@ -96,7 +96,7 @@ class ThemeListView(ThemesAdminMixin, TemplateView):
             default_slug=DEFAULT_THEME,
             draft_theme=(cfg.draft or {}).get("theme") if cfg.draft else None,
             can_install=self.request.user.has_cap(installer.CAPABILITY),
-            web_install=bool(settings.RAVIN_THEME_WEB_INSTALL),
+            web_install=bool(settings.RAVIX_THEME_WEB_INSTALL),
             upload_form=ThemeUploadForm(),
             limits={"zip_bytes": MAX_ZIP_BYTES, "zip_mb": MAX_ZIP_BYTES // (1024 * 1024), "extracted_mb": MAX_EXTRACTED_BYTES // (1024 * 1024), "files": MAX_FILES},
             installed=installed if installed in themes else "",

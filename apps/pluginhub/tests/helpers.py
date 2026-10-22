@@ -14,7 +14,7 @@ from apps.pluginhub.models import Category, Publisher, PublisherToken
 
 def manifest(slug="demo_plugin", version="1.0.0", **over):
     m = {"slug": slug, "name": "افزونهٔ نمونه", "version": version, "description": "توضیح", "author": "ناشر", "api_version": 1,
-         "ravin": ">=0.5.0,<1.0.0", "category": "tools", "license": "MIT"}
+         "ravix": ">=0.5.0,<1.0.0", "category": "tools", "license": "MIT"}
     m.update(over)
     return m
 
@@ -37,7 +37,7 @@ class HubTestCase(TestCase):
     def setUp(self):
         cache.clear()
         self._tmp = tempfile.mkdtemp(prefix="hub-test-")
-        self._ov = override_settings(RAVIN_REGISTRY_STORAGE=self._tmp)
+        self._ov = override_settings(RAVIX_REGISTRY_STORAGE=self._tmp)
         self._ov.enable()
         self.super = make_user("root", Role.SUPER_ADMIN)
         self.admin = make_user("boss", Role.ADMIN)

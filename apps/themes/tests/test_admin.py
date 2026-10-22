@@ -48,7 +48,7 @@ class ThemeManagementTests(ThemeDirMixin, TestCase):
 
     def test_list_shows_installed_themes(self):
         resp = self.client.get(reverse("themes:list"))
-        self.assertContains(resp, "پیش‌فرض راوین")
+        self.assertContains(resp, "پیش‌فرض راویکس")
         self.assertContains(resp, "قالب custom")
 
     def test_invalid_theme_is_listed_but_cannot_be_activated(self):

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load ravin_ui %}
+{% load ravix_ui %}
 {% block body %}
 <div class="panel">
   <aside class="sidebar" id="sidebar" aria-label="منوی اصلی">
@@ -44,7 +44,7 @@
     <main class="content {% block content_class %}{% endblock %}">
       {% block content %}{% endblock %}
     </main>
-    <footer class="site-footer">{% if site.footer_text %}{{ site.footer_text }}{% else %}Ravin CMS — نسخه ۰٫۱{% endif %}</footer>
+    <footer class="site-footer">{% if site.footer_text %}{{ site.footer_text }}{% else %}Ravix — نسخه ۰٫۱{% endif %}</footer>
   </div>
 </div>
 {% endblock %}

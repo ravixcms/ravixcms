@@ -21,16 +21,16 @@ def _urls(instance):
 
 
 def _remember_old_state(sender, instance, **kwargs):
-    instance._ravin_old = None
+    instance._ravix_old = None
     if instance.pk:
         old = sender.objects.filter(pk=instance.pk).first()
         if old is not None:
-            instance._ravin_old = (_urls(old), old.is_live)
+            instance._ravix_old = (_urls(old), old.is_live)
 
 
 def _create_redirect_on_slug_change(sender, instance, created, **kwargs):
-    old = getattr(instance, "_ravin_old", None)
-    instance._ravin_old = None
+    old = getattr(instance, "_ravix_old", None)
+    instance._ravix_old = None
     if created or old is None:
         return
     old_url, was_live = old
@@ -51,5 +51,5 @@ def _create_redirect_on_slug_change(sender, instance, created, **kwargs):
 
 
 for _model in (Post, Page):
-    pre_save.connect(_remember_old_state, sender=_model, dispatch_uid=f"ravin_redirect_pre_{_model.__name__}")
-    post_save.connect(_create_redirect_on_slug_change, sender=_model, dispatch_uid=f"ravin_redirect_post_{_model.__name__}")
+    pre_save.connect(_remember_old_state, sender=_model, dispatch_uid=f"ravix_redirect_pre_{_model.__name__}")
+    post_save.connect(_create_redirect_on_slug_change, sender=_model, dispatch_uid=f"ravix_redirect_post_{_model.__name__}")

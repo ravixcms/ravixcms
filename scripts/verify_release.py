@@ -4,7 +4,7 @@
 استفاده:  python scripts/verify_release.py dist/ravix-X.Y.Z.zip [--version X.Y.Z]
 
 بررسی می‌کند:
-  ۱) پیشوند پوشهٔ ریشه «ravix-X.Y.Z/» و برابری X.Y.Z با RAVIN_VERSION درون خود بسته (و با --version اگر داده شود)؛
+  ۱) پیشوند پوشهٔ ریشه «ravix-X.Y.Z/» و برابری X.Y.Z با RAVIX_VERSION درون خود بسته (و با --version اگر داده شود)؛
   ۲) وجود فایل‌های ضروری نصب/اجرا؛
   ۳) نبود فایل‌های ممنوع (آزمون‌ها، .github، پایگاه‌داده، .env، کلید، media، venv، کش‌ها و …) — بستهٔ کاربر ≠ بستهٔ توسعه؛
   ۴) نبود الگوهای اسرار (کلید خصوصی، توکن‌های شناخته‌شده) در فایل‌های متنی؛
@@ -20,9 +20,9 @@ from pathlib import Path
 REQUIRED = [
     "manage.py", "requirements.txt", "requirements.lock", "LICENSE", "README.md", "CHANGELOG.md", "SECURITY.md",
     "THIRD_PARTY_NOTICES.md", ".env.example", "config/settings/base.py", "config/settings/production.py",
-    "apps/core/version.py", "deploy/ravin.service", "deploy/nginx-ravin.conf", "deploy/gunicorn.conf.py",
+    "apps/core/version.py", "deploy/ravix.service", "deploy/nginx-ravix.conf", "deploy/gunicorn.conf.py",
     "deploy/backup.sh", "deploy/restore.sh", "docs/deployment.md", "docs/upgrade.md", "docs/themes.md",
-    "themes/default/theme.json", "themes/default/templates/base.html", "static/css/ravin.css",
+    "themes/default/theme.json", "themes/default/templates/base.html", "static/css/ravix.css",
     "scripts/vps_smoke.sh",
 ]
 # هر الگو روی مسیر نسبی (بدون پیشوند ریشه) آزموده می‌شود.
@@ -77,9 +77,9 @@ def main(argv):
     rel = [n[len(root):] for n in names] if root else names
 
     ver_file = next((n for n in names if n.endswith("apps/core/version.py")), None)
-    inner = re.search(r'RAVIN_VERSION = "([^"]+)"', zf.read(ver_file).decode()).group(1) if ver_file else None
-    base = lambda v: v.split("-")[0]  # v0.6.1-rc1 ← RAVIN_VERSION = 0.6.1 (مثل مرحلهٔ تطبیق تگ در release.yml)
-    check("RAVIN_VERSION درون بسته با شمارهٔ نسخهٔ نام فایل یکی است", m and inner == base(m.group(1)), f"{inner} ≠ {m.group(1) if m else '?'}")
+    inner = re.search(r'RAVIX_VERSION = "([^"]+)"', zf.read(ver_file).decode()).group(1) if ver_file else None
+    base = lambda v: v.split("-")[0]  # v0.6.1-rc1 ← RAVIX_VERSION = 0.6.1 (مثل مرحلهٔ تطبیق تگ در release.yml)
+    check("RAVIX_VERSION درون بسته با شمارهٔ نسخهٔ نام فایل یکی است", m and inner == base(m.group(1)), f"{inner} ≠ {m.group(1) if m else '?'}")
     if want:
         check("نسخهٔ بسته با --version یکی است", inner == base(want), f"{inner} ≠ {want}")
 

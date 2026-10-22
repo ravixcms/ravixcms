@@ -1,5 +1,5 @@
 {% extends "layouts/panel.html" %}
-{% load ravin_ui %}
+{% load ravix_ui %}
 {% block title %}{{ p.name }}{% endblock %}
 {% block page_title %}{{ p.name }}{% endblock %}
 {% block content %}
@@ -7,7 +7,7 @@
 <form method="post">{% csrf_token %}<div class="card" style="margin-bottom:1.25rem"><div class="card-body">{% include "partials/_form_errors.html" with form=form %}{% for field in form %}{% include "partials/_field.html" with field=field %}{% endfor %}<button class="btn" type="submit">ذخیرهٔ مشخصات</button></div></div></form>
 <div class="card"><div class="table-wrap"><table class="table"><thead><tr><th>نسخه</th><th>وضعیت</th><th>سازگاری</th><th>SHA-256</th><th>دریافت</th><th></th></tr></thead><tbody>
 {% for v in versions %}<tr><td class="ltr">{{ v.version }}</td><td>{{ v.get_status_display }}{% if v.yank_reason %}<br>{{ v.yank_reason }}{% endif %}</td>
-<td class="ltr">Ravin {{ v.ravin_spec }}</td><td class="ltr" style="word-break:break-all;max-width:220px"><code>{{ v.sha256|slice:":16" }}…</code></td><td>{{ v.downloads|fa_digits }}</td>
+<td class="ltr">Ravix {{ v.ravin_spec }}</td><td class="ltr" style="word-break:break-all;max-width:220px"><code>{{ v.sha256|slice:":16" }}…</code></td><td>{{ v.downloads|fa_digits }}</td>
 <td style="display:flex;gap:.4rem;flex-wrap:wrap">
 {% if v.status == 'draft' %}<form method="post" action="{% url 'pluginhub:version_action' p.slug v.version 'publish' %}">{% csrf_token %}<button class="btn btn-sm">انتشار</button></form>
 <form method="post" action="{% url 'pluginhub:version_action' p.slug v.version 'delete' %}">{% csrf_token %}<button class="btn btn-danger btn-sm">حذف</button></form>{% endif %}

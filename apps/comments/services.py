@@ -57,7 +57,7 @@ def rate_limited(request) -> bool:
     """هر تلاش (پذیرفته یا ردشده) شمرده می‌شود؛ True = از حد گذشته."""
     ip = throttle.client_ip(request)
     key = f"comment-hit:{hashlib.sha256(ip.encode()).hexdigest()[:24]}"
-    window = settings.RAVIN_COMMENT_WINDOW_SECONDS
+    window = settings.RAVIX_COMMENT_WINDOW_SECONDS
 
     def hit(c):
         c.add(key, 0, window)
@@ -67,7 +67,7 @@ def rate_limited(request) -> bool:
             c.set(key, 1, window)
             return 1
 
-    return throttle._with_cache(hit) > settings.RAVIN_COMMENT_LIMIT_PER_IP
+    return throttle._with_cache(hit) > settings.RAVIX_COMMENT_LIMIT_PER_IP
 
 
 def validate_fields(name, email, body, parent_id, post):
@@ -81,8 +81,8 @@ def validate_fields(name, email, body, parent_id, post):
         validate_email(email)
     except ValidationError:
         errors["email"] = "ایمیل معتبر وارد کنید. ایمیل شما نمایش داده نمی‌شود."
-    if len(body) > settings.RAVIN_COMMENT_MAX_LENGTH:
-        errors["body"] = f"متن دیدگاه حداکثر {settings.RAVIN_COMMENT_MAX_LENGTH} نویسه می‌تواند باشد."
+    if len(body) > settings.RAVIX_COMMENT_MAX_LENGTH:
+        errors["body"] = f"متن دیدگاه حداکثر {settings.RAVIX_COMMENT_MAX_LENGTH} نویسه می‌تواند باشد."
     elif len(plain_text(clean_body(body))) < 2:
         errors["body"] = "متن دیدگاه را بنویسید."
     parent = None
@@ -91,7 +91,7 @@ def validate_fields(name, email, body, parent_id, post):
             parent = Comment.objects.filter(pk=int(parent_id), post=post, status=Comment.Status.APPROVED).first()
         except (TypeError, ValueError):
             parent = None
-        if parent is None or parent.depth >= settings.RAVIN_COMMENT_MAX_DEPTH:
+        if parent is None or parent.depth >= settings.RAVIX_COMMENT_MAX_DEPTH:
             errors["form"] = "امکان پاسخ به این دیدگاه وجود ندارد."
     return name, email, body, parent, errors
 

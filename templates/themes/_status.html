@@ -1,4 +1,4 @@
-{% load ravin_ui %}
+{% load ravix_ui %}
 <nav class="tabs" aria-label="بخش‌های سفارشی‌سازی">
   <a class="tab {% if tab == 'appearance' %}active{% endif %}" href="{% url 'themes:customize' %}" {% if tab == 'appearance' %}aria-current="page"{% endif %}>رنگ، فونت و لوگو</a>
   <a class="tab {% if tab == 'layout' %}active{% endif %}" href="{% url 'themes:layout' %}" {% if tab == 'layout' %}aria-current="page"{% endif %}>سربرگ و پانویس</a>

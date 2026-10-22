@@ -92,18 +92,18 @@ def snapshot(path: Path):
 
 
 class UploadCase(TestCase):
-    """هر آزمون: پوشهٔ نصب موقت، RAVIN_THEME_WEB_INSTALL روشن و یک مدیرکل واردشده."""
+    """هر آزمون: پوشهٔ نصب موقت، RAVIX_THEME_WEB_INSTALL روشن و یک مدیرکل واردشده."""
 
     def setUp(self):
         super().setUp()
-        self.tmp = Path(tempfile.mkdtemp(prefix="ravin-theme-up-"))
+        self.tmp = Path(tempfile.mkdtemp(prefix="ravix-theme-up-"))
         self.install_dir = self.tmp / "installed"
         self.install_dir.mkdir(mode=0o750)
         self.addCleanup(shutil.rmtree, self.tmp, True)
         ov = override_settings(
-            RAVIN_THEME_INSTALL_DIR=self.install_dir,
-            RAVIN_THEME_DIRS=[BASE_THEMES, self.install_dir],
-            RAVIN_THEME_WEB_INSTALL=True,
+            RAVIX_THEME_INSTALL_DIR=self.install_dir,
+            RAVIX_THEME_DIRS=[BASE_THEMES, self.install_dir],
+            RAVIX_THEME_WEB_INSTALL=True,
         )
         ov.enable()
         self.addCleanup(ov.disable)
@@ -287,9 +287,9 @@ class PathAttackTests(UploadCase):
         self.assert_nothing_escaped()
 
     def test_absolute_path(self):
-        entries = [(f"my-theme/{k}", v) for k, v in default_files().items()] + [("/var/tmp/ravin-evil-test.txt", b"x")]
+        entries = [(f"my-theme/{k}", v) for k, v in default_files().items()] + [("/var/tmp/ravix-evil-test.txt", b"x")]
         self.assert_rejected(raw_zip(entries), security=True, expect="مسیر مطلق")
-        self.assertFalse(Path("/var/tmp/ravin-evil-test.txt").exists())
+        self.assertFalse(Path("/var/tmp/ravix-evil-test.txt").exists())
         self.assert_nothing_escaped()
 
     def test_windows_drive_and_backslash(self):
@@ -430,7 +430,7 @@ class ConflictTests(UploadCase):
         extra = self.tmp / "extra"
         (extra / "manual").mkdir(parents=True)
         (extra / "manual" / "keep.txt").write_text("mine")
-        with override_settings(RAVIN_THEME_DIRS=[BASE_THEMES, extra, self.install_dir]):
+        with override_settings(RAVIX_THEME_DIRS=[BASE_THEMES, extra, self.install_dir]):
             registry.clear_cache()
             resp = upload(self.client, build_zip("manual"))
         self.assertEqual(resp.status_code, 400)
@@ -499,7 +499,7 @@ class AccessTests(UploadCase):
         self.assertEqual(self.installed_names(), [])
 
     def test_web_install_flag_off_rejects_without_touching_files(self):
-        with override_settings(RAVIN_THEME_WEB_INSTALL=False):
+        with override_settings(RAVIX_THEME_WEB_INSTALL=False):
             before = snapshot(self.install_dir)
             resp = upload(self.client, build_zip())
             self.assertEqual(resp.status_code, 400)
@@ -510,7 +510,7 @@ class AccessTests(UploadCase):
 
     def test_flag_default_is_off(self):
         text = (Path(settings.BASE_DIR) / "config/settings/base.py").read_text(encoding="utf-8")
-        self.assertIn('env_bool("RAVIN_THEME_WEB_INSTALL", False)', text)
+        self.assertIn('env_bool("RAVIX_THEME_WEB_INSTALL", False)', text)
 
 
 # ====================================================================== قفل هم‌زمانی
@@ -691,7 +691,7 @@ class PanelTests(UploadCase):
         self.assertNotContains(page, "بارگذاری قالب (ZIP)")
 
     def test_flag_off_shows_explanation_instead_of_form(self):
-        with override_settings(RAVIN_THEME_WEB_INSTALL=False):
+        with override_settings(RAVIX_THEME_WEB_INSTALL=False):
             page = self.client.get(reverse("themes:list"))
         self.assertContains(page, "خاموش")
         self.assertNotContains(page, 'name="theme_zip"')
@@ -748,7 +748,7 @@ class PanelTests(UploadCase):
         m = json.loads((manual / "older/theme.json").read_text())
         m.update(slug="older", name="Older")
         (manual / "older/theme.json").write_text(json.dumps(m))
-        with override_settings(RAVIN_THEME_DIRS=[BASE_THEMES, manual, self.install_dir]):
+        with override_settings(RAVIX_THEME_DIRS=[BASE_THEMES, manual, self.install_dir]):
             registry.clear_cache()
             upload(self.client, build_zip("newer"))
             themes = registry.get_themes(refresh=True)

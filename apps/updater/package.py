@@ -164,7 +164,7 @@ def validate_core(root: Path, expected_version: str) -> Extracted:
                 raise UpdateError("بستهٔ هسته فقط می‌تواند قالب «default» را شامل شود.")
     inner = versions.version_in_file(root / "apps/core/version.py")
     if inner != expected_version:
-        raise UpdateError(f"RAVIN_VERSION داخل بسته ({inner}) با نسخهٔ اعلام‌شده ({expected_version}) یکی نیست.")
+        raise UpdateError(f"RAVIX_VERSION داخل بسته ({inner}) با نسخهٔ اعلام‌شده ({expected_version}) یکی نیست.")
     files = _scan_secrets_and_syntax(root, python_ok=True)
     return Extracted(root, rel, files)
 
@@ -180,4 +180,4 @@ def validate_theme(root: Path, slug: str, expected_version: str) -> Extracted:
         raise UpdateError("قالب نامعتبر است: " + "؛ ".join(info.errors[:5]))
     if info.version != expected_version:
         raise UpdateError(f"نسخهٔ داخل theme.json ({info.version}) با نسخهٔ درخواستی ({expected_version}) یکی نیست.")
-    return Extracted(root, {"component": "theme", "version": info.version, "requires": {"ravin": getattr(info, "ravin", "")}}, files)
+    return Extracted(root, {"component": "theme", "version": info.version, "requires": {"ravix": getattr(info, "ravix", ""), "ravin": getattr(info, "ravix", "")}}, files)

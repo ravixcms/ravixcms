@@ -7,7 +7,7 @@
 
 پیش‌نیاز (یک‌بار):  pip install playwright && playwright install chromium
 اجرا:               python scripts/e2e_builder.py            (از ریشه‌ی پروژه، با python‌ای که Django نصب است یا نیست)
-متغیرها:            RAVIN_PYTHON (مفسر پروژه؛ پیش‌فرض .venv/bin/python)، CHROMIUM_PATH (مسیر Chromium در صورت نیاز)،
+متغیرها:            RAVIX_PYTHON (مفسر پروژه؛ پیش‌فرض .venv/bin/python)، CHROMIUM_PATH (مسیر Chromium در صورت نیاز)،
                     HEADED=1 (نمایش مرورگر)، SLOWMO=300 (کندتر؛ برای تماشای Drag & Drop)
 خروجی: کد 0 اگر همه‌ی بررسی‌ها موفق باشند.
 """
@@ -25,7 +25,7 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parent.parent
-PY = os.environ.get("RAVIN_PYTHON") or str(ROOT / ".venv" / "bin" / "python")
+PY = os.environ.get("RAVIX_PYTHON") or str(ROOT / ".venv" / "bin" / "python")
 PASSWORD = "Pass12345!xyz"
 results = []
 
@@ -72,7 +72,7 @@ print("seeded")
 
 
 def main():
-    tmp = Path(tempfile.mkdtemp(prefix="ravin-e2e-"))
+    tmp = Path(tempfile.mkdtemp(prefix="ravix-e2e-"))
     started = time.time()
     port = free_port()
     base = f"http://127.0.0.1:{port}"
@@ -207,7 +207,7 @@ def run_scenarios(base):
 
         print("\n[۵] تنظیمات المان انتخاب‌شده (متن، رنگ، اندازه، پس‌زمینه، حاشیه، فاصله)")
         page.click("#bx-canvas .bx-heading .bx-core")
-        page.fill('[data-testid="f-text"]', "خوش آمدید به راوین")
+        page.fill('[data-testid="f-text"]', "خوش آمدید به راویکس")
         page.fill('[data-testid="f-color"]', "#d6334a")
         page.fill('#bx-settings input[type=number][data-testid="f-font_size"]', "44")
         page.fill('[data-testid="f-bg_color"]', "#fff5e0")
@@ -215,7 +215,7 @@ def run_scenarios(base):
         page.fill('[data-testid="f-border_color"]', "#112233")
         page.fill('[data-testid="f-padding"]', "20")
         cs = page.evaluate("(() => { const h = document.querySelector('#bx-canvas .bx-heading'); const c = h.querySelector('.bx-core'); const a = getComputedStyle(h), b = getComputedStyle(c); return {txt: c.textContent, color: b.color, size: b.fontSize, bg: a.backgroundColor, bw: a.borderTopWidth, bc: a.borderTopColor, pad: a.paddingTop}; })()")
-        check("متن/رنگ/اندازه در بوم اعمال شد", cs["txt"] == "خوش آمدید به راوین" and cs["color"] == "rgb(214, 51, 74)" and cs["size"] == "44px", cs)
+        check("متن/رنگ/اندازه در بوم اعمال شد", cs["txt"] == "خوش آمدید به راویکس" and cs["color"] == "rgb(214, 51, 74)" and cs["size"] == "44px", cs)
         check("پس‌زمینه/حاشیه/فاصله‌ی داخلی در بوم اعمال شد", cs["bg"] == "rgb(255, 245, 224)" and cs["bw"] == "3px" and cs["bc"] == "rgb(17, 34, 51)" and cs["pad"] == "20px", cs)
         page.fill('[data-testid="f-color"]', "red")
         check("رنگ نامعتبر پذیرفته نمی‌شود و خطا نشان می‌دهد", page.locator('[data-testid="f-color"]').evaluate("e => e.classList.contains('is-bad')"))
@@ -327,7 +327,7 @@ def run_scenarios(base):
         page.click("#bx-note-ok")
         wait_js(page, "document.querySelector('#bx-dlg-note').open === false")
         public.goto(base + "/about/")
-        check("پس از انتشار، صفحه با صفحه‌ساز نمایش داده می‌شود", public.locator(".bx-page").count() == 1 and "خوش آمدید به راوین" in public.content())
+        check("پس از انتشار، صفحه با صفحه‌ساز نمایش داده می‌شود", public.locator(".bx-page").count() == 1 and "خوش آمدید به راویکس" in public.content())
         check("قالب سایت (هدر/فوتر/منو) در صفحه‌ی ساخته‌شده حفظ شد", public.locator(".site-header").count() == 1 and public.locator(".site-nav").count() == 1)
         check("هیچ اسکریپتی در بدنه‌ی صفحه‌ی ساخته‌شده نیست", public.locator("main script").count() == 0)
         public.close()

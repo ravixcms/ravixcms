@@ -1,5 +1,5 @@
 {% extends "layouts/panel.html" %}
-{% load ravin_ui %}
+{% load ravix_ui %}
 {% block title %}نصب افزونه از بسته{% endblock %}
 {% block page_title %}نصب افزونه از بسته{% endblock %}
 {% block content_class %}content-narrow{% endblock %}
@@ -7,14 +7,14 @@
 <div class="page-head"><div><h1>نصب افزونه از بسته</h1><p>دریافت و جایگذاری امن بسته. پس از آن، مشخصات و کد را بازبینی و نصب را صریحاً تأیید می‌کنید؛ هیچ افزونه‌ای خودکار نصب یا فعال نمی‌شود.</p></div>
   <a class="btn btn-light" href="{% url 'plugins:list' %}">بازگشت</a></div>
 <div class="form-errors warn" role="note"><p><strong>امضای دیجیتال فقط اصالت بسته را تأیید می‌کند، نه بی‌خطر بودن کد را.</strong> افزونه کد پایتون است و با دسترسی کامل سرور اجرا می‌شود. فقط افزونهٔ ناشر مورد اعتماد را نصب کنید و کدش را در مرحلهٔ بازبینی ببینید.</p></div>
-{% if not web_install %}<div class="form-errors" role="alert"><p>نصب از طریق وب خاموش است. مدیر سرور باید <span class="ltr">RAVIN_PLUGIN_WEB_INSTALL=true</span> را تنظیم و پوشهٔ <span class="ltr">RAVIN_PLUGIN_INSTALL_DIR</span> را برای سرویس قابل‌نوشتن کند.</p></div>{% endif %}
+{% if not web_install %}<div class="form-errors" role="alert"><p>نصب از طریق وب خاموش است. مدیر سرور باید <span class="ltr">RAVIX_PLUGIN_WEB_INSTALL=true</span> را تنظیم و پوشهٔ <span class="ltr">RAVIX_PLUGIN_INSTALL_DIR</span> را برای سرویس قابل‌نوشتن کند.</p></div>{% endif %}
 {% if not trusted_count %}<div class="form-errors warn" role="status"><p>هیچ کلید امضای مورد اعتمادی تعریف نشده است؛ بستهٔ امضاشده پذیرفته نمی‌شود. مدیرکل می‌تواند در «کلیدهای مورد اعتماد» کلید عمومی ناشر را ثبت کند.</p></div>{% endif %}
 <div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>از مخزن رسمی</h2></div><div class="card-body">
   {% if has_registry %}<form method="post" data-once>{% csrf_token %}<input type="hidden" name="op" value="registry">
     <div class="field"><label for="slug">شناسهٔ افزونه</label><input class="input ltr" id="slug" name="slug" value="{{ prefill_slug }}" maxlength="40" required></div>
     <div class="field"><label for="version">نسخه (خالی = آخرین نسخهٔ سازگار)</label><input class="input ltr" id="version" name="version" value="{{ prefill_version }}" maxlength="20"></div>
     <button class="btn" type="submit" {% if not web_install %}disabled{% endif %}>دریافت و بررسی</button></form>
-  {% else %}<div class="empty">مخزن رسمی تنظیم نشده است (<span class="ltr">RAVIN_OFFICIAL_REGISTRY_URL</span>).</div>{% endif %}
+  {% else %}<div class="empty">مخزن رسمی تنظیم نشده است (<span class="ltr">RAVIX_OFFICIAL_REGISTRY_URL</span>).</div>{% endif %}
 </div></div>
 <div class="card"><div class="card-header"><h2>از فایل محلی (zip)</h2></div><div class="card-body">
   <form method="post" enctype="multipart/form-data" data-once>{% csrf_token %}<input type="hidden" name="op" value="local">

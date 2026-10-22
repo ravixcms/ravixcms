@@ -8,8 +8,9 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from apps.accounts.permissions import CAPABILITIES
+from apps.core.deprecation import upgrade_legacy_key
 from apps.core.navigation import SECTIONS
-from apps.core.templatetags.ravin_ui import ICONS
+from apps.core.templatetags.ravix_ui import ICONS
 from apps.core.version import PLUGIN_API_VERSION
 
 from . import versions
@@ -19,11 +20,11 @@ from .settings_schema import parse_field
 MANIFEST_FILE = "plugin.json"
 MAX_MANIFEST_BYTES = 64 * 1024
 SLUG_RE = re.compile(r"^[a-z][a-z0-9_]{2,30}$")
-RESERVED_SLUGS = frozenset({"log", "x", "events", "core", "ravin", "plugins", "admin", "static"})
+RESERVED_SLUGS = frozenset({"log", "x", "events", "core", "ravix", "plugins", "admin", "static"})
 _MODULE_REF = re.compile(r"^([a-z_][a-z0-9_]*(?:\.[a-z_][a-z0-9_]*)*):([A-Za-z_][A-Za-z0-9_]*)$")
 _KEY_RE = re.compile(r"^[a-z][a-z0-9_]{0,29}$")
 _ROUTE_RE = re.compile(r"^(?:[a-z0-9][-a-z0-9_]*(?:/[a-z0-9][-a-z0-9_]*)*/?)?$")
-TOP_KEYS = {"slug", "name", "version", "description", "author", "homepage", "api_version", "ravin", "requires", "capabilities",
+TOP_KEYS = {"slug", "name", "version", "description", "author", "homepage", "api_version", "ravix", "requires", "capabilities",
             "settings", "admin_pages", "public_routes", "hooks", "models", "category", "license"}
 
 
@@ -42,7 +43,7 @@ class Manifest:
     author: str
     homepage: str
     api_version: int
-    ravin: str
+    ravix: str
     requires: dict
     capabilities: dict
     settings: tuple
@@ -61,7 +62,7 @@ class Manifest:
     def to_json(self) -> dict:
         return {
             "slug": self.slug, "name": self.name, "version": self.version, "description": self.description, "author": self.author,
-            "homepage": self.homepage, "api_version": self.api_version, "ravin": self.ravin, "requires": dict(self.requires),
+            "homepage": self.homepage, "api_version": self.api_version, "ravix": self.ravix, "requires": dict(self.requires),
             "capabilities": dict(self.capabilities), "settings": [f.to_json() for f in self.settings],
             "admin_pages": [dict(p) for p in self.admin_pages], "public_routes": [dict(r) for r in self.public_routes],
             "hooks": [dict(h) for h in self.hooks], "models": self.models,
@@ -101,6 +102,7 @@ def parse_manifest(raw, *, expected_slug: str | None = None) -> Manifest:
     errors: list[str] = []
     if not isinstance(raw, dict):
         raise ManifestError(["plugin.json باید یک شیء JSON باشد."])
+    raw = upgrade_legacy_key(raw, f"plugin.json ({raw.get('slug', '?')})")  # «ravin» ← نام قدیمی کلید
     for k in raw:
         if k not in TOP_KEYS:
             errors.append(f"{k}: کلید ناشناخته.")
@@ -127,9 +129,9 @@ def parse_manifest(raw, *, expected_slug: str | None = None) -> Manifest:
         api = 0
     elif api != PLUGIN_API_VERSION:
         errors.append(f"api_version: این CMS قرارداد نسخهٔ {PLUGIN_API_VERSION} را پشتیبانی می‌کند (افزونه: {api}).")
-    ravin = _str(raw, "ravin", errors, required=True, max_len=50)
-    if ravin and not versions.is_valid_spec(ravin):
-        errors.append("ravin: بازه‌ی نسخه نامعتبر است (مثل >=0.5.0,<1.0.0).")
+    ravix = _str(raw, "ravix", errors, required=True, max_len=50)
+    if ravix and not versions.is_valid_spec(ravix):
+        errors.append("ravix: بازه‌ی نسخه نامعتبر است (مثل >=0.5.0,<1.0.0).")
 
     requires = raw.get("requires", {})
     if not isinstance(requires, dict):
@@ -269,7 +271,7 @@ def parse_manifest(raw, *, expected_slug: str | None = None) -> Manifest:
     if errors:
         raise ManifestError(errors)
     return Manifest(slug=slug, name=name, version=version, description=description, author=author, homepage=homepage, api_version=api,
-                    ravin=ravin, requires=dict(requires), capabilities={k: v.strip() for k, v in caps.items()}, settings=tuple(schema),
+                    ravix=ravix, requires=dict(requires), capabilities={k: v.strip() for k, v in caps.items()}, settings=tuple(schema),
                     admin_pages=tuple(pages), public_routes=tuple(routes), hooks=tuple(hooks), models=models, category=category, license=license_)
 
 

@@ -300,7 +300,7 @@ class PreviewVisibilityTests(TestCase):
         author = make_user("auth", role=Role.AUTHOR)
         self.client.force_login(author)
         session = self.client.session
-        session["ravin_preview"] = True  # حتی با دست‌کاری نشست
+        session["ravix_preview"] = True  # حتی با دست‌کاری نشست
         session.save()
         resp = self.client.get("/")
         self.assertNotContains(resp, "#b91c1c")

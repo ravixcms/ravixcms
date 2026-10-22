@@ -1,4 +1,4 @@
-/* صفحه‌ساز Ravin — ویرایشگر تصویری (بدون وابستگی، بدون innerHTML برای داده‌ی کاربر).
+/* صفحه‌ساز Ravix — ویرایشگر تصویری (بدون وابستگی، بدون innerHTML برای داده‌ی کاربر).
    منبع حقیقت ساختار و سبک‌ها: جدول SPECS که سرور می‌فرستد (apps/builder/schema.py). */
 (function () {
   "use strict";
@@ -387,7 +387,7 @@
       if (nodeEl) { nodeEl.classList.add("bx-dragging-src"); try { e.dataTransfer.setDragImage(nodeEl, 12, 12); } catch (x) { /* بی‌اهمیت */ } }
     }
     e.dataTransfer.effectAllowed = "copyMove";
-    e.dataTransfer.setData("text/plain", "ravin-builder");  // فایرفاکس بدون setData درگ را شروع نمی‌کند
+    e.dataTransfer.setData("text/plain", "ravix-builder");  // فایرفاکس بدون setData درگ را شروع نمی‌کند
   });
   canvas.addEventListener("dragover", function (e) {
     if (!drag) return;

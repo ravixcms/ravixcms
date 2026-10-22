@@ -1,5 +1,5 @@
 [Unit]
-Description=Run Ravin backup daily at 03:17
+Description=Run Ravix backup daily at 03:17
 
 [Timer]
 OnCalendar=*-*-* 03:17:00

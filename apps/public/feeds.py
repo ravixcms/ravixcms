@@ -1,8 +1,8 @@
 """فید RSS 2.0 و Atom با ``django.contrib.syndication``: همهٔ نوشته‌ها، به‌تفکیک دسته (با زیردسته‌ها) و برچسب.
 
-- فقط نوشته‌های منتشرشده (شامل زمان‌بندی‌شده‌های رسیده) و جدیدترین اول؛ تعداد: ``RAVIN_FEED_ITEMS`` (پیش‌فرض ۲۰).
+- فقط نوشته‌های منتشرشده (شامل زمان‌بندی‌شده‌های رسیده) و جدیدترین اول؛ تعداد: ``RAVIX_FEED_ITEMS`` (پیش‌فرض ۲۰).
 - تاریخ انتشار هر مورد ``publish_at`` است (نه زمان ساخت پیش‌نویس) و ``updated_at`` تاریخ به‌روزرسانی؛ هر دو aware (UTC) و با offset درست.
-- نشانی‌ها مطلق‌اند و در صورت تنظیم، از ``RAVIN_SITE_URL`` ساخته می‌شوند (نه از سرآیند Host).
+- نشانی‌ها مطلق‌اند و در صورت تنظیم، از ``RAVIX_SITE_URL`` ساخته می‌شوند (نه از سرآیند Host).
 - ``request`` از طریق شیء ``obj`` (نه ``self``) رد می‌شود؛ چون نمونهٔ Feed بین درخواست‌ها مشترک است.
 """
 from dataclasses import dataclass
@@ -26,7 +26,7 @@ ATOM_TYPE = "application/atom+xml"
 
 
 def feed_items_limit() -> int:
-    return max(1, min(int(getattr(settings, "RAVIN_FEED_ITEMS", 20)), 100))
+    return max(1, min(int(getattr(settings, "RAVIX_FEED_ITEMS", 20)), 100))
 
 
 @dataclass

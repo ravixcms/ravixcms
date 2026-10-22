@@ -1,34 +1,34 @@
-# به‌روزرسانی یکپارچه و بازیابی (Ravix / Ravin CMS)
+# به‌روزرسانی یکپارچه و بازیابی (Ravix / راویکس)
 
 این سند سه چیز را پوشش می‌دهد: **(۱)** نحوهٔ کار ارتقا و مدل امنیتی، **(۲)** راهنمای مدیر سایت (ارتقا/بازگشت/بازیابی)، **(۳)** راهنمای ناشر (ساخت و امضای بسته). در پایان فهرست محدودیت‌های صادقانه آمده است.
 
-> **هیچ منبع رسمی و هیچ کلید امضایی از پیش متصل نیست.** سرور به‌روزرسانی و کلیدها را خودتان میزبانی و تنظیم می‌کنید (`RAVIN_UPDATE_URL`، `RAVIN_TRUSTED_PUBLIC_KEYS`). تا آن‌ها را تنظیم نکنید، هیچ «نسخهٔ جدیدی» وجود ندارد و هیچ بسته‌ای پذیرفته نمی‌شود.
+> **هیچ منبع رسمی و هیچ کلید امضایی از پیش متصل نیست.** سرور به‌روزرسانی و کلیدها را خودتان میزبانی و تنظیم می‌کنید (`RAVIX_UPDATE_URL`، `RAVIX_TRUSTED_PUBLIC_KEYS`). تا آن‌ها را تنظیم نکنید، هیچ «نسخهٔ جدیدی» وجود ندارد و هیچ بسته‌ای پذیرفته نمی‌شود.
 
 ## ۱. نسخه‌بندی
 | جزء | کجا | قاعده |
 |---|---|---|
-| هسته | `apps/core/version.py` ← `RAVIN_VERSION` | `MAJOR.MINOR.PATCH` (SemVer). MAJOR: ناسازگار؛ MINOR: قابلیت سازگار؛ PATCH: رفع اشکال |
+| هسته | `apps/core/version.py` ← `RAVIX_VERSION` | `MAJOR.MINOR.PATCH` (SemVer). MAJOR: ناسازگار؛ MINOR: قابلیت سازگار؛ PATCH: رفع اشکال |
 | قرارداد افزونه / قالب | `PLUGIN_API_VERSION`، `THEME_API_VERSION` | با تغییر ناسازگار در قرارداد زیاد می‌شود؛ افزونه/قالب‌ها با آن سنجیده می‌شوند |
-| قالب | `theme.json` ← `version` و اختیاری `ravin` (مثل `>=0.6,<1.0`) | `MAJOR.MINOR.PATCH` |
-| افزونه | `plugin.json` ← `version`، `ravin`، `api_version` | همان |
+| قالب | `theme.json` ← `version` و اختیاری `ravix` (مثل `>=0.6,<1.0`) | `MAJOR.MINOR.PATCH` |
+| افزونه | `plugin.json` ← `version`، `ravix`، `api_version` | همان |
 | دیتابیس | جدول `django_migrations` | نسخهٔ شما = آخرین مهاجرت اعمال‌شدهٔ هر اپ؛ هر ارتقا فهرست مهاجرت‌های «قبل» و «تازه اعمال‌شده» را در تاریخچه ثبت می‌کند |
 
-مشاهده: پنل ← «به‌روزرسانی‌ها»، `GET /api/v1/system/versions/` (قابلیت `updates.view`؛ بدون مسیر دیسک/کلید) یا `python manage.py ravin_update status`.
+مشاهده: پنل ← «به‌روزرسانی‌ها»، `GET /api/v1/system/versions/` (قابلیت `updates.view`؛ بدون مسیر دیسک/کلید) یا `python manage.py ravix_update status`.
 
 ## ۲. خط لولهٔ ارتقا (هسته)
 هر گام ناموفق، کار را متوقف می‌کند. **تا گام ۸ هیچ فایلی از سایت تغییر نمی‌کند.**
 
-1. **قفل سراسری** (یکتایی در دیتابیس): ارتقای هم‌زمان ممکن نیست. قفلِ مانده (کرش) پس از `RAVIN_UPDATE_LOCK_STALE_MINUTES` آزاد و اجرای نیمه‌کاره «نیازمند بازیابی» علامت می‌خورد. نصب افزونه هم تا پایان ارتقا ممنوع است.
-2. **دریافت فهرست** از منبع رسمی (فقط HTTPS، بدون ریدایرکت، با سقف حجم) و اعتبارسنجی ساختار. اختیاری: امضای خودِ فهرست (`RAVIN_UPDATE_REQUIRE_SIGNED_INDEX`).
+1. **قفل سراسری** (یکتایی در دیتابیس): ارتقای هم‌زمان ممکن نیست. قفلِ مانده (کرش) پس از `RAVIX_UPDATE_LOCK_STALE_MINUTES` آزاد و اجرای نیمه‌کاره «نیازمند بازیابی» علامت می‌خورد. نصب افزونه هم تا پایان ارتقا ممنوع است.
+2. **دریافت فهرست** از منبع رسمی (فقط HTTPS، بدون ریدایرکت، با سقف حجم) و اعتبارسنجی ساختار. اختیاری: امضای خودِ فهرست (`RAVIX_UPDATE_REQUIRE_SIGNED_INDEX`).
 3. **سازگاری (پیش‌نمایش):** کاهش نسخه ممنوع؛ `min_from`؛ نسخهٔ Python؛ قراردادهای افزونه/قالب؛ افزونه‌های **فعالِ** ناسازگار مانع هستند (غیرفعال‌ها فقط هشدار).
-4. **دریافت به پوشهٔ موقت** (`RAVIN_UPDATE_WORK_DIR`، مجوز ۰۷۰۰) و بررسی **SHA-256** با فهرست.
+4. **دریافت به پوشهٔ موقت** (`RAVIX_UPDATE_WORK_DIR`، مجوز ۰۷۰۰) و بررسی **SHA-256** با فهرست.
 5. **امضای دیجیتال Ed25519** با کلیدهای مورد اعتماد. پیام امضاشده = `ravin-update-v1 | نوع | شناسه | نسخه | sha256`؛ پس امضا بین نسخه‌ها/نوع‌ها/بسته‌ها قابل جابه‌جایی نیست و امضای افزونه برای هسته معتبر نیست. بدون امضا یا کلید ناشناس ⇐ رد.
-6. **استخراج امن و اعتبارسنجی بدون اجرای کد:** رد zip-slip، مسیر مطلق/بک‌اسلش، symlink، چند ریشه، بستهٔ رمزگذاری‌شده، zip-bomb، `.env`/دیتابیس/کلید/`*.pem`، کلید خصوصی داخل متن، خطای نحوی (`compile` بدون اجرا)، و هر مسیر خارج از **فهرست سفید** (`apps config static templates themes/default deploy docs scripts manage.py requirements*.txt README.md .env.example`). `media/`، `plugins/`، `.env`، دیتابیس و قالب‌های سفارشی هرگز لمس نمی‌شوند. نسخهٔ `release.json` و `RAVIN_VERSION` داخل بسته باید با نسخهٔ اعلام‌شده یکی باشد.
+6. **استخراج امن و اعتبارسنجی بدون اجرای کد:** رد zip-slip، مسیر مطلق/بک‌اسلش، symlink، چند ریشه، بستهٔ رمزگذاری‌شده، zip-bomb، `.env`/دیتابیس/کلید/`*.pem`، کلید خصوصی داخل متن، خطای نحوی (`compile` بدون اجرا)، و هر مسیر خارج از **فهرست سفید** (`apps config static templates themes/default deploy docs scripts manage.py requirements*.txt README.md .env.example`). `media/`، `plugins/`، `.env`، دیتابیس و قالب‌های سفارشی هرگز لمس نمی‌شوند. نسخهٔ `release.json` و `RAVIX_VERSION` داخل بسته باید با نسخهٔ اعلام‌شده یکی باشد.
 7. **سازگاری قطعی** با اطلاعات داخل بستهٔ امضاشده: Python، `requirements.txt` در برابر بسته‌های نصب‌شده (**نصب خودکار pip انجام نمی‌شود؛** کمبود را گزارش می‌کند)، قراردادها و افزونه‌ها/قالب‌ها.
 8. **پشتیبان:** آرشیو فایل‌های مدیریت‌شده (`files.tar.gz`) + دیتابیس (SQLite با API رسمی backup؛ PostgreSQL با `pg_dump -Fc`، رمز فقط از `PGPASSWORD`)، با SHA-256 و تأیید پیش از ادامه. پوشه ۰۷۰۰، فایل‌ها ۰۶۰۰.
 9. **حالت تعمیر (۵۰۳ + Retry-After)** فقط از همین‌جا تا پایان تأیید؛ `/healthz` و صفحهٔ وضعیت آزادند.
 10. **جایگزینی** هر مسیر (rename اتمی؛ نسخهٔ قبلی کنار گذاشته می‌شود) ← بررسی نسخهٔ روی دیسک ← `manage.py check` با کد جدید ← `manage.py migrate` (در **پروسهٔ جدا** تا کد جدید بارگذاری شود) ← فهرست مهاجرت‌های تازه ثبت ← `check` دوباره.
-11. **موفق:** پوشهٔ قبلی پاک، پشتیبان‌های قدیمی هرس (`RAVIN_UPDATE_BACKUPS_KEEP`)، `restart_required`.
+11. **موفق:** پوشهٔ قبلی پاک، پشتیبان‌های قدیمی هرس (`RAVIX_UPDATE_BACKUPS_KEEP`)، `restart_required`.
 
 ### شکست پس از شروع جایگزینی ⇐ بازگشت خودکار
 فایل‌ها از نسخهٔ کنار گذاشته‌شده (و در صورت نیاز آرشیو پشتیبان) برمی‌گردند؛ اگر مهاجرتی شروع شده بود، **دیتابیس از پشتیبان تأییدشده بازیابی می‌شود** (تاریخچهٔ ارتقا و قفل جاری حفظ می‌شود، حتی اگر شمای جدول تاریخچه در نسخه‌ها فرق کند). وضعیت نهایی:
@@ -42,60 +42,60 @@
 ## ۳. راهنمای مدیر
 ### تنظیمات سرور (فقط سرور؛ نه از پنل)
 ```
-RAVIN_UPDATE_URL=https://updates.example.com      # یا RAVIN_UPDATE_DIR=/srv/ravin/update_source (آفلاین)
-RAVIN_TRUSTED_PUBLIC_KEYS=publisher:<کلید_عمومی_base64>
-RAVIN_UPDATE_BACKUP_DIR=/srv/ravin/update_backups  # خارج از media، ۰۷۰۰
-RAVIN_UPDATE_WEB_APPLY=false                       # پیش‌فرض: اعمال فقط با دستور
+RAVIX_UPDATE_URL=https://updates.example.com      # یا RAVIX_UPDATE_DIR=/srv/ravix/update_source (آفلاین)
+RAVIX_TRUSTED_PUBLIC_KEYS=publisher:<کلید_عمومی_base64>
+RAVIX_UPDATE_BACKUP_DIR=/srv/ravix/update_backups  # خارج از media، ۰۷۰۰
+RAVIX_UPDATE_WEB_APPLY=false                       # پیش‌فرض: اعمال فقط با دستور
 ```
 ### ارتقا (توصیه‌شده: خط فرمان)
 ```bash
-python manage.py ravin_update status                 # نسخه‌ها، قفل، اجراهای نیازمند بازیابی
-python manage.py ravin_update check                  # نسخهٔ جدید + موانع/هشدارهای سازگاری
-python manage.py ravin_update apply core --dry-run   # دریافت + SHA + امضا + اعتبارسنجی کامل، بدون تغییر فایل
-python manage.py ravin_update apply core [--to 0.7.0]
-sudo systemctl restart ravin                         # پس از موفقیت؛ تا آن موقع کد قدیمی در حافظه اجراست (پنل هشدار می‌دهد)
-python manage.py ravin_preflight
+python manage.py ravix_update status                 # نسخه‌ها، قفل، اجراهای نیازمند بازیابی
+python manage.py ravix_update check                  # نسخهٔ جدید + موانع/هشدارهای سازگاری
+python manage.py ravix_update apply core --dry-run   # دریافت + SHA + امضا + اعتبارسنجی کامل، بدون تغییر فایل
+python manage.py ravix_update apply core [--to 0.7.0]
+sudo systemctl restart ravix                         # پس از موفقیت؛ تا آن موقع کد قدیمی در حافظه اجراست (پنل هشدار می‌دهد)
+python manage.py ravix_preflight
 ```
-قالب: `ravin_update apply theme --slug NAME`؛ افزونه: `ravin_update apply plugin --slug NAME --user ADMIN`.
-از پنل (فقط مدیرکل و فقط با `RAVIN_UPDATE_WEB_APPLY=true`): «به‌روزرسانی‌ها». مدیر عادی فقط می‌بیند.
+قالب: `ravix_update apply theme --slug NAME`؛ افزونه: `ravix_update apply plugin --slug NAME --user ADMIN`.
+از پنل (فقط مدیرکل و فقط با `RAVIX_UPDATE_WEB_APPLY=true`): «به‌روزرسانی‌ها». مدیر عادی فقط می‌بیند.
 
 ### بازگشت دستی به نسخهٔ قبل
 ```bash
-python manage.py ravin_update history
-python manage.py ravin_update rollback --run <شناسهٔ ارتقا> --yes-data-loss
-sudo systemctl restart ravin
+python manage.py ravix_update history
+python manage.py ravix_update rollback --run <شناسهٔ ارتقا> --yes-data-loss
+sudo systemctl restart ravix
 ```
 **هشدار:** بازگشت دیتابیس را به لحظهٔ پیش از ارتقا برمی‌گرداند؛ داده‌های ثبت‌شده پس از ارتقا (سفارش، نظر، ...) از بین می‌روند. پیش از بازگشت از وضعیت فعلی هم پشتیبان گرفته می‌شود. بازگشت فقط وقتی انجام می‌شود که کد روی دیسک دقیقاً همان نسخهٔ ارتقایافته باشد و پشتیبان سالم باشد.
 
 ## ۴. بازیابی دستی (وضعیت `needs_recovery`)
-متن دقیق با مسیر پشتیبان همین اجرا در پنل ← جزئیات اجرا و در `ravin_update status` چاپ می‌شود. خلاصه:
+متن دقیق با مسیر پشتیبان همین اجرا در پنل ← جزئیات اجرا و در `ravix_update status` چاپ می‌شود. خلاصه:
 ```bash
-sudo systemctl stop ravin
-B=/srv/ravin/update_backups/<پوشهٔ_پشتیبان_اجرا>
+sudo systemctl stop ravix
+B=/srv/ravix/update_backups/<پوشهٔ_پشتیبان_اجرا>
 # فایل‌ها (پوشه‌های apps config static templates ... را کنار بگذارید و از آرشیو بازگردانید)
-tar -xzf $B/files.tar.gz -C /srv/ravin/app
+tar -xzf $B/files.tar.gz -C /srv/ravix/app
 # دیتابیس — SQLite: فایل db.sqlite3 پشتیبان را جای دیتابیس بگذارید و -wal/-shm را پاک کنید
 # دیتابیس — PostgreSQL:
 PGPASSWORD=… pg_restore --clean --if-exists --no-owner -h HOST -U USER -d DBNAME $B/db.dump
-sudo systemctl start ravin
-python manage.py ravin_update status && python manage.py ravin_preflight
+sudo systemctl start ravix
+python manage.py ravix_update status && python manage.py ravix_preflight
 ```
 اگر پشتیبان این ابزار هم قابل‌استفاده نیست، از پشتیبان روزانهٔ `deploy/backup.sh` (docs/deployment.md §10) بازیابی کنید. **بازیابی را روی سیستم آزمایشی تمرین کنید.**
 
-اجرای «در حال اجرا»یی که قفل زنده ندارد (قطع برق/کشتن پروسه) خودکار «نیازمند بازیابی» علامت می‌خورد و در پنل و `ravin_preflight` دیده می‌شود.
+اجرای «در حال اجرا»یی که قفل زنده ندارد (قطع برق/کشتن پروسه) خودکار «نیازمند بازیابی» علامت می‌خورد و در پنل و `ravix_preflight` دیده می‌شود.
 
 ## ۵. راهنمای ناشر (ساخت و امضای بسته)
 روی ماشین انتشار (نه روی سرور سایت):
 ```bash
-python manage.py ravin_release keygen --key-file keys/release.key     # فقط یک‌بار؛ فایل ۰۶۰۰؛ کلید عمومی را چاپ می‌کند
-# RAVIN_VERSION را در apps/core/version.py بالا ببرید و مهاجرت‌ها را بسازید، سپس:
-python manage.py ravin_release core --out dist/ --key-file keys/release.key --python '>=3.11' --min-from 0.6.0 --notes "..."
-python manage.py ravin_release theme --theme-dir themes/mytheme --out dist/ --key-file keys/release.key
+python manage.py ravix_release keygen --key-file keys/release.key     # فقط یک‌بار؛ فایل ۰۶۰۰؛ کلید عمومی را چاپ می‌کند
+# RAVIX_VERSION را در apps/core/version.py بالا ببرید و مهاجرت‌ها را بسازید، سپس:
+python manage.py ravix_release core --out dist/ --key-file keys/release.key --python '>=3.11' --min-from 0.6.0 --notes "..."
+python manage.py ravix_release theme --theme-dir themes/mytheme --out dist/ --key-file keys/release.key
 ```
-خروجی: `dist/ravin-core-X.zip`، `index.json` و `index.json.sig` (امضای فهرست). دایرکتوری `dist/` را زیر `/updates/v1/` روی یک میزبان **HTTPS** بگذارید. کلید خصوصی هرگز نباید روی سرور سایت یا در مخزن کد باشد؛ در گزارش‌ها هم چاپ نمی‌شود. کلید عمومی را سایت‌ها در `RAVIN_TRUSTED_PUBLIC_KEYS` می‌گذارند؛ چرخش کلید = افزودن کلید جدید و سپس حذف قدیمی.
+خروجی: `dist/ravix-core-X.zip`، `index.json` و `index.json.sig` (امضای فهرست). دایرکتوری `dist/` را زیر `/updates/v1/` روی یک میزبان **HTTPS** بگذارید. کلید خصوصی هرگز نباید روی سرور سایت یا در مخزن کد باشد؛ در گزارش‌ها هم چاپ نمی‌شود. کلید عمومی را سایت‌ها در `RAVIX_TRUSTED_PUBLIC_KEYS` می‌گذارند؛ چرخش کلید = افزودن کلید جدید و سپس حذف قدیمی.
 
 ## ۶. گزارش و حریم اسرار
-تاریخچه (پنل/CLI): زمان، جزء، نسخه‌ها، وضعیت، مراحل، SHA-256، امضاکننده، مهاجرت‌های اعمال‌شده، خروجی مهاجرت، خطا و دستور بازیابی. هر متن ذخیره‌شده از پاک‌سازی عبور می‌کند: `SECRET_KEY`، کلیدهای `RAVIN_SECRETS_KEY(S)`، رمز دیتابیس، رمز داخل URL، کلید خصوصی PEM و مقدار هر متغیر محیطی با نامی شامل KEY/SECRET/PASSWORD/TOKEN حذف می‌شود. API نسخه‌ها مسیر دیسک نمی‌دهد.
+تاریخچه (پنل/CLI): زمان، جزء، نسخه‌ها، وضعیت، مراحل، SHA-256، امضاکننده، مهاجرت‌های اعمال‌شده، خروجی مهاجرت، خطا و دستور بازیابی. هر متن ذخیره‌شده از پاک‌سازی عبور می‌کند: `SECRET_KEY`، کلیدهای `RAVIX_SECRETS_KEY(S)`، رمز دیتابیس، رمز داخل URL، کلید خصوصی PEM و مقدار هر متغیر محیطی با نامی شامل KEY/SECRET/PASSWORD/TOKEN حذف می‌شود. API نسخه‌ها مسیر دیسک نمی‌دهد.
 
 ## ۷. آزمون‌ها
 * `python manage.py test apps.updater` — ۹۳ تست: ارتقای موفق، رد پیش از تغییر (امضا/SHA/سازگاری/بستهٔ مخدوش)، شکست در میانه (جایگزینی، بررسی کد، مهاجرت، تأیید) با بازگشت خودکار بایت‌به‌بایت، شکست بازگشت ⇐ بازیابی دستی، بازگشت دستی، قفل و کرش، حالت تعمیر، قالب، افزونه، پنل/API/مجوزها، نشت‌نکردن اسرار.
@@ -107,7 +107,67 @@ python manage.py ravin_release theme --theme-dir themes/mytheme --out dist/ --ke
 * **راه‌اندازی مجدد سرویس خودکار نیست:** پس از ارتقا باید خودتان سرویس را restart کنید؛ تا آن زمان پنل هشدار «کد روی دیسک جدیدتر از پروسه است» می‌دهد.
 * **وابستگی‌های pip نصب نمی‌شوند:** فقط بررسی می‌شوند. اگر نسخهٔ جدید بستهٔ تازه می‌خواهد، ارتقا متوقف می‌شود و باید `pip install -r requirements.txt` را خودتان اجرا کنید.
 * **امضا اصالت را می‌رساند، نه بی‌خطر بودن کد.** بستهٔ امضاشده از ناشر مورد اعتماد هم کد پایتون است؛ فقط از ناشری که به او اعتماد دارید بپذیرید.
-* حملهٔ **بازگرداندن نسخهٔ قدیمی/انجماد** (freeze) فقط تا حدی مهار شده (کاهش نسخه ممنوع، فهرست قابل‌امضا)؛ زمان‌دار/انقضادار نیست. ابطال کلید (CRL) وجود ندارد: کلید لورفته را از `RAVIN_TRUSTED_PUBLIC_KEYS` و پنل حذف کنید.
+* حملهٔ **بازگرداندن نسخهٔ قدیمی/انجماد** (freeze) فقط تا حدی مهار شده (کاهش نسخه ممنوع، فهرست قابل‌امضا)؛ زمان‌دار/انقضادار نیست. ابطال کلید (CRL) وجود ندارد: کلید لورفته را از `RAVIX_TRUSTED_PUBLIC_KEYS` و پنل حذف کنید.
 * بستهٔ هسته **پوشهٔ `plugins/` و قالب‌های سفارشی** را به‌روز نمی‌کند (آن‌ها خودشان بسته دارند). فایل‌های دستی‌ای که داخل پوشه‌های مدیریت‌شده (مثلاً `templates/`) خودتان اضافه کرده‌اید با جایگزینی کل پوشه حذف می‌شوند (در پشتیبان هستند). تغییرات محلی کد را در fork نگه دارید.
 * حذف مهاجرت/بازگرداندن مهاجرت برگشت‌پذیر (reverse) استفاده نمی‌شود؛ بازگشت همیشه از پشتیبان است (قابل‌پیش‌بینی‌تر).
 * اعمال از وب پیش‌فرض خاموش است (و ممکن است از timeout کارگر Gunicorn بیشتر طول بکشد؛ قطع آن وسط کار اجرا را «نیازمند بازیابی» می‌کند)؛ چون سرویس وب باید مجوز نوشتن روی کد داشته باشد؛ برای تولید، اجرای CLI با کاربر استقرار توصیه می‌شود.
+
+## ۹. تغییر نام ravin → ravix (فهرست کامل و راهنمای مهاجرت)
+
+نام محصول **Ravix (راویکس)** است. نام قدیمی «ravin/راوین» که در کد، فایل‌های استقرار و مستندات مانده بود، در یک commit جدا به `ravix` تغییر کرد.
+**نام‌های قدیمی تا Ravix 2.0 کار می‌کنند و هر کدام هنگام استفاده `RavixDeprecationWarning` (زیرکلاس `FutureWarning`؛ پیش‌فرض در stderr/journald دیده می‌شود) می‌دهند و در 2.0 حذف می‌شوند.**
+اگر هیچ کاری نکنید، سایت موجود بدون تغییر کار می‌کند؛ فقط هشدار می‌بینید. `manage.py ravix_preflight` همهٔ نام‌های قدیمیِ در حال استفاده را فهرست می‌کند.
+
+### ۹.۱ جدول نام قدیمی ← جدید
+
+| دسته | قدیمی | جدید | سازگاری تا 2.0 |
+|---|---|---|---|
+| متغیر محیطی | `RAVIN_*` (همه) | `RAVIX_*` | ✔ اگر `RAVIX_X` نباشد، `RAVIN_X` خوانده می‌شود (هشدار؛ نام جدید برنده است) |
+| تنظیمات Django | `settings.RAVIN_*` | `settings.RAVIX_*` | ✘ فقط نام جدید (کد افزونه‌ای که مستقیم `settings.RAVIN_…` می‌خواند باید اصلاح شود) |
+| ثابت نسخه | `RAVIN_VERSION` | `RAVIX_VERSION` | ✔ هر دو خط در `apps/core/version.py` هستند و باید همیشه برابر بمانند (به‌روزرسان‌های قدیمی با regex دنبال `RAVIN_VERSION` می‌گردند) |
+| دستور مدیریتی | `ravin_preflight`، `ravin_update`، `ravin_release` | `ravix_preflight`، `ravix_update`، `ravix_release` | ✔ دستور قدیمی همان را اجرا می‌کند |
+| تگ قالب سایت | `{% load ravin_theme %}` | `{% load ravix_theme %}` | ✔ در اعتبارسنجی قالب و هنگام رندر هشدار؛ قالب معتبر می‌ماند |
+| تگ قالب پنل/افزونه | `{% load ravin_ui %}` | `{% load ravix_ui %}` | ✔ (افزونه‌های نصب‌شده با نسخهٔ قدیمی این را دارند) |
+| کلید `theme.json` | `"ravin"` (بازهٔ سازگاری) | `"ravix"` | ✔ خوانده می‌شود + هشدار |
+| کلید `plugin.json` | `"ravin"` | `"ravix"` | ✔ خوانده می‌شود + هشدار؛ manifestهای ذخیره‌شده در دیتابیس هم با کلید قدیمی خوانده می‌شوند |
+| `requires` در `release.json` و فهرست به‌روزرسانی | `requires.ravin` | `requires.ravix` | ✔ خواندن هر دو؛ `ravix_release` **هر دو** را می‌نویسد تا کلاینت‌های قدیمی بسته را بپذیرند |
+| API هاب افزونه | `ravin` (نسخه‌ها)، `ravin_version` (ریشه) | `ravix`، `ravix_version` | ✔ پاسخ هر دو را دارد |
+| سرویس/تایمرهای systemd | `ravin.service`، `ravin-backup.timer`، `ravin-publish-scheduled.timer`، `ravin-expire-orders.timer` | `ravix.service`، `ravix-*.timer` | ✔ preflight تایمر قدیمیِ فعال را می‌پذیرد (هشدار)؛ فایل‌های unit جدید `deploy/ravix*` هستند |
+| nginx | `deploy/nginx-ravin.conf`، `deploy/ravin-proxy.conf` | `deploy/nginx-ravix.conf`، `deploy/ravix-proxy.conf` | فقط نام فایل نمونه |
+| فایل تنظیمات | `/etc/ravin/ravin.env` | `/etc/ravix/ravix.env` | ✔ `backup.sh`/`restore.sh` اگر فقط قدیمی هست آن را می‌خوانند (هشدار) |
+| مسیرها | `/srv/ravin`، `/var/backups/ravin`، `/var/cache/ravin` | `/srv/ravix`، `/var/backups/ravix`، `/var/cache/ravix` | ✔ اگر پوشهٔ جدید نیست و قدیمی هست، قدیمی استفاده می‌شود (`deploy/_legacy.sh`، `config/settings/production.py`) |
+| کاربر سیستم | `ravin` | `ravix` | فقط در نمونه‌ها؛ کاربر موجود را عوض نکنید |
+| نام فایل پشتیبان | `ravin-YYYYmmdd-HHMMSS.*` | `ravix-…` | ✔ نگهداری و بازیابی هر دو پیشوند را می‌شناسد |
+| نام بستهٔ انتشار | `ravin-core-X.zip`، `ravin-theme-…`، ریشهٔ `ravin-X/` | `ravix-…` | بسته‌های ساخته‌شده؛ به‌روزرسان نام را بررسی نمی‌کند |
+| فایل‌های ایستا | `static/css/ravin.css`، `static/js/ravin.js` | `ravix.css`، `ravix.js` | ✘ (قالب‌های سفارشی که مستقیم لینک داده‌اند باید اصلاح شوند؛ `theme_head` خودکار است) |
+| ماژول افزونه‌ها | `ravin_plugins.<slug>` (نام داخلی بارگذار) | `ravix_plugins.<slug>` | ✘ داخلی؛ افزونه نباید به آن import بزند |
+| نام لاگرها | `ravin.updater`، `ravin.plugins`، `ravin.shop`، … | `ravix.*` | ✘ اگر `LOGGING` سفارشی دارید نام لاگر را عوض کنید |
+| کلیدهای نشست | `ravin_active_site`، `ravin_preview` | `ravix_active_site`، `ravix_preview` | ✘ فقط انتخاب سایت فعال/پیش‌نمایش جاری کاربران یک بار از نو انتخاب می‌شود |
+| نام نمایشی | «راوین»، «Ravin CMS» | «راویکس»، «Ravix» | پیش‌فرض `site_name` تغییر کرد؛ مقدار ذخیره‌شدهٔ سایت‌های موجود دست نمی‌خورد |
+
+### ۹.۲ آنچه عمداً «ravin» ماند
+- **دیتابیس:** جدول `ravin_cache` (کش جایگزین محدودیت نرخ) و فیلد `HubVersion.ravin_spec`. تغییر نام ستون/جدول نیازمند مهاجرت داده بدون سود عملی است.
+- **مهاجرت‌های موجود** دست نخوردند. تنها دو مهاجرت تازه برای تغییر `verbose_name`/پیش‌فرض ساخته شد (بدون تغییر ساختار یا داده): `core.0006` (پیش‌فرض `site_name`) و `pluginhub.0004` (برچسب `ravin_spec`).
+- **ثابت‌های پروتکل/رمزنگاری** که تغییرشان همه‌چیز امضاشده یا رمزشده را بی‌اعتبار می‌کند: پیشوند امضای `ravin-update-v1` و `ravin-index-v1`؛ `info` در HKDF اسرار درگاه (`ravin-gateway-secrets`)؛ salt تأیید ایمیل (`ravin.accounts.email-verify`).
+- شیم‌های سازگاری و آزمون‌های آن‌ها (`apps/core/deprecation.py`، `apps/themes/legacy/`، `apps/core/templatetags/ravin_ui.py`، `ravin_*` در `management/commands/`)، `deploy/_legacy.sh`، و `CHANGELOG.md` (تاریخچه).
+- پوشهٔ ریشهٔ پروژه هنوز `ravin-cms` است (فقط نام پوشهٔ مخزن؛ برای تغییر آن به مخزن/CI خودتان نگاه کنید).
+
+### ۹.۳ فهرست تغییرات
+1. **کد:** نام‌های `ravin`/`Ravin`/`RAVIN`/«راوین» در همهٔ فایل‌های دنبال‌شده (≈۲۴۰ فایل: apps، templates، themes، plugins، config، deploy، scripts، docs، `.github`) به معادل `ravix` رفت، و فایل‌ها و دستورها با نام قدیمی (جدول بالا) تغییر نام یافتند.
+2. **`apps/core/deprecation.py` (تازه):** `RavixDeprecationWarning`، `getenv` (جایگزین `RAVIN_*`)، `upgrade_legacy_key`/`read_legacy_key` (کلید `ravin` در manifest)، `legacy_library` (پوشانندهٔ تگ‌های قدیمی که هنگام استفادهٔ واقعی هشدار می‌دهد). ماژول Django را import نمی‌کند، چون در ابتدای بارگذاری تنظیمات استفاده می‌شود.
+3. **تنظیمات:** `config/settings/base.py` همهٔ متغیرها را با `getenv` می‌خواند؛ `gunicorn.conf.py` هر دو `RAVIX_LOG_LEVEL`/`RAVIN_LOG_LEVEL`؛ پیش‌فرض کش فایلی `/var/cache/ravix` (یا `/var/cache/ravin` در صورت وجود فقط همان).
+4. **به‌روزرسان:** regex نسخه هر دو `RAVIX_VERSION`/`RAVIN_VERSION` را می‌پذیرد؛ `requires.ravin` خوانده و در بسته/فهرست ساخته‌شده هم نوشته می‌شود.
+5. **افزونه‌ها/قالب‌ها:** کلید manifest، کتابخانه‌های تگ، و API هاب (جدول بالا). فایل‌های `plugins/` همراه برنامه به نام جدید رفتند؛ چون اثرانگشت افزونه ثبت می‌شود، نسخهٔ نصب‌شدهٔ قدیمی در همان پوشه پس از `git pull` «تغییرکرده» دیده و برای تأیید مدیر علامت می‌خورد. افزونه‌های نصب‌شده‌ای که فایلشان دست نخورد بدون مشکل کار می‌کنند (شیم‌ها).
+6. **استقرار:** `deploy/_legacy.sh` (نگاشت `RAVIN_*`، فایل env و مسیرهای قدیمی) در `backup.sh` و `restore.sh`؛ preflight تایمر و متغیر قدیمی را گزارش می‌کند.
+7. **آزمون:** `apps/core/tests/test_rename_compat.py` (≈۲۶ آزمون: env، نسخه، کلیدها، قالب و تگ‌ها، دستورها، preflight، اسکریپت‌های shell، و نگهبان «ravin ناخواسته نماند»).
+
+### ۹.۴ مهاجرت یک نصب موجود (اختیاری؛ لازم نیست تا 2.0)
+1. بدون کار اضافه ارتقا دهید؛ هشدارها را با `ravix_preflight` ببینید.
+2. در `/etc/ravin/ravin.env` همهٔ `RAVIN_` را به `RAVIX_` تغییر دهید (فایل را می‌توان به `/etc/ravix/ravix.env` برد و `EnvironmentFile` سرویس را اصلاح کرد).
+3. فایل‌های unit جدید را نصب کنید: `cp deploy/ravix*.{service,timer} /etc/systemd/system/ && systemctl daemon-reload`. سپس تایمرهای جدید را فعال و قدیمی‌ها را غیرفعال کنید: `systemctl enable --now ravix-backup.timer …; systemctl disable --now ravin-backup.timer …`.
+4. اگر `CacheDirectory=` در unit قدیمی `ravin` است، با unit جدید پوشهٔ `/var/cache/ravix` ساخته می‌شود (کش فایلی بازسازی‌شدنی است).
+5. قالب‌ها و افزونه‌های خودتان: `{% load ravin_theme %}`/`ravin_ui` را عوض کنید و کلید `"ravin"` را در `theme.json`/`plugin.json` به `"ravix"` ببرید (افزونه‌ای که اثرانگشتش ثبت است پس از ویرایش باید دوباره تأیید شود).
+6. اگر `LOGGING` یا مانیتورینگ به نام لاگر `ravin.*` وابسته است، به `ravix.*` تغییر دهید.
+
+> **آزمون‌نشده:** اسکریپت‌های shell فقط با `bash -n` و آزمون‌های واحد نگاشت متغیر/مسیر بررسی شدند؛ اجرای واقعی روی VPS با systemd و PostgreSQL انجام نشده است.
+

@@ -22,7 +22,7 @@ class DirectoryAccessTests(HubTestCase):
     def setUp(self):
         super().setUp()
         self.publish_version("alpha_plugin", "1.0.0", man=manifest("alpha_plugin", category="seo", description="فرم تماس پیشرفته"))
-        self.publish_version("beta_plugin", "1.0.0", man=manifest("beta_plugin", ravin=">=9.0.0"))
+        self.publish_version("beta_plugin", "1.0.0", man=manifest("beta_plugin", ravix=">=9.0.0"))
 
     def test_anonymous_redirected_to_login(self):
         r = Client().get("/panel/plugin-directory/")
@@ -194,7 +194,7 @@ class FetchCommandTests(HubTestCase):
         super().setUp()
         from apps.plugins import signing
         self.seed, self.pubkey = signing.generate_keypair()
-        self._ov2 = override_settings(RAVIN_REGISTRY_SIGNING_KEY=self.seed, RAVIN_TRUSTED_PUBLIC_KEYS=[f"t:{self.pubkey}"])
+        self._ov2 = override_settings(RAVIX_REGISTRY_SIGNING_KEY=self.seed, RAVIX_TRUSTED_PUBLIC_KEYS=[f"t:{self.pubkey}"])
         self._ov2.enable()
         self.addCleanup(self._ov2.disable)
         self.v = self.publish_version("alpha_plugin", "1.0.0")
@@ -246,7 +246,7 @@ class FetchCommandTests(HubTestCase):
             with self.assertRaisesMessage(CommandError, "امضا"):
                 self.run_cmd()
         from apps.plugins import signing
-        with override_settings(RAVIN_TRUSTED_PUBLIC_KEYS=[f"o:{signing.generate_keypair()[1]}"]), mock.patch("apps.plugins.sources.http_get", self.fake_open()):
+        with override_settings(RAVIX_TRUSTED_PUBLIC_KEYS=[f"o:{signing.generate_keypair()[1]}"]), mock.patch("apps.plugins.sources.http_get", self.fake_open()):
             with self.assertRaises(CommandError):
                 self.run_cmd()
         self.assertFalse((Path(self.dest) / "alpha_plugin").exists())

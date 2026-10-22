@@ -5,10 +5,12 @@ import re
 
 from django.conf import settings
 
+from apps.core.deprecation import getenv
+
 from . import vault
 from .base import ConfigField, GatewayUnavailable, PaymentGateway
 
-logger = logging.getLogger("ravin.shop.payments")
+logger = logging.getLogger("ravix.shop.payments")
 
 GATEWAYS: dict[str, type] = {}
 NAME_RE = re.compile(r"^[a-z][a-z0-9_]{2,29}$")
@@ -45,8 +47,8 @@ def sandbox_allowed() -> bool:
 
 
 def env_override(name: str, key: str) -> str | None:
-    """RAVIN_GATEWAY_<درگاه>_<کلید> در محیط بر دیتابیس مقدم است؛ برای نگهداری اسرار خارج از دیتابیس."""
-    return os.environ.get(f"RAVIN_GATEWAY_{name.upper()}_{key.upper()}") or None
+    """RAVIX_GATEWAY_<درگاه>_<کلید> در محیط بر دیتابیس مقدم است؛ برای نگهداری اسرار خارج از دیتابیس."""
+    return getenv(f"RAVIX_GATEWAY_{name.upper()}_{key.upper()}") or None
 
 
 def get_config_row(site, name):

@@ -12,7 +12,7 @@ from django.views.generic import ListView, TemplateView
 
 from apps.accounts.mixins import CapabilityRequiredMixin
 from apps.content.models import Page
-from apps.core.templatetags.ravin_ui import jalali_datetime
+from apps.core.templatetags.ravix_ui import jalali_datetime
 from apps.media_library.models import Media
 from apps.public import builders as pub
 from apps.public.rendering import render_page

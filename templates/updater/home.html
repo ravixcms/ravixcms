@@ -1,5 +1,5 @@
 {% extends "layouts/panel.html" %}
-{% load ravin_ui %}
+{% load ravix_ui %}
 {% block title %}به‌روزرسانی‌ها{% endblock %}
 {% block page_title %}به‌روزرسانی‌ها{% endblock %}
 {% block content %}
@@ -10,8 +10,8 @@
 {% if lock %}<div class="form-errors warn" role="status"><p>ارتقایی در جریان است: <span class="ltr">{{ lock.operation }}</span> (از {{ lock.since|jalali_datetime }}). تا پایان آن ارتقای دیگری ممکن نیست.</p></div>{% endif %}
 {% for r in recovery %}<div class="form-errors" role="alert"><p><strong>اجرای #{{ r.pk }} نیازمند بازیابی دستی است.</strong> <a href="{% url 'updater:run' r.pk %}">دستور بازیابی</a></p></div>{% endfor %}
 {% if error %}<div class="form-errors" role="alert"><p>{{ error }}</p></div>{% endif %}
-{% if not has_source %}<div class="form-errors warn" role="status"><p>منبع رسمی به‌روزرسانی تنظیم نشده است (<span class="ltr">RAVIN_UPDATE_URL</span>). تا آن را تنظیم نکنید فقط نسخه‌های نصب‌شده نمایش داده می‌شود. هیچ نسخهٔ جدیدی «حدس» زده نمی‌شود.</p></div>{% endif %}
-{% if not web_apply %}<div class="form-errors warn" role="status"><p>اعمال ارتقا از وب خاموش است (امن‌ترین حالت). با دستور <span class="ltr">python manage.py ravin_update apply core</span> انجام دهید.</p></div>{% endif %}
+{% if not has_source %}<div class="form-errors warn" role="status"><p>منبع رسمی به‌روزرسانی تنظیم نشده است (<span class="ltr">RAVIX_UPDATE_URL</span>). تا آن را تنظیم نکنید فقط نسخه‌های نصب‌شده نمایش داده می‌شود. هیچ نسخهٔ جدیدی «حدس» زده نمی‌شود.</p></div>{% endif %}
+{% if not web_apply %}<div class="form-errors warn" role="status"><p>اعمال ارتقا از وب خاموش است (امن‌ترین حالت). با دستور <span class="ltr">python manage.py ravix_update apply core</span> انجام دهید.</p></div>{% endif %}
 
 <div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>هسته</h2></div><div class="card-body">
   <p>نسخهٔ فعلی: <strong class="ltr">{{ v.core.running }}</strong> — قرارداد افزونه <span class="ltr">{{ v.contracts.plugin_api }}</span>، قرارداد قالب <span class="ltr">{{ v.contracts.theme_api }}</span>، Python <span class="ltr">{{ v.python }}</span></p>

@@ -24,7 +24,7 @@ OTHER_SEED, OTHER_PUB = signing.generate_keypair()
 
 
 def pkg(slug="demo_pkg", version="1.0.0", *, man=None, extra=None, root=None, raw=None):
-    m = man or {"slug": slug, "name": f"افزونه {slug}", "version": version, "description": "d", "api_version": 1, "ravin": ">=0.5.0,<1.0.0"}
+    m = man or {"slug": slug, "name": f"افزونه {slug}", "version": version, "description": "d", "api_version": 1, "ravix": ">=0.5.0,<1.0.0"}
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
         zf.writestr(f"{root or slug}/plugin.json", json.dumps(m))
@@ -49,8 +49,8 @@ class InstallerCase(PluginTestCase):
         self.backups = self.tmp.parent / (self.tmp.name + "-backups")
         self.backups.mkdir()
         self.addCleanup(__import__("shutil").rmtree, self.backups, True)
-        ov = override_settings(RAVIN_PLUGIN_INSTALL_DIR=self.tmp, RAVIN_PLUGIN_BACKUP_DIR=self.backups, RAVIN_PLUGIN_WEB_INSTALL=True,
-                               RAVIN_TRUSTED_PUBLIC_KEYS=[f"test:{PUB}"], RAVIN_PLUGINS_ALLOW_UNSIGNED=False)
+        ov = override_settings(RAVIX_PLUGIN_INSTALL_DIR=self.tmp, RAVIX_PLUGIN_BACKUP_DIR=self.backups, RAVIX_PLUGIN_WEB_INSTALL=True,
+                               RAVIX_TRUSTED_PUBLIC_KEYS=[f"test:{PUB}"], RAVIX_PLUGINS_ALLOW_UNSIGNED=False)
         ov.enable()
         self.addCleanup(ov.disable)
 
@@ -116,7 +116,7 @@ class PackageValidationTests(InstallerCase):
         self.assertFalse(any(self.tmp.iterdir()))
 
     def test_incompatible_core_version(self):
-        data = pkg(man={"slug": "demo_pkg", "name": "x", "version": "1.0.0", "api_version": 1, "ravin": ">=9.0.0"})
+        data = pkg(man={"slug": "demo_pkg", "name": "x", "version": "1.0.0", "api_version": 1, "ravix": ">=9.0.0"})
         with self.assertRaises(InstallError) as cm:
             self.local(data)
         self.assertIn("سازگار نیست", str(cm.exception))
@@ -124,7 +124,7 @@ class PackageValidationTests(InstallerCase):
         self.assertFalse(any(self.tmp.iterdir()))
 
     def test_incompatible_plugin_api(self):
-        data = pkg(man={"slug": "demo_pkg", "name": "x", "version": "1.0.0", "api_version": 2, "ravin": ">=0.5.0"})
+        data = pkg(man={"slug": "demo_pkg", "name": "x", "version": "1.0.0", "api_version": 2, "ravix": ">=0.5.0"})
         with self.assertRaises(InstallError):
             installer.install_from_file(data, self.admin, signature="x")
 
@@ -184,7 +184,7 @@ class SignatureTests(InstallerCase):
     def test_no_trusted_keys_means_nothing_verifies(self):
         data = pkg()
         sig, kid = sig_for(data)
-        with override_settings(RAVIN_TRUSTED_PUBLIC_KEYS=[]), self.assertRaises(InstallError) as cm:
+        with override_settings(RAVIX_TRUSTED_PUBLIC_KEYS=[]), self.assertRaises(InstallError) as cm:
             installer.install_from_file(data, self.admin, signature=sig, key_id=kid)
         self.assertIn("کلید", str(cm.exception))
 
@@ -203,19 +203,19 @@ class SignatureTests(InstallerCase):
         with self.assertRaises(InstallError) as cm:
             installer.install_from_file(data, self.admin)
         self.assertIn("امضا", str(cm.exception))
-        with override_settings(RAVIN_PLUGINS_ALLOW_UNSIGNED=True):
+        with override_settings(RAVIX_PLUGINS_ALLOW_UNSIGNED=True):
             self.assertEqual(installer.install_from_file(data, self.admin)[0], "installed")
         self.assertEqual(PluginPackage.objects.get().signature_state, "unsigned")
 
     def test_registry_source_always_requires_signature(self):
-        with override_settings(RAVIN_PLUGINS_ALLOW_UNSIGNED=True), self.assertRaises(InstallError):
+        with override_settings(RAVIX_PLUGINS_ALLOW_UNSIGNED=True), self.assertRaises(InstallError):
             installer.stage(pkg(), source="registry")
 
     def test_signing_primitives(self):
         s, p = signing.generate_keypair()
         sig, kid = signing.sign(s, "a_b", "1.0.0", "h" * 64, "f" * 64)
         self.assertEqual(kid, signing.key_id(p))
-        with override_settings(RAVIN_TRUSTED_PUBLIC_KEYS=[p]):
+        with override_settings(RAVIX_TRUSTED_PUBLIC_KEYS=[p]):
             self.assertTrue(signing.verify("a_b", "1.0.0", "h" * 64, "f" * 64, sig, kid).ok)
             for args in (("a_c", "1.0.0", "h" * 64, "f" * 64), ("a_b", "1.0.1", "h" * 64, "f" * 64), ("a_b", "1.0.0", "x" * 64, "f" * 64), ("a_b", "1.0.0", "h" * 64, "y" * 64)):
                 self.assertEqual(signing.verify(*args, sig, kid).state, "invalid")
@@ -260,7 +260,7 @@ class PlaceAndLifecycleTests(InstallerCase):
         self.assertFalse(PluginOperationLock.objects.exists())  # قفل آزاد شده
 
     def test_unwritable_install_dir_message(self):
-        with override_settings(RAVIN_PLUGIN_INSTALL_DIR=Path("/proc/nope/plugins")), self.assertRaises(InstallError) as cm:
+        with override_settings(RAVIX_PLUGIN_INSTALL_DIR=Path("/proc/nope/plugins")), self.assertRaises(InstallError) as cm:
             self.local(pkg())
         self.assertIn("قابل‌نوشتن", str(cm.exception))
 
@@ -276,7 +276,7 @@ class PlaceAndLifecycleTests(InstallerCase):
         for u in (self.author, None):
             with self.assertRaises(InstallError):
                 installer.install_from_file(pkg(), u)
-        with override_settings(RAVIN_PLUGIN_WEB_INSTALL=False), self.assertRaisesMessage(InstallError, "خاموش"):
+        with override_settings(RAVIX_PLUGIN_WEB_INSTALL=False), self.assertRaisesMessage(InstallError, "خاموش"):
             self.local(pkg())
 
     def test_already_installed_requires_upgrade(self):
@@ -342,7 +342,7 @@ class UpgradeRollbackTests(InstallerCase):
         other = self.tmp.parent / (self.tmp.name + "-manual")
         other.mkdir()
         self.addCleanup(__import__("shutil").rmtree, other, True)
-        with override_settings(RAVIN_PLUGIN_INSTALL_DIR=other), self.assertRaisesMessage(InstallError, "دستی"):
+        with override_settings(RAVIX_PLUGIN_INSTALL_DIR=other), self.assertRaisesMessage(InstallError, "دستی"):
             self.upgrade()
 
     def test_failed_swap_restores_everything(self):
@@ -399,7 +399,7 @@ class UpgradeRollbackTests(InstallerCase):
             installer.rollback(99999, self.admin)
 
     def test_backup_retention(self):
-        with override_settings(RAVIN_PLUGIN_BACKUPS_KEEP=2):
+        with override_settings(RAVIX_PLUGIN_BACKUPS_KEEP=2):
             for v in ("1.1.0", "1.2.0", "1.3.0"):
                 self.upgrade(v)
                 services.approve_update("demo_pkg", self.admin, fingerprint(self.tmp / "demo_pkg"))
@@ -417,7 +417,7 @@ class MigrationRollbackTests(InstallerCase):
             "    operations = [migrations.AddField(model_name='note', name='extra', field=models.CharField(default='', max_length=10))]\n")
 
     def pk(self, version, model, migs):
-        m = base_manifest("rbnotes", version=version, models=True, ravin=">=0.5.0,<1.0.0")
+        m = base_manifest("rbnotes", version=version, models=True, ravix=">=0.5.0,<1.0.0")
         m.pop("admin_pages"); m.pop("public_routes"); m.pop("capabilities")
         extra = {"models.py": model, "migrations/__init__.py": "", **migs}
         return pkg("rbnotes", version, man=m, extra=extra)
@@ -484,7 +484,7 @@ class RegistrySourceTests(InstallerCase):
         import tempfile
         self.hub_tmp = tempfile.mkdtemp(prefix="hub-")
         self.addCleanup(__import__("shutil").rmtree, self.hub_tmp, True)
-        ov = override_settings(RAVIN_REGISTRY_STORAGE=self.hub_tmp, RAVIN_REGISTRY_SIGNING_KEY=SEED, RAVIN_OFFICIAL_REGISTRY_URL="")
+        ov = override_settings(RAVIX_REGISTRY_STORAGE=self.hub_tmp, RAVIX_REGISTRY_SIGNING_KEY=SEED, RAVIX_OFFICIAL_REGISTRY_URL="")
         ov.enable()
         self.addCleanup(ov.disable)
         self.pubuser = make_user("pubx", Role.USER)
@@ -503,7 +503,7 @@ class RegistrySourceTests(InstallerCase):
         self.assertTrue((self.tmp / "hub_plug" / "plugin.json").is_file())
 
     def test_unsigned_registry_version_rejected(self):
-        with override_settings(RAVIN_REGISTRY_SIGNING_KEY=""):
+        with override_settings(RAVIX_REGISTRY_SIGNING_KEY=""):
             self.hub_publish()
         with self.assertRaises(InstallError) as cm:
             installer.install_from_registry("hub_plug", None, self.admin)
@@ -512,7 +512,7 @@ class RegistrySourceTests(InstallerCase):
 
     def test_registry_key_not_trusted_by_site(self):
         self.hub_publish()
-        with override_settings(RAVIN_TRUSTED_PUBLIC_KEYS=[f"x:{OTHER_PUB}"]), self.assertRaises(InstallError):
+        with override_settings(RAVIX_TRUSTED_PUBLIC_KEYS=[f"x:{OTHER_PUB}"]), self.assertRaises(InstallError):
             installer.install_from_registry("hub_plug", None, self.admin)
 
     def test_tampered_package_in_registry_storage(self):
@@ -526,7 +526,7 @@ class RegistrySourceTests(InstallerCase):
 
     def test_incompatible_versions_are_skipped_or_refused(self):
         self.hub_publish("1.0.0")
-        self.hub_publish("2.0.0", man={"slug": "hub_plug", "name": "x", "version": "2.0.0", "api_version": 1, "ravin": ">=9.0.0"})
+        self.hub_publish("2.0.0", man={"slug": "hub_plug", "name": "x", "version": "2.0.0", "api_version": 1, "ravix": ">=9.0.0"})
         installer.install_from_registry("hub_plug", None, self.admin)  # آخرین نسخهٔ سازگار = 1.0.0
         self.assertIn('"1.0.0"', (self.tmp / "hub_plug" / "plugin.json").read_text())
         with self.assertRaises(InstallError) as cm:
@@ -536,7 +536,7 @@ class RegistrySourceTests(InstallerCase):
     def test_unknown_plugin_and_missing_registry(self):
         with self.assertRaisesMessage(InstallError, "پیدا نشد"):
             installer.install_from_registry("nope_x", None, self.admin)
-        with override_settings(RAVIN_REGISTRY_ENABLED=False), self.assertRaisesMessage(InstallError, "تنظیم نشده"):
+        with override_settings(RAVIX_REGISTRY_ENABLED=False), self.assertRaisesMessage(InstallError, "تنظیم نشده"):
             installer.install_from_registry("hub_plug", None, self.admin)
 
     def test_upgrade_from_registry_and_update_visibility(self):
@@ -570,13 +570,13 @@ class RegistrySourceTests(InstallerCase):
 
         def fake(url, max_bytes, allow_insecure=False):
             return (json.dumps(info).encode() if url.endswith("/hub_plug/") else body), {}
-        with override_settings(RAVIN_OFFICIAL_REGISTRY_URL="https://registry.example.com"), mock.patch("apps.plugins.sources.http_get", fake):
+        with override_settings(RAVIX_OFFICIAL_REGISTRY_URL="https://registry.example.com"), mock.patch("apps.plugins.sources.http_get", fake):
             self.assertEqual(installer.install_from_registry("hub_plug", None, self.admin), ("installed", "hub_plug"))
             self.assertEqual(PluginPackage.objects.get().source_ref, "https://registry.example.com#hub_plug@1.0.0")
         self.assertTrue(v.signature)
 
     def test_unavailable_registry_does_not_break_panel_versions(self):
-        with override_settings(RAVIN_OFFICIAL_REGISTRY_URL="https://down.example.com"), mock.patch("apps.plugins.sources.http_get", side_effect=sources.RegistryUnavailable("down")):
+        with override_settings(RAVIX_OFFICIAL_REGISTRY_URL="https://down.example.com"), mock.patch("apps.plugins.sources.http_get", side_effect=sources.RegistryUnavailable("down")):
             cache.clear()
             self.assertEqual(sources.latest_versions(), {})
 
@@ -611,7 +611,7 @@ class PanelTests(InstallerCase):
 
     def test_web_install_disabled_message(self):
         c = self.login(self.admin)
-        with override_settings(RAVIN_PLUGIN_WEB_INSTALL=False):
+        with override_settings(RAVIX_PLUGIN_WEB_INSTALL=False):
             self.upload(c, pkg(), signature="x")
             self.assertContains(c.get("/panel/plugins/install-package/"), "خاموش")
 
@@ -676,7 +676,7 @@ class CommandTests(InstallerCase):
         call_command("plugin_sign", str(z), key_file=str(keyfile), stdout=out2)
         sig = [l for l in out2.getvalue().splitlines() if l.startswith("signature:")][0].split(": ")[1]
         kid = [l for l in out2.getvalue().splitlines() if l.startswith("key_id:")][0].split(": ")[1]
-        with override_settings(RAVIN_TRUSTED_PUBLIC_KEYS=[f"dev:{pub}"]):
+        with override_settings(RAVIX_TRUSTED_PUBLIC_KEYS=[f"dev:{pub}"]):
             self.assertEqual(installer.install_from_file(z.read_bytes(), self.admin, signature=sig, key_id=kid)[0], "installed")
         with self.assertRaises(Exception):
             call_command("plugin_keygen", out=str(keyfile))  # بازنویسی نمی‌کند

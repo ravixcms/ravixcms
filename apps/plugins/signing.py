@@ -93,11 +93,11 @@ def sign(seed_b64: str, slug: str, version: str, sha256: str, fingerprint: str) 
 
 
 def registry_signing_seed() -> str | None:
-    """کلید امضای مخزن از فایل (RAVIN_REGISTRY_SIGNING_KEY_FILE) یا متغیر محیطی (RAVIN_REGISTRY_SIGNING_KEY)؛ در غیر این صورت None."""
-    path = getattr(settings, "RAVIN_REGISTRY_SIGNING_KEY_FILE", "")
+    """کلید امضای مخزن از فایل (RAVIX_REGISTRY_SIGNING_KEY_FILE) یا متغیر محیطی (RAVIX_REGISTRY_SIGNING_KEY)؛ در غیر این صورت None."""
+    path = getattr(settings, "RAVIX_REGISTRY_SIGNING_KEY_FILE", "")
     if path:
         return read_key_file(path)
-    return getattr(settings, "RAVIN_REGISTRY_SIGNING_KEY", "") or None
+    return getattr(settings, "RAVIX_REGISTRY_SIGNING_KEY", "") or None
 
 
 # ------------------------------------------------------------------ اعتبارسنجی (سمت سایت)
@@ -110,9 +110,9 @@ class TrustedKeyInfo:
 
 
 def trusted_keys() -> dict[str, TrustedKeyInfo]:
-    """کلیدهای مورد اعتماد: تنظیم سرور (RAVIN_TRUSTED_PUBLIC_KEYS) + کلیدهای فعال ثبت‌شده توسط مدیرکل."""
+    """کلیدهای مورد اعتماد: تنظیم سرور (RAVIX_TRUSTED_PUBLIC_KEYS) + کلیدهای فعال ثبت‌شده توسط مدیرکل."""
     out: dict[str, TrustedKeyInfo] = {}
-    for item in getattr(settings, "RAVIN_TRUSTED_PUBLIC_KEYS", []):
+    for item in getattr(settings, "RAVIX_TRUSTED_PUBLIC_KEYS", []):
         label, _, val = item.partition(":")
         if not val:
             label, val = "env", item
