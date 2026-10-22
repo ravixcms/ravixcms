@@ -237,4 +237,4 @@ python scripts/e2e_plugins.py               # سناریوی کامل در مر�
 - ابزار نصب از طریق آپلود فایل ZIP عمداً وجود ندارد (سطح حملهٔ بزرگ).
 
 
-> نصب از مخزن/فایل، امضای دیجیتال، ارتقا و بازگشت: [`installer.md`](installer.md). مخزن و API آن: [`registry.md`](registry.md).
+> نصب از مخزن/فایل، امضای دیجیتال، ارتقا و بازگشت: [`plugin-installer.md`](plugin-installer.md). مخزن و API آن: [`registry.md`](registry.md).

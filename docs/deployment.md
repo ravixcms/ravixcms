@@ -1,5 +1,7 @@
 # راهنمای استقرار روی Ubuntu (۲۲٫۰۴ / ۲۴٫۰۴)
 
+> نصب خودکار: `sudo ./install.sh` (همین مراحل را با پرسش انجام می‌دهد) یا Docker Compose — [`installer.md`](installer.md). این راهنما شرح دستیِ همان مراحل است.
+
 معماری: **Nginx (HTTPS) → Gunicorn (سوکت یونیکس) → Django → PostgreSQL**. استاتیک با WhiteNoise/Nginx، مدیا با Nginx.
 
 > این راهنما با اطلاعات واقعی شما (دامنه، سرور) اجرا می‌شود. هیچ دامنه، گواهی SSL یا سرویس خارجی از قبل متصل نشده است.
@@ -21,7 +23,7 @@ sudo ufw allow OpenSSH && sudo ufw allow 'Nginx Full' && sudo ufw enable
 sudo adduser --system --group --home /srv/ravix ravix
 sudo usermod -aG ravix www-data                    # nginx باید بتواند سوکت و media را بخواند
 sudo mkdir -p /srv/ravix/{app,media,shop_private,plugins_installed,plugin_backups,themes_installed,update_work,update_backups} /etc/ravix /var/backups/ravix /var/cache/ravix
-# (برای نصب افزونه از پنل: docs/installer.md)
+# (برای نصب افزونه از پنل: docs/plugin-installer.md)
 # (نصب قالب ZIP از پنل — پیش‌فرض خاموش؛ فقط اگر می‌خواهید: sudo chown ravix:ravix /srv/ravix/themes_installed && sudo chmod 750 /srv/ravix/themes_installed ، سپس RAVIX_THEME_INSTALL_DIR و RAVIX_THEME_WEB_INSTALL را در /etc/ravix/ravix.env بگذارید؛ docs/themes.md)
 sudo chown ravix:ravix /srv/ravix/plugins_installed /srv/ravix/plugin_backups && sudo chmod 750 /srv/ravix/plugins_installed && sudo chmod 700 /srv/ravix/plugin_backups
 sudo chown ravix:www-data /srv/ravix/media /var/cache/ravix && sudo chmod 2750 /srv/ravix/media
