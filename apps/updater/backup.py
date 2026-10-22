@@ -131,7 +131,7 @@ def extract_archive(archive: Path, dest: Path) -> Path:
             tgt = (base / m.name).resolve()
             if not (tgt == base or base in tgt.parents) or m.issym() or m.islnk() or m.isdev():
                 raise UpdateError("آرشیو پشتیبان ناامن است؛ بازیابی انجام نشد.")
-        tar.extractall(dest)  # noqa: S202 - نام‌ها بالا بررسی شد
+        tar.extractall(dest)  # noqa: S202  # nosec B202
     return base
 
 
