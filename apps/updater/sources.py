@@ -27,11 +27,16 @@ SHA_RE = re.compile(r"^[0-9a-f]{64}$")
 SLUG_RE = re.compile(r"^[a-z0-9][a-z0-9_-]{0,48}$")
 
 
-def _http_get(url: str, max_bytes: int):
+INDEX_TIMEOUT = 8  # ثانیه؛ فهرست کوچک است و پنل نباید برای سرور قطع‌شده منتظر بماند
+DOWNLOAD_TIMEOUT = 60
+FAIL_TTL = 300  # ثانیه؛ پس از شکست تا این مدت دوباره شبکه صدا زده نمی‌شود (کش منفی)
+
+
+def _http_get(url: str, max_bytes: int, timeout: int = DOWNLOAD_TIMEOUT):
     from apps.plugins.sources import http_get
 
     try:
-        return http_get(url, max_bytes)
+        return http_get(url, max_bytes, timeout=timeout)
     except Exception as exc:  # noqa: BLE001 - RegistryUnavailable و خطاهای شبکه
         raise UpdateError(f"دریافت از منبع به‌روزرسانی ممکن نشد: {exc}")
 
@@ -90,10 +95,10 @@ class HttpSource:
         self.ref = self.base
 
     def index(self) -> dict:
-        data, _ = _http_get(f"{self.base}/updates/v1/index.json", MAX_INDEX)
+        data, _ = _http_get(f"{self.base}/updates/v1/index.json", MAX_INDEX, INDEX_TIMEOUT)
         sig, kid = "", ""
         try:
-            raw, _ = _http_get(f"{self.base}/updates/v1/index.json.sig", 4096)
+            raw, _ = _http_get(f"{self.base}/updates/v1/index.json.sig", 4096, INDEX_TIMEOUT)
             sig_doc = json.loads(raw)
             sig, kid = str(sig_doc.get("signature", "")), str(sig_doc.get("key_id", ""))
         except (UpdateError, ValueError, AttributeError):
@@ -101,8 +106,11 @@ class HttpSource:
         return parse_index(data, sig, kid)
 
     def download(self, entry: dict) -> bytes:
-        url = entry.get("download_url") or ""
-        if urllib.parse.urlparse(url).netloc != urllib.parse.urlparse(self.base).netloc:
+        raw_url = entry.get("download_url") or ""
+        # ravix_release فقط «نام فایل» می‌نویسد؛ نسبی نسبت به <base>/updates/v1/ حل می‌شود. نشانی مطلق باید همان دامنه (و https) باشد.
+        url = urllib.parse.urljoin(f"{self.base}/updates/v1/", raw_url) if raw_url else ""
+        parsed, base = urllib.parse.urlparse(url), urllib.parse.urlparse(self.base)
+        if not url or parsed.scheme != "https" or parsed.netloc != base.netloc:
             raise UpdateError("نشانی دریافت روی دامنهٔ دیگری است؛ برای امنیت رد شد.")
         data, _ = _http_get(url, settings.RAVIX_UPDATE_MAX_PACKAGE_BYTES)
         return data
@@ -158,13 +166,25 @@ def has_source() -> bool:
 
 
 def cached_index(force: bool = False) -> dict:
-    """فهرست با کش کوتاه (۱۰ دقیقه) برای پنل. خطا ← UpdateError (پنل پیام می‌دهد و نمی‌شکند)."""
-    key = "updater:index"
+    """فهرست با کش کوتاه (۱۰ دقیقه) برای پنل. خطا ← UpdateError (پنل پیام می‌دهد و نمی‌شکند).
+
+    شکست هم ۵ دقیقه کش می‌شود تا با قطع بودن سرور رسمی هر بازشدن صفحه ۸ ثانیه معطل نشود؛ ``force=True`` (دکمهٔ «بررسی») کش را دور می‌زند.
+    """
+    key, fail_key = "updater:index", "updater:index:fail"
     if not force:
         hit = cache.get(key)
         if hit is not None:
             return hit
-    idx = get_source().index()
+        failed = cache.get(fail_key)
+        if failed:
+            raise UpdateError(failed)
+    try:
+        idx = get_source().index()
+    except UpdateError as exc:
+        logger.warning("منبع به‌روزرسانی در دسترس نیست: %s", exc)
+        cache.set(fail_key, str(exc)[:300], FAIL_TTL)
+        raise
+    cache.delete(fail_key)
     cache.set(key, idx, 600)
     return idx
 

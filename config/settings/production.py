@@ -11,6 +11,12 @@ from .base import DATABASES, SHOP_ALLOW_SANDBOX_IN_PRODUCTION, SHOP_ENABLED, SHO
 DEBUG = False
 
 SECRET_KEY = env("DJANGO_SECRET_KEY", "")
+if not SECRET_KEY and env("RAVIX_SECRET_KEY_FILE"):  # مثل Docker secrets: کلید از فایل (مجوز 600) خوانده می‌شود
+    try:
+        with open(env("RAVIX_SECRET_KEY_FILE"), encoding="utf-8") as _fh:
+            SECRET_KEY = _fh.read().strip()
+    except OSError:
+        SECRET_KEY = ""
 if not SECRET_KEY or len(SECRET_KEY) < 32:
     raise ImproperlyConfigured("DJANGO_SECRET_KEY باید تنظیم شده و حداقل ۳۲ کاراکتر باشد.")
 

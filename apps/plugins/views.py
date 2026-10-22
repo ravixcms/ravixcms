@@ -359,8 +359,8 @@ class TrustedKeysView(CapabilityRequiredMixin, View):
     required_capability = "plugins.trust"
 
     def _render(self, request, status=200):
-        return render(request, "plugins/trusted_keys.html", {"env_keys": [k for k in signing.trusted_keys().values() if k.source == "env"],
-                                                            "db_keys": TrustedKey.objects.all()}, status=status)
+        return render(request, "plugins/trusted_keys.html", {"env_keys": [k for k in signing.trusted_keys().values() if k.source in ("builtin", "env")],
+                                                            "db_keys": TrustedKey.objects.all(), "revoked": sorted(signing.revoked_key_ids())}, status=status)
 
     def get(self, request):
         return self._render(request)

@@ -39,7 +39,7 @@ class HttpSourceTests(UpdaterCase):
     def test_index_fetched_over_https_helper_and_signature_optional(self):
         calls = []
 
-        def fake(url, max_bytes, allow_insecure=False):
+        def fake(url, max_bytes, allow_insecure=False, timeout=30):
             calls.append(url)
             if url.endswith("index.json"):
                 return index(), {}
@@ -59,6 +59,24 @@ class HttpSourceTests(UpdaterCase):
         with mock.patch("apps.plugins.sources.http_get") as g:
             with self.assertRaisesRegex(UpdateError, "دامنه"):
                 self.http().download({**GOOD, "download_url": "https://evil.example.org/p.zip"})
+            g.assert_not_called()
+
+    def test_relative_filename_from_ravix_release_resolves_under_updates_v1(self):
+        seen = []
+
+        def fake(url, max_bytes, allow_insecure=False, timeout=30):
+            seen.append(url)
+            return b"zip", {}
+
+        with mock.patch("apps.plugins.sources.http_get", side_effect=fake):
+            self.assertEqual(self.http().download({**GOOD, "download_url": "ravix-core-0.7.0.zip"}), b"zip")
+        self.assertEqual(seen, ["https://u.example.com/updates/v1/ravix-core-0.7.0.zip"])
+
+    def test_relative_tricks_refused(self):
+        with mock.patch("apps.plugins.sources.http_get") as g:
+            for bad in ("//evil.example.org/p.zip", "http://u.example.com/p.zip", "https://u.example.com.evil.org/p.zip"):
+                with self.assertRaises(UpdateError, msg=bad):
+                    self.http().download({**GOOD, "download_url": bad})
             g.assert_not_called()
 
     def test_http_scheme_rejected_by_helper(self):

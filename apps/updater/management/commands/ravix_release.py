@@ -48,7 +48,7 @@ class Command(BaseCommand):
             fd = os.open(kf, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
             with os.fdopen(fd, "w") as f:
                 f.write(seed)
-            self.stdout.write(f"کلید خصوصی در {kf} نوشته شد (مجوز ۶۰۰؛ آن را نگه‌داری و پشتیبان امن کنید). کلید عمومی برای RAVIX_TRUSTED_PUBLIC_KEYS:\n{pub}")
+            self.stdout.write(f"کلید خصوصی در {kf} نوشته شد (مجوز ۶۰۰؛ آن را نگه‌داری و پشتیبان امن کنید). شناسهٔ کلید (key_id؛ برای ابطال): {plugin_signing.key_id(pub)}\nکلید عمومی (برای apps/core/official.py یا RAVIX_TRUSTED_PUBLIC_KEYS؛ آخرین خط):\n{pub}")
             return
         seed = self._seed(o)
         req = {k: v for k, v in {"python": o["python"], "min_from": o["min_from"]}.items() if v}
