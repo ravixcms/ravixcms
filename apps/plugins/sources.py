@@ -28,14 +28,14 @@ class _NoRedirect(urllib.request.HTTPRedirectHandler):
         return None
 
 
-def http_get(url: str, max_bytes: int, allow_insecure: bool = False) -> tuple[bytes, dict]:
+def http_get(url: str, max_bytes: int, allow_insecure: bool = False, timeout: int = 30) -> tuple[bytes, dict]:
     parsed = urllib.parse.urlparse(url)
     if parsed.scheme != "https" and not (allow_insecure and settings.DEBUG and parsed.scheme == "http"):
         raise RegistryUnavailable("فقط نشانی HTTPS مجاز است.")
     req = urllib.request.Request(url, headers={"User-Agent": "ravix-plugin-installer/1"})
     opener = urllib.request.build_opener(_NoRedirect)
     try:
-        with opener.open(req, timeout=30) as resp:
+        with opener.open(req, timeout=timeout) as resp:
             data = resp.read(max_bytes + 1)
             headers = dict(resp.headers)
     except urllib.error.HTTPError as exc:
@@ -73,7 +73,7 @@ class RemoteSource:
         return data
 
     def latest_map(self) -> dict:
-        raw, _ = http_get(f"{self.base}/registry/v1/plugins/?page_size=50", MAX_JSON, self.allow_insecure)
+        raw, _ = http_get(f"{self.base}/registry/v1/plugins/?page_size=50", MAX_JSON, self.allow_insecure, timeout=8)
         return {r["slug"]: r.get("latest_compatible_version") for r in json.loads(raw).get("results", [])}
 
 

@@ -10,6 +10,7 @@ from urllib.parse import urlparse
 
 from dotenv import load_dotenv
 
+from apps.core import official
 from apps.core.deprecation import getenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -81,6 +82,7 @@ LOCAL_APPS = [
     "apps.updater",
     "apps.public",
     "apps.dashboard",
+    "apps.installer",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS + (["apps.shop"] if SHOP_ENABLED else [])
@@ -92,6 +94,7 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
+    "apps.installer.middleware.InstallGateMiddleware",  # تا پایان نصب همه‌چیز را به /install/ می‌برد
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -99,6 +102,7 @@ MIDDLEWARE = [
     "apps.core.middleware.SecurityHeadersMiddleware",  # CSP برای پنل/حساب‌ها/API + Permissions-Policy
     "django.middleware.http.ConditionalGetMiddleware",  # ETag/304 برای صفحات عمومی
     "apps.updater.middleware.MaintenanceMiddleware",  # ۵۰۳ فقط در بازهٔ اعمال ارتقا
+    "apps.core.middleware.SiteRegionalMiddleware",  # زبان/منطقهٔ زمانی انتخابی مدیر (SiteSettings)
     "apps.sites.middleware.CurrentSiteMiddleware",  # request.site (تنبل؛ فقط در صورت استفاده کوئری می‌زند)
     "apps.content.middleware.RedirectFallbackMiddleware",  # ریدایرکت مسیرهای قدیمی (فقط روی پاسخ ۴۰۴)
 ]
@@ -231,7 +235,9 @@ RAVIX_PLUGIN_BACKUPS_KEEP = int(env("RAVIX_PLUGIN_BACKUPS_KEEP", "5"))
 RAVIX_PLUGIN_WEB_INSTALL = env_bool("RAVIX_PLUGIN_WEB_INSTALL", False)
 RAVIX_PLUGINS_ALLOW_UNSIGNED = env_bool("RAVIX_PLUGINS_ALLOW_UNSIGNED", False)  # بستهٔ بدون امضای معتبر (فقط آپلود محلی؛ مخزن همیشه امضا می‌خواهد)
 RAVIX_TRUSTED_PUBLIC_KEYS = env_list("RAVIX_TRUSTED_PUBLIC_KEYS")  # «برچسب:کلید_عمومی_base64» ؛ کلیدهای بیشتر در پنل (مدیرکل)
-RAVIX_OFFICIAL_REGISTRY_URL = env("RAVIX_OFFICIAL_REGISTRY_URL", "").rstrip("/")  # خالی: مخزن همین نمونه (اگر روشن باشد)
+# پیش‌فرض‌ها از apps/core/official.py می‌آیند و با متغیر محیطی عوض می‌شوند؛ مقدار خالیِ صریح (RAVIX_OFFICIAL_REGISTRY_URL=) آن را خاموش می‌کند.
+RAVIX_OFFICIAL_REGISTRY_URL = env("RAVIX_OFFICIAL_REGISTRY_URL", official.OFFICIAL_REGISTRY_URL).strip().rstrip("/")  # خالی: مخزن همین نمونه (اگر روشن باشد)
+RAVIX_REVOKED_KEY_IDS = [k.lower() for k in env_list("RAVIX_REVOKED_KEY_IDS")]  # شناسهٔ کلیدهای ابطال‌شده (افزون بر official.REVOKED_KEY_IDS)
 RAVIX_PLUGINS_ENABLED = env_bool("RAVIX_PLUGINS_ENABLED", True)  # false: سیستم افزونه کاملاً خاموش
 # حالت امن (بازیابی): کد هیچ افزونه‌ای بارگذاری یا اجرا نمی‌شود؛ پنل و مدیریت افزونه‌ها کار می‌کند.
 RAVIX_PLUGINS_SAFE_MODE = env_bool("RAVIX_PLUGINS_SAFE_MODE", False)
@@ -338,6 +344,11 @@ import sys  # noqa: E402
 if "test" in sys.argv:
     PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 
+# نصب‌کنندهٔ وب (apps/installer): تا ساخته‌شدن مدیرکل همه‌چیز را به /install/ می‌برد. در اجرای تست‌ها خاموش است.
+RAVIX_INSTALLER_ENABLED = env_bool("RAVIX_INSTALLER_ENABLED", True) and "test" not in sys.argv
+RAVIX_INSTALL_TOKEN = env("RAVIX_INSTALL_TOKEN", "")  # اگر خالی باشد توکن تصادفی ساخته و در لاگ/فایل گذاشته می‌شود
+RAVIX_INSTALL_TOKEN_FILE = Path(env("RAVIX_INSTALL_TOKEN_FILE", str(BASE_DIR / "install_token")))
+
 # ---------------------------------------------------------------------------
 # چندسایتی و فروشگاه (مرحله ششم)
 # ---------------------------------------------------------------------------
@@ -371,7 +382,7 @@ RAVIX_REGISTRY_SIGNING_KEY = env("RAVIX_REGISTRY_SIGNING_KEY", "")  # جایگز
 # ---------------------------------------------------------------------------
 # به‌روزرسانی یکپارچه (apps.updater) — docs/upgrade.md
 # ---------------------------------------------------------------------------
-RAVIX_UPDATE_URL = env("RAVIX_UPDATE_URL", "").rstrip("/")  # منبع رسمی (فقط HTTPS): <URL>/updates/v1/index.json
+RAVIX_UPDATE_URL = env("RAVIX_UPDATE_URL", official.OFFICIAL_UPDATE_URL).strip().rstrip("/")  # منبع رسمی (فقط HTTPS): <URL>/updates/v1/index.json
 RAVIX_UPDATE_DIR = env("RAVIX_UPDATE_DIR", "")  # منبع پوشه‌ای (آفلاین/آزمایشی): index.json + بسته‌ها؛ فقط تنظیم سرور
 RAVIX_UPDATE_WEB_APPLY = env_bool("RAVIX_UPDATE_WEB_APPLY", False)  # false: اعمال ارتقا فقط با دستور مدیریتی (check/نمایش همیشه آزاد است)
 RAVIX_UPDATE_APP_ROOT = Path(env("RAVIX_UPDATE_APP_ROOT", str(BASE_DIR)))  # ریشهٔ کدی که ارتقا می‌یابد

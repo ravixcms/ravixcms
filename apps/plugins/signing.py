@@ -106,27 +106,38 @@ class TrustedKeyInfo:
     key_id: str
     public_key: str
     label: str
-    source: str  # env | db
+    source: str  # builtin | env | db
 
 
 def trusted_keys() -> dict[str, TrustedKeyInfo]:
-    """کلیدهای مورد اعتماد: تنظیم سرور (RAVIX_TRUSTED_PUBLIC_KEYS) + کلیدهای فعال ثبت‌شده توسط مدیرکل."""
+    """کلیدهای مورد اعتماد: کلیدهای رسمی داخل کد (apps/core/official.py) + RAVIX_TRUSTED_PUBLIC_KEYS + کلیدهای فعال ثبت‌شده توسط مدیرکل؛ منهای کلیدهای ابطال‌شده."""
+    from apps.core import official
+
     out: dict[str, TrustedKeyInfo] = {}
-    for item in getattr(settings, "RAVIX_TRUSTED_PUBLIC_KEYS", []):
-        label, _, val = item.partition(":")
-        if not val:
-            label, val = "env", item
-        try:
-            val = normalize_public_key(val)
-        except SigningError:
-            continue  # ورودی خراب نادیده گرفته می‌شود؛ preflight آن را گزارش می‌کند
-        kid = key_id(val)
-        out[kid] = TrustedKeyInfo(kid, val, label.strip() or "env", "env")
+    for source, items in (("builtin", official.OFFICIAL_PUBLIC_KEYS), ("env", getattr(settings, "RAVIX_TRUSTED_PUBLIC_KEYS", []))):
+        for item in items:
+            label, _, val = item.partition(":")
+            if not val:
+                label, val = source, item
+            try:
+                val = normalize_public_key(val)
+            except SigningError:
+                continue  # ورودی خراب نادیده گرفته می‌شود؛ preflight آن را گزارش می‌کند
+            kid = key_id(val)
+            out.setdefault(kid, TrustedKeyInfo(kid, val, label.strip() or source, source))
     from .models import TrustedKey
 
     for k in TrustedKey.objects.filter(is_active=True):
         out.setdefault(k.key_id, TrustedKeyInfo(k.key_id, k.public_key, k.label, "db"))
+    for kid in revoked_key_ids():
+        out.pop(kid, None)  # ابطال بر همهٔ منبع‌ها (کد، env، پنل) غالب است
     return out
+
+
+def revoked_key_ids() -> set[str]:
+    from apps.core import official
+
+    return {str(k).strip().lower() for k in (*official.REVOKED_KEY_IDS, *getattr(settings, "RAVIX_REVOKED_KEY_IDS", [])) if str(k).strip()}
 
 
 @dataclass
