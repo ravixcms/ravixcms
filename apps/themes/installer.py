@@ -65,11 +65,11 @@ class InstallResult:
 
 def install_root() -> Path:
     """مسیر واقعی پوشهٔ نصب (اگر مدیر سرور آن را symlink کرده باشد یک بار resolve می‌شود و از آن به بعد همان مسیر به‌کار می‌رود)."""
-    return Path(settings.RAVIN_THEME_INSTALL_DIR).resolve()
+    return Path(settings.RAVIX_THEME_INSTALL_DIR).resolve()
 
 
 def revision_path() -> Path:
-    return Path(settings.RAVIN_THEME_INSTALL_DIR) / REVISION_FILE
+    return Path(settings.RAVIX_THEME_INSTALL_DIR) / REVISION_FILE
 
 
 # ------------------------------------------------------------------ ثبت رویداد
@@ -84,9 +84,9 @@ def _audit(request, kind: str, text: str, *, ok: bool = False) -> None:
 
 # ------------------------------------------------------------------ پیش‌نیازها
 def _require_enabled() -> None:
-    if not getattr(settings, "RAVIN_THEME_WEB_INSTALL", False):
+    if not getattr(settings, "RAVIX_THEME_WEB_INSTALL", False):
         raise ThemeInstallError(
-            "نصب قالب از طریق وب در این سرور خاموش است. مدیر سرور باید آگاهانه RAVIN_THEME_WEB_INSTALL=true را تنظیم کند "
+            "نصب قالب از طریق وب در این سرور خاموش است. مدیر سرور باید آگاهانه RAVIX_THEME_WEB_INSTALL=true را تنظیم کند "
             "(راهنما: docs/themes.md)."
         )
 
@@ -119,9 +119,9 @@ def _prepare_root() -> Path:
     try:
         root.mkdir(parents=True, exist_ok=True, mode=0o750)
     except OSError:
-        raise ThemeInstallError("پوشهٔ نصب قالب ساخته نشد یا قابل‌نوشتن نیست؛ RAVIN_THEME_INSTALL_DIR و مجوزهای آن را بررسی کنید.") from None
+        raise ThemeInstallError("پوشهٔ نصب قالب ساخته نشد یا قابل‌نوشتن نیست؛ RAVIX_THEME_INSTALL_DIR و مجوزهای آن را بررسی کنید.") from None
     if not root.is_dir() or not os.access(root, os.W_OK | os.X_OK):
-        raise ThemeInstallError("پوشهٔ نصب قالب قابل‌نوشتن نیست؛ RAVIN_THEME_INSTALL_DIR و مجوزهای آن را بررسی کنید.")
+        raise ThemeInstallError("پوشهٔ نصب قالب قابل‌نوشتن نیست؛ RAVIX_THEME_INSTALL_DIR و مجوزهای آن را بررسی کنید.")
     fstype = _mount_fstype(root)
     if fstype in UNRELIABLE_LOCK_FS:
         raise ThemeInstallError(
@@ -186,7 +186,7 @@ def _tighten_permissions(tree: Path) -> None:
 def _conflict(slug: str) -> str | None:
     if slug == DEFAULT_THEME:
         return "قالب پیش‌فرض («default») با این روش جایگزین یا بازنویسی نمی‌شود."
-    for base in getattr(settings, "RAVIN_THEME_DIRS", []):
+    for base in getattr(settings, "RAVIX_THEME_DIRS", []):
         if os.path.lexists(Path(base) / slug):
             return f"قالبی با شناسهٔ «{slug}» از قبل وجود دارد و بازنویسی نمی‌شود. شناسهٔ قالب را در theme.json و نام پوشه تغییر دهید."
     return None

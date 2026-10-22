@@ -1,7 +1,7 @@
 """حالت پیش‌نمایش: پرچمی در نشست مدیر که باعث می‌شود سایت عمومی «پیش‌نویس» را نشان دهد، نه نسخه منتشرشده."""
 from django.conf import settings
 
-SESSION_KEY = "ravin_preview"
+SESSION_KEY = "ravix_preview"
 CAPABILITY = "themes.manage"
 
 

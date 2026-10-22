@@ -1,13 +1,13 @@
 # مخزن افزونه‌ها (Plugin Registry)
 
-اپ `apps/pluginhub`. هر نمونهٔ Ravin می‌تواند یک مخزن مرکزی باشد: ناشران مجاز بسته‌ها را منتشر می‌کنند، مدیران سایت‌ها در **Plugin Directory** جست‌وجو و سازگاری را می‌بینند و بسته را با بررسی SHA-256 دریافت می‌کنند.
+اپ `apps/pluginhub`. هر نمونهٔ Ravix می‌تواند یک مخزن مرکزی باشد: ناشران مجاز بسته‌ها را منتشر می‌کنند، مدیران سایت‌ها در **Plugin Directory** جست‌وجو و سازگاری را می‌بینند و بسته را با بررسی SHA-256 دریافت می‌کنند.
 
 > قاعدهٔ امنیتی مرحلهٔ ۵ حفظ شده است: **دریافت از مخزن = فقط قراردادن پوشه در `plugins/`**. نصب و فعال‌سازی همچنان فقط توسط مدیر و پس از بازبینی/اعتماد صریح در پنل «افزونه‌ها» انجام می‌شود. هیچ کدی خودکار بارگذاری یا فعال نمی‌شود.
 
 ## شناسه، نسخه و manifest
 - **شناسهٔ یکتا** = `slug` در `plugin.json` (`[a-z][a-z0-9_]{2,30}`). در مخزن یکتاست و پس از ثبت، **متعلق به همان ناشر** می‌ماند؛ ناشر دیگر نمی‌تواند نسخه‌ای برای آن بفرستد.
 - **نسخه** سه‌بخشی (`1.2.3`). هر نسخهٔ ثبت‌شده **تغییرناپذیر** است؛ تغییر یعنی نسخهٔ جدید. نسخهٔ پس‌گرفته (yanked) دانلود نمی‌شود و دوباره منتشر نمی‌شود.
-- **manifest** همان `plugin.json` مرحلهٔ ۵ است. دو کلید اختیاری جدید: `category` (نامک دستهٔ مخزن) و `license`. سازگاری با `api_version` و `ravin` (مثل `>=0.5.0,<1.0.0`) تعیین می‌شود.
+- **manifest** همان `plugin.json` مرحلهٔ ۵ است. دو کلید اختیاری جدید: `category` (نامک دستهٔ مخزن) و `license`. سازگاری با `api_version` و `ravix` (مثل `>=0.5.0,<1.0.0`) تعیین می‌شود.
 - **قالب بسته:** فایل zip با یک پوشهٔ ریشه به نام slug که `plugin.json` دارد:
   ```
   my_plugin.zip
@@ -15,7 +15,7 @@
   ```
   ساخت: `cd plugins && zip -r my_plugin.zip my_plugin -x '*/__pycache__/*'`
 
-اعتبارسنجی بسته (بدون اجرای کد): مسیر مطلق/`..`/بک‌اسلش، symlink، فایل غیرعادی، نام تکراری، رمزگذاری، سقف تعداد/حجم بازشده (ضد zip-bomb)، سقف حجم zip (`RAVIN_REGISTRY_MAX_PACKAGE_BYTES`)، اعتبار manifest و برابری slug با نام پوشه.
+اعتبارسنجی بسته (بدون اجرای کد): مسیر مطلق/`..`/بک‌اسلش، symlink، فایل غیرعادی، نام تکراری، رمزگذاری، سقف تعداد/حجم بازشده (ضد zip-bomb)، سقف حجم zip (`RAVIX_REGISTRY_MAX_PACKAGE_BYTES`)، اعتبار manifest و برابری slug با نام پوشه.
 
 ## ساختار دیتابیس
 | مدل | کار |
@@ -43,9 +43,9 @@
 
 | مسیر | شرح |
 |---|---|
-| `GET /registry/v1/` | متادیتا: نسخهٔ API، نسخهٔ Ravin، الگوریتم تمامیت (`sha256`)، الزام HTTPS، سقف حجم |
+| `GET /registry/v1/` | متادیتا: نسخهٔ API، نسخهٔ Ravix، الگوریتم تمامیت (`sha256`)، الزام HTTPS، سقف حجم |
 | `GET /registry/v1/categories/` | دسته‌ها |
-| `GET /registry/v1/plugins/?q=&category=&compatible=1&page=&page_size=` | فهرست (حداکثر `page_size` ۵۰). `compatible=1` فقط افزونه‌های دارای نسخهٔ سازگار با این Ravin |
+| `GET /registry/v1/plugins/?q=&category=&compatible=1&page=&page_size=` | فهرست (حداکثر `page_size` ۵۰). `compatible=1` فقط افزونه‌های دارای نسخهٔ سازگار با این Ravix |
 | `GET /registry/v1/plugins/<slug>/` | جزئیات + همهٔ نسخه‌های منتشرشده/پس‌گرفته‌شده |
 | `GET /registry/v1/plugins/<slug>/versions/<ver>/` | جزئیات یک نسخه |
 | `GET /registry/v1/plugins/<slug>/versions/<ver>/download/` | دانلود zip؛ فقط HTTPS؛ هدر `X-Checksum-SHA256` |
@@ -57,21 +57,21 @@
   "id": "contact_form", "name": "فرم تماس", "summary": "...", "author": "ناشر یک",
   "category": {"slug": "forms", "name": "فرم‌ها"}, "license": "MIT", "homepage": "",
   "latest_version": "1.2.0", "latest_compatible_version": "1.2.0", "compatible": true,
-  "latest": {"version": "1.2.0", "ravin": ">=0.5.0,<1.0.0", "api_version": 1, "size": 4210,
+  "latest": {"version": "1.2.0", "ravix": ">=0.5.0,<1.0.0", "api_version": 1, "size": 4210,
              "sha256": "…", "fingerprint": "…", "published_at": "…",
-             "compatibility": {"compatible": true, "problems": [], "ravin_version": "0.5.0", "plugin_api_version": 1},
+             "compatibility": {"compatible": true, "problems": [], "ravix_version": "0.5.0", "plugin_api_version": 1},
              "download_url": "https://registry.example.com/registry/v1/plugins/contact_form/versions/1.2.0/download/"}}]}
 ```
 نمونهٔ انتشار با curl:
 ```bash
-curl -sS -H "Authorization: Bearer $RAVIN_PUBLISH_TOKEN" -F package=@my_plugin.zip -F changelog="رفع باگ" -F publish=1 \
+curl -sS -H "Authorization: Bearer $RAVIX_PUBLISH_TOKEN" -F package=@my_plugin.zip -F changelog="رفع باگ" -F publish=1 \
      https://registry.example.com/registry/v1/publish/
 ```
 کدهای خطا: `400` اعتبارسنجی/نسخهٔ تکراری/مالکیت، `401` توکن نامعتبر، `403` غیر-HTTPS، `404`، `429` (۳۰ درخواست انتشار در ۱۰ دقیقه به‌ازای IP)، `500` عدم تطابق هش فایل ذخیره‌شده (هرگز سرو نمی‌شود).
 
 ## تمامیت و HTTPS
 - هنگام آپلود SHA-256 بسته محاسبه و ذخیره می‌شود؛ **پیش از انتشار و پیش از هر دانلود** هش فایل روی دیسک دوباره سنجیده می‌شود (فایل دست‌کاری‌شده سرو نمی‌شود).
-- دانلود و انتشار در حالت `DEBUG=False` فقط با HTTPS (پشت Nginx با `X-Forwarded-Proto`) پذیرفته می‌شوند؛ `download_url`ها همیشه `https://` ساخته می‌شوند (با `RAVIN_SITE_URL` مبنای نشانی را ثابت کنید).
+- دانلود و انتشار در حالت `DEBUG=False` فقط با HTTPS (پشت Nginx با `X-Forwarded-Proto`) پذیرفته می‌شوند؛ `download_url`ها همیشه `https://` ساخته می‌شوند (با `RAVIX_SITE_URL` مبنای نشانی را ثابت کنید).
 - کلاینت `manage.py plugin_fetch` فقط HTTPS می‌پذیرد، هش را با متادیتای مخزن (و اختیاری `--sha256` مستقل از پنل) تطبیق می‌دهد، دامنهٔ دانلود را با دامنهٔ مخزن مقایسه می‌کند، zip را امن باز می‌کند، اثرانگشت را می‌سنجد و پوشهٔ موجود را بازنویسی نمی‌کند.
 - **امضای دیجیتال (Ed25519):** مخزن هنگام *انتشار* هر نسخه را با کلید امضای خودش امضا می‌کند (`signature`, `signature_key_id` در API). سایت‌ها فقط بسته‌ای را می‌پذیرند که با یکی از **کلیدهای مورد اعتماد خودشان** امضا شده باشد؛ نصب‌کننده امضا را روی SHA-256 و اثرانگشتی که خودش از بسته حساب کرده بررسی می‌کند، نه روی مقادیر ادعاشدهٔ مخزن. جزئیات: [`installer.md`](installer.md). `registry_sign` نسخه‌های قدیمی بدون امضا را امضا می‌کند.
 - **محدودیت:** امضا فقط اصالت و تمامیت را می‌رساند، نه بی‌خطری کد را؛ اگر کلید امضای مخزن لو برود، مهاجم می‌تواند بستهٔ مخرب امضاشده بسازد. کلید را فقط در فایل 600 یا secret manager نگه دارید و در صورت لو رفتن آن را از فهرست مورد اعتماد سایت‌ها حذف کنید.
@@ -81,12 +81,12 @@ curl -sS -H "Authorization: Bearer $RAVIN_PUBLISH_TOKEN" -F package=@my_plugin.z
 
 | متغیر | پیش‌فرض |
 |---|---|
-| `RAVIN_REGISTRY_ENABLED` | `true` (false: API ۴۰۴ می‌دهد) |
-| `RAVIN_REGISTRY_NAME` | `Ravin Plugin Registry` |
-| `RAVIN_REGISTRY_STORAGE` | `<پروژه>/registry_packages` (در تولید: مسیری خارج از کد، مالک کاربر سرویس) |
-| `RAVIN_REGISTRY_MAX_PACKAGE_BYTES` | ۵ مگابایت |
-| `RAVIN_REGISTRY_ALLOW_INSECURE_DOWNLOAD` | `false` (فقط توسعه) |
-| `RAVIN_REGISTRY_SIGNING_KEY_FILE` / `RAVIN_REGISTRY_SIGNING_KEY` | خالی (بدون کلید ⇒ نسخه‌ها بدون امضا منتشر می‌شوند و نصب‌کننده آن‌ها را رد می‌کند) |
+| `RAVIX_REGISTRY_ENABLED` | `true` (false: API ۴۰۴ می‌دهد) |
+| `RAVIX_REGISTRY_NAME` | `Ravix Plugin Registry` |
+| `RAVIX_REGISTRY_STORAGE` | `<پروژه>/registry_packages` (در تولید: مسیری خارج از کد، مالک کاربر سرویس) |
+| `RAVIX_REGISTRY_MAX_PACKAGE_BYTES` | ۵ مگابایت |
+| `RAVIX_REGISTRY_ALLOW_INSECURE_DOWNLOAD` | `false` (فقط توسعه) |
+| `RAVIX_REGISTRY_SIGNING_KEY_FILE` / `RAVIX_REGISTRY_SIGNING_KEY` | خالی (بدون کلید ⇒ نسخه‌ها بدون امضا منتشر می‌شوند و نصب‌کننده آن‌ها را رد می‌کند) |
 
 ذخیره‌گاه بسته‌ها را **در Nginx سرو نکنید**؛ فقط از طریق view دانلود (با بررسی هش) در دسترس است. `deploy/backup.sh` این پوشه را هم پشتیبان می‌گیرد.
 

@@ -1,5 +1,5 @@
 {% extends "layouts/panel.html" %}
-{% load ravin_ui %}
+{% load ravix_ui %}
 {% block title %}افزونه‌ها{% endblock %}
 {% block page_title %}افزونه‌ها{% endblock %}
 {% block content %}
@@ -8,8 +8,8 @@
     <a class="btn btn-light" href="{% url 'pluginhub:directory' %}">Plugin Directory</a>
     {% if request.user.role == "super_admin" %}<a class="btn btn-light" href="{% url 'plugins:trusted_keys' %}">کلیدهای مورد اعتماد</a>{% endif %}
     <a class="btn btn-light" href="{% url 'plugins:events' %}">{% icon "list" 18 %} گزارش افزونه‌ها</a></div></div>
-{% if not plugins_enabled %}<div class="form-errors" role="alert"><p>سیستم افزونه‌ها با تنظیم <span class="ltr">RAVIN_PLUGINS_ENABLED=false</span> خاموش است.</p></div>{% endif %}
-{% if safe_mode %}<div class="form-errors warn" role="status"><p>حالت امن فعال است (<span class="ltr">RAVIN_PLUGINS_SAFE_MODE</span>): کد هیچ افزونه‌ای اجرا نمی‌شود. فقط مدیریت (نصب/حذف/گزارش) در دسترس است.</p></div>{% endif %}
+{% if not plugins_enabled %}<div class="form-errors" role="alert"><p>سیستم افزونه‌ها با تنظیم <span class="ltr">RAVIX_PLUGINS_ENABLED=false</span> خاموش است.</p></div>{% endif %}
+{% if safe_mode %}<div class="form-errors warn" role="status"><p>حالت امن فعال است (<span class="ltr">RAVIX_PLUGINS_SAFE_MODE</span>): کد هیچ افزونه‌ای اجرا نمی‌شود. فقط مدیریت (نصب/حذف/گزارش) در دسترس است.</p></div>{% endif %}
 {% if recent_errors %}
 <div class="form-errors warn" role="status"><p><strong>آخرین خطاها:</strong></p><ul>
   {% for e in recent_errors %}<li><span class="ltr">{{ e.slug }}</span> — {{ e.message }} ({{ e.created_at|jalali_datetime }})</li>{% endfor %}</ul></div>

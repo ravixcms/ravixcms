@@ -1,4 +1,4 @@
-/* صفحه‌ساز Ravin — چیدمان سه‌بخشی ویرایشگر (RTL) */
+/* صفحه‌ساز Ravix — چیدمان سه‌بخشی ویرایشگر (RTL) */
 .bx-body{margin:0;height:100vh;overflow:hidden;background:#e9ecf4}
 .bx-app{display:grid;height:100vh;grid-template-columns:260px minmax(0,1fr) 320px;grid-template-rows:auto minmax(0,1fr);
   grid-template-areas:"top top top" "left stage right"}

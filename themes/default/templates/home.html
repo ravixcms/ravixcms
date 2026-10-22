@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load ravin_theme %}
+{% load ravix_theme %}
 {% block body_class %}page-home{% endblock %}
 {% block content %}
 {% with first=sections.0 %}{% if first.type != "hero" %}<h1 class="sr-only">{{ site.name }}</h1>{% endif %}{% endwith %}

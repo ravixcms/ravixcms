@@ -14,8 +14,8 @@ class ThemeDirMixin:
 
     def setUp(self):
         super().setUp()
-        self.extra_dir = Path(tempfile.mkdtemp(prefix="ravin-test-themes-"))
-        self._override = override_settings(RAVIN_THEME_DIRS=[BASE_THEMES, self.extra_dir])
+        self.extra_dir = Path(tempfile.mkdtemp(prefix="ravix-test-themes-"))
+        self._override = override_settings(RAVIX_THEME_DIRS=[BASE_THEMES, self.extra_dir])
         self._override.enable()
         self.addCleanup(self._cleanup)
 

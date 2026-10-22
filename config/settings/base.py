@@ -1,5 +1,5 @@
 """
-تنظیمات پایه Ravin CMS.
+تنظیمات پایه Ravix.
 
 تمام مقادیر حساس از متغیرهای محیطی (یا فایل .env) خوانده می‌شوند.
 """
@@ -10,24 +10,31 @@ from urllib.parse import urlparse
 
 from dotenv import load_dotenv
 
+from apps.core.deprecation import getenv
+
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 load_dotenv(BASE_DIR / ".env")
 
 
+_raw = getenv  # RAVIX_* با بازگشت به RAVIN_* (منسوخ)
+
+
 def env(name: str, default=None):
-    return os.environ.get(name, default)
+    value = _raw(name)
+    return default if value is None else value
 
 
 def env_bool(name: str, default: bool = False) -> bool:
-    value = os.environ.get(name)
+    value = _raw(name)
     if value is None:
         return default
     return value.strip().lower() in {"1", "true", "yes", "on"}
 
 
 def env_list(name: str, default: str = "") -> list[str]:
-    return [item.strip() for item in os.environ.get(name, default).split(",") if item.strip()]
+    value = _raw(name)
+    return [item.strip() for item in (default if value is None else value).split(",") if item.strip()]
 
 
 # ---------------------------------------------------------------------------
@@ -56,8 +63,8 @@ THIRD_PARTY_APPS = [
     "rest_framework",
 ]
 
-# ماژول‌های Ravin CMS؛ ماژول‌های آینده (محتوا، رسانه، افزونه‌ها و ...) اینجا اضافه می‌شوند.
-SHOP_ENABLED = env_bool("RAVIN_SHOP_ENABLED", True)  # false: ماژول فروشگاه اصلاً نصب/بارگذاری نمی‌شود (جدول، مسیر، منو، API ندارد)
+# ماژول‌های Ravix؛ ماژول‌های آینده (محتوا، رسانه، افزونه‌ها و ...) اینجا اضافه می‌شوند.
+SHOP_ENABLED = env_bool("RAVIX_SHOP_ENABLED", True)  # false: ماژول فروشگاه اصلاً نصب/بارگذاری نمی‌شود (جدول، مسیر، منو، API ندارد)
 
 LOCAL_APPS = [
     "apps.core",
@@ -176,17 +183,17 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # --- ایمیل: بازیابی رمز و تأیید ایمیل ---
-PASSWORD_RESET_TIMEOUT = int(env("RAVIN_PASSWORD_RESET_TIMEOUT", str(60 * 60)))  # ثانیه؛ پیوند بازیابی (یک‌بارمصرف) ۱ ساعت اعتبار دارد
-RAVIN_EMAIL_VERIFY_MAX_AGE = int(env("RAVIN_EMAIL_VERIFY_MAX_AGE", str(60 * 60 * 24 * 3)))  # ثانیه؛ پیوند تأیید ایمیل ۳ روز
+PASSWORD_RESET_TIMEOUT = int(env("RAVIX_PASSWORD_RESET_TIMEOUT", str(60 * 60)))  # ثانیه؛ پیوند بازیابی (یک‌بارمصرف) ۱ ساعت اعتبار دارد
+RAVIX_EMAIL_VERIFY_MAX_AGE = int(env("RAVIX_EMAIL_VERIFY_MAX_AGE", str(60 * 60 * 24 * 3)))  # ثانیه؛ پیوند تأیید ایمیل ۳ روز
 # اگر روشن باشد، ورود تا تأیید ایمیل ممکن نیست (فقط وقتی SMTP کار می‌کند روشن کنید؛ پیش‌فرض خاموش تا نصب بدون SMTP قفل نشود)
-RAVIN_REQUIRE_EMAIL_VERIFICATION = env_bool("RAVIN_REQUIRE_EMAIL_VERIFICATION", False)
-RAVIN_MAIL_WINDOW_SECONDS = int(env("RAVIN_MAIL_WINDOW_SECONDS", str(60 * 60)))
-RAVIN_MAIL_LIMIT_PER_EMAIL = int(env("RAVIN_MAIL_LIMIT_PER_EMAIL", "3"))  # ارسال در هر بازه به‌ازای هر ایمیل
-RAVIN_MAIL_LIMIT_PER_IP = int(env("RAVIN_MAIL_LIMIT_PER_IP", "10"))  # ارسال در هر بازه به‌ازای هر IP
-RAVIN_COMMENT_LIMIT_PER_IP = int(env("RAVIN_COMMENT_LIMIT_PER_IP", "5"))  # دیدگاه در هر بازه به‌ازای هر IP (همهٔ تلاش‌ها شمرده می‌شود)
-RAVIN_COMMENT_WINDOW_SECONDS = int(env("RAVIN_COMMENT_WINDOW_SECONDS", "600"))
-RAVIN_COMMENT_MAX_DEPTH = int(env("RAVIN_COMMENT_MAX_DEPTH", "2"))  # عمق پاسخ: دیدگاه اصلی ۰، پاسخ ۱، پاسخ به پاسخ ۲
-RAVIN_COMMENT_MAX_LENGTH = int(env("RAVIN_COMMENT_MAX_LENGTH", "2000"))
+RAVIX_REQUIRE_EMAIL_VERIFICATION = env_bool("RAVIX_REQUIRE_EMAIL_VERIFICATION", False)
+RAVIX_MAIL_WINDOW_SECONDS = int(env("RAVIX_MAIL_WINDOW_SECONDS", str(60 * 60)))
+RAVIX_MAIL_LIMIT_PER_EMAIL = int(env("RAVIX_MAIL_LIMIT_PER_EMAIL", "3"))  # ارسال در هر بازه به‌ازای هر ایمیل
+RAVIX_MAIL_LIMIT_PER_IP = int(env("RAVIX_MAIL_LIMIT_PER_IP", "10"))  # ارسال در هر بازه به‌ازای هر IP
+RAVIX_COMMENT_LIMIT_PER_IP = int(env("RAVIX_COMMENT_LIMIT_PER_IP", "5"))  # دیدگاه در هر بازه به‌ازای هر IP (همهٔ تلاش‌ها شمرده می‌شود)
+RAVIX_COMMENT_WINDOW_SECONDS = int(env("RAVIX_COMMENT_WINDOW_SECONDS", "600"))
+RAVIX_COMMENT_MAX_DEPTH = int(env("RAVIX_COMMENT_MAX_DEPTH", "2"))  # عمق پاسخ: دیدگاه اصلی ۰، پاسخ ۱، پاسخ به پاسخ ۲
+RAVIX_COMMENT_MAX_LENGTH = int(env("RAVIX_COMMENT_MAX_LENGTH", "2000"))
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", "Ravix <noreply@localhost>")
 EMAIL_TIMEOUT = int(env("EMAIL_TIMEOUT", "10"))  # قطع‌شدن SMTP نباید ورکر وب را معلق نگه دارد
 
@@ -211,38 +218,38 @@ STATIC_URL = "static/"
 # قالب‌های سایت (Themes)
 # ---------------------------------------------------------------------------
 # هر قالب یک پوشه است: themes/<slug>/{theme.json, templates/, static/}. پوشه‌های قالب فقط از مسیرهای زیر خوانده می‌شوند.
-# نصب قالب جدید = کپی پوشه آن در همین مسیرها توسط مدیر سرور، یا (اگر RAVIN_THEME_WEB_INSTALL=true) بارگذاری ZIP توسط مدیرکل در پنل.
+# نصب قالب جدید = کپی پوشه آن در همین مسیرها توسط مدیر سرور، یا (اگر RAVIX_THEME_WEB_INSTALL=true) بارگذاری ZIP توسط مدیرکل در پنل.
 # --- افزونه‌ها (مرحله پنجم) ---
 # فقط پوشه‌های این فهرست (تنظیم سرور) برای افزونه بررسی می‌شوند؛ بارگذاری کد از هیچ مسیر دیگری ممکن نیست.
-RAVIN_PLUGIN_DIRS = [BASE_DIR / "plugins"] + [Path(p) for p in env_list("RAVIN_EXTRA_PLUGIN_DIRS")]
+RAVIX_PLUGIN_DIRS = [BASE_DIR / "plugins"] + [Path(p) for p in env_list("RAVIX_EXTRA_PLUGIN_DIRS")]
 # نصب‌شده‌ها از طریق پنل/مخزن در این پوشه قرار می‌گیرند (جدا از plugins/ که می‌تواند برای سرویس فقط‌خواندنی باشد).
-RAVIN_PLUGIN_INSTALL_DIR = Path(env("RAVIN_PLUGIN_INSTALL_DIR", str(BASE_DIR / "plugins_installed")))
-RAVIN_PLUGIN_DIRS = RAVIN_PLUGIN_DIRS + [RAVIN_PLUGIN_INSTALL_DIR]
-RAVIN_PLUGIN_BACKUP_DIR = Path(env("RAVIN_PLUGIN_BACKUP_DIR", str(BASE_DIR / "plugin_backups")))
-RAVIN_PLUGIN_BACKUPS_KEEP = int(env("RAVIN_PLUGIN_BACKUPS_KEEP", "5"))
+RAVIX_PLUGIN_INSTALL_DIR = Path(env("RAVIX_PLUGIN_INSTALL_DIR", str(BASE_DIR / "plugins_installed")))
+RAVIX_PLUGIN_DIRS = RAVIX_PLUGIN_DIRS + [RAVIX_PLUGIN_INSTALL_DIR]
+RAVIX_PLUGIN_BACKUP_DIR = Path(env("RAVIX_PLUGIN_BACKUP_DIR", str(BASE_DIR / "plugin_backups")))
+RAVIX_PLUGIN_BACKUPS_KEEP = int(env("RAVIX_PLUGIN_BACKUPS_KEEP", "5"))
 # نصب از طریق وب (آپلود/مخزن) صراحتاً باید روشن شود؛ بدون آن فقط نصب دستی پوشه‌ای + تأیید در پنل ممکن است.
-RAVIN_PLUGIN_WEB_INSTALL = env_bool("RAVIN_PLUGIN_WEB_INSTALL", False)
-RAVIN_PLUGINS_ALLOW_UNSIGNED = env_bool("RAVIN_PLUGINS_ALLOW_UNSIGNED", False)  # بستهٔ بدون امضای معتبر (فقط آپلود محلی؛ مخزن همیشه امضا می‌خواهد)
-RAVIN_TRUSTED_PUBLIC_KEYS = env_list("RAVIN_TRUSTED_PUBLIC_KEYS")  # «برچسب:کلید_عمومی_base64» ؛ کلیدهای بیشتر در پنل (مدیرکل)
-RAVIN_OFFICIAL_REGISTRY_URL = env("RAVIN_OFFICIAL_REGISTRY_URL", "").rstrip("/")  # خالی: مخزن همین نمونه (اگر روشن باشد)
-RAVIN_PLUGINS_ENABLED = env_bool("RAVIN_PLUGINS_ENABLED", True)  # false: سیستم افزونه کاملاً خاموش
+RAVIX_PLUGIN_WEB_INSTALL = env_bool("RAVIX_PLUGIN_WEB_INSTALL", False)
+RAVIX_PLUGINS_ALLOW_UNSIGNED = env_bool("RAVIX_PLUGINS_ALLOW_UNSIGNED", False)  # بستهٔ بدون امضای معتبر (فقط آپلود محلی؛ مخزن همیشه امضا می‌خواهد)
+RAVIX_TRUSTED_PUBLIC_KEYS = env_list("RAVIX_TRUSTED_PUBLIC_KEYS")  # «برچسب:کلید_عمومی_base64» ؛ کلیدهای بیشتر در پنل (مدیرکل)
+RAVIX_OFFICIAL_REGISTRY_URL = env("RAVIX_OFFICIAL_REGISTRY_URL", "").rstrip("/")  # خالی: مخزن همین نمونه (اگر روشن باشد)
+RAVIX_PLUGINS_ENABLED = env_bool("RAVIX_PLUGINS_ENABLED", True)  # false: سیستم افزونه کاملاً خاموش
 # حالت امن (بازیابی): کد هیچ افزونه‌ای بارگذاری یا اجرا نمی‌شود؛ پنل و مدیریت افزونه‌ها کار می‌کند.
-RAVIN_PLUGINS_SAFE_MODE = env_bool("RAVIN_PLUGINS_SAFE_MODE", False)
+RAVIX_PLUGINS_SAFE_MODE = env_bool("RAVIX_PLUGINS_SAFE_MODE", False)
 # غیرفعال‌سازی خودکار: اگر یک افزونه در این بازه (ثانیه) به این تعداد خطا بدهد.
-RAVIN_PLUGIN_ERROR_LIMIT = int(env("RAVIN_PLUGIN_ERROR_LIMIT", "5"))
-RAVIN_PLUGIN_ERROR_WINDOW = int(env("RAVIN_PLUGIN_ERROR_WINDOW", "600"))
+RAVIX_PLUGIN_ERROR_LIMIT = int(env("RAVIX_PLUGIN_ERROR_LIMIT", "5"))
+RAVIX_PLUGIN_ERROR_WINDOW = int(env("RAVIX_PLUGIN_ERROR_WINDOW", "600"))
 
 # پوشهٔ نصب قالب‌های بارگذاری‌شده از پنل (ZIP)؛ جدا از themes/ (که می‌تواند برای سرویس فقط‌خواندنی باشد).
-# فقط وقتی RAVIN_THEME_WEB_INSTALL=true باشد و این پوشه برای کاربر سرویس قابل‌نوشتن باشد کار می‌کند (docs/themes.md).
-RAVIN_THEME_INSTALL_DIR = Path(env("RAVIN_THEME_INSTALL_DIR", str(BASE_DIR / "themes_installed")))
-RAVIN_THEME_WEB_INSTALL = env_bool("RAVIN_THEME_WEB_INSTALL", False)  # پیش‌فرض خاموش؛ روشن‌کردن آگاهانه است
-RAVIN_THEME_DIRS = [BASE_DIR / "themes"] + [Path(p) for p in env_list("RAVIN_EXTRA_THEME_DIRS")] + [RAVIN_THEME_INSTALL_DIR]
+# فقط وقتی RAVIX_THEME_WEB_INSTALL=true باشد و این پوشه برای کاربر سرویس قابل‌نوشتن باشد کار می‌کند (docs/themes.md).
+RAVIX_THEME_INSTALL_DIR = Path(env("RAVIX_THEME_INSTALL_DIR", str(BASE_DIR / "themes_installed")))
+RAVIX_THEME_WEB_INSTALL = env_bool("RAVIX_THEME_WEB_INSTALL", False)  # پیش‌فرض خاموش؛ روشن‌کردن آگاهانه است
+RAVIX_THEME_DIRS = [BASE_DIR / "themes"] + [Path(p) for p in env_list("RAVIX_EXTRA_THEME_DIRS")] + [RAVIX_THEME_INSTALL_DIR]
 # نشانی اصلی سایت (مثلاً https://example.com) برای canonical، sitemap و Open Graph؛ اگر خالی باشد از Host درخواست ساخته می‌شود.
-SITE_URL = env("RAVIN_SITE_URL", "").rstrip("/")
-RAVIN_FEED_ITEMS = int(env("RAVIN_FEED_ITEMS", "20"))  # تعداد مورد در هر فید RSS/Atom (۱ تا ۱۰۰)
-PUBLIC_PAGE_SIZE = int(env("RAVIN_PUBLIC_PAGE_SIZE", "9"))
+SITE_URL = env("RAVIX_SITE_URL", "").rstrip("/")
+RAVIX_FEED_ITEMS = int(env("RAVIX_FEED_ITEMS", "20"))  # تعداد مورد در هر فید RSS/Atom (۱ تا ۱۰۰)
+PUBLIC_PAGE_SIZE = int(env("RAVIX_PUBLIC_PAGE_SIZE", "9"))
 # مدت کش مرورگر/CDN برای صفحات عمومی بازدیدکنندگان ناشناس (ثانیه). ۰ یعنی همیشه با ETag بازبینی شود.
-PUBLIC_CACHE_SECONDS = int(env("RAVIN_PUBLIC_CACHE_SECONDS", "0"))
+PUBLIC_CACHE_SECONDS = int(env("RAVIX_PUBLIC_CACHE_SECONDS", "0"))
 THEME_SLUG_PATTERN = r"[a-z0-9][a-z0-9_-]{0,48}"
 
 
@@ -265,11 +272,11 @@ def _theme_static_dirs(theme_dirs):
     return found
 
 
-STATICFILES_DIRS = [BASE_DIR / "static", *_theme_static_dirs(RAVIN_THEME_DIRS)]
+STATICFILES_DIRS = [BASE_DIR / "static", *_theme_static_dirs(RAVIX_THEME_DIRS)]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 # مدت کش مرورگر برای فایل‌های استاتیک (ثانیه؛ فقط در حالت DEBUG=False اثر دارد). نشانی فایل‌های هر قالب با ?v=<نسخه قالب>
 # ساخته می‌شود؛ پس با افزایش نسخه در theme.json کش مرورگر بازدیدکنندگان خودکار نو می‌شود.
-WHITENOISE_MAX_AGE = int(env("RAVIN_STATIC_MAX_AGE", "3600"))
+WHITENOISE_MAX_AGE = int(env("RAVIX_STATIC_MAX_AGE", "3600"))
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
@@ -305,16 +312,16 @@ CSRF_COOKIE_SAMESITE = "Lax"
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = "DENY"
 SECURE_REFERRER_POLICY = "same-origin"
-RAVIN_CSP_REPORT_ONLY = env_bool("RAVIN_CSP_REPORT_ONLY", False)  # true: فقط گزارش (برای عیب‌یابی)؛ پیش‌فرض اعمال کامل
+RAVIX_CSP_REPORT_ONLY = env_bool("RAVIX_CSP_REPORT_ONLY", False)  # true: فقط گزارش (برای عیب‌یابی)؛ پیش‌فرض اعمال کامل
 # فقط وقتی برنامه تنها پشت پراکسی خودتان است (Nginx با proxy_set_header X-Real-IP $remote_addr): IP واقعی کلاینت برای محدودیت ورود
-RAVIN_TRUST_PROXY_HEADERS = env_bool("RAVIN_TRUST_PROXY_HEADERS", False)
-RAVIN_ADMIN_PATH = env("RAVIN_ADMIN_PATH", "django-admin").strip("/")  # مسیر django-admin را عوض کنید یا در Nginx محدود کنید
+RAVIX_TRUST_PROXY_HEADERS = env_bool("RAVIX_TRUST_PROXY_HEADERS", False)
+RAVIX_ADMIN_PATH = env("RAVIX_ADMIN_PATH", "django-admin").strip("/")  # مسیر django-admin را عوض کنید یا در Nginx محدود کنید
 
 # ---------------------------------------------------------------------------
 # ثبت‌نام
 # ---------------------------------------------------------------------------
 # اگر False باشد ثبت‌نام عمومی غیرفعال می‌شود (قابل تغییر از تنظیمات سایت نیز هست).
-REGISTRATION_DEFAULT_OPEN = env_bool("RAVIN_REGISTRATION_OPEN", True)
+REGISTRATION_DEFAULT_OPEN = env_bool("RAVIX_REGISTRATION_OPEN", True)
 
 LOGGING = {
     "version": 1,
@@ -335,42 +342,42 @@ if "test" in sys.argv:
 # چندسایتی و فروشگاه (مرحله ششم)
 # ---------------------------------------------------------------------------
 # false (پیش‌فرض): فقط «سایت پیش‌فرض» و دسترسی بر پایهٔ نقش سراسری. true: تشخیص سایت با دامنه + عضویت الزامی برای پنل.
-RAVIN_MULTISITE_ENABLED = env_bool("RAVIN_MULTISITE_ENABLED", False)
-SHOP_CURRENCY_LABEL = env("RAVIN_SHOP_CURRENCY_LABEL", "تومان")
-SHOP_CURRENCY_CODE = env("RAVIN_SHOP_CURRENCY_CODE", "IRT").upper()  # IRT تومان | IRR ریال؛ درگاه باید از آن پشتیبانی کند
+RAVIX_MULTISITE_ENABLED = env_bool("RAVIX_MULTISITE_ENABLED", False)
+SHOP_CURRENCY_LABEL = env("RAVIX_SHOP_CURRENCY_LABEL", "تومان")
+SHOP_CURRENCY_CODE = env("RAVIX_SHOP_CURRENCY_CODE", "IRT").upper()  # IRT تومان | IRR ریال؛ درگاه باید از آن پشتیبانی کند
 # کلید(های) Fernet برای رمزنگاری اسرار درگاه‌ها (جداشده با ویرگول؛ اولی رمز می‌کند، بقیه فقط برای چرخش). تولید: python -c "from cryptography.fernet import Fernet;print(Fernet.generate_key().decode())"
-RAVIN_SECRETS_KEYS = env_list("RAVIN_SECRETS_KEY")
-RAVIN_SECRETS_ALLOW_DERIVED_KEY = env_bool("RAVIN_SECRETS_ALLOW_DERIVED_KEY", False)  # فقط دمو: مشتق از SECRET_KEY (ناامن‌تر برای چرخش)
-SHOP_GATEWAY_ALLOW_PRIVATE_HOSTS = env_bool("RAVIN_SHOP_GATEWAY_ALLOW_PRIVATE_HOSTS", False)  # فقط توسعه: اجازهٔ اتصال به IP خصوصی
-SHOP_PAYMENT_GATEWAY = env("RAVIN_SHOP_PAYMENT_GATEWAY", "sandbox")  # sandbox | (درگاه واقعی پس از افزودن آداپتور)
-SHOP_ALLOW_SANDBOX_IN_PRODUCTION = env_bool("RAVIN_SHOP_ALLOW_SANDBOX_IN_PRODUCTION", False)
-SHOP_PENDING_ORDER_MINUTES = int(env("RAVIN_SHOP_PENDING_ORDER_MINUTES", "30"))  # مهلت پرداخت؛ پس از آن سفارش لغو و موجودی برمی‌گردد
-SHOP_PAGE_SIZE = int(env("RAVIN_SHOP_PAGE_SIZE", "12"))
-SHOP_ALLOW_GUEST_CHECKOUT = env_bool("RAVIN_SHOP_ALLOW_GUEST_CHECKOUT", True)  # false: خرید فقط برای کاربر واردشده
-SHOP_PRIVATE_ROOT = Path(env("RAVIN_SHOP_PRIVATE_ROOT", str(BASE_DIR / "shop_private")))  # فایل‌های دیجیتال؛ خارج از media
-SHOP_DIGITAL_MAX_BYTES = int(env("RAVIN_SHOP_DIGITAL_MAX_BYTES", str(200 * 1024 * 1024)))
-SHOP_DIGITAL_DOWNLOAD_LIMIT = int(env("RAVIN_SHOP_DIGITAL_DOWNLOAD_LIMIT", "5"))  # حداکثر دانلود هر قلم سفارش
+RAVIX_SECRETS_KEYS = env_list("RAVIX_SECRETS_KEY")
+RAVIX_SECRETS_ALLOW_DERIVED_KEY = env_bool("RAVIX_SECRETS_ALLOW_DERIVED_KEY", False)  # فقط دمو: مشتق از SECRET_KEY (ناامن‌تر برای چرخش)
+SHOP_GATEWAY_ALLOW_PRIVATE_HOSTS = env_bool("RAVIX_SHOP_GATEWAY_ALLOW_PRIVATE_HOSTS", False)  # فقط توسعه: اجازهٔ اتصال به IP خصوصی
+SHOP_PAYMENT_GATEWAY = env("RAVIX_SHOP_PAYMENT_GATEWAY", "sandbox")  # sandbox | (درگاه واقعی پس از افزودن آداپتور)
+SHOP_ALLOW_SANDBOX_IN_PRODUCTION = env_bool("RAVIX_SHOP_ALLOW_SANDBOX_IN_PRODUCTION", False)
+SHOP_PENDING_ORDER_MINUTES = int(env("RAVIX_SHOP_PENDING_ORDER_MINUTES", "30"))  # مهلت پرداخت؛ پس از آن سفارش لغو و موجودی برمی‌گردد
+SHOP_PAGE_SIZE = int(env("RAVIX_SHOP_PAGE_SIZE", "12"))
+SHOP_ALLOW_GUEST_CHECKOUT = env_bool("RAVIX_SHOP_ALLOW_GUEST_CHECKOUT", True)  # false: خرید فقط برای کاربر واردشده
+SHOP_PRIVATE_ROOT = Path(env("RAVIX_SHOP_PRIVATE_ROOT", str(BASE_DIR / "shop_private")))  # فایل‌های دیجیتال؛ خارج از media
+SHOP_DIGITAL_MAX_BYTES = int(env("RAVIX_SHOP_DIGITAL_MAX_BYTES", str(200 * 1024 * 1024)))
+SHOP_DIGITAL_DOWNLOAD_LIMIT = int(env("RAVIX_SHOP_DIGITAL_DOWNLOAD_LIMIT", "5"))  # حداکثر دانلود هر قلم سفارش
 
 # --- مخزن افزونه‌ها (apps.pluginhub) ---
-RAVIN_REGISTRY_ENABLED = env_bool("RAVIN_REGISTRY_ENABLED", True)  # false: API عمومی و انتشار خاموش (پنل Directory خالی می‌ماند)
-RAVIN_REGISTRY_NAME = env("RAVIN_REGISTRY_NAME", "Ravin Plugin Registry")
-RAVIN_REGISTRY_STORAGE = Path(env("RAVIN_REGISTRY_STORAGE", str(BASE_DIR / "registry_packages")))  # خارج از media و static
-RAVIN_REGISTRY_MAX_PACKAGE_BYTES = int(env("RAVIN_REGISTRY_MAX_PACKAGE_BYTES", str(5 * 1024 * 1024)))
-RAVIN_REGISTRY_ALLOW_INSECURE_DOWNLOAD = env_bool("RAVIN_REGISTRY_ALLOW_INSECURE_DOWNLOAD", False)  # فقط توسعهٔ محلی
-RAVIN_REGISTRY_SIGNING_KEY_FILE = env("RAVIN_REGISTRY_SIGNING_KEY_FILE", "")  # مسیر فایل seed کلید امضا (مجوز 600، خارج از مخزن کد)
-RAVIN_REGISTRY_SIGNING_KEY = env("RAVIN_REGISTRY_SIGNING_KEY", "")  # جایگزین فایل (seed در base64)؛ فقط از env/secret manager
+RAVIX_REGISTRY_ENABLED = env_bool("RAVIX_REGISTRY_ENABLED", True)  # false: API عمومی و انتشار خاموش (پنل Directory خالی می‌ماند)
+RAVIX_REGISTRY_NAME = env("RAVIX_REGISTRY_NAME", "Ravix Plugin Registry")
+RAVIX_REGISTRY_STORAGE = Path(env("RAVIX_REGISTRY_STORAGE", str(BASE_DIR / "registry_packages")))  # خارج از media و static
+RAVIX_REGISTRY_MAX_PACKAGE_BYTES = int(env("RAVIX_REGISTRY_MAX_PACKAGE_BYTES", str(5 * 1024 * 1024)))
+RAVIX_REGISTRY_ALLOW_INSECURE_DOWNLOAD = env_bool("RAVIX_REGISTRY_ALLOW_INSECURE_DOWNLOAD", False)  # فقط توسعهٔ محلی
+RAVIX_REGISTRY_SIGNING_KEY_FILE = env("RAVIX_REGISTRY_SIGNING_KEY_FILE", "")  # مسیر فایل seed کلید امضا (مجوز 600، خارج از مخزن کد)
+RAVIX_REGISTRY_SIGNING_KEY = env("RAVIX_REGISTRY_SIGNING_KEY", "")  # جایگزین فایل (seed در base64)؛ فقط از env/secret manager
 
 
 # ---------------------------------------------------------------------------
 # به‌روزرسانی یکپارچه (apps.updater) — docs/upgrade.md
 # ---------------------------------------------------------------------------
-RAVIN_UPDATE_URL = env("RAVIN_UPDATE_URL", "").rstrip("/")  # منبع رسمی (فقط HTTPS): <URL>/updates/v1/index.json
-RAVIN_UPDATE_DIR = env("RAVIN_UPDATE_DIR", "")  # منبع پوشه‌ای (آفلاین/آزمایشی): index.json + بسته‌ها؛ فقط تنظیم سرور
-RAVIN_UPDATE_WEB_APPLY = env_bool("RAVIN_UPDATE_WEB_APPLY", False)  # false: اعمال ارتقا فقط با دستور مدیریتی (check/نمایش همیشه آزاد است)
-RAVIN_UPDATE_APP_ROOT = Path(env("RAVIN_UPDATE_APP_ROOT", str(BASE_DIR)))  # ریشهٔ کدی که ارتقا می‌یابد
-RAVIN_UPDATE_WORK_DIR = Path(env("RAVIN_UPDATE_WORK_DIR", str(BASE_DIR / "update_work")))  # دانلود/استخراج موقت (باید روی همان فایل‌سیستم کد باشد)
-RAVIN_UPDATE_BACKUP_DIR = Path(env("RAVIN_UPDATE_BACKUP_DIR", str(BASE_DIR / "update_backups")))  # پشتیبان‌های پیش از ارتقا (مجوز ۰۷۰۰)
-RAVIN_UPDATE_BACKUPS_KEEP = int(env("RAVIN_UPDATE_BACKUPS_KEEP", "3"))
-RAVIN_UPDATE_MAX_PACKAGE_BYTES = int(env("RAVIN_UPDATE_MAX_PACKAGE_BYTES", str(80 * 1024 * 1024)))
-RAVIN_UPDATE_LOCK_STALE_MINUTES = int(env("RAVIN_UPDATE_LOCK_STALE_MINUTES", "60"))
-RAVIN_UPDATE_REQUIRE_SIGNED_INDEX = env_bool("RAVIN_UPDATE_REQUIRE_SIGNED_INDEX", False)  # فهرست هم باید امضا (index.json.sig) داشته باشد
+RAVIX_UPDATE_URL = env("RAVIX_UPDATE_URL", "").rstrip("/")  # منبع رسمی (فقط HTTPS): <URL>/updates/v1/index.json
+RAVIX_UPDATE_DIR = env("RAVIX_UPDATE_DIR", "")  # منبع پوشه‌ای (آفلاین/آزمایشی): index.json + بسته‌ها؛ فقط تنظیم سرور
+RAVIX_UPDATE_WEB_APPLY = env_bool("RAVIX_UPDATE_WEB_APPLY", False)  # false: اعمال ارتقا فقط با دستور مدیریتی (check/نمایش همیشه آزاد است)
+RAVIX_UPDATE_APP_ROOT = Path(env("RAVIX_UPDATE_APP_ROOT", str(BASE_DIR)))  # ریشهٔ کدی که ارتقا می‌یابد
+RAVIX_UPDATE_WORK_DIR = Path(env("RAVIX_UPDATE_WORK_DIR", str(BASE_DIR / "update_work")))  # دانلود/استخراج موقت (باید روی همان فایل‌سیستم کد باشد)
+RAVIX_UPDATE_BACKUP_DIR = Path(env("RAVIX_UPDATE_BACKUP_DIR", str(BASE_DIR / "update_backups")))  # پشتیبان‌های پیش از ارتقا (مجوز ۰۷۰۰)
+RAVIX_UPDATE_BACKUPS_KEEP = int(env("RAVIX_UPDATE_BACKUPS_KEEP", "3"))
+RAVIX_UPDATE_MAX_PACKAGE_BYTES = int(env("RAVIX_UPDATE_MAX_PACKAGE_BYTES", str(80 * 1024 * 1024)))
+RAVIX_UPDATE_LOCK_STALE_MINUTES = int(env("RAVIX_UPDATE_LOCK_STALE_MINUTES", "60"))
+RAVIX_UPDATE_REQUIRE_SIGNED_INDEX = env_bool("RAVIX_UPDATE_REQUIRE_SIGNED_INDEX", False)  # فهرست هم باید امضا (index.json.sig) داشته باشد

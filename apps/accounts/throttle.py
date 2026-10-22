@@ -17,9 +17,9 @@ _last_warn = 0.0
 
 
 def client_ip(request) -> str:
-    """IP کلاینت. فقط وقتی RAVIN_TRUST_PROXY_HEADERS=true و برنامه تنها پشت پراکسی خودتان (که X-Real-IP را بازنویسی می‌کند) است، از X-Real-IP می‌خواند؛
+    """IP کلاینت. فقط وقتی RAVIX_TRUST_PROXY_HEADERS=true و برنامه تنها پشت پراکسی خودتان (که X-Real-IP را بازنویسی می‌کند) است، از X-Real-IP می‌خواند؛
     وگرنه سربرگ‌های قابل‌جعل نادیده گرفته می‌شوند."""
-    if getattr(settings, "RAVIN_TRUST_PROXY_HEADERS", False):
+    if getattr(settings, "RAVIX_TRUST_PROXY_HEADERS", False):
         raw = request.META.get("HTTP_X_REAL_IP", "").strip()
         try:
             return str(ipaddress.ip_address(raw))
@@ -100,7 +100,7 @@ def allow_send(request, email: str, kind: str) -> bool:
     ip = client_ip(request)
     digest = hashlib.sha256((email or "").strip().lower().encode()).hexdigest()[:32]
     k_ip, k_mail = f"mail-send:{kind}:ip:{ip}", f"mail-send:{kind}:em:{digest}"
-    window = settings.RAVIN_MAIL_WINDOW_SECONDS
+    window = settings.RAVIX_MAIL_WINDOW_SECONDS
 
     def hit(c):
         counts = []
@@ -114,7 +114,7 @@ def allow_send(request, email: str, kind: str) -> bool:
         return counts
 
     n_ip, n_mail = _with_cache(hit)
-    allowed = n_ip <= settings.RAVIN_MAIL_LIMIT_PER_IP and n_mail <= settings.RAVIN_MAIL_LIMIT_PER_EMAIL
+    allowed = n_ip <= settings.RAVIX_MAIL_LIMIT_PER_IP and n_mail <= settings.RAVIX_MAIL_LIMIT_PER_EMAIL
     if not allowed:
         logger.warning("محدودیت نرخ ارسال ایمیل (%s) برای IP %s فعال شد.", kind, ip)
     return allowed

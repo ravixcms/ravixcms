@@ -1,5 +1,5 @@
 """
-کتابخانه تگ مخصوص قالب‌های سایت: ``{% load ravin_theme %}``.
+کتابخانه تگ مخصوص قالب‌های سایت: ``{% load ravix_theme %}``.
 
 این تنها کتابخانه‌ای است که قالب‌ها اجازه بارگذاری آن را دارند. تگ‌های ``theme_head`` و ``theme_toolbar`` برای
 هر قالب الزامی هستند تا سئوی پایه، فونت‌ها، رنگ‌های سفارشی و نوار پیش‌نمایش همه‌جا یکسان کار کنند.
@@ -12,7 +12,7 @@ from django.templatetags.static import static
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
-from apps.core.templatetags.ravin_ui import fa_digits as _fa_digits
+from apps.core.templatetags.ravix_ui import fa_digits as _fa_digits
 
 register = template.Library()
 

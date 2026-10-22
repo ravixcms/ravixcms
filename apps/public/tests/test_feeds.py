@@ -105,7 +105,7 @@ class FeedTests(TestCase):
         self.assertEqual(r["Cache-Control"], "public, max-age=0, must-revalidate")
 
     def test_item_limit_setting(self):
-        with override_settings(RAVIN_FEED_ITEMS=2):
+        with override_settings(RAVIX_FEED_ITEMS=2):
             _, items = rss_items(self.client.get("/feed/"))
         self.assertEqual(len(items), 2)
 

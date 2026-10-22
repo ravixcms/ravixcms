@@ -17,7 +17,7 @@ class ShopTestCase(TestCase):
         from django.core.cache import cache
 
         # فایل‌های دیجیتال و رسانهٔ تست هرگز در پوشهٔ واقعی پروژه نمی‌مانند
-        tmp = tempfile.mkdtemp(prefix="ravin-shop-test-")
+        tmp = tempfile.mkdtemp(prefix="ravix-shop-test-")
         self.addCleanup(shutil.rmtree, tmp, True)
         priv = override_settings(SHOP_PRIVATE_ROOT=tmp + "/private", MEDIA_ROOT=tmp + "/media")
         priv.enable()

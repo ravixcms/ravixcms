@@ -288,8 +288,8 @@ class GatewayEditView(GatewaysAdmin, View):
                 reason = _cannot_enable_reason(cls, merged)
                 if reason:
                     problems.append(reason)
-                if secret and not vault.key_configured() and not (settings.DEBUG or settings.RAVIN_SECRETS_ALLOW_DERIVED_KEY):
-                    problems.append("کلید رمزنگاری RAVIN_SECRETS_KEY تنظیم نشده است.")
+                if secret and not vault.key_configured() and not (settings.DEBUG or settings.RAVIX_SECRETS_ALLOW_DERIVED_KEY):
+                    problems.append("کلید رمزنگاری RAVIX_SECRETS_KEY تنظیم نشده است.")
             if problems:
                 for m in problems:
                     form.add_error(None, m)

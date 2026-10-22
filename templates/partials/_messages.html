@@ -1,4 +1,4 @@
-{% load ravin_ui %}
+{% load ravix_ui %}
 <div class="toasts" role="region" aria-label="پیام‌های سامانه" aria-live="polite">
   {% for message in messages %}
     <div class="toast toast-{% if message.tags == 'debug' %}info{% else %}{{ message.tags|default:'info' }}{% endif %}" data-toast role="{% if message.level >= 40 %}alert{% else %}status{% endif %}">

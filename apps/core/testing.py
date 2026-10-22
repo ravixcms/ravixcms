@@ -12,7 +12,7 @@ class MediaTestCase(TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls._media_dir = tempfile.mkdtemp(prefix="ravin-test-media-")
+        cls._media_dir = tempfile.mkdtemp(prefix="ravix-test-media-")
         cls._media_override = override_settings(MEDIA_ROOT=cls._media_dir)
         cls._media_override.enable()
         super().setUpClass()

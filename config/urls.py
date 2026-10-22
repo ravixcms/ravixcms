@@ -5,7 +5,7 @@ from django.urls import include, path
 
 from apps.core.health import healthz
 
-# django-admin فقط برای مدیرکل (is_superuser)؛ نقش «مدیر» پنل Ravin را دارد و نباید وارد admin داخلی جنگو شود.
+# django-admin فقط برای مدیرکل (is_superuser)؛ نقش «مدیر» پنل Ravix را دارد و نباید وارد admin داخلی جنگو شود.
 admin.site.has_permission = lambda request: bool(request.user.is_active and request.user.is_superuser)
 
 urlpatterns = [
@@ -24,7 +24,7 @@ urlpatterns = [
     path("", include("apps.pluginhub.urls")),
     path("", include("apps.plugins.urls")),
     path("api/v1/", include("config.api_urls")),
-    path(f"{settings.RAVIN_ADMIN_PATH}/", admin.site.urls),
+    path(f"{settings.RAVIX_ADMIN_PATH}/", admin.site.urls),
 ]
 
 if settings.DEBUG:

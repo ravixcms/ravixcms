@@ -14,25 +14,25 @@ class SecretsError(Exception):
 
 
 def _keys() -> list[bytes]:
-    explicit = [k for k in getattr(settings, "RAVIN_SECRETS_KEYS", []) if k]
+    explicit = [k for k in getattr(settings, "RAVIX_SECRETS_KEYS", []) if k]
     if explicit:
         return [k.encode() for k in explicit]
-    if settings.DEBUG or getattr(settings, "RAVIN_SECRETS_ALLOW_DERIVED_KEY", False):
+    if settings.DEBUG or getattr(settings, "RAVIX_SECRETS_ALLOW_DERIVED_KEY", False):
         # فقط برای توسعه: از SECRET_KEY مشتق می‌شود (با چرخش SECRET_KEY دادهٔ رمزشده خوانا نمی‌ماند)
         raw = HKDF(algorithm=hashes.SHA256(), length=32, salt=None, info=b"ravin-gateway-secrets").derive(settings.SECRET_KEY.encode())
         return [base64.urlsafe_b64encode(raw)]
-    raise SecretsError("کلید رمزنگاری اسرار (RAVIN_SECRETS_KEY) تنظیم نشده است.")
+    raise SecretsError("کلید رمزنگاری اسرار (RAVIX_SECRETS_KEY) تنظیم نشده است.")
 
 
 def _fernet() -> MultiFernet:
     try:
         return MultiFernet([Fernet(k) for k in _keys()])  # کلید اول رمز می‌کند؛ همه برای رمزگشایی (چرخش کلید)
     except (ValueError, TypeError):
-        raise SecretsError("RAVIN_SECRETS_KEY معتبر نیست (باید کلید Fernet باشد).")
+        raise SecretsError("RAVIX_SECRETS_KEY معتبر نیست (باید کلید Fernet باشد).")
 
 
 def key_configured() -> bool:
-    return bool([k for k in getattr(settings, "RAVIN_SECRETS_KEYS", []) if k])
+    return bool([k for k in getattr(settings, "RAVIX_SECRETS_KEYS", []) if k])
 
 
 def encrypt_json(data: dict) -> str:
@@ -47,7 +47,7 @@ def decrypt_json(token: str) -> dict:
     try:
         return json.loads(_fernet().decrypt(token.encode()))
     except InvalidToken:
-        raise SecretsError("رمزگشایی تنظیمات ممکن نیست؛ کلید RAVIN_SECRETS_KEY تغییر کرده است.")
+        raise SecretsError("رمزگشایی تنظیمات ممکن نیست؛ کلید RAVIX_SECRETS_KEY تغییر کرده است.")
 
 
 # ------------------------------------------------------------------ پاک‌سازی گزارش‌ها

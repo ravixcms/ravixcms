@@ -21,28 +21,28 @@ class ThemeUpgrade(UpdaterCase):
         self.themes = self.base / "themes"
         self.themes.mkdir()
         self.make_theme("0.1.0")
-        ov = override_settings(RAVIN_THEME_DIRS=[Path(settings.BASE_DIR) / "themes", self.themes])
+        ov = override_settings(RAVIX_THEME_DIRS=[Path(settings.BASE_DIR) / "themes", self.themes])
         ov.enable()
         self.addCleanup(ov.disable)
         registry.clear_cache()
         self.addCleanup(registry.clear_cache)
 
-    def make_theme(self, version, where=None, ravin=""):
+    def make_theme(self, version, where=None, ravix=""):
         d = (where or self.themes) / "mytheme"
         if d.exists():
             shutil.rmtree(d)
         shutil.copytree(Path(settings.BASE_DIR) / "themes/default", d, ignore=shutil.ignore_patterns("__pycache__"))
         m = json.loads((d / "theme.json").read_text())
         m.update(slug="mytheme", name="My", version=version)
-        if ravin:
-            m["ravin"] = ravin
+        if ravix:
+            m["ravix"] = ravix
         (d / "theme.json").write_text(json.dumps(m))
         (d / "static/marker.txt").write_text(version)
         return d
 
-    def publish_theme(self, version, *, seed=SEED, ravin=""):
+    def publish_theme(self, version, *, seed=SEED, ravix=""):
         (self.base / f"src-{version}").mkdir(exist_ok=True)
-        src = self.make_theme(version, self.base / f"src-{version}", ravin)
+        src = self.make_theme(version, self.base / f"src-{version}", ravix)
         slug, entry = release.build_theme(src, self.dist, seed=seed)
         release.write_index(self.dist, themes={slug: [entry]})
         return entry
@@ -102,7 +102,7 @@ class ThemeUpgrade(UpdaterCase):
         self.assertFalse(UpdateLock.objects.exists())
 
     def test_theme_requiring_other_core_rejected(self):
-        self.publish_theme("0.2.0", ravin=">=9.0")
+        self.publish_theme("0.2.0", ravix=">=9.0")
         with self.assertRaises(UpdateBlocked):
             self.apply()
 

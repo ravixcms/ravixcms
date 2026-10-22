@@ -3,7 +3,7 @@
 {% block page_title %}تنظیمات درگاه {{ cls.label }}{% endblock %}
 {% block content_class %}content-narrow{% endblock %}
 {% block content %}
-<p class="muted">کلیدها رمزنگاری‌شده ذخیره می‌شوند و هرگز دوباره نمایش داده نمی‌شوند. فیلد محرمانه را خالی بگذارید تا مقدار فعلی حفظ شود. برای نگهداری کلیدها خارج از دیتابیس می‌توانید از متغیر محیطی <code class="ltr">RAVIN_GATEWAY_{{ cls.name|upper }}_&lt;KEY&gt;</code> استفاده کنید.</p>
+<p class="muted">کلیدها رمزنگاری‌شده ذخیره می‌شوند و هرگز دوباره نمایش داده نمی‌شوند. فیلد محرمانه را خالی بگذارید تا مقدار فعلی حفظ شود. برای نگهداری کلیدها خارج از دیتابیس می‌توانید از متغیر محیطی <code class="ltr">RAVIX_GATEWAY_{{ cls.name|upper }}_&lt;KEY&gt;</code> استفاده کنید.</p>
 <form method="post" novalidate data-once autocomplete="off">{% csrf_token %}
   {% include "partials/_form_errors.html" %}
   <div class="card" style="margin-bottom:1.25rem"><div class="card-body">{% for field in form %}{% include "partials/_field.html" with field=field %}{% endfor %}</div></div>

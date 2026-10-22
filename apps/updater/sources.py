@@ -1,8 +1,8 @@
 """
-منبع رسمی به‌روزرسانی: ``<RAVIN_UPDATE_URL>/updates/v1/index.json`` (فقط HTTPS، بدون ریدایرکت، با سقف حجم) یا پوشهٔ محلی ``RAVIN_UPDATE_DIR``.
+منبع رسمی به‌روزرسانی: ``<RAVIX_UPDATE_URL>/updates/v1/index.json`` (فقط HTTPS، بدون ریدایرکت، با سقف حجم) یا پوشهٔ محلی ``RAVIX_UPDATE_DIR``.
 
 هیچ اعتمادی به منبع نیست: SHA-256 و امضای هر بسته را خود به‌روزرسان می‌سنجد (امضا نوع/شناسه/نسخه/هش را می‌پوشاند)، پس فهرست دست‌کاری‌شده
-نمی‌تواند بستهٔ دیگری را جایگزین کند. فهرست اختیاراً امضا هم می‌شود (RAVIN_UPDATE_REQUIRE_SIGNED_INDEX).
+نمی‌تواند بستهٔ دیگری را جایگزین کند. فهرست اختیاراً امضا هم می‌شود (RAVIX_UPDATE_REQUIRE_SIGNED_INDEX).
 """
 import hashlib
 import json
@@ -14,12 +14,13 @@ from pathlib import Path
 from django.conf import settings
 from django.core.cache import cache
 
+from apps.core.deprecation import read_legacy_key
 from apps.core.version import UPDATE_SCHEMA_VERSION
 
 from . import signing
 from .errors import UpdateError
 
-logger = logging.getLogger("ravin.updater")
+logger = logging.getLogger("ravix.updater")
 MAX_INDEX = 2 * 1024 * 1024
 VERSION_RE = re.compile(r"^\d{1,4}\.\d{1,4}\.\d{1,4}$")
 SHA_RE = re.compile(r"^[0-9a-f]{64}$")
@@ -46,21 +47,21 @@ def normalize_entry(raw, kind: str) -> dict | None:
         size = int(raw.get("size") or 0)
     except (TypeError, ValueError):
         return None
-    if not 0 <= size <= settings.RAVIN_UPDATE_MAX_PACKAGE_BYTES:
+    if not 0 <= size <= settings.RAVIX_UPDATE_MAX_PACKAGE_BYTES:
         return None
     req = raw.get("requires") if isinstance(raw.get("requires"), dict) else {}
     pk = req.get("packages", [])
     return {"version": version, "sha256": sha, "size": size, "download_url": str(raw.get("download_url", ""))[:500],
             "signature": str(raw.get("signature") or "")[:200], "signature_key_id": str(raw.get("signature_key_id") or "")[:32],
             "released": str(raw.get("released", ""))[:40], "notes": str(raw.get("notes", ""))[:2000], "migrations": bool(raw.get("migrations")),
-            "requires": {"python": str(req.get("python", ""))[:60], "min_from": str(req.get("min_from", ""))[:20], "ravin": str(req.get("ravin", ""))[:60],
+            "requires": {"python": str(req.get("python", ""))[:60], "min_from": str(req.get("min_from", ""))[:20], "ravix": str(read_legacy_key(req))[:60],
                          "plugin_api": req.get("plugin_api") if isinstance(req.get("plugin_api"), int) else None,
                          "theme_api": req.get("theme_api") if isinstance(req.get("theme_api"), int) else None,
                          "packages": [str(p)[:120] for p in pk[:100]] if isinstance(pk, list) else []}}
 
 
 def parse_index(data: bytes, signature: str = "", key_id: str = "") -> dict:
-    if settings.RAVIN_UPDATE_REQUIRE_SIGNED_INDEX and not signature:
+    if settings.RAVIX_UPDATE_REQUIRE_SIGNED_INDEX and not signature:
         raise UpdateError("فهرست به‌روزرسانی امضا ندارد و سیاست این سایت امضای فهرست را الزامی کرده است.")
     if signature:
         ver = signing.verify_index(data, signature, key_id)
@@ -103,7 +104,7 @@ class HttpSource:
         url = entry.get("download_url") or ""
         if urllib.parse.urlparse(url).netloc != urllib.parse.urlparse(self.base).netloc:
             raise UpdateError("نشانی دریافت روی دامنهٔ دیگری است؛ برای امنیت رد شد.")
-        data, _ = _http_get(url, settings.RAVIN_UPDATE_MAX_PACKAGE_BYTES)
+        data, _ = _http_get(url, settings.RAVIX_UPDATE_MAX_PACKAGE_BYTES)
         return data
 
 
@@ -137,7 +138,7 @@ class DirSource:
         if not name or self.dir.resolve() not in path.parents:
             raise UpdateError("نام فایل بسته نامعتبر است.")
         try:
-            if path.stat().st_size > settings.RAVIN_UPDATE_MAX_PACKAGE_BYTES:
+            if path.stat().st_size > settings.RAVIX_UPDATE_MAX_PACKAGE_BYTES:
                 raise UpdateError("بسته از سقف حجم بزرگ‌تر است.")
             return path.read_bytes()
         except OSError:
@@ -145,15 +146,15 @@ class DirSource:
 
 
 def get_source():
-    if settings.RAVIN_UPDATE_DIR:
-        return DirSource(settings.RAVIN_UPDATE_DIR)
-    if settings.RAVIN_UPDATE_URL:
-        return HttpSource(settings.RAVIN_UPDATE_URL)
-    raise UpdateError("منبع رسمی به‌روزرسانی تنظیم نشده است (RAVIN_UPDATE_URL).")
+    if settings.RAVIX_UPDATE_DIR:
+        return DirSource(settings.RAVIX_UPDATE_DIR)
+    if settings.RAVIX_UPDATE_URL:
+        return HttpSource(settings.RAVIX_UPDATE_URL)
+    raise UpdateError("منبع رسمی به‌روزرسانی تنظیم نشده است (RAVIX_UPDATE_URL).")
 
 
 def has_source() -> bool:
-    return bool(settings.RAVIN_UPDATE_DIR or settings.RAVIN_UPDATE_URL)
+    return bool(settings.RAVIX_UPDATE_DIR or settings.RAVIX_UPDATE_URL)
 
 
 def cached_index(force: bool = False) -> dict:

@@ -29,7 +29,7 @@ def ping(request, api):
 
 def base_manifest(slug, **over):
     data = {
-        "slug": slug, "name": f"افزونه {slug}", "version": "1.0.0", "description": "آزمایشی", "api_version": 1, "ravin": ">=0.5.0,<1.0.0",
+        "slug": slug, "name": f"افزونه {slug}", "version": "1.0.0", "description": "آزمایشی", "api_version": 1, "ravix": ">=0.5.0,<1.0.0",
         "capabilities": {f"{slug}.use": "استفاده"},
         "settings": [{"key": "greeting", "label": "پیام", "type": "text", "default": "hi", "max_len": 20}],
         "admin_pages": [{"key": "home", "title": f"صفحه {slug}", "view": "views:home", "capability": f"{slug}.use"}],
@@ -45,12 +45,12 @@ class PluginTestCase(TransactionTestCase):
     copy_samples = False
 
     def setUp(self):
-        self.tmp = Path(tempfile.mkdtemp(prefix="ravin-plugins-"))
+        self.tmp = Path(tempfile.mkdtemp(prefix="ravix-plugins-"))
         self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
         if self.copy_samples:
             for name in ("contact_form", "seo_toolkit"):
                 shutil.copytree(REPO_PLUGINS / name, self.tmp / name, ignore=shutil.ignore_patterns("__pycache__"))
-        override = override_settings(RAVIN_PLUGIN_DIRS=[self.tmp], RAVIN_PLUGINS_ENABLED=True, RAVIN_PLUGINS_SAFE_MODE=False)
+        override = override_settings(RAVIX_PLUGIN_DIRS=[self.tmp], RAVIX_PLUGINS_ENABLED=True, RAVIX_PLUGINS_SAFE_MODE=False)
         override.enable()
         self.addCleanup(override.disable)
         patcher = mock.patch.object(registry, "VERIFY_INTERVAL", 0)

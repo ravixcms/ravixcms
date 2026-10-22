@@ -1,4 +1,4 @@
-{% load ravin_ui %}
+{% load ravix_ui %}
 <div class="field {% if field.errors %}has-error{% endif %}">
   <label for="{{ field.id_for_label }}">{{ field.label }}</label>
   <div class="md-editor" data-md-editor data-preview-url="{% url 'content:markdown_preview' %}">

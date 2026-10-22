@@ -65,7 +65,7 @@ class ScriptedGateway(PaymentGateway):
         return self._verify(ctx, None)
 
 
-@override_settings(SHOP_PAYMENT_GATEWAY="scripted", RAVIN_SECRETS_KEYS=[KEY])
+@override_settings(SHOP_PAYMENT_GATEWAY="scripted", RAVIX_SECRETS_KEYS=[KEY])
 class PayCase(ShopTestCase):
     def setUp(self):
         super().setUp()
@@ -361,15 +361,15 @@ class LoggingAndSecretsTests(PayCase):
 
     def test_key_rotation_and_missing_key(self):
         new = Fernet.generate_key().decode()
-        with override_settings(RAVIN_SECRETS_KEYS=[new, KEY]):
+        with override_settings(RAVIX_SECRETS_KEYS=[new, KEY]):
             self.assertEqual(vault.decrypt_json(self.cfg.secrets_encrypted), {"api_key": SECRET})
-        with override_settings(RAVIN_SECRETS_KEYS=[new]), self.assertRaises(vault.SecretsError):
+        with override_settings(RAVIX_SECRETS_KEYS=[new]), self.assertRaises(vault.SecretsError):
             vault.decrypt_json(self.cfg.secrets_encrypted)
-        with override_settings(RAVIN_SECRETS_KEYS=[], DEBUG=False, RAVIN_SECRETS_ALLOW_DERIVED_KEY=False), self.assertRaises(vault.SecretsError):
+        with override_settings(RAVIX_SECRETS_KEYS=[], DEBUG=False, RAVIX_SECRETS_ALLOW_DERIVED_KEY=False), self.assertRaises(vault.SecretsError):
             vault.encrypt_json({"a": "b"})
 
     def test_unreadable_secrets_make_gateway_unavailable_not_crash(self):
-        with override_settings(RAVIN_SECRETS_KEYS=[Fernet.generate_key().decode()]):
+        with override_settings(RAVIX_SECRETS_KEYS=[Fernet.generate_key().decode()]):
             c = Client()
             self.add_to_cart(c)
             r = c.post("/shop/checkout/", self.checkout_data())
@@ -392,7 +392,7 @@ class LoggingAndSecretsTests(PayCase):
             self.assertNotIn("gateway_ref", pay)
 
     def test_env_override_wins_and_is_not_shown(self):
-        with mock.patch.dict("os.environ", {"RAVIN_GATEWAY_SCRIPTED_API_KEY": "ENV-KEY-VALUE-999"}):
+        with mock.patch.dict("os.environ", {"RAVIX_GATEWAY_SCRIPTED_API_KEY": "ENV-KEY-VALUE-999"}):
             gw = gateways.get_gateway("scripted", site=self.site)
             self.assertEqual(gw.config["api_key"], "ENV-KEY-VALUE-999")
             admin = Client()
@@ -630,14 +630,14 @@ class PreflightTests(PayCase):
         out = io.StringIO()
         with override_settings(**settings_over):
             try:
-                call_command("ravin_preflight", stdout=out)
+                call_command("ravix_preflight", stdout=out)
             except SystemExit:
                 pass
         return out.getvalue()
 
     def test_enabled_gateway_without_encryption_key_is_an_error(self):
-        out = self.run_pf(RAVIN_SECRETS_KEYS=[])
-        self.assertIn("RAVIN_SECRETS_KEY تنظیم نشده", out)
+        out = self.run_pf(RAVIX_SECRETS_KEYS=[])
+        self.assertIn("RAVIX_SECRETS_KEY تنظیم نشده", out)
         self.assertNotIn(SECRET, out)
 
     def test_test_mode_warning_and_ok(self):

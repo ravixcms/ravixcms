@@ -1,12 +1,12 @@
 """آزمون نصب قالب ZIP روی میزبان واقعی (بدون مرورگر؛ درخواست‌ها درون‌پردازه‌ای با Django test Client).
 
 اجرا (روی سرور، با کاربر سرویس و محیط واقعی؛ دستور کامل در docs/themes.md):
-    sudo -u ravin bash -c 'set -a; . /etc/ravin/ravin.env; set +a; export RAVIN_THEME_INSTALL_DIR=/srv/ravin/themes_installed; \
-        cd /srv/ravin/app && /srv/ravin/venv/bin/python scripts/vps_theme_install_check.py'
+    sudo -u ravix bash -c 'set -a; . /etc/ravix/ravix.env; set +a; export RAVIX_THEME_INSTALL_DIR=/srv/ravix/themes_installed; \
+        cd /srv/ravix/app && /srv/ravix/venv/bin/python scripts/vps_theme_install_check.py'
 
 ⚠ فقط روی سرور آزمایشی. این اسکریپت:
   - کاربران موقت `vpscheck_*` می‌سازد و در پایان حذف می‌کند؛
-  - قالب‌های آزمایشی `vpscheck-*` را در RAVIN_THEME_INSTALL_DIR نصب و در پایان پاک می‌کند (فقط همین‌ها)؛
+  - قالب‌های آزمایشی `vpscheck-*` را در RAVIX_THEME_INSTALL_DIR نصب و در پایان پاک می‌کند (فقط همین‌ها)؛
   - ZIPهای مخرب فقط در حافظه ساخته می‌شوند (داده‌های ساختگی)؛ چیزی خارج از پوشهٔ نصب نوشته نمی‌شود؛
   - collectstatic را اجرا نمی‌کند؛ قالب‌ها را فعال نمی‌کند.
 خروجی: PASS/FAIL برای هر بررسی؛ کد خروج ۰ فقط اگر همه PASS باشند. اطلاعات محرمانه چاپ نمی‌شود.
@@ -39,9 +39,9 @@ from apps.accounts.permissions import Role  # noqa: E402
 from apps.audit.models import AuditLog  # noqa: E402
 from apps.themes import installer, registry  # noqa: E402
 
-ROOT = Path(settings.RAVIN_THEME_INSTALL_DIR)
+ROOT = Path(settings.RAVIX_THEME_INSTALL_DIR)
 DEFAULT_SRC = Path(settings.BASE_DIR) / "themes" / "default"
-EVIL = Path("/tmp/ravin-evil-vps-check.txt")
+EVIL = Path("/tmp/ravix-evil-vps-check.txt")
 RESULTS = []
 CREATED = []
 
@@ -101,7 +101,7 @@ def tree(path):
 def main():
     print(f"پوشهٔ نصب: {ROOT} | کاربر OS: {os.getuid()} | DB: {connection.vendor}")
     if not ROOT.exists():
-        print(f"خطا: {ROOT} وجود ندارد؛ ابتدا بسازید (install -d -m 0750 -o ravin -g ravin ...)")
+        print(f"خطا: {ROOT} وجود ندارد؛ ابتدا بسازید (install -d -m 0750 -o ravix -g ravix ...)")
         return 2
     sa = User.objects.create_user(username="vpscheck_super", email="vpscheck_super@example.invalid", password=os.urandom(12).hex() + "Aa1!", role=Role.SUPER_ADMIN)
     ad = User.objects.create_user(username="vpscheck_admin", email="vpscheck_admin@example.invalid", password=os.urandom(12).hex() + "Aa1!", role=Role.ADMIN)
@@ -125,12 +125,12 @@ def run(sa, ad):
     baseline = tree(ROOT)
 
     # ۱) خاموش بودن: رد شود و چیزی تغییر نکند
-    with override_settings(RAVIN_THEME_WEB_INSTALL=False):
+    with override_settings(RAVIX_THEME_WEB_INSTALL=False):
         r = post(csa, zip_bytes("vpscheck-off"))
     check("پرچم خاموش: درخواست رد می‌شود", r.status_code in (400, 403), r.status_code)
     check("پرچم خاموش: هیچ فایلی تغییر نکرد", tree(ROOT) == baseline)
 
-    with override_settings(RAVIN_THEME_WEB_INSTALL=True):
+    with override_settings(RAVIX_THEME_WEB_INSTALL=True):
         # ۲) مجوز: ادمین معمولی نباید بتواند
         r = post(cad, zip_bytes("vpscheck-adm"))
         check("ادمین بدون themes.install: ۴۰۳", r.status_code == 403, r.status_code)
@@ -172,8 +172,8 @@ def run(sa, ad):
 
         EVIL.unlink(missing_ok=True)
         attacks = {
-            "zip-slip (..)": raw_zip([("vpscheck-bad/theme.json", base["theme.json"]), ("vpscheck-bad/../../tmp/ravin-evil-vps-check.txt", b"x")]),
-            "مسیر مطلق": raw_zip([("/tmp/ravin-evil-vps-check.txt", b"x")]),
+            "zip-slip (..)": raw_zip([("vpscheck-bad/theme.json", base["theme.json"]), ("vpscheck-bad/../../tmp/ravix-evil-vps-check.txt", b"x")]),
+            "مسیر مطلق": raw_zip([("/tmp/ravix-evil-vps-check.txt", b"x")]),
             "فایل SVG": zip_bytes("vpscheck-bad", with_extra({"static/a.svg": b"<svg xmlns='http://www.w3.org/2000/svg'/>"})),
             "فایل php": zip_bytes("vpscheck-bad", with_extra({"static/a.php": b"<?php echo 1;"})),
             "فایل py": zip_bytes("vpscheck-bad", with_extra({"static/a.py": b"print(1)"})),

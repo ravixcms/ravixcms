@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.utils.html import strip_tags
 from django.utils.text import Truncator
 
-from apps.core.templatetags.ravin_ui import fa_digits
+from apps.core.templatetags.ravix_ui import fa_digits
 
 JALALI_MONTHS = ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"]
 _WS = re.compile(r"\s+")

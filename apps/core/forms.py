@@ -4,7 +4,7 @@ from .models import SiteSettings
 
 
 class StyledFormMixin:
-    """کلاس‌های CSS رابط Ravin را به ویجت‌ها اضافه می‌کند."""
+    """کلاس‌های CSS رابط Ravix را به ویجت‌ها اضافه می‌کند."""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

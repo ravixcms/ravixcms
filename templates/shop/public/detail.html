@@ -1,4 +1,4 @@
-{% load ravin_ui %}
+{% load ravix_ui %}
 <div class="detail">
   <div>{% if p.image %}<img src="{{ p.image.url }}" alt="{{ p.name }}" width="800" height="600" style="width:100%;height:auto;border-radius:.6rem">{% endif %}
     {% if gallery %}<ul class="thumbs">{% for g in gallery %}<li><img src="{{ g.image.url }}" alt="{{ g.alt|default:p.name }}" loading="lazy" width="200" height="150"></li>{% endfor %}</ul>{% endif %}</div>

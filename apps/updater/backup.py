@@ -21,7 +21,7 @@ from .package import CORE_ENTRIES
 
 
 def backup_dir() -> Path:
-    d = Path(settings.RAVIN_UPDATE_BACKUP_DIR)
+    d = Path(settings.RAVIX_UPDATE_BACKUP_DIR)
     d.mkdir(parents=True, exist_ok=True)
     if os.name == "posix":
         os.chmod(d, 0o700)

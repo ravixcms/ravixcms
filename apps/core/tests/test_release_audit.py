@@ -169,6 +169,6 @@ class LoginThrottle(TestCase):
             self.attempt("thr", REMOTE_ADDR="10.0.0.1", HTTP_X_REAL_IP=f"203.0.113.{i}")  # تلاش برای دور زدن با سربرگ جعلی
         r = self.attempt("thr", "Str0ng-pass-123", REMOTE_ADDR="10.0.0.1", HTTP_X_REAL_IP="198.51.100.9")
         self.assertNotIn("_auth_user_id", r.client.session)
-        with override_settings(RAVIN_TRUST_PROXY_HEADERS=True):  # پشت پراکسی مورد اعتماد، هر کلاینتِ واقعی جداگانه شمرده می‌شود
+        with override_settings(RAVIX_TRUST_PROXY_HEADERS=True):  # پشت پراکسی مورد اعتماد، هر کلاینتِ واقعی جداگانه شمرده می‌شود
             r = self.attempt("thr", "Str0ng-pass-123", REMOTE_ADDR="127.0.0.1", HTTP_X_REAL_IP="198.51.100.77")
             self.assertEqual(r.status_code, 302)

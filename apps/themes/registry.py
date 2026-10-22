@@ -1,4 +1,4 @@
-"""کشف و نگهداری فهرست قالب‌های نصب‌شده (از پوشه‌های ``settings.RAVIN_THEME_DIRS``)."""
+"""کشف و نگهداری فهرست قالب‌های نصب‌شده (از پوشه‌های ``settings.RAVIX_THEME_DIRS``)."""
 import logging
 import os
 import threading
@@ -21,14 +21,14 @@ _cache_stamp: int | None = None
 def _stamp() -> int | None:
     """مهر نسخهٔ نصب‌ها: نصب‌کنندهٔ ZIP پس از هر نصب این فایل را به‌روز می‌کند تا همهٔ workerها کش خود را نو کنند (یک stat ارزان)."""
     try:
-        return os.stat(Path(settings.RAVIN_THEME_INSTALL_DIR) / ".revision").st_mtime_ns
+        return os.stat(Path(settings.RAVIX_THEME_INSTALL_DIR) / ".revision").st_mtime_ns
     except (OSError, AttributeError):
         return None
 
 
 def _discover() -> dict[str, ThemeInfo]:
     found: dict[str, ThemeInfo] = {}
-    for base in getattr(settings, "RAVIN_THEME_DIRS", []):
+    for base in getattr(settings, "RAVIX_THEME_DIRS", []):
         base = Path(base)
         if not base.is_dir():
             continue
@@ -76,5 +76,5 @@ def clear_cache() -> None:
 
 @receiver(setting_changed)
 def _reset_on_setting_change(sender, setting, **kwargs):
-    if setting in {"RAVIN_THEME_DIRS", "RAVIN_THEME_INSTALL_DIR", "DEBUG"}:
+    if setting in {"RAVIX_THEME_DIRS", "RAVIX_THEME_INSTALL_DIR", "DEBUG"}:
         clear_cache()

@@ -6,7 +6,7 @@
 تنظیم سئوی یک صفحه و دیدن اثرش در صفحهٔ عمومی، سپس دستکاری فایل یک افزونهٔ فعال و اطمینان از توقف فوری آن،
 و ایزوله‌بودن خطا (افزونهٔ خراب پنل را از کار نمی‌اندازد).
 دیتابیس موقت می‌سازد و به دیتابیس پروژه دست نمی‌زند.
-اجرا: python scripts/e2e_plugins.py   (متغیرها مثل e2e_builder.py: RAVIN_PYTHON, CHROMIUM_PATH, HEADED)
+اجرا: python scripts/e2e_plugins.py   (متغیرها مثل e2e_builder.py: RAVIX_PYTHON, CHROMIUM_PATH, HEADED)
 """
 import json
 import os
@@ -21,7 +21,7 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parent.parent
-PY = os.environ.get("RAVIN_PYTHON") or str(ROOT / ".venv" / "bin" / "python")
+PY = os.environ.get("RAVIX_PYTHON") or str(ROOT / ".venv" / "bin" / "python")
 PASSWORD = "Pass12345!xyz"
 results = []
 
@@ -49,7 +49,7 @@ print("seeded")
 ''' % {"pw": PASSWORD}
 
 CRASHY = {
-    "plugin.json": {"slug": "crashy", "name": "افزونهٔ خراب", "version": "1.0.0", "api_version": 1, "ravin": ">=0.5.0,<1.0.0",
+    "plugin.json": {"slug": "crashy", "name": "افزونهٔ خراب", "version": "1.0.0", "api_version": 1, "ravix": ">=0.5.0,<1.0.0",
                     "description": "برای آزمون ایزوله‌سازی خطا",
                     "admin_pages": [{"key": "home", "title": "صفحهٔ خراب", "view": "views:home"}]},
 }
@@ -204,14 +204,14 @@ def run(base, extra_dir):
 
 
 def main():
-    tmp = Path(tempfile.mkdtemp(prefix="ravin-e2e-plugins-"))
+    tmp = Path(tempfile.mkdtemp(prefix="ravix-e2e-plugins-"))
     extra = tmp / "extra"
     extra.mkdir()
     port = free_port()
     base = f"http://127.0.0.1:{port}"
     rel = os.path.relpath(tmp / "e2e.sqlite3", ROOT)
     env = {**os.environ, "DATABASE_URL": "sqlite:///" + rel, "DJANGO_SETTINGS_MODULE": "config.settings.development", "PYTHONUNBUFFERED": "1",
-           "RAVIN_EXTRA_PLUGIN_DIRS": str(extra)}
+           "RAVIX_EXTRA_PLUGIN_DIRS": str(extra)}
     server = None
     try:
         subprocess.run([PY, "manage.py", "migrate", "-v0"], cwd=ROOT, env=env, check=True)

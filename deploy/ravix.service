@@ -1,15 +1,15 @@
 [Unit]
-Description=Ravin CMS (Gunicorn)
+Description=Ravix (Gunicorn)
 After=network.target postgresql.service
 
 [Service]
 Type=notify
-User=ravin
+User=ravix
 Group=www-data
-RuntimeDirectory=ravin
-WorkingDirectory=/srv/ravin/app
-EnvironmentFile=/etc/ravin/ravin.env
-ExecStart=/srv/ravin/venv/bin/gunicorn config.wsgi:application -c /srv/ravin/app/deploy/gunicorn.conf.py
+RuntimeDirectory=ravix
+WorkingDirectory=/srv/ravix/app
+EnvironmentFile=/etc/ravix/ravix.env
+ExecStart=/srv/ravix/venv/bin/gunicorn config.wsgi:application -c /srv/ravix/app/deploy/gunicorn.conf.py
 ExecReload=/bin/kill -s HUP $MAINPID
 Restart=on-failure
 RestartSec=3
@@ -18,12 +18,12 @@ NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=full
 ProtectHome=true
-ReadWritePaths=/srv/ravin/media
-# کش فایلیِ مشترک بین ورکرها: systemd خودش /var/cache/ravin را (مالک User:Group سرویس) می‌سازد و قابل‌نوشتن می‌کند.
+ReadWritePaths=/srv/ravix/media
+# کش فایلیِ مشترک بین ورکرها: systemd خودش /var/cache/ravix را (مالک User:Group سرویس) می‌سازد و قابل‌نوشتن می‌کند.
 # مسیر زیر /var/tmp نباید در ReadWritePaths بیاید: با PrivateTmp=true آن مسیر در /var/tmp خصوصیِ سرویس وجود ندارد و سرویس با 226/NAMESPACE بالا نمی‌آید (در آزمون VPS دیده شد).
-CacheDirectory=ravin
+CacheDirectory=ravix
 CacheDirectoryMode=0750
-# پوشهٔ plugins/ و themes/ (کد) برای کاربر سرویس فقط‌خواندنی‌اند. نصب قالب از پنل فقط در RAVIN_THEME_INSTALL_DIR (پیش‌فرض /srv/ravin/themes_installed) می‌نویسد؛
+# پوشهٔ plugins/ و themes/ (کد) برای کاربر سرویس فقط‌خواندنی‌اند. نصب قالب از پنل فقط در RAVIX_THEME_INSTALL_DIR (پیش‌فرض /srv/ravix/themes_installed) می‌نویسد؛
 # با ProtectSystem=full این مسیر زیر /srv قابل‌نوشتن است و فقط مجوز پوشه تعیین‌کننده است. اگر به ProtectSystem=strict ارتقا دادید، آن مسیر را به ReadWritePaths اضافه کنید.
 
 [Install]

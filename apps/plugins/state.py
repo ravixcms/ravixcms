@@ -31,7 +31,7 @@ class ActiveInfo:
 
 
 def enabled() -> bool:
-    return bool(getattr(settings, "RAVIN_PLUGINS_ENABLED", True)) and not getattr(settings, "RAVIN_PLUGINS_SAFE_MODE", False)
+    return bool(getattr(settings, "RAVIX_PLUGINS_ENABLED", True)) and not getattr(settings, "RAVIX_PLUGINS_SAFE_MODE", False)
 
 
 def invalidate(*_args, **_kwargs):

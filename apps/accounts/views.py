@@ -83,7 +83,7 @@ class RegisterView(RedirectAuthenticatedMixin, FormView):
         user = form.save()
         log_event(self.request, "create", user, f"کاربر جدید «{user.username}» ثبت‌نام کرد.", actor=user)
         emailing.send_verification_email(self.request, user)
-        if settings.RAVIN_REQUIRE_EMAIL_VERIFICATION:
+        if settings.RAVIX_REQUIRE_EMAIL_VERIFICATION:
             messages.success(self.request, "حساب شما ساخته شد. برای ورود، پیوند تأییدی را که به ایمیل شما فرستادیم باز کنید.")
             return redirect("accounts:login")
         login(self.request, user, backend="apps.accounts.backends.EmailOrUsernameBackend")

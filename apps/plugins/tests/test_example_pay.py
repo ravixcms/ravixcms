@@ -58,7 +58,7 @@ class FakeProvider:
         return 200, json.dumps(self.payments[pid]).encode()
 
 
-@override_settings(RAVIN_SECRETS_KEYS=[KEY], SHOP_PAYMENT_GATEWAY="example_pay")
+@override_settings(RAVIX_SECRETS_KEYS=[KEY], SHOP_PAYMENT_GATEWAY="example_pay")
 class ExamplePayPluginTests(PluginTestCase):
     def setUp(self):
         super().setUp()

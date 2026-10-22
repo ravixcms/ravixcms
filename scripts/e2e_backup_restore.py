@@ -50,13 +50,13 @@ def main():
         raise SystemExit("E2E_PG_URL را تنظیم کنید (مثلاً postgresql://user:pass@localhost:5432).")
     u = urlparse(BASE)
     admin_env = {**os.environ, "PGHOST": u.hostname, "PGPORT": str(u.port or 5432), "PGUSER": u.username, "PGPASSWORD": u.password or "", "PGDATABASE": "postgres"}
-    name = "ravin_e2e_" + uuid.uuid4().hex[:8]
+    name = "ravix_e2e_" + uuid.uuid4().hex[:8]
     url = f"{BASE}/{name}"
-    tmp = Path(tempfile.mkdtemp(prefix="ravin-e2e-bk-"))
+    tmp = Path(tempfile.mkdtemp(prefix="ravix-e2e-bk-"))
     media, priv, bk = tmp / "media", tmp / "shop_private", tmp / "backups"
-    env = {**os.environ, "DJANGO_SETTINGS_MODULE": "config.settings.development", "DATABASE_URL": url, "RAVIN_SHOP_ENABLED": "true",
-           "MEDIA_DIR": str(media), "RAVIN_SHOP_PRIVATE_ROOT": str(priv), "BACKUP_DIR": str(bk), "RAVIN_ENV_FILE": "/nonexistent",
-           "RAVIN_PLUGIN_INSTALL_DIR": str(tmp / "pi"), "RAVIN_PLUGIN_BACKUP_DIR": str(tmp / "pb"), "RAVIN_REGISTRY_STORAGE": str(tmp / "reg"), "RAVIN_RESTORE_YES": "1"}
+    env = {**os.environ, "DJANGO_SETTINGS_MODULE": "config.settings.development", "DATABASE_URL": url, "RAVIX_SHOP_ENABLED": "true",
+           "MEDIA_DIR": str(media), "RAVIX_SHOP_PRIVATE_ROOT": str(priv), "BACKUP_DIR": str(bk), "RAVIX_ENV_FILE": "/nonexistent",
+           "RAVIX_PLUGIN_INSTALL_DIR": str(tmp / "pi"), "RAVIX_PLUGIN_BACKUP_DIR": str(tmp / "pb"), "RAVIX_REGISTRY_STORAGE": str(tmp / "reg"), "RAVIX_RESTORE_YES": "1"}
     # در تنظیمات، MEDIA_ROOT ثابت است؛ برای آزمون، رسانه را با symlink به پوشهٔ موقت می‌بریم
     real_media = ROOT / "media"
     try:

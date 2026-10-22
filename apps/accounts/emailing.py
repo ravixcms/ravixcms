@@ -33,7 +33,7 @@ def make_verify_token(user) -> str:
 def read_verify_token(token: str):
     """(user, state) با state یکی از: ``ok`` | ``done`` (قبلاً تأیید شده) | ``invalid`` (امضای نادرست/منقضی/ایمیل عوض‌شده)."""
     try:
-        data = signing.loads(token, salt=VERIFY_SALT, max_age=settings.RAVIN_EMAIL_VERIFY_MAX_AGE)
+        data = signing.loads(token, salt=VERIFY_SALT, max_age=settings.RAVIX_EMAIL_VERIFY_MAX_AGE)
         user = User.objects.filter(pk=data["u"], is_active=True).first()
     except (signing.BadSignature, KeyError, TypeError, ValueError):
         return None, "invalid"
@@ -43,14 +43,14 @@ def read_verify_token(token: str):
 
 
 def absolute_url(request, path: str) -> str:
-    """نشانی مطلق؛ اگر RAVIN_SITE_URL تنظیم شده باشد از آن (نه از سرآیند Host) ساخته می‌شود."""
+    """نشانی مطلق؛ اگر RAVIX_SITE_URL تنظیم شده باشد از آن (نه از سرآیند Host) ساخته می‌شود."""
     if settings.SITE_URL:
         return settings.SITE_URL + path
     return request.build_absolute_uri(path)
 
 
 def site_domain_args() -> dict:
-    """آرگومان‌های ``PasswordResetForm.save`` برای استفاده از RAVIN_SITE_URL."""
+    """آرگومان‌های ``PasswordResetForm.save`` برای استفاده از RAVIX_SITE_URL."""
     if not settings.SITE_URL:
         return {}
     parts = urlsplit(settings.SITE_URL)
@@ -64,7 +64,7 @@ def send_verification_email(request, user) -> bool:
     if not throttle.allow_send(request, user.email, "verify"):
         return False
     link = absolute_url(request, reverse("accounts:verify_email", args=[make_verify_token(user)]))
-    ctx = {"user": user, "link": link, "hours": settings.RAVIN_EMAIL_VERIFY_MAX_AGE // 3600}
+    ctx = {"user": user, "link": link, "hours": settings.RAVIX_EMAIL_VERIFY_MAX_AGE // 3600}
     subject = " ".join(render_to_string("accounts/email/verify_subject.txt", ctx).split())
     body = render_to_string("accounts/email/verify.txt", ctx)
     try:

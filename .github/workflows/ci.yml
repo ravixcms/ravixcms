@@ -15,12 +15,12 @@ jobs:
     services:
       postgres:
         image: postgres:16
-        env: { POSTGRES_USER: ravin, POSTGRES_PASSWORD: ci-only-password, POSTGRES_DB: ravin }
+        env: { POSTGRES_USER: ravix, POSTGRES_PASSWORD: ci-only-password, POSTGRES_DB: ravix }
         ports: ["5432:5432"]
         options: >-
-          --health-cmd "pg_isready -U ravin" --health-interval 5s --health-timeout 5s --health-retries 10
+          --health-cmd "pg_isready -U ravix" --health-interval 5s --health-timeout 5s --health-retries 10
     env:
-      RAVIN_SHOP_ENABLED: ${{ matrix.shop }}
+      RAVIX_SHOP_ENABLED: ${{ matrix.shop }}
       DJANGO_SECRET_KEY: ci-only-not-a-secret-ci-only-not-a-secret
     steps:
       - uses: actions/checkout@v4
@@ -29,7 +29,7 @@ jobs:
       - run: pip install -r requirements.lock
       - name: DATABASE_URL (postgres)
         if: matrix.db == 'postgres'
-        run: echo "DATABASE_URL=postgres://ravin:ci-only-password@localhost:5432/ravin" >> "$GITHUB_ENV"
+        run: echo "DATABASE_URL=postgres://ravix:ci-only-password@localhost:5432/ravix" >> "$GITHUB_ENV"
       - run: python manage.py makemigrations --check --dry-run
       - name: Tests
         run: |
@@ -39,17 +39,17 @@ jobs:
     services:
       postgres:
         image: postgres:16
-        env: { POSTGRES_USER: ravin, POSTGRES_PASSWORD: ci-only-password }
+        env: { POSTGRES_USER: ravix, POSTGRES_PASSWORD: ci-only-password }
         ports: ["5432:5432"]
         options: >-
-          --health-cmd "pg_isready -U ravin" --health-interval 5s --health-timeout 5s --health-retries 10
+          --health-cmd "pg_isready -U ravix" --health-interval 5s --health-timeout 5s --health-retries 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.13", cache: pip }
       - run: pip install -r requirements.lock
-      - run: E2E_PG_URL='postgresql://ravin:ci-only-password@localhost:5432' python scripts/e2e_backup_restore.py
-      - run: E2E_PG_URL='postgresql://ravin:ci-only-password@localhost:5432' python scripts/e2e_updater.py
+      - run: E2E_PG_URL='postgresql://ravix:ci-only-password@localhost:5432' python scripts/e2e_backup_restore.py
+      - run: E2E_PG_URL='postgresql://ravix:ci-only-password@localhost:5432' python scripts/e2e_updater.py
   audit:
     runs-on: ubuntu-latest
     steps:

@@ -1,4 +1,4 @@
-{% load ravin_ui %}
+{% load ravix_ui %}
 <div class="alert" role="note" style="border-color:#8a5a10;color:inherit">⚠ این صفحهٔ <strong>درگاه پرداخت آزمایشی</strong> است و هیچ پولی جابه‌جا نمی‌شود.</div>
 <p>سفارش {{ payment.order.number }} — مبلغ: <strong>{{ tx.amount|money }} {{ currency }}</strong></p>
 {% if tx.state == 'pending' %}

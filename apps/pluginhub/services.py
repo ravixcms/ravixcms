@@ -8,7 +8,7 @@ from django.db import IntegrityError, transaction
 from django.db.models import Q
 from django.utils import timezone
 
-from apps.core.version import PLUGIN_API_VERSION, RAVIN_VERSION
+from apps.core.version import PLUGIN_API_VERSION, RAVIX_VERSION
 from apps.plugins import versions
 
 from .models import Category, HubPlugin, HubVersion, Publisher, PublisherToken
@@ -43,15 +43,15 @@ class Compat:
     problems: list
 
     def as_dict(self):
-        return {"compatible": self.ok, "problems": self.problems, "ravin_version": RAVIN_VERSION, "plugin_api_version": PLUGIN_API_VERSION}
+        return {"compatible": self.ok, "problems": self.problems, "ravix_version": RAVIX_VERSION, "ravin_version": RAVIX_VERSION, "plugin_api_version": PLUGIN_API_VERSION}
 
 
 def compat_for(api_version: int, ravin_spec: str) -> Compat:
     problems = []
     if api_version != PLUGIN_API_VERSION:
         problems.append(f"قرارداد افزونه {api_version} است؛ این CMS قرارداد {PLUGIN_API_VERSION} را پشتیبانی می‌کند.")
-    if not versions.satisfies(RAVIN_VERSION, ravin_spec):
-        problems.append(f"نیازمند Ravin «{ravin_spec}»؛ نسخهٔ فعلی {RAVIN_VERSION}.")
+    if not versions.satisfies(RAVIX_VERSION, ravin_spec):
+        problems.append(f"نیازمند Ravix «{ravin_spec}»؛ نسخهٔ فعلی {RAVIX_VERSION}.")
     return Compat(not problems, problems)
 
 
@@ -95,7 +95,7 @@ def _check_ownership(plugin, publisher):
 def upload_version(publisher: Publisher, user, data: bytes, *, changelog="", publish=False) -> HubVersion:
     if publisher is None or not publisher.is_active:
         raise HubError("فقط ناشران مجاز می‌توانند افزونه منتشر کنند.")
-    if not settings.RAVIN_REGISTRY_ENABLED:
+    if not settings.RAVIX_REGISTRY_ENABLED:
         raise HubError("مخزن غیرفعال است.")
     try:
         info: Inspected = inspect(data)
@@ -112,7 +112,7 @@ def upload_version(publisher: Publisher, user, data: bytes, *, changelog="", pub
     if HubVersion.objects.filter(plugin=plugin, version=m.version).exists():
         raise HubError(f"نسخهٔ {m.version} قبلاً ثبت شده است؛ نسخه‌ها تغییرناپذیرند. نسخهٔ جدید بسازید.")
     ver = HubVersion(plugin=plugin, version=m.version, manifest=info.raw_manifest, sha256=info.sha256, fingerprint=info.fingerprint, size=info.size,
-                     ravin_spec=m.ravin, api_version=m.api_version, changelog=(changelog or "")[:5000], uploaded_by=user)
+                     ravin_spec=m.ravix, api_version=m.api_version, changelog=(changelog or "")[:5000], uploaded_by=user)
     ver.package.save(f"{m.slug}-{m.version}.zip", ContentFile(info.data), save=False)
     try:
         ver.save()

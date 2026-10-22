@@ -19,7 +19,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[3]
 
 
 def broken_caches(with_fallback=True):
-    """کش اصلی فایلی که مسیرش زیر یک «فایل» است (ساخت پوشه ممکن نیست؛ مثل نبودن/قابل‌نوشتن‌نبودن /var/cache/ravin)."""
+    """کش اصلی فایلی که مسیرش زیر یک «فایل» است (ساخت پوشه ممکن نیست؛ مثل نبودن/قابل‌نوشتن‌نبودن /var/cache/ravix)."""
     blocker = tempfile.NamedTemporaryFile(delete=False)
     blocker.close()
     caches = {"default": {"BACKEND": "django.core.cache.backends.filebased.FileBasedCache", "LOCATION": os.path.join(blocker.name, "cache")}}
@@ -96,7 +96,7 @@ class PreflightCacheTests(TestCase):
     def run_preflight(self, **kw):
         out = StringIO()
         try:
-            call_command("ravin_preflight", stdout=out)
+            call_command("ravix_preflight", stdout=out)
         except SystemExit:
             pass
         return out.getvalue()

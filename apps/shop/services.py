@@ -18,7 +18,7 @@ from . import gateways
 from .models import Order, OrderEvent, OrderItem, Payment, PaymentEvent, Product
 from .payments import TransactionContext, VerifyStatus, vault
 
-logger = logging.getLogger("ravin.shop")
+logger = logging.getLogger("ravix.shop")
 
 MAX_QTY = 20
 MAX_LINES = 30

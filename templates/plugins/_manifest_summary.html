@@ -1,10 +1,10 @@
-{% load ravin_ui %}
+{% load ravix_ui %}
 {% with m=manifest %}
 <dl class="kv">
   <dt>نامک</dt><dd class="ltr">{{ m.slug }}</dd>
   <dt>نسخه</dt><dd class="ltr">{{ m.version }}</dd>
   <dt>سازنده</dt><dd>{{ m.author|default:"—" }}</dd>
-  <dt>سازگاری با Ravin CMS</dt><dd class="ltr">{{ m.ravin }} (API {{ m.api_version }})</dd>
+  <dt>سازگاری با Ravix</dt><dd class="ltr">{{ m.ravix }} (API {{ m.api_version }})</dd>
   {% if m.requires %}<dt>وابستگی‌ها</dt><dd class="ltr">{% for k, v in m.requires.items %}{{ k }} {{ v }}{% if not forloop.last %}، {% endif %}{% endfor %}</dd>{% endif %}
   <dt>جدول در دیتابیس</dt><dd>{% if m.models %}بله — جدول‌هایی با پیشوند <span class="ltr">plugin_{{ m.slug }}_</span> ساخته می‌شود{% else %}خیر{% endif %}</dd>
   <dt>صفحات مدیریتی</dt><dd>{% for p in m.admin_pages %}{{ p.title }} (مجوز: <span class="ltr">{{ p.capability }}</span>){% if not forloop.last %}<br>{% endif %}{% empty %}—{% endfor %}</dd>

@@ -9,9 +9,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.13", cache: pip }
-      - name: Tag matches RAVIN_VERSION
+      - name: Tag matches RAVIX_VERSION
         run: |
-          v=$(python -c "import re;print(re.search(r'RAVIN_VERSION = \"([^\"]+)\"',open('apps/core/version.py').read()).group(1))")
+          v=$(python -c "import re;print(re.search(r'RAVIX_VERSION = \"([^\"]+)\"',open('apps/core/version.py').read()).group(1))")
           test "v$v" = "${GITHUB_REF_NAME%%-*}" || { echo "tag $GITHUB_REF_NAME != version $v"; exit 1; }
       - run: pip install -r requirements.lock
       - run: python manage.py test --parallel 4

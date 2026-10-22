@@ -1,4 +1,4 @@
-{% load ravin_ui %}
+{% load ravix_ui %}
 {% if gateway_error %}<div class="alert" role="alert">{{ gateway_error }}</div>{% endif %}
 <table><tbody>{% for l in lines %}<tr><td>{{ l.product.name }} × {{ l.qty|fa_digits }}</td><td>{{ l.line_total|money }}</td></tr>{% endfor %}</tbody>
 <tfoot>{% if summary.discount %}<tr><th>تخفیف</th><td>{{ summary.discount|money }}</td></tr>{% endif %}<tr><th>مبلغ نهایی</th><th>{{ total|money }} {{ currency }}</th></tr></tfoot></table>

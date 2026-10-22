@@ -22,6 +22,7 @@ from django.db import DatabaseError, IntegrityError, connection, transaction
 from django.db.migrations.recorder import MigrationRecorder
 from django.utils import timezone
 
+from apps.core.deprecation import read_legacy_key
 from apps.core.version import PLUGIN_API_VERSION, THEME_API_VERSION
 
 from . import backup as backups
@@ -31,7 +32,7 @@ from .logs import sanitize
 from .models import UpdateLock, UpdateRun
 from .runner import SubprocessRunner
 
-logger = logging.getLogger("ravin.updater")
+logger = logging.getLogger("ravix.updater")
 
 
 # ------------------------------------------------------------------ قفل و تاریخچه
@@ -69,7 +70,7 @@ def _restore_table(model, rows):
             c.execute(sql)
 
 def _stale_cutoff():
-    return timezone.now() - timedelta(minutes=settings.RAVIN_UPDATE_LOCK_STALE_MINUTES)
+    return timezone.now() - timedelta(minutes=settings.RAVIX_UPDATE_LOCK_STALE_MINUTES)
 
 
 def mark_interrupted():
@@ -148,9 +149,9 @@ def recovery_text(run: UpdateRun) -> str:
     b = run.backup or {}
     lines = ["بازیابی دستی (سرویس وب را متوقف کنید):"]
     if b.get("dir"):
-        d = Path(settings.RAVIN_UPDATE_BACKUP_DIR) / b["dir"]
+        d = Path(settings.RAVIX_UPDATE_BACKUP_DIR) / b["dir"]
         lines += [f"۱) پشتیبان: {d}",
-                  f"۲) فایل‌ها: tar -xzf {d / b.get('files_archive', 'files.tar.gz')} -C {settings.RAVIN_UPDATE_APP_ROOT}  (پیش‌تر پوشه‌های apps، config، static، templates و ... را کنار بگذارید)"]
+                  f"۲) فایل‌ها: tar -xzf {d / b.get('files_archive', 'files.tar.gz')} -C {settings.RAVIX_UPDATE_APP_ROOT}  (پیش‌تر پوشه‌های apps، config، static، templates و ... را کنار بگذارید)"]
         if b.get("db_file"):
             if b.get("backend") == "postgres":
                 lines.append(f"۳) دیتابیس: pg_restore --clean --if-exists -d <نام_دیتابیس> {d / b['db_file']}")
@@ -158,7 +159,7 @@ def recovery_text(run: UpdateRun) -> str:
                 lines.append(f"۳) دیتابیس: فایل {d / b['db_file']} را جای فایل دیتابیس سایت بگذارید (و فایل‌های -wal/-shm کنارش را حذف کنید).")
     else:
         lines.append("پشتیبانی ثبت نشده است؛ از آخرین پشتیبان دستی (deploy/backup.sh) استفاده کنید.")
-    lines += ["۴) سرویس را راه‌اندازی مجدد کنید و `python manage.py ravin_update status` و `python manage.py ravin_preflight` را اجرا کنید.",
+    lines += ["۴) سرویس را راه‌اندازی مجدد کنید و `python manage.py ravix_update status` و `python manage.py ravix_preflight` را اجرا کنید.",
               "راهنمای کامل: docs/upgrade.md"]
     return "\n".join(lines)
 
@@ -174,8 +175,9 @@ def compat(new_version: str, requires: dict, *, component="core") -> tuple[list[
         if requires.get("min_from") and versions.newer(requires["min_from"], cur):
             problems.append(f"برای رسیدن به {new_version} ابتدا باید به {requires['min_from']} (یا بالاتر) ارتقا دهید؛ نسخهٔ فعلی {cur} است.")
     else:
-        if requires.get("ravin") and not versions.satisfies(cur, requires["ravin"]):
-            problems.append(f"این نسخه Ravin «{requires['ravin']}» می‌خواهد؛ نسخهٔ فعلی {cur} است.")
+        need = read_legacy_key(requires, default="")  # بسته‌های قدیمی کلید «ravin» دارند
+        if need and not versions.satisfies(cur, need):
+            problems.append(f"این نسخه Ravix «{need}» می‌خواهد؛ نسخهٔ فعلی {cur} است.")
     if requires.get("python"):
         p = versions.python_problem(requires["python"])
         if p:
@@ -187,8 +189,8 @@ def compat(new_version: str, requires: dict, *, component="core") -> tuple[list[
             bad = []
             if pa is not None and pl.get("api_version") != pa:
                 bad.append(f"قرارداد افزونه {pl.get('api_version')}≠{pa}")
-            if pl["ravin"] and not versions.satisfies(new_version, pl["ravin"]):
-                bad.append(f"نیازمند Ravin «{pl['ravin']}»")
+            if pl["ravix"] and not versions.satisfies(new_version, pl["ravix"]):
+                bad.append(f"نیازمند Ravix «{pl['ravix']}»")
             if bad:
                 msg = f"افزونهٔ «{pl['slug']}» با نسخهٔ جدید سازگار نیست ({'؛ '.join(bad)})."
                 (problems if pl["active"] else warnings).append(msg + ("" if pl["active"] else " (غیرفعال است؛ پس از ارتقا فعال نخواهد شد.)"))
@@ -198,8 +200,8 @@ def compat(new_version: str, requires: dict, *, component="core") -> tuple[list[
             bad = []
             if ta is not None and ta != THEME_API_VERSION:
                 bad.append(f"قرارداد قالب {THEME_API_VERSION}≠{ta}")
-            if th["ravin"] and not versions.satisfies(new_version, th["ravin"]):
-                bad.append(f"نیازمند Ravin «{th['ravin']}»")
+            if th["ravix"] and not versions.satisfies(new_version, th["ravix"]):
+                bad.append(f"نیازمند Ravix «{th['ravix']}»")
             if bad:
                 warnings.append(f"قالب «{th['slug']}» ممکن است با نسخهٔ جدید سازگار نباشد ({'؛ '.join(bad)}).")
     return problems, warnings
@@ -232,7 +234,7 @@ def plan_core(index: dict | None = None) -> dict:
 
 # ------------------------------------------------------------------ دریافت و اعتبارسنجی بسته (بدون تغییر در سایت)
 def _work_dir() -> Path:
-    base = Path(settings.RAVIN_UPDATE_WORK_DIR)
+    base = Path(settings.RAVIX_UPDATE_WORK_DIR)
     base.mkdir(parents=True, exist_ok=True)
     if os.name == "posix":
         os.chmod(base, 0o700)
@@ -244,7 +246,7 @@ def _work_dir() -> Path:
 def fetch_verified(src, kind: str, slug: str, entry: dict, run: UpdateRun) -> bytes:
     data = src.download(entry)
     step(run, "download", True, f"{len(data)} بایت")
-    if len(data) > settings.RAVIN_UPDATE_MAX_PACKAGE_BYTES:
+    if len(data) > settings.RAVIX_UPDATE_MAX_PACKAGE_BYTES:
         raise UpdateBlocked("بسته از سقف حجم بزرگ‌تر است.")
     digest = sources.sha256_hex(data)
     run.sha256 = digest
@@ -456,10 +458,10 @@ def _apply_core_files(run, holder, root: Path, tree: Path, work: Path, runner, d
         raise UpdateError(f"ارتقا ناموفق بود ({run.get_status_display()}): {err}") from None
     shutil.rmtree(old_dir, ignore_errors=True)
     run.restart_required = True
-    run.recovery = "ارتقا موفق بود. سرویس وب را راه‌اندازی مجدد کنید تا کد جدید بارگذاری شود. در صورت مشکل: `python manage.py ravin_update rollback --run %d`." % run.pk
+    run.recovery = "ارتقا موفق بود. سرویس وب را راه‌اندازی مجدد کنید تا کد جدید بارگذاری شود. در صورت مشکل: `python manage.py ravix_update rollback --run %d`." % run.pk
     finish(run, UpdateRun.Status.SUCCEEDED)
     try:
-        backups.prune(settings.RAVIN_UPDATE_BACKUPS_KEEP)
+        backups.prune(settings.RAVIX_UPDATE_BACKUPS_KEEP)
     except OSError:
         pass
     _clear_caches()
@@ -602,7 +604,7 @@ def apply_theme(slug: str, version: str | None = None, user=None, *, source=None
             raise UpdateBlocked(f"نسخهٔ {version} برای قالب «{slug}» در منبع نیست.")
     else:
         cand = [x for x in entries if versions.newer(x["version"], installed.version)
-                and (not x["requires"].get("ravin") or versions.satisfies(versions.running_version(), x["requires"]["ravin"]))]
+                and (not read_legacy_key(x["requires"]) or versions.satisfies(versions.running_version(), read_legacy_key(x["requires"])))]
         if not cand:
             raise UpdateBlocked("نسخهٔ جدید سازگاری برای این قالب نیست.")
         entry = max(cand, key=lambda x: versions.parse(x["version"]) or (0, 0, 0))
@@ -622,9 +624,9 @@ def apply_theme(slug: str, version: str | None = None, user=None, *, source=None
             work = _work_dir()
             tree = package.extract(data, work / "pkg")
             ex = package.validate_theme(tree, slug, entry["version"])
-            ravin_spec = getattr(inspect_theme_dir(tree), "ravin", "")
+            ravin_spec = getattr(inspect_theme_dir(tree), "ravix", "")
             if ravin_spec and not versions.satisfies(versions.running_version(), ravin_spec):
-                raise UpdateBlocked(f"قالب جدید Ravin «{ravin_spec}» می‌خواهد؛ نسخهٔ فعلی {versions.running_version()} است.")
+                raise UpdateBlocked(f"قالب جدید Ravix «{ravin_spec}» می‌خواهد؛ نسخهٔ فعلی {versions.running_version()} است.")
             step(run, "validate", True, f"{ex.files} فایل")
             if dry_run:
                 step(run, "dry_run", True, "اجرای آزمایشی؛ هیچ فایلی تغییر نکرد")
@@ -673,7 +675,7 @@ def apply_theme(slug: str, version: str | None = None, user=None, *, source=None
             run.restart_required = True
             run.recovery = "قالب به‌روز شد. برای اعمال در همهٔ پروسه‌ها سرویس را راه‌اندازی مجدد کنید."
             finish(run, UpdateRun.Status.SUCCEEDED)
-            backups.prune(settings.RAVIN_UPDATE_BACKUPS_KEEP)
+            backups.prune(settings.RAVIX_UPDATE_BACKUPS_KEEP)
         return run
     except UpdateError:
         if run.status == UpdateRun.Status.RUNNING:

@@ -11,8 +11,8 @@ URL_PASSWORD = re.compile(r"(\w+://[^:/\s@]+:)[^@\s]+(@)")
 
 def _secret_values() -> list[str]:
     vals = {str(getattr(settings, "SECRET_KEY", "") or "")}
-    vals.update(str(k) for k in getattr(settings, "RAVIN_SECRETS_KEYS", []) or [])
-    vals.add(str(getattr(settings, "RAVIN_REGISTRY_SIGNING_KEY", "") or ""))
+    vals.update(str(k) for k in getattr(settings, "RAVIX_SECRETS_KEYS", []) or [])
+    vals.add(str(getattr(settings, "RAVIX_REGISTRY_SIGNING_KEY", "") or ""))
     for db in getattr(settings, "DATABASES", {}).values():
         vals.add(str(db.get("PASSWORD") or ""))
     for name, value in os.environ.items():

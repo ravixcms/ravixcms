@@ -6,25 +6,26 @@ from pathlib import Path
 
 from django.conf import settings
 
-from apps.core.version import PLUGIN_API_VERSION, RAVIN_VERSION, THEME_API_VERSION
+from apps.core.version import PLUGIN_API_VERSION, RAVIX_VERSION, THEME_API_VERSION
 from apps.plugins import versions as plugin_versions
 
 VERSION_FILE = Path("apps/core/version.py")
-_VER = re.compile(r'^RAVIN_VERSION\s*=\s*["\'](\d{1,4}\.\d{1,4}\.\d{1,4})["\']', re.M)
+from apps.core.deprecation import read_legacy_key
+_VER = re.compile(r'^RAVI[XN]_VERSION\s*=\s*["\'](\d{1,4}\.\d{1,4}\.\d{1,4})["\']', re.M)
 _REQ = re.compile(r"^([A-Za-z0-9][A-Za-z0-9._-]*)\s*(?:\[[^\]]*\])?\s*(.*)$")
 _CLAUSE = re.compile(r"^(>=|<=|==|!=|>|<|~=)\s*([0-9][0-9A-Za-z.]*)$")
 
 
 def app_root() -> Path:
-    return Path(settings.RAVIN_UPDATE_APP_ROOT)
+    return Path(settings.RAVIX_UPDATE_APP_ROOT)
 
 
 def running_version() -> str:
-    return RAVIN_VERSION
+    return RAVIX_VERSION
 
 
 def version_in_file(path: Path) -> str | None:
-    """RAVIN_VERSION را فقط با regex از متن می‌خواند (هرگز import/اجرا نمی‌کند)."""
+    """RAVIX_VERSION را فقط با regex از متن می‌خواند (هرگز import/اجرا نمی‌کند)."""
     try:
         m = _VER.search(Path(path).read_text(encoding="utf-8"))
     except OSError:
@@ -102,14 +103,14 @@ def python_problem(spec: str) -> str | None:
 def installed_plugins() -> list[dict]:
     from apps.plugins.models import PluginRecord
 
-    return [{"slug": r.slug, "version": r.version, "active": r.is_active, "ravin": (r.manifest or {}).get("ravin", ""), "api_version": (r.manifest or {}).get("api_version")}
+    return [{"slug": r.slug, "version": r.version, "active": r.is_active, "ravix": read_legacy_key(r.manifest or {}), "api_version": (r.manifest or {}).get("api_version")}
             for r in PluginRecord.objects.all().order_by("slug")]
 
 
 def installed_themes() -> list[dict]:
     from apps.themes import registry
 
-    return [{"slug": s, "version": t.version, "valid": t.valid, "ravin": getattr(t, "ravin", ""), "path": str(t.path)} for s, t in sorted(registry.get_themes().items())]
+    return [{"slug": s, "version": t.version, "valid": t.valid, "ravix": getattr(t, "ravix", ""), "path": str(t.path)} for s, t in sorted(registry.get_themes().items())]
 
 
 def component_versions() -> dict:

@@ -15,7 +15,7 @@ from django.core.cache import cache
 from . import versions
 from .services import PluginError
 
-logger = logging.getLogger("ravin.plugins")
+logger = logging.getLogger("ravix.plugins")
 MAX_JSON = 2 * 1024 * 1024
 
 
@@ -32,7 +32,7 @@ def http_get(url: str, max_bytes: int, allow_insecure: bool = False) -> tuple[by
     parsed = urllib.parse.urlparse(url)
     if parsed.scheme != "https" and not (allow_insecure and settings.DEBUG and parsed.scheme == "http"):
         raise RegistryUnavailable("فقط نشانی HTTPS مجاز است.")
-    req = urllib.request.Request(url, headers={"User-Agent": "ravin-plugin-installer/1"})
+    req = urllib.request.Request(url, headers={"User-Agent": "ravix-plugin-installer/1"})
     opener = urllib.request.build_opener(_NoRedirect)
     try:
         with opener.open(req, timeout=30) as resp:
@@ -69,7 +69,7 @@ class RemoteSource:
         url = entry.get("download_url") or ""
         if urllib.parse.urlparse(url).netloc != urllib.parse.urlparse(self.base).netloc:
             raise RegistryUnavailable("نشانی دریافت روی دامنهٔ دیگری است؛ برای امنیت رد شد.")
-        data, _ = http_get(url, getattr(settings, "RAVIN_REGISTRY_MAX_PACKAGE_BYTES", 5 * 1024 * 1024), self.allow_insecure)
+        data, _ = http_get(url, getattr(settings, "RAVIX_REGISTRY_MAX_PACKAGE_BYTES", 5 * 1024 * 1024), self.allow_insecure)
         return data
 
     def latest_map(self) -> dict:
@@ -117,12 +117,12 @@ class LocalHubSource:
 
 
 def get_source():
-    url = getattr(settings, "RAVIN_OFFICIAL_REGISTRY_URL", "")
+    url = getattr(settings, "RAVIX_OFFICIAL_REGISTRY_URL", "")
     if url:
         return RemoteSource(url)
-    if getattr(settings, "RAVIN_REGISTRY_ENABLED", False) and django_apps.is_installed("apps.pluginhub"):
+    if getattr(settings, "RAVIX_REGISTRY_ENABLED", False) and django_apps.is_installed("apps.pluginhub"):
         return LocalHubSource()
-    raise RegistryUnavailable("مخزن رسمی تنظیم نشده است (RAVIN_OFFICIAL_REGISTRY_URL).")
+    raise RegistryUnavailable("مخزن رسمی تنظیم نشده است (RAVIX_OFFICIAL_REGISTRY_URL).")
 
 
 def has_source() -> bool:
@@ -143,10 +143,10 @@ def pick_version(info: dict, version: str | None) -> dict:
     else:
         ok = [v for v in pub if v.get("compatibility", {}).get("compatible")]
         if not ok:
-            raise RegistryUnavailable("هیچ نسخهٔ سازگار با این Ravin در مخزن نیست.")
+            raise RegistryUnavailable("هیچ نسخهٔ سازگار با این Ravix در مخزن نیست.")
         entry = max(ok, key=lambda v: versions.parse(v["version"]) or (0, 0, 0))
     if not entry.get("compatibility", {}).get("compatible"):
-        raise RegistryUnavailable("این نسخه با Ravin فعلی سازگار نیست: " + "؛ ".join(entry.get("compatibility", {}).get("problems", [])))
+        raise RegistryUnavailable("این نسخه با Ravix فعلی سازگار نیست: " + "؛ ".join(entry.get("compatibility", {}).get("problems", [])))
     return entry
 
 

@@ -1,4 +1,4 @@
-{% load ravin_ui %}
+{% load ravix_ui %}
 <p>شمارهٔ سفارش: <strong>{{ order.number }}</strong> — وضعیت: <span class="badge">{{ order.get_status_display }}</span></p>
 {% if order.status == 'pending_payment' %}<p class="errors">پرداخت این سفارش هنوز تأیید نشده است.</p>
 <form method="post" action="{% url 'shop:order_pay' order.number order.token %}">{% csrf_token %}{% if gateway_choices|length > 1 %}<fieldset><legend>درگاه پرداخت</legend>{% for v, l in gateway_choices %}<label><input type="radio" name="gateway" value="{{ v }}"{% if forloop.first %} checked{% endif %}> {{ l }}</label> {% endfor %}</fieldset>{% endif %}<button class="btn btn-primary" type="submit">پرداخت سفارش</button></form>

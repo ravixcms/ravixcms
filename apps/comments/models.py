@@ -21,7 +21,7 @@ class Comment(TimeStampedModel):
     depth = models.PositiveSmallIntegerField("عمق", default=0, editable=False)
     author_name = models.CharField("نام", max_length=80)
     author_email = models.EmailField("ایمیل", max_length=254)  # هرگز عمومی نمی‌شود
-    body = models.TextField("متن دیدگاه", max_length=settings.RAVIN_COMMENT_MAX_LENGTH * 2)
+    body = models.TextField("متن دیدگاه", max_length=settings.RAVIX_COMMENT_MAX_LENGTH * 2)
     body_html = models.TextField(editable=False, blank=True)  # خروجی پاک‌سازی‌شده (nh3)؛ تنها همین در قالب‌ها نمایش داده می‌شود
     status = models.CharField("وضعیت", max_length=10, choices=Status.choices, default=Status.PENDING, db_index=True)
     ip_address = models.GenericIPAddressField("IP", null=True, blank=True)

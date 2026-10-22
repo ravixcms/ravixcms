@@ -18,7 +18,7 @@ class TimeStampedModel(models.Model):
 class SiteSettings(models.Model):
     """تنظیمات عمومی سایت؛ همیشه فقط یک رکورد (singleton) وجود دارد."""
 
-    site_name = models.CharField("نام سایت", max_length=120, default="راوین")
+    site_name = models.CharField("نام سایت", max_length=120, default="راویکس")
     tagline = models.CharField("شعار سایت", max_length=200, blank=True)
     description = models.TextField("توضیحات سایت", blank=True, max_length=1000)
     logo = models.ImageField(

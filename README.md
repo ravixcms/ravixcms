@@ -1,4 +1,4 @@
-# Ravix (Ravin CMS)
+# Ravix (راویکس)
 
 سیستم مدیریت محتوای فارسی و راست‌چین با Python / Django 5.2 / DRF — نسخهٔ هسته: `0.6.1`.
 
@@ -21,10 +21,10 @@ mkdir -p media
 ## نصب در تولید
 معماری: Nginx (HTTPS) → Gunicorn (سوکت یونیکس) → Django → PostgreSQL.
 راهنمای گام‌به‌گام Ubuntu: [`docs/deployment.md`](docs/deployment.md). خلاصه:
-1. `cp .env.example /etc/ravin/ravin.env` و پر کردن `DJANGO_SETTINGS_MODULE=config.settings.production`، `DJANGO_SECRET_KEY` (≥۳۲ نویسه)، `DJANGO_ALLOWED_HOSTS`، `DJANGO_CSRF_TRUSTED_ORIGINS`، `DATABASE_URL` (PostgreSQL).
+1. `cp .env.example /etc/ravix/ravix.env` و پر کردن `DJANGO_SETTINGS_MODULE=config.settings.production`، `DJANGO_SECRET_KEY` (≥۳۲ نویسه)، `DJANGO_ALLOWED_HOSTS`، `DJANGO_CSRF_TRUSTED_ORIGINS`، `DATABASE_URL` (PostgreSQL).
 2. `pip install -r requirements.lock`، `mkdir media`، `manage.py migrate`، `collectstatic`، `createsuperuser`.
-3. `manage.py ravin_preflight` و `manage.py check --deploy` باید بدون خطا/هشدار باشند.
-4. Gunicorn با `deploy/gunicorn.conf.py` (یا `deploy/ravin.service`)، Nginx با `deploy/nginx-ravin.conf`، سپس certbot.
+3. `manage.py ravix_preflight` و `manage.py check --deploy` باید بدون خطا/هشدار باشند.
+4. Gunicorn با `deploy/gunicorn.conf.py` (یا `deploy/ravix.service`)، Nginx با `deploy/nginx-ravix.conf`، سپس certbot.
 
 ## مستندات
 | موضوع | فایل |
@@ -42,7 +42,7 @@ mkdir -p media
 ## آزمون
 ```bash
 .venv/bin/python manage.py test --parallel 4                      # فروشگاه روشن
-RAVIN_SHOP_ENABLED=false .venv/bin/python manage.py test          # فروشگاه خاموش (ترتیبی)
+RAVIX_SHOP_ENABLED=false .venv/bin/python manage.py test          # فروشگاه خاموش (ترتیبی)
 E2E_PG_URL='postgresql://USER:PASS@127.0.0.1:5432' python scripts/e2e_backup_restore.py
 ```
 سایر مسیرها: `scripts/e2e_*.py`. مشارکت: [`CONTRIBUTING.md`](CONTRIBUTING.md). تغییرات: [`CHANGELOG.md`](CHANGELOG.md).

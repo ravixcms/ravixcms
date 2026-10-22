@@ -18,7 +18,7 @@ from .integrity import IntegrityError, fingerprint, iter_files
 from .models import PluginBackup, PluginEvent, PluginPackage, PluginRecord, TrustedKey
 from .services import PluginError, SettingsInvalid
 
-logger = logging.getLogger("ravin.plugins")
+logger = logging.getLogger("ravix.plugins")
 
 
 class PluginsAdminMixin(CapabilityRequiredMixin):
@@ -36,7 +36,7 @@ class PluginListView(PluginsAdminMixin, TemplateView):
         rows = services.overview()
         for r in rows:
             r.new_version = sources.update_available(r.slug, r.record.version) if r.record else None
-        ctx.update(rows=rows, web_install=settings.RAVIN_PLUGIN_WEB_INSTALL, safe_mode=settings.RAVIN_PLUGINS_SAFE_MODE, plugins_enabled=settings.RAVIN_PLUGINS_ENABLED,
+        ctx.update(rows=rows, web_install=settings.RAVIX_PLUGIN_WEB_INSTALL, safe_mode=settings.RAVIX_PLUGINS_SAFE_MODE, plugins_enabled=settings.RAVIX_PLUGINS_ENABLED,
                    recent_errors=PluginEvent.objects.filter(level="error").order_by("-created_at")[:5])
         return ctx
 
@@ -58,7 +58,7 @@ class PluginDetailView(PluginsAdminMixin, TemplateView):
             raise Http404
         ctx.update(new_version=sources.update_available(slug, row.record.version) if row.record else None,
                    packages=PluginPackage.objects.filter(slug=slug)[:10], backups=PluginBackup.objects.filter(slug=slug)[:10],
-                   web_install=settings.RAVIN_PLUGIN_WEB_INSTALL, managed=_is_managed(row.path))
+                   web_install=settings.RAVIX_PLUGIN_WEB_INSTALL, managed=_is_managed(row.path))
         ctx.update(row=row, events=PluginEvent.objects.filter(slug=slug)[:15], has_settings=bool(row.record and row.record.manifest.get("settings")))
         if row.path is not None:
             try:
@@ -290,8 +290,8 @@ class InstallPackageView(PluginsAdminMixin, View):
     def _ctx(self, request, **extra):
         from django.conf import settings
 
-        return {"web_install": settings.RAVIN_PLUGIN_WEB_INSTALL, "has_registry": sources.has_source(), "trusted_count": len(signing.trusted_keys()),
-                "allow_unsigned": settings.RAVIN_PLUGINS_ALLOW_UNSIGNED, "prefill_slug": request.GET.get("slug", "")[:40],
+        return {"web_install": settings.RAVIX_PLUGIN_WEB_INSTALL, "has_registry": sources.has_source(), "trusted_count": len(signing.trusted_keys()),
+                "allow_unsigned": settings.RAVIX_PLUGINS_ALLOW_UNSIGNED, "prefill_slug": request.GET.get("slug", "")[:40],
                 "prefill_version": request.GET.get("version", "")[:20], **extra}
 
     def get(self, request):
@@ -311,7 +311,7 @@ class InstallPackageView(PluginsAdminMixin, View):
                 f = request.FILES.get("package")
                 if f is None:
                     raise PluginError("فایل zip را انتخاب کنید.")
-                if f.size > settings.RAVIN_REGISTRY_MAX_PACKAGE_BYTES:
+                if f.size > settings.RAVIX_REGISTRY_MAX_PACKAGE_BYTES:
                     raise PluginError("حجم فایل از سقف مجاز بیشتر است.")
                 kind, slug = installer.install_from_file(f.read(), request.user, signature=request.POST.get("signature", "")[:200],
                                                          key_id=request.POST.get("key_id", "")[:16], upgrade_existing=request.POST.get("upgrade") == "on")

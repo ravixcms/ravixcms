@@ -4,7 +4,7 @@ import logging
 from . import events, registry, state
 from .hooks_registry import HOOKS
 
-logger = logging.getLogger("ravin.plugins")
+logger = logging.getLogger("ravix.plugins")
 
 SEO_KEYS = {"title", "description", "canonical", "robots", "og_type", "og_image"}
 ROBOTS = {"index,follow", "noindex,follow", "noindex,nofollow", "index,nofollow"}

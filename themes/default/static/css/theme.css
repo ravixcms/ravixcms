@@ -1,4 +1,4 @@
-/* قالب پیش‌فرض راوین. فقط به متغیرهای --rv-* وابسته است؛ مقدارهای زیر تنها پیش‌فرضِ ایمن‌اند (specificity صفر). */
+/* قالب پیش‌فرض راویکس. فقط به متغیرهای --rv-* وابسته است؛ مقدارهای زیر تنها پیش‌فرضِ ایمن‌اند (specificity صفر). */
 :where(:root){
   --rv-primary:#1d4ed8;--rv-on-primary:#fff;--rv-primary-soft:#eef3fd;--rv-bg:#fff;--rv-surface:#f4f5f7;
   --rv-border:#d6d9df;--rv-text:#1b1f27;--rv-muted:#505763;

@@ -19,7 +19,7 @@ TEMPLATE = '''{% extends "plugins/page.html" %}
 
 
 class Command(BaseCommand):
-    help = "اسکلت یک افزونهٔ جدید را در اولین پوشهٔ RAVIN_PLUGIN_DIRS می‌سازد."
+    help = "اسکلت یک افزونهٔ جدید را در اولین پوشهٔ RAVIX_PLUGIN_DIRS می‌سازد."
 
     def add_arguments(self, parser):
         parser.add_argument("slug")
@@ -32,14 +32,14 @@ class Command(BaseCommand):
             raise CommandError("نامک نامعتبر یا رزرو است (حروف کوچک انگلیسی، عدد و _، با حرف شروع شود، ۳ تا ۳۱ نویسه).")
         dirs = discovery.plugin_dirs()
         if not dirs:
-            raise CommandError("RAVIN_PLUGIN_DIRS خالی است.")
+            raise CommandError("RAVIX_PLUGIN_DIRS خالی است.")
         target = dirs[0] / slug
         if target.exists():
             raise CommandError(f"{target} از قبل وجود دارد.")
         (target / "templates").mkdir(parents=True)
         manifest = {
             "slug": slug, "name": options["name"] or re.sub(r"_+", " ", slug).title(), "version": "0.1.0", "description": "توضیح افزونه را اینجا بنویسید.",
-            "author": options["author"], "api_version": 1, "ravin": ">=0.5.0,<1.0.0", "models": options["models"],
+            "author": options["author"], "api_version": 1, "ravix": ">=0.5.0,<1.0.0", "models": options["models"],
             "capabilities": {f"{slug}.use": "استفاده از افزونه"},
             "settings": [{"key": "greeting", "label": "پیام خوش‌آمد", "type": "text", "default": "سلام!", "max_len": 100}],
             "admin_pages": [{"key": "home", "title": options["name"] or slug, "view": "views:hello", "capability": f"{slug}.use", "icon": "puzzle"}],

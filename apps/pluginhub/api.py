@@ -9,7 +9,7 @@ from django.http import FileResponse, Http404, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 
-from apps.core.version import PLUGIN_API_VERSION, RAVIN_VERSION
+from apps.core.version import PLUGIN_API_VERSION, RAVIX_VERSION
 
 from . import services
 from .models import Category, HubPlugin, HubVersion
@@ -29,13 +29,13 @@ def _json(data, status=200):
 
 
 def _https_ok(request):
-    return settings.DEBUG or settings.RAVIN_REGISTRY_ALLOW_INSECURE_DOWNLOAD or request.is_secure()
+    return settings.DEBUG or settings.RAVIX_REGISTRY_ALLOW_INSECURE_DOWNLOAD or request.is_secure()
 
 
 def hub_enabled(view):
     @wraps(view)
     def wrapper(request, *a, **kw):
-        if not settings.RAVIN_REGISTRY_ENABLED:
+        if not settings.RAVIX_REGISTRY_ENABLED:
             return _err("مخزن غیرفعال است.", 404)
         return view(request, *a, **kw)
     return wrapper
@@ -43,7 +43,7 @@ def hub_enabled(view):
 
 def _base(request):
     base = settings.SITE_URL or request.build_absolute_uri("/").rstrip("/")
-    if not (settings.DEBUG or settings.RAVIN_REGISTRY_ALLOW_INSECURE_DOWNLOAD) and base.startswith("http://"):
+    if not (settings.DEBUG or settings.RAVIX_REGISTRY_ALLOW_INSECURE_DOWNLOAD) and base.startswith("http://"):
         base = "https://" + base[len("http://"):]
     return base
 
@@ -52,7 +52,7 @@ def ser_version(request, v: HubVersion, *, full=True):
     c = services.version_compat(v)
     d = {
         "version": v.version, "status": v.status, "published_at": v.published_at.isoformat() if v.published_at else None,
-        "api_version": v.api_version, "ravin": v.ravin_spec, "compatibility": c.as_dict(), "size": v.size,
+        "api_version": v.api_version, "ravix": v.ravin_spec, "ravin": v.ravin_spec, "compatibility": c.as_dict(), "size": v.size,
         "sha256": v.sha256, "fingerprint": v.fingerprint, "changelog": v.changelog,
         "signature": v.signature or None, "signature_key_id": v.signature_key_id or None, "signature_algorithm": "ed25519" if v.signature else None,
         "download_url": f"{_base(request)}/registry/v1/plugins/{v.plugin.slug}/versions/{v.version}/download/",
@@ -62,7 +62,7 @@ def ser_version(request, v: HubVersion, *, full=True):
         d["download_url"] = None
     if full:
         m = v.manifest or {}
-        d["manifest"] = {k: m.get(k) for k in ("slug", "name", "version", "description", "author", "homepage", "api_version", "ravin", "requires",
+        d["manifest"] = {k: m.get(k) for k in ("slug", "name", "version", "description", "author", "homepage", "api_version", "ravix", "ravin", "requires",
                                               "capabilities", "models", "category", "license")}
     return d
 
@@ -91,10 +91,10 @@ def ser_plugin(request, p: HubPlugin, latest, compat_latest, *, versions=None):
 @hub_enabled
 def meta(request):
     return _json({
-        "name": settings.RAVIN_REGISTRY_NAME, "api_version": API_VERSION, "ravin_version": RAVIN_VERSION, "plugin_api_version": PLUGIN_API_VERSION,
-        "https_required": not (settings.DEBUG or settings.RAVIN_REGISTRY_ALLOW_INSECURE_DOWNLOAD),
+        "name": settings.RAVIX_REGISTRY_NAME, "api_version": API_VERSION, "ravix_version": RAVIX_VERSION, "ravin_version": RAVIX_VERSION, "plugin_api_version": PLUGIN_API_VERSION,
+        "https_required": not (settings.DEBUG or settings.RAVIX_REGISTRY_ALLOW_INSECURE_DOWNLOAD),
         "integrity": {"algorithm": "sha256", "header": "X-Checksum-SHA256"},
-        "max_package_bytes": settings.RAVIN_REGISTRY_MAX_PACKAGE_BYTES,
+        "max_package_bytes": settings.RAVIX_REGISTRY_MAX_PACKAGE_BYTES,
         "signature": {"algorithm": "ed25519", "message": "ravin-plugin-v1\\n<slug>\\n<version>\\n<sha256>\\n<fingerprint>",
                       "note": "کلید عمومی را از کانال مستقل بگیرید و دستی در کلیدهای مورد اعتماد ثبت کنید؛ به این پاسخ برای اعتماد تکیه نکنید."},
     })
@@ -213,7 +213,7 @@ def publish(request):
     f = request.FILES.get("package")
     if f is None:
         return _err("فایل «package» الزامی است.", 400)
-    if f.size > settings.RAVIN_REGISTRY_MAX_PACKAGE_BYTES:
+    if f.size > settings.RAVIX_REGISTRY_MAX_PACKAGE_BYTES:
         return _err("حجم بسته از سقف مجاز بیشتر است.", 400)
     try:
         v = services.upload_version(publisher, publisher.user, f.read(), changelog=request.POST.get("changelog", ""),

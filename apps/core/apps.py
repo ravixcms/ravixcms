@@ -4,7 +4,7 @@ from django.apps import AppConfig
 class CoreConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "apps.core"
-    verbose_name = "هسته Ravin"
+    verbose_name = "هسته Ravix"
 
     def ready(self):
         from .navigation import NavItem, register_nav_item

@@ -1,14 +1,14 @@
 [Unit]
-Description=Ravin CMS - publish due scheduled posts
+Description=Ravix - publish due scheduled posts
 After=network.target postgresql.service
 
 [Service]
 Type=oneshot
-User=ravin
+User=ravix
 Group=www-data
-EnvironmentFile=/etc/ravin/ravin.env
-WorkingDirectory=/srv/ravin/app
-ExecStart=/srv/ravin/venv/bin/python manage.py publish_scheduled
+EnvironmentFile=/etc/ravix/ravix.env
+WorkingDirectory=/srv/ravix/app
+ExecStart=/srv/ravix/venv/bin/python manage.py publish_scheduled
 # اجرای بعدی تایمر نباید روی این یکی بیفتد؛ oneshot هم‌زمان دو بار اجرا نمی‌شود، ولی اجرای گیرکرده باید زود قطع شود.
 TimeoutStartSec=55
 NoNewPrivileges=true

@@ -17,7 +17,7 @@ from .errors import UpdateError
 from .logs import sanitize
 from .models import UpdateRun
 
-logger = logging.getLogger("ravin.updater")
+logger = logging.getLogger("ravix.updater")
 
 
 def _audit(request, message):
@@ -38,9 +38,9 @@ class ManageMixin(CapabilityRequiredMixin):
     http_method_names = ["post"]
 
     def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated and request.user.has_cap("updates.manage") and not settings.RAVIN_UPDATE_WEB_APPLY:
-            messages.error(request, "اعمال به‌روزرسانی از وب خاموش است. با دستور «python manage.py ravin_update apply ...» انجام دهید "
-                                    "یا RAVIN_UPDATE_WEB_APPLY=true را در تنظیمات سرور بگذارید.")
+        if request.user.is_authenticated and request.user.has_cap("updates.manage") and not settings.RAVIX_UPDATE_WEB_APPLY:
+            messages.error(request, "اعمال به‌روزرسانی از وب خاموش است. با دستور «python manage.py ravix_update apply ...» انجام دهید "
+                                    "یا RAVIX_UPDATE_WEB_APPLY=true را در تنظیمات سرور بگذارید.")
             return redirect("updater:home")
         return super().dispatch(request, *args, **kwargs)
 
@@ -75,7 +75,7 @@ class HomeView(ViewMixin, TemplateView):
             t["new"] = theme_updates.get(t["slug"])
         for p in v["plugins"]:
             p["new"] = plugin_updates.get(p["slug"])
-        ctx.update(v=v, plan=plan, error=error, has_source=sources.has_source(), lock=pipeline.lock_state(), web_apply=settings.RAVIN_UPDATE_WEB_APPLY,
+        ctx.update(v=v, plan=plan, error=error, has_source=sources.has_source(), lock=pipeline.lock_state(), web_apply=settings.RAVIX_UPDATE_WEB_APPLY,
                    can_manage=self.request.user.has_cap("updates.manage"), theme_updates=theme_updates, plugin_updates={k: x for k, x in plugin_updates.items() if x},
                    runs=UpdateRun.objects.select_related("started_by")[:25], recovery=UpdateRun.objects.filter(status="needs_recovery")[:3])
         return ctx
@@ -99,7 +99,7 @@ class RunDetailView(ViewMixin, TemplateView):
     def get_context_data(self, pk, **kwargs):
         ctx = super().get_context_data(**kwargs)
         run = get_object_or_404(UpdateRun.objects.select_related("started_by", "parent"), pk=pk)
-        ctx.update(run=run, can_manage=self.request.user.has_cap("updates.manage"), web_apply=settings.RAVIN_UPDATE_WEB_APPLY,
+        ctx.update(run=run, can_manage=self.request.user.has_cap("updates.manage"), web_apply=settings.RAVIX_UPDATE_WEB_APPLY,
                    can_rollback=run.component == "core" and run.kind == "upgrade" and run.status in ("succeeded", "needs_recovery") and bool(run.backup.get("dir")))
         return ctx
 

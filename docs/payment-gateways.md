@@ -65,8 +65,8 @@ class MyGateway(PaymentGateway):
 
 ## ذخیرهٔ امن تنظیمات
 - فیلد `secret=True`: با Fernet رمز و در `GatewayConfig.secrets_encrypted` ذخیره می‌شود؛ فیلدهای غیرمحرمانه در `public_config`.
-- کلید رمزنگاری **فقط در محیط**: `RAVIN_SECRETS_KEY` (تولید: `python -c "from cryptography.fernet import Fernet;print(Fernet.generate_key().decode())"`). چرخش: کلید جدید را اول و قبلی را بعد از آن (ویرگول) بگذارید. بدون کلید در حالت `DEBUG=False` ذخیرهٔ اسرار رد می‌شود؛ `ravin_preflight` هم خطا می‌دهد.
-- جایگزین بدون دیتابیس: متغیر `RAVIN_GATEWAY_<نام>_<فیلد>` (مثل `RAVIN_GATEWAY_EXAMPLE_PAY_API_KEY`) بر مقدار پنل مقدم است.
+- کلید رمزنگاری **فقط در محیط**: `RAVIX_SECRETS_KEY` (تولید: `python -c "from cryptography.fernet import Fernet;print(Fernet.generate_key().decode())"`). چرخش: کلید جدید را اول و قبلی را بعد از آن (ویرگول) بگذارید. بدون کلید در حالت `DEBUG=False` ذخیرهٔ اسرار رد می‌شود؛ `ravix_preflight` هم خطا می‌دهد.
+- جایگزین بدون دیتابیس: متغیر `RAVIX_GATEWAY_<نام>_<فیلد>` (مثل `RAVIX_GATEWAY_EXAMPLE_PAY_API_KEY`) بر مقدار پنل مقدم است.
 - پنل هرگز مقدار محرمانه را نشان نمی‌دهد (ورودی password، خالی = حفظ، «حذف» جداگانه). مقدار محرمانه در پاسخ API، قالب‌ها، کد جاوااسکریپت، گزارش‌ها و لاگ ممیزی نیست (تست می‌کند).
 - `repr` درگاه، config را چاپ نمی‌کند. اسرار را در `plugin.json`/تنظیمات افزونه نگذارید (آنجا رمز نمی‌شوند).
 
@@ -77,7 +77,7 @@ class MyGateway(PaymentGateway):
 - هر درگاه برای هر سایت جدا فعال/غیرفعال می‌شود؛ ظرفیت: فعال‌سازی فقط با تنظیمات کامل؛ درگاه آزمایشی (`is_test`) در تولید فعال نمی‌شود. مجوز: `shop.gateways` (مدیر و مدیرکل). هر تغییر در لاگ ممیزی (بدون مقدار محرمانه) ثبت می‌شود.
 - **غیرفعال‌کردن درگاه تراکنش‌های باز را نمی‌بندد**: تأیید و استعلام برای پرداخت‌های آغازشده ادامه دارد.
 - «حالت آزمایشی»: پرچم `test_mode` به درگاه داده می‌شود (مثلاً آدرس sandbox ارائه‌دهنده)؛ پرداخت‌ها `is_test` علامت می‌خورند و `preflight` هشدار می‌دهد.
-- اگر چند درگاه فعال باشد، مشتری انتخاب می‌کند (فقط از فهرست فعال‌ها پذیرفته می‌شود). برای راحتی توسعه، وقتی برای `sandbox` هیچ رکوردی نیست و `DEBUG` روشن است (یا دمو مجاز شده) و `RAVIN_SHOP_PAYMENT_GATEWAY=sandbox`، شبیه‌ساز بدون تنظیم فعال است؛ در تولید هرگز.
+- اگر چند درگاه فعال باشد، مشتری انتخاب می‌کند (فقط از فهرست فعال‌ها پذیرفته می‌شود). برای راحتی توسعه، وقتی برای `sandbox` هیچ رکوردی نیست و `DEBUG` روشن است (یا دمو مجاز شده) و `RAVIX_SHOP_PAYMENT_GATEWAY=sandbox`، شبیه‌ساز بدون تنظیم فعال است؛ در تولید هرگز.
 
 ## هدایت مشتری
 `Redirect(url, method="GET"|"POST", fields={})`. آدرس باید مسیر داخلی یا `https://` روی یکی از `redirect_hosts` باشد، وگرنه تراکنش رد می‌شود. GET ← ۳۰۲. POST ← صفحهٔ فرم خودکار؛ سیاست CSP سایت (`form-action 'self'`) فقط برای همین پاسخ و فقط برای همان میزبان باز می‌شود.
@@ -96,7 +96,7 @@ class MyGateway(PaymentGateway):
 ## ساخت افزونهٔ درگاه جدید (گام‌به‌گام)
 1. پوشهٔ `plugins/<slug>/` با `plugin.json`:
 ```json
-{"slug": "my_gateway", "name": "درگاه من", "version": "1.0.0", "description": "...", "author": "...", "api_version": 1, "ravin": ">=0.5.0,<1.0.0",
+{"slug": "my_gateway", "name": "درگاه من", "version": "1.0.0", "description": "...", "author": "...", "api_version": 1, "ravix": ">=0.5.0,<1.0.0",
  "hooks": [{"name": "shop.gateways", "handler": "hooks:register", "priority": 50}]}
 ```
 2. `hooks.py`:

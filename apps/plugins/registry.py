@@ -3,7 +3,7 @@
 
 تضمین‌ها:
 - فقط افزونه‌ای که رکورد «فعال» در دیتابیس دارد و اثرانگشت پوشه‌اش با اثرانگشت تأییدشدهٔ مدیر برابر است بارگذاری می‌شود؛
-- import از مسیر ``ravin_plugins.<slug>`` فقط با یابندهٔ اختصاصی ممکن است که هر بار اثرانگشت را بازبینی می‌کند و بایت‌کد
+- import از مسیر ``ravix_plugins.<slug>`` فقط با یابندهٔ اختصاصی ممکن است که هر بار اثرانگشت را بازبینی می‌کند و بایت‌کد
   (``.pyc``) را نادیده می‌گیرد (کد منبع تأییدشده اجرا می‌شود، نه یک کش دست‌کاری‌شده)؛
 - تغییر کد پس از تأیید (دستکاری) ← افزونه فوراً غیرفعال و رویداد «tamper» ثبت می‌شود؛
 - هر خطای بارگذاری یا اجرا در همین‌جا مهار و ثبت می‌شود و به پنل نمی‌رسد.
@@ -26,9 +26,9 @@ from django.conf import settings
 from . import events, state
 from .integrity import IntegrityError, fingerprint
 
-logger = logging.getLogger("ravin.plugins")
+logger = logging.getLogger("ravix.plugins")
 
-NAMESPACE = "ravin_plugins"
+NAMESPACE = "ravix_plugins"
 VERIFY_INTERVAL = 5.0  # ثانیه؛ فاصلهٔ بازبینی اثرانگشت برای افزونه‌های بارگذاری‌شده
 _lock = threading.RLock()
 _roots: dict[str, tuple[Path, str]] = {}  # slug -> (ریشه، اثرانگشت تأییدشده)؛ فقط این‌ها import می‌شوند

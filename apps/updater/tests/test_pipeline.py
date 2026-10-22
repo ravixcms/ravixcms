@@ -30,7 +30,7 @@ class SuccessfulUpgrade(UpdaterCase):
         self.assertEqual(run.signer_label, "test")
         self.assertEqual(len(run.sha256), 64)
         self.assertFalse(UpdateLock.objects.exists())
-        self.assertFalse((self.root / ".ravin-old").exists())
+        self.assertFalse((self.root / ".ravix-old").exists())
 
     def test_backup_contains_files_and_db_and_is_private(self):
         self.publish("0.7.0")
@@ -104,7 +104,7 @@ class RejectedBeforeAnyChange(UpdaterCase):
 
     def test_no_trusted_keys_configured_rejects(self):
         self.publish("0.7.0")
-        with override_settings(RAVIN_TRUSTED_PUBLIC_KEYS=[]):
+        with override_settings(RAVIX_TRUSTED_PUBLIC_KEYS=[]):
             with self.assertRaisesRegex(UpdateBlocked, "کلید مورد اعتماد"):
                 self.apply()
         self.assertUntouched()
@@ -173,7 +173,7 @@ class RejectedBeforeAnyChange(UpdaterCase):
     def test_incompatible_active_plugin_blocks_but_inactive_only_warns(self):
         from apps.plugins.models import PluginRecord
 
-        PluginRecord.objects.create(slug="oldp", name="Old", version="1.0.0", is_active=True, manifest={"ravin": ">=0.5,<0.7", "api_version": 1}, fingerprint="x")
+        PluginRecord.objects.create(slug="oldp", name="Old", version="1.0.0", is_active=True, manifest={"ravix": ">=0.5,<0.7", "api_version": 1}, fingerprint="x")
         self.publish("0.7.0")
         with self.assertRaisesRegex(UpdateBlocked, "oldp"):
             self.apply()
@@ -185,7 +185,7 @@ class RejectedBeforeAnyChange(UpdaterCase):
     def test_plugin_api_change_blocks_active_plugins(self):
         from apps.plugins.models import PluginRecord
 
-        PluginRecord.objects.create(slug="p1", name="P", version="1.0.0", is_active=True, manifest={"ravin": ">=0.5,<1.0", "api_version": 1}, fingerprint="x")
+        PluginRecord.objects.create(slug="p1", name="P", version="1.0.0", is_active=True, manifest={"ravix": ">=0.5,<1.0", "api_version": 1}, fingerprint="x")
         self.publish("0.7.0", requires={"plugin_api": 2, "theme_api": 1})
         with self.assertRaisesRegex(UpdateBlocked, "p1"):
             self.apply()
@@ -193,11 +193,11 @@ class RejectedBeforeAnyChange(UpdaterCase):
 
     def test_signed_index_required_policy(self):
         self.publish("0.7.0")
-        with override_settings(RAVIN_UPDATE_REQUIRE_SIGNED_INDEX=True):
+        with override_settings(RAVIX_UPDATE_REQUIRE_SIGNED_INDEX=True):
             with self.assertRaisesRegex(UpdateError, "فهرست"):
                 self.apply()
         self.publish("0.7.0", sign_index=True)
-        with override_settings(RAVIN_UPDATE_REQUIRE_SIGNED_INDEX=True):
+        with override_settings(RAVIX_UPDATE_REQUIRE_SIGNED_INDEX=True):
             self.assertEqual(self.apply().status, "succeeded")
 
     def test_tampered_signed_index_rejected(self):
@@ -334,7 +334,7 @@ class ManualRollback(UpdaterCase):
 
     def test_rollback_refused_if_code_changed_since(self):
         up = self.upgrade()
-        (self.root / "apps/core/version.py").write_text('RAVIN_VERSION = "0.7.5"\n')
+        (self.root / "apps/core/version.py").write_text('RAVIX_VERSION = "0.7.5"\n')
         with self.assertRaisesRegex(UpdateBlocked, "نیست"):
             self.rollback(up)
 

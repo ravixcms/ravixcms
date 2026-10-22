@@ -1,4 +1,4 @@
-# راهنمای قالب‌ها در Ravin CMS
+# راهنمای قالب‌ها در Ravix
 
 این سند دو بخش دارد: **افزودن قالب جدید** (گام‌به‌گام) و **قرارداد قالب** (مرجع کامل).
 برای مدیر سایت، همهٔ مدیریت قالب از پنل است: «ظاهر سایت ← قالب‌ها / سفارشی‌سازی ظاهر».
@@ -17,7 +17,7 @@ python manage.py startheme my-theme --name "قالب من" --author "نام شم
 انگلیسی، عدد، `-` و `_` است. اگر دستور را نمی‌خواهید، پوشهٔ `themes/default` را دستی کپی کنید و
 مقدار `slug` را در `theme.json` با نام پوشه یکی کنید.
 
-برای نصب قالب‌ها در مسیری خارج از پروژه، آن را در `RAVIN_EXTRA_THEME_DIRS` (جداشده با ویرگول) بگذارید.
+برای نصب قالب‌ها در مسیری خارج از پروژه، آن را در `RAVIX_EXTRA_THEME_DIRS` (جداشده با ویرگول) بگذارید.
 
 ### گام ۲ – ویرایش `theme.json`
 
@@ -70,7 +70,7 @@ python manage.py startheme my-theme --name "قالب من" --author "نام شم
 `base.html` **باید** این دو تگ را داشته باشد (برای سئوی پایه و نوار پیش‌نمایش):
 
 ```django
-{% load ravin_theme %}
+{% load ravix_theme %}
 <head>{% theme_head %} <link rel="stylesheet" href="{% theme_static 'css/theme.css' %}"> </head>
 <body>{% theme_toolbar %} ...
 ```
@@ -130,7 +130,7 @@ themes/<slug>/
 | فقط پسوندهای غیرقابل‌اجرا: `html css js json txt md svg png jpg jpeg gif webp ico woff woff2` | `.py`، `.sh`، `.php` و … رد می‌شوند |
 | `html` فقط در `templates/` و هرگز در `static/` | فایل‌های static مستقیم از وب سرو می‌شوند |
 | symlink، حجم بیش از ۵MB برای هر فایل، بیش از ۴۰۰ فایل | جلوگیری از خروج از پوشه و سوءاستفاده از منابع |
-| موتور قالب جدا و قفل‌شده: فقط پوشهٔ `templates/` همان قالب، فقط `{% load ravin_theme %}`، بدون `{% debug %}`، بدون context processor | قالب به `request`، `user`، `settings`، ORM و قالب‌های پنل دسترسی ندارد |
+| موتور قالب جدا و قفل‌شده: فقط پوشهٔ `templates/` همان قالب، فقط `{% load ravix_theme %}`، بدون `{% debug %}`، بدون context processor | قالب به `request`، `user`، `settings`، ORM و قالب‌های پنل دسترسی ندارد |
 | قالب فقط داده‌های ساده‌ی اعلام‌شده (DTO در `apps/public/dto.py`) را می‌بیند | نشت نکردن فیلدهای حساس |
 | CSP: `script-src 'self'`، بدون اسکریپت درون‌خط | جلوگیری از XSS؛ جاوااسکریپت قالب باید فایل جدا در `static/` باشد |
 
@@ -194,18 +194,18 @@ themes/<slug>/
 ### فعال‌سازی (مدیر سرور)
 
 ```bash
-sudo mkdir -p /srv/ravin/themes_installed
-sudo chown ravin:ravin /srv/ravin/themes_installed && sudo chmod 750 /srv/ravin/themes_installed   # دیسک محلی
-# در /etc/ravin/ravin.env :
-RAVIN_THEME_INSTALL_DIR=/srv/ravin/themes_installed
-RAVIN_THEME_WEB_INSTALL=true
-sudo systemctl restart ravin
+sudo mkdir -p /srv/ravix/themes_installed
+sudo chown ravix:ravix /srv/ravix/themes_installed && sudo chmod 750 /srv/ravix/themes_installed   # دیسک محلی
+# در /etc/ravix/ravix.env :
+RAVIX_THEME_INSTALL_DIR=/srv/ravix/themes_installed
+RAVIX_THEME_WEB_INSTALL=true
+sudo systemctl restart ravix
 ```
 
-- پوشهٔ نصب جدا از کد برنامه است (کد برای سرویس فقط‌خواندنی می‌ماند) و خودکار به `RAVIN_THEME_DIRS` اضافه می‌شود. سرویس فقط در همین پوشه (و `media`) می‌نویسد.
+- پوشهٔ نصب جدا از کد برنامه است (کد برای سرویس فقط‌خواندنی می‌ماند) و خودکار به `RAVIX_THEME_DIRS` اضافه می‌شود. سرویس فقط در همین پوشه (و `media`) می‌نویسد.
 - پوشه باید روی **دیسک محلی** باشد. قفل نصب با `flock` فایل‌سیستمی است؛ روی NFS/CIFS نصب رد می‌شود (بدون جایگزین ناامن). اگر `flock` کار نکند هم نصب انجام نمی‌شود.
 - قابلیت `themes.install` فقط به مدیرکل (`SUPER_ADMIN`) داده می‌شود؛ مدیر معمولی (`themes.manage`) فقط قالب‌ها را فعال/پیش‌نمایش/سفارشی می‌کند.
-- Nginx: `deploy/nginx-ravin.conf` برای مسیر `/panel/themes/upload/` سقف ۱۱MB و `limit_req` دارد. سقف واقعی را خود برنامه اعمال می‌کند (Nginx به‌تنهایی کافی نیست).
+- Nginx: `deploy/nginx-ravix.conf` برای مسیر `/panel/themes/upload/` سقف ۱۱MB و `limit_req` دارد. سقف واقعی را خود برنامه اعمال می‌کند (Nginx به‌تنهایی کافی نیست).
 - پشتیبان‌گیری: `deploy/backup.sh` پوشهٔ `themes_installed` را هم می‌گیرد و `restore.sh` آن را برمی‌گرداند.
 
 ### ساختار ZIP
@@ -249,18 +249,18 @@ my-theme.zip
 
 | پیام | علت و راه‌حل |
 |---|---|
-| نصب از طریق وب خاموش است | `RAVIN_THEME_WEB_INSTALL=true` و راه‌اندازی مجدد سرویس |
+| نصب از طریق وب خاموش است | `RAVIX_THEME_WEB_INSTALL=true` و راه‌اندازی مجدد سرویس |
 | فقط یک پوشهٔ ریشه … | فایل‌ها را داخل یک پوشه به نام شناسهٔ قالب بگذارید و دوباره ZIP کنید |
 | نام «…» مجاز نیست | نام فایل/پوشه فارسی، با فاصله یا با نقطهٔ ابتدایی است |
 | فایل SVG در این نسخه مجاز نیست | SVG را به png/webp تبدیل کنید |
 | قالب با قرارداد سازگار نیست + فهرست خطا | همان خطاهای `check_themes`؛ اصلاح و دوباره ZIP کنید |
 | قالبی با این شناسه از قبل وجود دارد | شناسه را (در theme.json و نام پوشه) تغییر دهید؛ جایگزینی انجام نمی‌شود |
 | نصب دیگری در جریان است | چند ثانیه بعد دوباره تلاش کنید (قفل با پایان یا مرگ فرایند آزاد می‌شود) |
-| پوشهٔ نصب قابل‌نوشتن نیست / قفل پشتیبانی نمی‌شود | مالک/مجوز `RAVIN_THEME_INSTALL_DIR` و نوع دیسک (محلی) را بررسی کنید |
+| پوشهٔ نصب قابل‌نوشتن نیست / قفل پشتیبانی نمی‌شود | مالک/مجوز `RAVIX_THEME_INSTALL_DIR` و نوع دیسک (محلی) را بررسی کنید |
 
 ### فایل‌های استاتیک پس از نصب (نتیجهٔ آزمایش واقعی)
 
-نصب از پنل **`collectstatic` را اجرا نمی‌کند**. آزمایش در یک کپی ایزوله (تنظیمات production، Gunicorn ۲ worker + WhiteNoise، و Nginx با `alias` به `staticfiles/` مطابق `deploy/nginx-ravin.conf`):
+نصب از پنل **`collectstatic` را اجرا نمی‌کند**. آزمایش در یک کپی ایزوله (تنظیمات production، Gunicorn ۲ worker + WhiteNoise، و Nginx با `alias` به `staticfiles/` مطابق `deploy/nginx-ravix.conf`):
 
 | مرحله | WhiteNoise (فقط Gunicorn) | Nginx |
 |---|---|---|
@@ -270,14 +270,14 @@ my-theme.zip
 | پس از reload (HUP) یا restart سرویس | ۲۰۰ | ۲۰۰ |
 
 (در تمام مراحل استاتیک قالب `default` ۲۰۰ ماند.) نتیجه:
-- با Nginx در جلو (روش مستند این پروژه): فقط یک بار `sudo -u ravin /srv/ravin/venv/bin/python manage.py collectstatic --noinput` کافی است؛ restart لازم نیست.
+- با Nginx در جلو (روش مستند این پروژه): فقط یک بار `sudo -u ravix /srv/ravix/venv/bin/python manage.py collectstatic --noinput` کافی است؛ restart لازم نیست.
 - بدون Nginx (WhiteNoise به‌تنهایی): پس از `collectstatic` سرویس را reload/restart کنید.
 - پیش از اجرای `collectstatic`، صفحه‌های قالب بدون CSS/JS کامل نمایش داده می‌شوند. پنل تا زمان انتشار استاتیک هشدار «استاتیک هنوز منتشر نشده» نشان می‌دهد (وجود `STATIC_ROOT/themes/<slug>/` سنجیده می‌شود).
 - بین نصب و `collectstatic` بهتر است قالب را فعال نکنید.
 
 ### نکات امنیتی برای توسعه‌دهندگان قالب
 
-- قالب‌ها با موتور قفل‌شده رندر می‌شوند (فقط `{% load ravin_theme %}`)؛ کدی اجرا نمی‌شود. فایل پایتون/PHP هرگز پذیرفته نمی‌شود.
+- قالب‌ها با موتور قفل‌شده رندر می‌شوند (فقط `{% load ravix_theme %}`)؛ کدی اجرا نمی‌شود. فایل پایتون/PHP هرگز پذیرفته نمی‌شود.
 - جاوااسکریپت فقط فایل جدا در `static/` باشد (CSP: `script-src 'self'`).
 - فایل‌های قالب مستقیم از وب سرو می‌شوند؛ چیز محرمانه (کلید، رمز) در قالب نگذارید.
 - فقط قالب‌های منبع مورد اعتماد را نصب کنید؛ تگ‌های داخلی Django مثل `{% url %}` در موتور قالب باز هستند.

@@ -82,7 +82,7 @@ class HubVersion(models.Model):
     sha256 = models.CharField("SHA-256 بسته", max_length=64)
     fingerprint = models.CharField("اثرانگشت محتوا", max_length=64, help_text="همان اثرانگشتی که پنل افزونه‌ها هنگام نصب نشان می‌دهد.")
     size = models.PositiveIntegerField("حجم (بایت)")
-    ravin_spec = models.CharField("سازگاری با Ravin", max_length=60)
+    ravin_spec = models.CharField("سازگاری با Ravix", max_length=60)
     api_version = models.PositiveSmallIntegerField("نسخهٔ قرارداد افزونه")
     signature = models.CharField("امضای Ed25519 (base64)", max_length=120, blank=True)
     signature_key_id = models.CharField("شناسهٔ کلید امضا", max_length=16, blank=True)

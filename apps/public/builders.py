@@ -134,21 +134,21 @@ def build_comments(post, *, state: dict | None = None, notice: str = "", reply_t
         return CommentItem(
             id=c.pk, author_name=c.author_name, date_display=date_display(c.created_at), date_iso=date_iso(c.created_at),
             body_html=mark_safe(c.body_html), depth=c.depth,
-            reply_url=f"{base}?reply={c.pk}#comment-form" if can_reply and c.depth < settings.RAVIN_COMMENT_MAX_DEPTH else "",
+            reply_url=f"{base}?reply={c.pk}#comment-form" if can_reply and c.depth < settings.RAVIX_COMMENT_MAX_DEPTH else "",
             replies=tuple(node(r) for r in children.get(c.pk, [])),
         )
 
     items = tuple(node(c) for c in children.get(None, []))
-    target = next((c for c in rows if c.pk == reply_to and c.depth < settings.RAVIN_COMMENT_MAX_DEPTH), None) if can_reply else None
+    target = next((c for c in rows if c.pk == reply_to and c.depth < settings.RAVIX_COMMENT_MAX_DEPTH), None) if can_reply else None
     values = dict(state.get("values", {}))
     if target is None and state.get("values", {}).get("parent", "").isdigit():
-        target = next((c for c in rows if c.pk == int(values["parent"]) and c.depth < settings.RAVIN_COMMENT_MAX_DEPTH), None)
+        target = next((c for c in rows if c.pk == int(values["parent"]) and c.depth < settings.RAVIX_COMMENT_MAX_DEPTH), None)
     return CommentsSection(
         count=len(rows), items=items, open=post.comments_open, action_url=reverse("public:comment_submit", args=[post.slug]),
         honeypot_name="website", notice=notice if notice in ("pending", "ok") else "", errors=state.get("errors", {}),
         values={k: v for k, v in values.items() if k in ("name", "email", "body")},
         reply_to_id=target.pk if target else 0, reply_to_name=target.author_name if target else "",
-        cancel_reply_url=f"{base}#comment-form" if target else "", max_length=settings.RAVIN_COMMENT_MAX_LENGTH,
+        cancel_reply_url=f"{base}#comment-form" if target else "", max_length=settings.RAVIX_COMMENT_MAX_LENGTH,
     )
 
 

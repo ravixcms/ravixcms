@@ -13,7 +13,7 @@ from django.db import connection, transaction
 
 from apps.audit.models import AuditLog
 from apps.audit.services import log_event as audit_log
-from apps.core.version import PLUGIN_API_VERSION, RAVIN_VERSION
+from apps.core.version import PLUGIN_API_VERSION, RAVIX_VERSION
 
 from . import discovery, events, registry, state, versions
 from .integrity import IntegrityError, fingerprint
@@ -21,7 +21,7 @@ from .manifest import Manifest, ManifestError, parse_manifest
 from .models import PluginRecord
 from .settings_schema import clean_all
 
-logger = logging.getLogger("ravin.plugins")
+logger = logging.getLogger("ravix.plugins")
 
 ALLOWED_MIGRATION_OPS = {
     "CreateModel", "DeleteModel", "AddField", "RemoveField", "AlterField", "RenameField", "AlterModelOptions", "AddIndex",
@@ -73,8 +73,8 @@ def check_compat(manifest: Manifest) -> list[str]:
     problems = []
     if manifest.api_version != PLUGIN_API_VERSION:
         problems.append(f"قرارداد افزونه نسخهٔ {manifest.api_version} است؛ این CMS نسخهٔ {PLUGIN_API_VERSION} را پشتیبانی می‌کند.")
-    if not versions.satisfies(RAVIN_VERSION, manifest.ravin):
-        problems.append(f"نیازمند Ravin CMS با نسخهٔ «{manifest.ravin}» است؛ نسخهٔ فعلی {RAVIN_VERSION}.")
+    if not versions.satisfies(RAVIX_VERSION, manifest.ravix):
+        problems.append(f"نیازمند Ravix با نسخهٔ «{manifest.ravix}» است؛ نسخهٔ فعلی {RAVIX_VERSION}.")
     for dep, spec in manifest.requires.items():
         rec = PluginRecord.objects.filter(slug=dep).first()
         if rec is None or not rec.is_active:

@@ -34,10 +34,18 @@ def _write(zf, p: Path, arc: str):
     zf.writestr(info, p.read_bytes())
 
 
+def _with_legacy(req: dict) -> dict:
+    """کلاینت‌های قدیمی (<0.7) کلید «ravin» را می‌خوانند؛ تا 2.0 هر دو کلید نوشته می‌شود."""
+    req = dict(req or {})
+    if req.get("ravix") and "ravin" not in req:
+        req["ravin"] = req["ravix"]
+    return req
+
+
 def _entry(data: bytes, version: str, filename: str, seed: str | None, kind: str, slug: str, requires: dict, notes: str, migrations: bool):
     sha = hashlib.sha256(data).hexdigest()
     e = {"version": version, "sha256": sha, "size": len(data), "download_url": filename, "released": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
-         "notes": notes, "migrations": migrations, "requires": requires}
+         "notes": notes, "migrations": migrations, "requires": _with_legacy(requires)}
     if seed:
         e["signature"], e["signature_key_id"] = signing.sign(seed, kind, slug, version, sha)
     return e
@@ -47,12 +55,12 @@ def build_core(source_root: Path, out_dir: Path, *, seed: str | None, requires: 
     source_root, out_dir = Path(source_root), Path(out_dir)
     version = versions.disk_version(source_root)
     if not version:
-        raise UpdateError("RAVIN_VERSION در apps/core/version.py پیدا نشد.")
-    req = dict(requires or {})
+        raise UpdateError("RAVIX_VERSION در apps/core/version.py پیدا نشد.")
+    req = _with_legacy(requires)
     release = {"schema": UPDATE_SCHEMA_VERSION, "component": "core", "version": version, "requires": req, "migrations": migrations}
     out_dir.mkdir(parents=True, exist_ok=True)
-    fname = f"ravin-core-{version}.zip"
-    root_name = f"ravin-{version}"
+    fname = f"ravix-core-{version}.zip"
+    root_name = f"ravix-{version}"
     with zipfile.ZipFile(out_dir / fname, "w") as zf:
         for e in package.CORE_ENTRIES:
             if (source_root / e).exists():
@@ -72,7 +80,7 @@ def build_theme(theme_dir: Path, out_dir: Path, *, seed: str | None, requires: d
     if not info.valid:
         raise UpdateError("قالب نامعتبر است: " + "؛ ".join(info.errors[:5]))
     out_dir.mkdir(parents=True, exist_ok=True)
-    fname = f"ravin-theme-{info.slug}-{info.version}.zip"
+    fname = f"ravix-theme-{info.slug}-{info.version}.zip"
     with zipfile.ZipFile(out_dir / fname, "w") as zf:
         _add(zf, theme_dir, info.slug)
     data = (out_dir / fname).read_bytes()
