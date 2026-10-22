@@ -128,8 +128,10 @@ class PublisherPanelTests(HubTestCase):
         c = self.login(self.pubuser)
         r = c.post("/panel/publish/tokens/", {"name": "ci"})
         self.assertContains(r, "rvn_")
-        raw = PublisherToken.objects.get().prefix
-        self.assertNotContains(c.get("/panel/publish/tokens/"), "rvn_" + "x")  # صفحهٔ لیست فقط پیشوند دارد
+        import re
+
+        raw = re.search(r"rvn_[A-Za-z0-9_\-]{20,}", r.content.decode()).group(0)  # توکن کامل فقط یک‌بار نمایش داده می‌شود
+        self.assertNotContains(c.get("/panel/publish/tokens/"), raw)  # صفحهٔ لیست فقط پیشوند دارد (مستقل از حروف تصادفی توکن)
         tok = PublisherToken.objects.get()
         self.assertEqual(self.login(self.pubuser2).post(f"/panel/publish/tokens/{tok.pk}/revoke/").status_code, 404)
         c.post(f"/panel/publish/tokens/{tok.pk}/revoke/")

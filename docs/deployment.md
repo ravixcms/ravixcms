@@ -117,7 +117,7 @@ DNS دامنه باید از قبل به IP سرور اشاره کند.
 sudo certbot --nginx -d دامنه-شما.ir -d www.دامنه-شما.ir
 sudo certbot renew --dry-run          # تمدید خودکار
 ```
-سپس `https://دامنه-شما.ir/healthz` باید `{"status":"ok"}` بدهد. HSTS و ریدایرکت HTTPS از سمت Django فعال است
+سپس `https://دامنه-شما.ir/healthz` باید `{"status":"ok"}` بدهد. HSTS و ریدایرکت HTTPS از سمت Django فعال است (preload و زیردامنه‌ها پیش‌فرض خاموش‌اند چون برگشت‌ناپذیرند؛ با `DJANGO_HSTS_PRELOAD` و `DJANGO_HSTS_INCLUDE_SUBDOMAINS` فقط آگاهانه روشن کنید)
 (برای تست موقت بدون HTTPS: `DJANGO_SECURE_SSL_REDIRECT=false`).
 
 ## ۱۰. پشتیبان‌گیری و بازیابی
