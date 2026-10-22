@@ -79,7 +79,7 @@ def main(argv):
 
     ver_file = next((n for n in names if n.endswith("apps/core/version.py")), None)
     inner = re.search(r'RAVIX_VERSION = "([^"]+)"', zf.read(ver_file).decode()).group(1) if ver_file else None
-    base = lambda v: v.split("-")[0]  # v0.6.1-rc1 ← RAVIX_VERSION = 0.6.1 (مثل مرحلهٔ تطبیق تگ در release.yml)
+    base = lambda v: v.split("-")[0]  # v0.9.0-rc1 ← RAVIX_VERSION = 0.9.0 (مثل مرحلهٔ تطبیق تگ در release.yml)
     check("RAVIX_VERSION درون بسته با شمارهٔ نسخهٔ نام فایل یکی است", m and inner == base(m.group(1)), f"{inner} ≠ {m.group(1) if m else '?'}")
     if want:
         check("نسخهٔ بسته با --version یکی است", inner == base(want), f"{inner} ≠ {want}")

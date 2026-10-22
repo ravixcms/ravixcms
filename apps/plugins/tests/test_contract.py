@@ -105,3 +105,20 @@ class SettingsSchemaTests(SimpleTestCase):
         clean, errors = clean_all(schema, {"k": "9", "evil": "x"})
         self.assertIn("k", errors)
         self.assertNotIn("evil", clean)
+
+
+class BundledPluginsCompatTests(SimpleTestCase):
+    """افزونه‌های همراه بسته باید روی نسخهٔ جاری و روی 1.x هم سازگار اعلام شوند (مانع 1-2)."""
+
+    def test_bundled_plugins_satisfy_current_and_1x(self):
+        from pathlib import Path
+
+        from apps.core.version import RAVIX_VERSION
+
+        found = sorted(Path(REPO_PLUGINS).glob("*/plugin.json"))
+        self.assertGreaterEqual(len(found), 3)
+        for f in found:
+            spec = json.loads(f.read_text(encoding="utf-8"))["ravix"]
+            for v in (RAVIX_VERSION, "1.0.0", "1.9.9"):
+                self.assertTrue(versions.satisfies(v, spec), f"{f.parent.name}: {spec} باید {v} را بپذیرد")
+            self.assertFalse(versions.satisfies("2.0.0", spec))

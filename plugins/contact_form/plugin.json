@@ -5,7 +5,7 @@
   "description": "فرم تماس عمومی در /ext/contact_form/ که پیام‌ها را در دیتابیس ذخیره می‌کند و صندوق پیام در پنل دارد.",
   "author": "Ravix",
   "api_version": 1,
-  "ravix": ">=0.5.0,<1.0.0",
+  "ravix": ">=0.9,<2.0",
   "models": true,
   "capabilities": {
     "contact_form.view": "مشاهده و مدیریت پیام‌های فرم تماس"
