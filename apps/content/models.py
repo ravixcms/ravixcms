@@ -96,6 +96,8 @@ class Post(TimeStampedModel):
                                         help_text="با برداشتن تیک، ارسال دیدگاه جدید برای این نوشته بسته می‌شود (دیدگاه‌های قبلی نمایش داده می‌شوند).")
     noindex = models.BooleanField("عدم نمایش در موتورهای جستجو (noindex)", default=False,
                                   help_text="نوشته در نتایج گوگل و ... فهرست نمی‌شود و در نقشه سایت (sitemap) نمی‌آید.")
+    is_sample = models.BooleanField("محتوای نمونه", default=False, editable=False, db_index=True,
+                                    help_text="نوشتهٔ نمونهٔ ساخته‌شده هنگام نصب؛ با اولین ویرایش دیگر نمونه حساب نمی‌شود.")
 
     objects = PostQuerySet.as_manager()
 
@@ -172,6 +174,8 @@ class Page(TimeStampedModel):
     seo_description = models.CharField("توضیحات سئو (Meta Description)", max_length=160, blank=True, help_text="ترجیحاً ۱۲۰ تا ۱۶۰ کاراکتر.")
     author = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL,
                                related_name="pages", verbose_name="نویسنده")
+    is_sample = models.BooleanField("محتوای نمونه", default=False, editable=False, db_index=True,
+                                    help_text="برگهٔ نمونهٔ ساخته‌شده هنگام نصب؛ با اولین ویرایش دیگر نمونه حساب نمی‌شود.")
 
     class Meta:
         verbose_name = "صفحه"

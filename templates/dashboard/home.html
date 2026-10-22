@@ -16,6 +16,35 @@
   </div>
 </section>
 
+{% if onboarding %}
+<section class="card onboarding" aria-labelledby="onb-title">
+  <div class="card-header">
+    <h2 id="onb-title">شروع سریع — {{ onboarding.done|fa_digits }} از {{ onboarding.total|fa_digits }} گام انجام شد</h2>
+    <form method="post" action="{% url 'dashboard:onboarding_dismiss' %}">{% csrf_token %}<button class="btn btn-light btn-sm" type="submit">بستن راهنما</button></form>
+  </div>
+  <div class="card-body">
+    <div class="progress" role="progressbar" aria-valuenow="{{ onboarding.percent }}" aria-valuemin="0" aria-valuemax="100"><i style="width: {{ onboarding.percent }}%"></i></div>
+    <ol class="onb-steps" style="list-style:none;padding:0;margin:1rem 0 0;display:grid;gap:.75rem">
+      {% for s in onboarding.steps %}
+      <li class="onb-step{% if s.done %} done{% endif %}" style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
+        <span aria-hidden="true" style="font-size:1.2rem">{% if s.done %}✅{% else %}⬜{% endif %}</span>
+        <div style="flex:1;min-width:14rem"><strong>{{ s.title }}</strong><div class="help">{{ s.hint }}</div></div>
+        {% if s.done %}<span class="badge">انجام شد</span>{% else %}<a class="btn btn-primary btn-sm" href="{{ s.url }}">{{ s.button }}</a>{% endif %}
+      </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+{% endif %}
+{% if has_samples %}
+<section class="card" aria-label="محتوای نمونه">
+  <div class="card-body" style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+    <p style="flex:1;margin:0">سایت شما یک نوشته و دو برگهٔ نمونه («درباره ما» و «تماس با ما») دارد. هر کدام را ویرایش کنید، مال شما می‌شود؛ بقیه را می‌توانید یک‌جا حذف کنید.</p>
+    <form method="post" action="{% url 'dashboard:samples_delete' %}" data-confirm="نمونه‌های ویرایش‌نشده حذف شوند؟">{% csrf_token %}<button class="btn btn-light btn-sm" type="submit">حذف محتوای نمونه</button></form>
+  </div>
+</section>
+{% endif %}
+
 {% if stats %}
 <section class="stats-grid" aria-label="آمار کاربران">
   <div class="card stat"><span class="stat-icon">{% icon "users" 24 %}</span><div><strong>{{ stats.total_users|fa_digits }}</strong><span>کل کاربران</span></div></div>
