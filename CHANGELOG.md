@@ -12,6 +12,8 @@
 - `SECURE_HSTS_PRELOAD` و `SECURE_HSTS_INCLUDE_SUBDOMAINS` پیش‌فرض **خاموش** (برگشت‌ناپذیرند)؛ با `DJANGO_HSTS_PRELOAD` / `DJANGO_HSTS_INCLUDE_SUBDOMAINS` روشن می‌شوند.
 - افزونه‌های همراه بسته (`contact_form`, `seo_toolkit`, `example_pay`) و قالب `startplugin`: `"ravix": ">=0.9,<2.0"` (قبلاً `<1.0.0`، یعنی روی ۱.۰ نصب نمی‌شدند). آزمون تازه سازگاری با نسخهٔ جاری و 1.x را می‌سنجد.
 - `RAVIX_VERSION = 0.9.0` (و `RAVIN_VERSION` قدیمی هم‌ارز).
+### Changed (حقوقی و امنیتی)
+- `LICENSE`: دارندهٔ حق نشر «The Ravix Authors» (MIT بدون تغییر). `SECURITY.md`: راه تماس ravixcms@gmail.com، گزارش خصوصی، پاسخ اولیه ۷ روز، نسخه‌های پشتیبانی‌شده.
 ### Fixed
 - **خطای ۵۰۰ با ورودی عددی بزرگ/غیرمعمول** (مانع ۱-۶): `apps/core/params.py` (`safe_id`/`safe_ids`/`safe_int`: فقط رقم ASCII، سقف INTEGER دیتابیس) در دیدگاه‌ها (فیلتر `post`، عملیات گروهی)، فیلترهای نوشته (`category`/`tag`/`author`)، سازندهٔ صفحه، پاسخ دیدگاه، سبد فروشگاه و مدیریت سایت‌ها. `NumericOverflowMiddleware` عددهای بیش از بازه در مسیرهای دیگر (مثلاً فیلترهای خود django-admin که با fuzz پیدا شد) را به ۴۰۰ فارسی تبدیل می‌کند. رقم‌های غیر ASCII مثل «²» هم قبلاً با `isdigit()` به `int()` می‌رسیدند و ۵۰۰ می‌دادند.
 - آزمون ناپایدار `test_token_shown_once_and_revocable` (گاهی به‌خاطر حروف تصادفی توکن) پایدار شد: کل توکن در صفحهٔ لیست جست‌وجو می‌شود، نه یک پیشوند ثابت.
