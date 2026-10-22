@@ -286,6 +286,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 WHITENOISE_MAX_AGE = int(env("RAVIX_STATIC_MAX_AGE", "3600"))
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
+TEST_RUNNER = "config.testrunner.RavixTestRunner"  # آزمون‌ها با MEDIA_ROOT موقت اجرا می‌شوند
 
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
