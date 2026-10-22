@@ -23,7 +23,7 @@ REQUIRED = [
     "apps/core/version.py", "deploy/ravix.service", "deploy/nginx-ravix.conf", "deploy/gunicorn.conf.py",
     "deploy/backup.sh", "deploy/restore.sh", "docs/deployment.md", "docs/upgrade.md", "docs/themes.md",
     "themes/default/theme.json", "themes/default/templates/base.html", "static/css/ravix.css",
-    "scripts/vps_smoke.sh",
+    "scripts/vps_smoke.sh", "install.sh", "Dockerfile", "docker-compose.yml", "docker/entrypoint.sh", "docs/installer.md",
 ]
 # هر الگو روی مسیر نسبی (بدون پیشوند ریشه) آزموده می‌شود.
 FORBIDDEN = [
@@ -31,7 +31,8 @@ FORBIDDEN = [
     (r"(^|/)test_[^/]*\.py$", "فایل آزمون"),
     (r"^\.github(/|$)", "زیرساخت CI"),
     (r"^\.gitattributes$", ".gitattributes"),
-    (r"^scripts/(e2e_[^/]*|verify_release\.py|vps_theme_install_check\.py)$", "اسکریپت آزمایش/انتشار"),
+    (r"^scripts/(e2e_[^/]*|verify_release\.py|vps_theme_install_check\.py|bandit_check\.sh)$", "اسکریپت آزمایش/انتشار"),
+    (r"^\.bandit-baseline\.json$", "baseline ابزار توسعه"),
     (r"(^|/)\.env$", "فایل .env"),
     (r"(^|/)db\.sqlite3$", "پایگاه‌دادهٔ SQLite"),
     (r"^media(/|$)", "پوشهٔ media"),
