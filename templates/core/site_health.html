@@ -1,0 +1,50 @@
+{% extends "layouts/panel.html" %}
+{% load ravix_ui %}
+{% block title %}سلامت سایت{% endblock %}
+{% block page_title %}سلامت سایت{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>سلامت سایت</h1><p>بررسی خودکار تنظیمات و سرویس‌هایی که سایت به آن‌ها وابسته است.</p></div></div>
+
+<section class="card" style="margin-bottom:1.25rem" aria-labelledby="health-verdict">
+  <div class="card-body" style="display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap">
+    <div style="font-size:2.2rem;font-weight:800" aria-label="امتیاز سلامت">{{ summary.score|fa_digits }}٪</div>
+    <div style="flex:1;min-width:14rem">
+      <h2 id="health-verdict" style="margin:0">{{ summary.verdict }}</h2>
+      <p class="help" style="margin:.25rem 0 0">
+        {{ summary.counts.critical|fa_digits }} بحرانی · {{ summary.counts.recommended|fa_digits }} پیشنهادی · {{ summary.counts.unknown|fa_digits }} نامشخص · {{ summary.counts.good|fa_digits }} خوب
+      </p>
+    </div>
+    <form method="post" action="{% url 'core:site_health_test_email' %}">{% csrf_token %}
+      <button class="btn btn-light btn-sm" type="submit"{% if not test_email_to %} disabled{% endif %}>ارسال ایمیل آزمایشی{% if test_email_to %} به {{ test_email_to }}{% endif %}</button>
+    </form>
+  </div>
+</section>
+
+{% if problems %}
+<section class="card" style="margin-bottom:1.25rem" aria-label="مواردی که نیاز به توجه دارند">
+  <div class="card-header"><h2>نیازمند توجه ({{ problems|length|fa_digits }})</h2></div>
+  <div class="card-body" style="display:grid;gap:1rem">
+    {% for c in problems %}
+    <article class="health-item health-{{ c.status }}">
+      <header style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap">
+        <span class="badge">{{ c.label }}</span><strong>{{ c.title }}</strong><span class="help">{{ c.group }}</span>
+      </header>
+      <p style="margin:.4rem 0 0">{{ c.detail }}</p>
+      {% if c.fix %}<p class="help" style="margin:.25rem 0 0"><b>راه‌حل:</b> <span dir="auto">{{ c.fix }}</span></p>{% endif %}
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section class="card" aria-label="بررسی‌های موفق">
+  <details{% if not problems %} open{% endif %}>
+    <summary class="card-header" style="cursor:pointer"><h2 style="display:inline">بررسی‌های موفق ({{ passed|length|fa_digits }})</h2></summary>
+    <div class="card-body" style="display:grid;gap:.6rem">
+      {% for c in passed %}
+      <div><span aria-hidden="true">✅</span> <strong>{{ c.title }}</strong> <span class="help">— {{ c.detail }}</span></div>
+      {% empty %}<p class="help">هنوز مورد موفقی نیست.</p>{% endfor %}
+    </div>
+  </details>
+</section>
+{% endblock %}

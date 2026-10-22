@@ -29,6 +29,7 @@ CAPABILITIES = {
     "users.view": "مشاهده فهرست کاربران",
     "users.manage": "مدیریت نقش و وضعیت کاربران",
     "settings.manage": "مدیریت تنظیمات سایت",
+    "health.view": "مشاهدهٔ «سلامت سایت» و ارسال ایمیل آزمایشی",
     # قابلیت‌های آماده برای مرحله‌های بعد (ماژول محتوا)
     "content.write": "نوشتن محتوا",
     "content.publish": "انتشار و مدیریت نوشته‌های همه",
@@ -60,6 +61,7 @@ _ADMIN = _BASIC | {
     "users.view",
     "users.manage",
     "settings.manage",
+    "health.view",
     "content.write",
     "content.publish",
     "pages.manage",
