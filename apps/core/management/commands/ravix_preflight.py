@@ -75,6 +75,21 @@ class Command(BaseCommand):
             except Exception:  # noqa: BLE001 - پیش از migrate
                 ok_fb = False
             advise(ok_fb, "جدول کش جایگزین (ravin_cache) در دیتابیس هست", "جدول کش جایگزین (ravin_cache) نیست؛ migrate را اجرا کنید")
+        # --- IP کلاینت (محدودیت ورود/دیدگاه/ایمیل به آن وابسته است) ---
+        from apps.core import clientip
+
+        bad_proxies = clientip.invalid_trusted_entries()
+        need(not bad_proxies, "RAVIX_TRUSTED_PROXIES معتبر است", f"RAVIX_TRUSTED_PROXIES شامل ورودی نامعتبر است: {bad_proxies}")
+        if os.environ.get("RAVIX_TRUST_PROXY_HEADERS"):
+            warns.append("RAVIX_TRUST_PROXY_HEADERS حذف شده و اثری ندارد؛ پشت سوکت یونیکس چیزی لازم نیست و برای پراکسی روی TCP از RAVIX_TRUSTED_PROXIES استفاده کنید")
+        seen = clientip.observations()
+        if "untrusted_proxy" in seen:
+            errors.append(f"درخواست‌ها از پراکسی {seen['untrusted_proxy'].get('remote')} می‌رسند که مورداعتماد نیست؛ همهٔ بازدیدکننده‌ها یک IP شمرده می‌شوند. "
+                          "آن را در RAVIX_TRUSTED_PROXIES بنویسید (یا Gunicorn را روی سوکت یونیکس بگذارید)")
+        elif "no_headers" in seen:
+            warns.append("پراکسی مورداعتماد هدر IP نمی‌فرستد؛ IP کلاینت قابل‌تشخیص نیست (فقط محدودیت به‌ازای نام‌کاربری)")
+        else:
+            oks.append("تشخیص IP کلاینت: مشکلی دیده نشده (برای بررسی زنده صفحهٔ «سلامت سایت» را از طریق دامنه باز کنید)")
         from apps.core.deprecation import LEGACY_ENV_USED
         if LEGACY_ENV_USED:
             warns.append("متغیرهای محیطی قدیمی استفاده شده‌اند: " + "، ".join(sorted(LEGACY_ENV_USED))

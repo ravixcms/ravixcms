@@ -1,10 +1,11 @@
 """محدودسازی تلاش‌های ناموفق ورود در برابر حدس رمز: هم به‌ازای (IP، نام‌کاربری) و هم مجموع هر IP (چرخاندن نام‌کاربری فایده ندارد)."""
-import ipaddress
 import logging
 import time
 
 from django.conf import settings
 from django.core.cache import caches
+
+from apps.core.clientip import client_ip as _client_ip
 
 logger = logging.getLogger(__name__)
 
@@ -16,20 +17,13 @@ _WARN_EVERY = 60  # ثانیه؛ هشدار لاگ هر بار تلاش ورود
 _last_warn = 0.0
 
 
-def client_ip(request) -> str:
-    """IP کلاینت. فقط وقتی RAVIX_TRUST_PROXY_HEADERS=true و برنامه تنها پشت پراکسی خودتان (که X-Real-IP را بازنویسی می‌کند) است، از X-Real-IP می‌خواند؛
-    وگرنه سربرگ‌های قابل‌جعل نادیده گرفته می‌شوند."""
-    if getattr(settings, "RAVIX_TRUST_PROXY_HEADERS", False):
-        raw = request.META.get("HTTP_X_REAL_IP", "").strip()
-        try:
-            return str(ipaddress.ip_address(raw))
-        except ValueError:
-            pass
-    return request.META.get("REMOTE_ADDR") or "unknown"
+def client_ip(request) -> str | None:
+    """IP کلاینت از تابع واحد apps.core.clientip؛ ``None`` یعنی قابل‌تشخیص نیست (آن‌گاه فقط محدودیت به‌ازای نام‌کاربری/ایمیل اعمال می‌شود)."""
+    return _client_ip(request)
 
 
-def _key(ip: str, identifier: str) -> str:
-    return f"login-fail:{ip}:{(identifier or '').strip().lower()}"
+def _key(ip: str | None, identifier: str) -> str:
+    return f"login-fail:{ip or '-'}:{(identifier or '').strip().lower()}"
 
 
 def _ip_key(ip: str) -> str:
@@ -71,17 +65,18 @@ def _bump_on(c, key: str) -> None:
 
 def is_locked(request, identifier: str) -> bool:
     ip = client_ip(request)
-    k1, k2 = _key(ip, identifier), _ip_key(ip)
-    return _with_cache(lambda c: c.get(k1, 0) >= MAX_ATTEMPTS or c.get(k2, 0) >= MAX_ATTEMPTS_PER_IP)
+    k1, k2 = _key(ip, identifier), (_ip_key(ip) if ip else None)  # IP نامعلوم ⇒ محدودیت سراسری IP نیست
+    return _with_cache(lambda c: c.get(k1, 0) >= MAX_ATTEMPTS or (k2 is not None and c.get(k2, 0) >= MAX_ATTEMPTS_PER_IP))
 
 
 def register_failure(request, identifier: str) -> None:
     ip = client_ip(request)
-    k1, k2 = _key(ip, identifier), _ip_key(ip)
+    k1, k2 = _key(ip, identifier), (_ip_key(ip) if ip else None)
 
     def bump(c):
         _bump_on(c, k1)
-        _bump_on(c, k2)
+        if k2 is not None:
+            _bump_on(c, k2)
 
     _with_cache(bump)
 
@@ -99,12 +94,15 @@ def allow_send(request, email: str, kind: str) -> bool:
 
     ip = client_ip(request)
     digest = hashlib.sha256((email or "").strip().lower().encode()).hexdigest()[:32]
-    k_ip, k_mail = f"mail-send:{kind}:ip:{ip}", f"mail-send:{kind}:em:{digest}"
+    k_ip, k_mail = (f"mail-send:{kind}:ip:{ip}" if ip else None), f"mail-send:{kind}:em:{digest}"
     window = settings.RAVIX_MAIL_WINDOW_SECONDS
 
     def hit(c):
         counts = []
         for key in (k_ip, k_mail):
+            if key is None:  # IP نامعلوم: فقط محدودیت به‌ازای ایمیل
+                counts.append(0)
+                continue
             c.add(key, 0, window)
             try:
                 counts.append(c.incr(key))
@@ -116,5 +114,5 @@ def allow_send(request, email: str, kind: str) -> bool:
     n_ip, n_mail = _with_cache(hit)
     allowed = n_ip <= settings.RAVIX_MAIL_LIMIT_PER_IP and n_mail <= settings.RAVIX_MAIL_LIMIT_PER_EMAIL
     if not allowed:
-        logger.warning("محدودیت نرخ ارسال ایمیل (%s) برای IP %s فعال شد.", kind, ip)
+        logger.warning("محدودیت نرخ ارسال ایمیل (%s) برای IP %s فعال شد.", kind, ip or "نامعلوم")
     return allowed

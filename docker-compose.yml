@@ -17,7 +17,7 @@ x-ravix-env: &ravix-env
   DJANGO_SECURE_SSL_REDIRECT: ${DJANGO_SECURE_SSL_REDIRECT:-false}
   RAVIX_SITE_URL: ${RAVIX_PUBLIC_URL:-http://localhost}
   RAVIX_INSTALL_TOKEN: ${RAVIX_INSTALL_TOKEN:-}      # خالی ⇒ توکن تصادفی در لاگ و /data/install_token
-  RAVIX_TRUST_PROXY_HEADERS: "true"                  # برنامه فقط از پشت nginx همین compose در دسترس است (X-Real-IP را nginx تعیین می‌کند)
+  RAVIX_TRUSTED_PROXIES: "172.16.0.0/12,192.168.0.0/16,10.0.0.0/8"  # شبکهٔ داخلی compose؛ برنامه فقط از پشت nginx همین compose در دسترس است
   FORWARDED_ALLOW_IPS: "*"
   EMAIL_HOST: ${EMAIL_HOST:-localhost}
   EMAIL_HOST_USER: ${EMAIL_HOST_USER:-}

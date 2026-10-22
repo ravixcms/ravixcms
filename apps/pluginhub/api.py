@@ -187,7 +187,9 @@ def download(request, slug, version):
 
 # ------------------------------------------------------------------ انتشار با توکن ناشر
 def _throttled(request, bucket, limit, window):
-    ip = (request.META.get("REMOTE_ADDR") or "?")[:45]
+    from apps.core.clientip import client_ip
+
+    ip = (client_ip(request) or "-")[:45]
     key = f"hub:{bucket}:{ip}"
     n = cache.get(key, 0)
     if n >= limit:
