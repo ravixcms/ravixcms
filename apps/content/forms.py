@@ -89,6 +89,8 @@ class PostForm(StyledFormMixin, forms.ModelForm):
 
     def save(self, commit=True):
         post = super().save(commit=False)
+        if post.pk and self.has_changed():
+            post.is_sample = False  # ویرایش‌شده یعنی دیگر «نمونه» نیست
         if not self.can_publish:
             if not post.pk:
                 post.author = self.user
@@ -123,6 +125,8 @@ class PageForm(StyledFormMixin, forms.ModelForm):
 
     def save(self, commit=True):
         page = super().save(commit=False)
+        if page.pk and self.has_changed():
+            page.is_sample = False
         if not page.pk:
             page.author = self.user
         if commit:

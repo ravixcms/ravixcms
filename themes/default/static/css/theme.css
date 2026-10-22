@@ -158,6 +158,10 @@ ul,ol{padding-inline-start:1.4em}
 .empty-state{border:2px dashed var(--rv-border);border-radius:var(--radius);padding:2.5rem 1.5rem}
 .error-code{font-size:clamp(4rem,14vw,7rem);font-weight:900;line-height:1;margin:0;color:var(--rv-primary)}
 .error-box .search-form{margin-inline:auto}
+.error-box{background:var(--rv-primary-soft);border:1px solid var(--rv-border);border-radius:calc(var(--radius)*2);padding:3rem 1.5rem;margin-block:3rem}
+.error-box h1{margin:.5rem 0 .25rem}
+.error-box p{margin-block:.5rem}
+.error-box .error-actions{display:flex;flex-wrap:wrap;gap:.75rem;justify-content:center;margin-top:1.5rem}
 .search-status{margin-bottom:1rem}
 .link-list li{padding-block:.4rem;border-bottom:1px solid var(--rv-border)}
 
