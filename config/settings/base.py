@@ -319,8 +319,9 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = "DENY"
 SECURE_REFERRER_POLICY = "same-origin"
 RAVIX_CSP_REPORT_ONLY = env_bool("RAVIX_CSP_REPORT_ONLY", False)  # true: فقط گزارش (برای عیب‌یابی)؛ پیش‌فرض اعمال کامل
-# فقط وقتی برنامه تنها پشت پراکسی خودتان است (Nginx با proxy_set_header X-Real-IP $remote_addr): IP واقعی کلاینت برای محدودیت ورود
-RAVIX_TRUST_PROXY_HEADERS = env_bool("RAVIX_TRUST_PROXY_HEADERS", False)
+# پراکسی‌های مورداعتماد (IP/CIDR، با کاما) برای خواندن X-Forwarded-For / X-Real-IP. سوکت یونیکس همیشه مورداعتماد است؛ برای Nginx روی TCP
+# مثلاً RAVIX_TRUSTED_PROXIES=127.0.0.1. منطق: apps/core/clientip.py
+RAVIX_TRUSTED_PROXIES = env_list("RAVIX_TRUSTED_PROXIES")
 RAVIX_ADMIN_PATH = env("RAVIX_ADMIN_PATH", "django-admin").strip("/")  # مسیر django-admin را عوض کنید یا در Nginx محدود کنید
 
 # ---------------------------------------------------------------------------

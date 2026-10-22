@@ -4,8 +4,8 @@ from .models import AuditLog
 def _client_ip(request):
     if request is None:
         return None
-    # فقط REMOTE_ADDR (هدرهای X-Forwarded-For بدون پروکسی مورد اعتماد قابل جعل‌اند)
-    return request.META.get("REMOTE_ADDR") or None
+    from apps.core.clientip import client_ip  # تنها تابع تعیین IP؛ سربرگ‌ها فقط از پروکسی مورداعتماد
+    return client_ip(request)
 
 
 def log_event(request=None, action=AuditLog.Action.UPDATE, obj=None, message="", *, object_type=None, actor=None):

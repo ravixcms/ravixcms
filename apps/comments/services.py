@@ -56,6 +56,8 @@ def contains_blocked(words: list[str], *parts: str) -> bool:
 def rate_limited(request) -> bool:
     """هر تلاش (پذیرفته یا ردشده) شمرده می‌شود؛ True = از حد گذشته."""
     ip = throttle.client_ip(request)
+    if ip is None:  # IP نامعلوم: محدودیت سراسری اعمال نمی‌شود (جلوگیری از قفل‌شدن همه با هم)
+        return False
     key = f"comment-hit:{hashlib.sha256(ip.encode()).hexdigest()[:24]}"
     window = settings.RAVIX_COMMENT_WINDOW_SECONDS
 
@@ -122,7 +124,7 @@ def submit(request, post, data) -> Comment | None:
     status = apply_filter("comments.before_save", payload, post_id=post.pk, request=request)["status"]
     comment = Comment.objects.create(
         post=post, parent=parent, depth=(parent.depth + 1) if parent else 0, author_name=name, author_email=email, body=body,
-        body_html=clean_body(body), status=status, ip_address=payload["ip"] if payload["ip"] != "unknown" else None,
+        body_html=clean_body(body), status=status, ip_address=payload["ip"] or None,
     )
     run_action("comments.created", comment_id=comment.pk, post_id=post.pk, status=comment.status, request=request)
     if comment.status != Comment.Status.SPAM:

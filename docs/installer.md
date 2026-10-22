@@ -112,7 +112,7 @@ docker compose up -d
 تصویر تغییرناپذیر است (کد فقط‌خواندنی)؛ ارتقای درجا از پنل کار نمی‌کند. نسخهٔ تازهٔ کد را بگیرید و `docker compose up -d --build`؛ `migrate` خودکار اجرا می‌شود. پیش از آن `docker compose exec backup /app/deploy/backup.sh`.
 
 ### نکته‌های عملیاتی
-- `RAVIX_TRUST_PROXY_HEADERS=true` در compose روشن است چون برنامه فقط پشت Nginx همین compose در دسترس است (`X-Real-IP` را Nginx تعیین می‌کند). اگر جلوی Nginx هم پراکسی دیگری هست، IP کلاینت همان پراکسی دیده می‌شود.
+- `RAVIX_TRUSTED_PROXIES` در compose روی شبکه‌های خصوصی Docker تنظیم است چون برنامه فقط پشت Nginx همین compose در دسترس است؛ Nginx هدرهای `X-Forwarded-For`/`X-Real-IP` را تعیین می‌کند. اگر جلوی Nginx پراکسی/CDN دیگری هست، نشانی آن را هم به `RAVIX_TRUSTED_PROXIES` اضافه کنید تا IP واقعی (راست‌ترین نشانی غیرمورداعتماد) خوانده شود.
 - نسخهٔ major تصویر PostgreSQL (`postgres:17`) باید با `postgresql-client` داخل Dockerfile (Debian trixie = 17) برابر یا بالاتر از آن بماند؛ وگرنه `pg_dump` از ناسازگاری نسخه خطا می‌دهد.
 - بدون compose (`docker run`): خودتان `/data`، `/data/media`، `/backups` را به volume وصل کنید و `DATABASE_URL`، `REDIS_URL` را بدهید.
 

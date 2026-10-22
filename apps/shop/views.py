@@ -57,7 +57,9 @@ class ShopView(View):
 
 
 def _limited(request, bucket, limit, window):
-    ip = request.META.get("REMOTE_ADDR", "")
+    from apps.core.clientip import client_ip
+
+    ip = client_ip(request) or ""
     key = "shop-rl:" + hashlib.sha256(f"{bucket}|{ip}".encode()).hexdigest()[:32]
     if cache.add(key, 1, window):
         return False

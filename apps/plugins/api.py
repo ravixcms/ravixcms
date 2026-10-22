@@ -110,7 +110,9 @@ class PluginAPI:
 
     # --- ابزار امنیتی
     def client_ip(self, request) -> str:
-        return request.META.get("REMOTE_ADDR", "") or ""
+        from apps.core.clientip import client_ip
+
+        return client_ip(request) or ""
 
     def rate_limit(self, request, bucket: str, limit: int, window: int) -> bool:
         """True اگر درخواست مجاز است. شمارش بر اساس IP و سطل ``bucket`` در بازهٔ ``window`` ثانیه."""

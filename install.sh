@@ -303,7 +303,7 @@ env_set RAVIX_PLUGIN_BACKUP_DIR "$BASE/plugin_backups"
 env_set RAVIX_THEME_INSTALL_DIR "$BASE/themes_installed"
 env_set RAVIX_REGISTRY_STORAGE "$BASE/registry_packages"
 env_set RAVIX_UPDATE_WORK_DIR "$BASE/update_work"
-env_set RAVIX_TRUST_PROXY_HEADERS "$([ "$NGINX" = 1 ] && echo true || echo false)"
+# IP کلاینت: Gunicorn روی سوکت یونیکس است و به‌طور خودکار مورداعتماد؛ چیزی لازم نیست (RAVIX_TRUSTED_PROXIES فقط برای پروکسی روی TCP)
 [ "$SSL" = 0 ] && env_set DJANGO_SECURE_SSL_REDIRECT false
 [ "$DRY_RUN" = 1 ] || { chown root:"$APP_USER" "$ENV_FILE"; chmod 640 "$ENV_FILE"; }
 ok "تنظیمات آماده است (کلیدهای موجود دست نخوردند)"

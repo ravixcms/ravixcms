@@ -76,6 +76,40 @@ def check_https(request=None) -> list[Check]:
     return out
 
 
+def check_client_ip(request=None) -> list[Check]:
+    """آیا Ravix IP واقعی بازدیدکننده را می‌بیند؟ بدون آن محدودیت ورود/دیدگاه/ایمیل یا اثری ندارد یا همه را یکی می‌شمارد."""
+    from apps.core import clientip
+
+    g = "امنیت و HTTPS"
+    title = "تشخیص IP بازدیدکننده"
+    fix_proxy = ("پشت Nginx روی سوکت یونیکس تنظیمی لازم نیست. اگر Nginx/پراکسی روی TCP وصل می‌شود، نشانی آن را در RAVIX_TRUSTED_PROXIES بنویسید "
+                 "(مثلاً 127.0.0.1) و مطمئن شوید پراکسی X-Forwarded-For را می‌فرستد (deploy/ravix-proxy.conf).")
+    out = []
+    bad = clientip.invalid_trusted_entries()
+    if bad:
+        out.append(_c("client_ip_config", g, "RAVIX_TRUSTED_PROXIES", CRITICAL, "ورودی نامعتبر: " + "، ".join(bad[:5]), "فقط IP یا CIDR بنویسید."))
+    state = None
+    if request is not None:
+        ip, state = clientip.diagnose(request)
+    if state in (None, "direct", "proxied") and request is not None:
+        out.append(_c("client_ip", g, title, GOOD, f"IP این درخواست درست خوانده شد ({ip})."))
+        obs = {} if state == "proxied" else clientip.observations()
+    else:
+        obs = clientip.observations()
+        if request is not None:
+            obs = {**obs, state: {"remote": request.META.get("REMOTE_ADDR") or "سوکت یونیکس"}}
+    if "untrusted_proxy" in obs:
+        out.append(_c("client_ip", g, title, CRITICAL,
+                      f"درخواست‌ها از پراکسی {obs['untrusted_proxy'].get('remote')} می‌رسند ولی مورداعتماد نیست؛ همهٔ بازدیدکننده‌ها با یک IP شمرده می‌شوند.", fix_proxy))
+    elif "no_headers" in obs:
+        out.append(_c("client_ip", g, title, RECOMMENDED,
+                      "از پراکسی مورداعتماد درخواست می‌رسد ولی هدر IP (X-Forwarded-For یا X-Real-IP) ندارد؛ IP قابل‌تشخیص نیست و فقط محدودیت به‌ازای نام‌کاربری اعمال می‌شود.",
+                      "در پراکسی proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; را اضافه کنید."))
+    elif request is None:
+        out.append(_c("client_ip", g, title, UNKNOWN, "تا به حال درخواست مشکوکی دیده نشده؛ این صفحه را از طریق دامنهٔ اصلی باز کنید تا بررسی زنده انجام شود."))
+    return out
+
+
 # ------------------------------------------------------------------ ایمیل
 def check_email() -> list[Check]:
     g = "ایمیل"
@@ -293,7 +327,7 @@ GROUP_ORDER = ["امنیت و HTTPS", "ایمیل", "کش و ذخیره‌ساز
 
 def run_all(request=None) -> list[Check]:
     checks: list[Check] = []
-    for fn in (lambda: check_https(request), check_email, check_cache, check_database, check_timers, check_backup, check_versions):
+    for fn in (lambda: check_https(request), lambda: check_client_ip(request), check_email, check_cache, check_database, check_timers, check_backup, check_versions):
         try:
             checks.extend(fn())
         except Exception as exc:  # noqa: BLE001 — یک بررسی خراب نباید کل صفحه را بیندازد
