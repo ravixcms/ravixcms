@@ -1,0 +1,27 @@
+{% extends "layouts/panel.html" %}
+{% load ravin_ui %}
+{% block title %}بارگذاری فایل{% endblock %}
+{% block page_title %}بارگذاری فایل{% endblock %}
+{% block content_class %}content-narrow{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>بارگذاری فایل</h1><p>چند فایل را می‌توانید هم‌زمان انتخاب کنید.</p></div></div>
+<div class="card"><div class="card-body" style="max-width:640px">
+  <form method="post" enctype="multipart/form-data" novalidate data-once>
+    {% csrf_token %}
+    {% include "partials/_form_errors.html" %}
+    <div class="field {% if form.files.errors %}has-error{% endif %}">
+      <label for="{{ form.files.id_for_label }}">{{ form.files.label }}</label>
+      {{ form.files }}
+      <p class="help">{{ form.files.help_text }} تصاویر تا ۵ مگابایت، اسناد تا ۱۵، صوت تا ۲۵ و ویدئو تا ۵۰ مگابایت.</p>
+      {% for error in form.files.errors %}<p class="error-text">{{ error }}</p>{% endfor %}
+    </div>
+    {% include "partials/_field.html" with field=form.title %}
+    {% include "partials/_field.html" with field=form.alt_text %}
+    <p class="help">فرمت‌های مجاز: JPG، PNG، GIF، WEBP، PDF، TXT، CSV، DOC/DOCX، XLS/XLSX، PPT/PPTX، MP3، WAV، OGG، MP4، WEBM. فایل‌های اجرایی، اسکریپت، HTML و SVG پذیرفته نمی‌شوند.</p>
+    <div class="form-actions">
+      <button type="submit" class="btn">{% icon "upload" 18 %} بارگذاری</button>
+      <a href="{% url 'media_library:media_list' %}" class="btn btn-light">انصراف</a>
+    </div>
+  </form>
+</div></div>
+{% endblock %}

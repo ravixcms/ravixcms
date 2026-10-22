@@ -1,0 +1,17 @@
+asgiref==3.12.1
+cffi==2.1.1
+cryptography==50.0.2
+Django==5.2.18
+djangorestframework==3.18.3
+gunicorn==26.2.0
+jalali_core==1.0.0
+jdatetime==6.1.1
+Markdown==3.11.2
+nh3==0.3.7
+pillow==13.0.0
+psycopg==3.3.6
+psycopg-binary==3.3.6
+pycparser==3.11
+python-dotenv==1.2.4
+sqlparse==0.6.0
+whitenoise==6.12.0

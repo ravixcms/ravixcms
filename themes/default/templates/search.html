@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load ravin_theme %}
+{% block body_class %}page-search{% endblock %}
+{% block content %}
+<div class="container">
+  {% include "partials/breadcrumbs.html" %}
+  <header class="page-head"><h1>جستجو</h1></header>
+  {% include "partials/search_form.html" with input_id="page-q" query=query %}
+  <div class="search-status" role="status" aria-live="polite">
+    {% if searched %}
+      {% if total %}<p>{{ total|fa_digits }} نتیجه برای «{{ query }}»</p>{% else %}<p>نتیجه‌ای برای «{{ query }}» پیدا نشد. عبارت کوتاه‌تر یا کلمه‌ای دیگر را امتحان کنید.</p>{% endif %}
+    {% elif query %}
+      <p>حداقل دو نویسه وارد کنید.</p>
+    {% endif %}
+  </div>
+  {% if pages %}
+  <section aria-labelledby="found-pages">
+    <h2 id="found-pages" class="sub-head">صفحه‌ها</h2>
+    <ul class="plain link-list">{% for p in pages %}<li><a href="{{ p.url }}">{{ p.label }}</a></li>{% endfor %}</ul>
+  </section>
+  {% endif %}
+  {% if posts %}
+  <section aria-labelledby="found-posts">
+    <h2 id="found-posts" class="sub-head">نوشته‌ها</h2>
+    <div class="river">{% for post in posts %}{% include "partials/post_row.html" with post=post hlevel=3 %}{% endfor %}</div>
+    {% include "partials/pagination.html" %}
+  </section>
+  {% endif %}
+</div>
+{% endblock %}

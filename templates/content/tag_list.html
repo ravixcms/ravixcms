@@ -1,0 +1,25 @@
+{% extends "layouts/panel.html" %}
+{% load ravin_ui %}
+{% block title %}برچسب‌ها{% endblock %}
+{% block page_title %}برچسب‌ها{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>برچسب‌ها</h1></div><a href="{% url 'content:tag_create' %}" class="btn">{% icon "plus" 18 %} برچسب جدید</a></div>
+<div class="card">
+  <form method="get" class="toolbar" role="search">
+    <input type="search" name="q" value="{{ q }}" class="input grow" placeholder="جستجوی برچسب" aria-label="جستجو">
+    <button type="submit" class="btn">{% icon "search" 18 %} جستجو</button>
+  </form>
+  {% if tags %}
+  <div class="table-wrap"><table class="table">
+    <thead><tr><th>نام</th><th>نامک</th><th>تعداد نوشته</th><th></th></tr></thead>
+    <tbody>
+    {% for t in tags %}
+      <tr><td><strong>{{ t.name }}</strong></td><td class="ltr">{{ t.slug }}</td><td>{{ t.post_count|fa_digits }}</td>
+        <td><a class="btn btn-light btn-sm" href="{% url 'content:tag_update' t.pk %}">{% icon "edit" 16 %}</a>
+            <a class="btn btn-light btn-sm" href="{% url 'content:tag_delete' t.pk %}">{% icon "trash" 16 %}</a></td></tr>
+    {% endfor %}
+    </tbody></table></div>
+  {% include "partials/_pagination.html" %}
+  {% else %}<div class="empty">برچسبی پیدا نشد.</div>{% endif %}
+</div>
+{% endblock %}

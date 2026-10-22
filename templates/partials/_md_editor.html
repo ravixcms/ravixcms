@@ -1,0 +1,25 @@
+{% load ravin_ui %}
+<div class="field {% if field.errors %}has-error{% endif %}">
+  <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+  <div class="md-editor" data-md-editor data-preview-url="{% url 'content:markdown_preview' %}">
+    <div class="md-toolbar" role="toolbar" aria-label="ابزار قالب‌بندی">
+      <button type="button" data-md="bold" title="پررنگ"><b>B</b></button>
+      <button type="button" data-md="italic" title="کج"><i>I</i></button>
+      <button type="button" data-md="heading" title="عنوان">H</button>
+      <button type="button" data-md="quote" title="نقل‌قول">“</button>
+      <button type="button" data-md="ul" title="فهرست نقطه‌ای">{% icon "list" 16 %}</button>
+      <button type="button" data-md="ol" title="فهرست شماره‌دار">۱.</button>
+      <button type="button" data-md="link" title="پیوند">{% icon "globe" 16 %}</button>
+      <button type="button" data-md="image" title="درج تصویر با نشانی">{% icon "image" 16 %}</button>
+      <button type="button" data-md="code" title="کد">&lt;/&gt;</button>
+      <span class="md-tabs">
+        <button type="button" class="active" data-md-tab="write">نوشتن</button>
+        <button type="button" data-md-tab="preview">پیش‌نمایش</button>
+      </span>
+    </div>
+    {{ field }}
+    <div class="md-preview prose" data-md-preview hidden></div>
+  </div>
+  <p class="help">برای نوشتن از Markdown استفاده می‌شود. نشانی تصاویر را می‌توانید از صفحه «رسانه‌ها» کپی کنید.</p>
+  {% for error in field.errors %}<p class="error-text">{{ error }}</p>{% endfor %}
+</div>

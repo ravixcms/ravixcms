@@ -1,0 +1,19 @@
+{% extends "layouts/panel.html" %}
+{% load ravin_ui %}
+{% block title %}ویرایش کاربر{% endblock %}
+{% block page_title %}ویرایش کاربر{% endblock %}
+{% block content_class %}content-narrow{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>ویرایش کاربر</h1><p>{{ object.display_name }} — <span class="ltr">{{ object.email }}</span></p></div></div>
+<div class="card"><div class="card-body" style="max-width:520px">
+  <form method="post" novalidate data-once>
+    {% csrf_token %}
+    {% include "partials/_form_errors.html" %}
+    {% for field in form %}{% include "partials/_field.html" %}{% endfor %}
+    <div class="form-actions">
+      <button type="submit" class="btn">{% icon "check" 18 %} ذخیره</button>
+      <a href="{% url 'accounts:user_list' %}" class="btn btn-light">انصراف</a>
+    </div>
+  </form>
+</div></div>
+{% endblock %}

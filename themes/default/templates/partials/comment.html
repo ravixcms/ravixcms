@@ -1,0 +1,15 @@
+<li class="comment" id="comment-{{ c.id }}">
+  <article class="comment-body" itemscope itemtype="https://schema.org/Comment">
+    <header class="comment-head">
+      <strong itemprop="author">{{ c.author_name }}</strong>
+      <time datetime="{{ c.date_iso }}" itemprop="dateCreated">{{ c.date_display }}</time>
+    </header>
+    <div class="comment-text" itemprop="text">{{ c.body_html }}</div>
+    {% if c.reply_url %}<a class="comment-reply" href="{{ c.reply_url }}" rel="nofollow">پاسخ</a>{% endif %}
+  </article>
+  {% if c.replies %}
+  <ol class="comment-replies">
+    {% for r in c.replies %}{% include "partials/comment.html" with c=r %}{% endfor %}
+  </ol>
+  {% endif %}
+</li>

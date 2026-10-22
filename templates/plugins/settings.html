@@ -1,0 +1,16 @@
+{% extends "layouts/panel.html" %}
+{% load ravin_ui %}
+{% block title %}تنظیمات {{ rec.name }}{% endblock %}
+{% block page_title %}تنظیمات افزونه: {{ rec.name }}{% endblock %}
+{% block content_class %}content-narrow{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>تنظیمات «{{ rec.name }}»</h1></div><a class="btn btn-light" href="{% url 'plugins:detail' rec.slug %}">بازگشت</a></div>
+<form method="post" novalidate data-once>
+  {% csrf_token %}
+  {% include "partials/_form_errors.html" %}
+  <div class="card" style="margin-bottom:1.25rem"><div class="card-body">
+    {% for field in form %}{% include "partials/_field.html" with field=field %}{% endfor %}
+  </div></div>
+  <button class="btn" type="submit">ذخیره</button>
+</form>
+{% endblock %}

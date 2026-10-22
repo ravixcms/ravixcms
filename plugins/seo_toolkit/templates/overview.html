@@ -1,0 +1,12 @@
+{% extends "plugins/page.html" %}
+{% load ravin_ui %}
+{% block plugin_content %}
+<div class="card">{% if rows %}<div class="table-wrap"><table class="table"><thead><tr><th>مورد</th><th>عنوان سئو</th><th>توضیحات</th><th>وضعیت</th><th></th></tr></thead><tbody>
+{% for r in rows %}<tr>
+  <td><span class="badge badge-draft">{{ r.kind_label }}</span> {{ r.title }}</td>
+  <td>{{ r.meta.title|default:"—" }}</td>
+  <td style="white-space:normal;max-width:320px">{{ r.meta.description|default:"—" }}</td>
+  <td>{% if r.meta.noindex %}<span class="badge badge-inactive">noindex</span>{% else %}<span class="badge badge-published">ایندکس</span>{% endif %}</td>
+  <td><a class="btn btn-light btn-sm" href="{% url 'plugins:page' plugin_slug 'edit' %}?kind={{ r.kind }}&amp;id={{ r.id }}">ویرایش</a></td>
+</tr>{% endfor %}</tbody></table></div>{% else %}<div class="empty">صفحه یا نوشته‌ای وجود ندارد.</div>{% endif %}</div>
+{% endblock %}

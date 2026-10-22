@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load ravin_ui %}
+{% block body %}
+<main class="auth-page">
+  <div class="auth-card">
+    <div class="auth-brand">
+      <div class="brand-mark">{% include "partials/_brand_mark.html" %}</div>
+      <h1>{{ site.site_name }}</h1>
+      {% if site.tagline %}<p>{{ site.tagline }}</p>{% endif %}
+    </div>
+    <div class="card"><div class="card-body">{% block auth_content %}{% endblock %}</div></div>
+    <p class="auth-footer">{% if site.footer_text %}{{ site.footer_text }}{% else %}قدرت‌گرفته از Ravin CMS{% endif %}</p>
+  </div>
+</main>
+{% endblock %}

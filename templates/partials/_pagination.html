@@ -1,0 +1,10 @@
+{% load ravin_ui %}
+{% if is_paginated %}
+<div class="pagination">
+  <span>صفحه {{ page_obj.number|fa_digits }} از {{ paginator.num_pages|fa_digits }} ({{ paginator.count|fa_digits }} مورد)</span>
+  <span style="display:flex;gap:.5rem">
+    {% if page_obj.has_previous %}<a class="btn btn-light btn-sm" href="?{% if query_string %}{{ query_string }}&{% endif %}page={{ page_obj.previous_page_number }}">قبلی</a>{% endif %}
+    {% if page_obj.has_next %}<a class="btn btn-light btn-sm" href="?{% if query_string %}{{ query_string }}&{% endif %}page={{ page_obj.next_page_number }}">بعدی</a>{% endif %}
+  </span>
+</div>
+{% endif %}

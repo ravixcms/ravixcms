@@ -1,0 +1,25 @@
+{
+  "slug": "seo_toolkit",
+  "name": "ابزار سئو",
+  "version": "1.0.0",
+  "description": "عنوان، توضیحات متا، noindex، canonical و تصویر اشتراک‌گذاری هر صفحه/نوشته را مدیریت می‌کند و الگوی عنوان سراسری دارد.",
+  "author": "Ravin CMS",
+  "api_version": 1,
+  "ravin": ">=0.5.0,<1.0.0",
+  "models": true,
+  "capabilities": {
+    "seo_toolkit.manage": "مدیریت تنظیمات سئوی صفحات"
+  },
+  "settings": [
+    {"key": "title_pattern", "label": "الگوی عنوان", "type": "text", "default": "{title} | {site}", "max_len": 100, "help": "از {title} و {site} استفاده کنید."},
+    {"key": "default_robots", "label": "robots پیش‌فرض", "type": "choice", "default": "", "choices": [["", "پیش‌فرض سیستم"], ["index,follow", "index,follow"], ["noindex,follow", "noindex,follow"]]},
+    {"key": "fallback_description", "label": "توضیحات پیش‌فرض (در نبود توضیحات صفحه)", "type": "textarea", "default": "", "max_len": 300}
+  ],
+  "admin_pages": [
+    {"key": "overview", "title": "سئوی صفحات", "view": "views:overview", "capability": "seo_toolkit.manage", "icon": "search", "section": "content", "order": 80},
+    {"key": "edit", "title": "ویرایش سئو", "view": "views:edit", "capability": "seo_toolkit.manage", "menu": false}
+  ],
+  "hooks": [
+    {"name": "public.seo", "handler": "hooks:apply_seo", "priority": 50}
+  ]
+}

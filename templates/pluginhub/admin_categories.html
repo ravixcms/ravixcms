@@ -1,0 +1,9 @@
+{% extends "layouts/panel.html" %}
+{% block title %}دسته‌ها{% endblock %}
+{% block page_title %}مدیریت مخزن{% endblock %}
+{% block content %}
+{% include "pluginhub/_admin_tabs.html" with active="categories" %}
+<form method="post">{% csrf_token %}<div class="card" style="margin-bottom:1.25rem"><div class="card-body">{% include "partials/_form_errors.html" with form=form %}{% for field in form %}{% include "partials/_field.html" with field=field %}{% endfor %}<button class="btn">افزودن دسته</button></div></div></form>
+<div class="card"><div class="table-wrap"><table class="table"><thead><tr><th>نامک</th><th>نام</th><th></th></tr></thead><tbody>
+{% for c in categories %}<tr><td class="ltr">{{ c.slug }}</td><td>{{ c.name }}</td><td><form method="post">{% csrf_token %}<input type="hidden" name="op" value="delete"><input type="hidden" name="pk" value="{{ c.pk }}"><button class="btn btn-danger btn-sm">حذف</button></form></td></tr>{% endfor %}
+</tbody></table></div></div>{% endblock %}

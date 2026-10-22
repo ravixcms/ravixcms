@@ -1,0 +1,30 @@
+{% load ravin_ui %}
+<nav class="tabs" aria-label="بخش‌های سفارشی‌سازی">
+  <a class="tab {% if tab == 'appearance' %}active{% endif %}" href="{% url 'themes:customize' %}" {% if tab == 'appearance' %}aria-current="page"{% endif %}>رنگ، فونت و لوگو</a>
+  <a class="tab {% if tab == 'layout' %}active{% endif %}" href="{% url 'themes:layout' %}" {% if tab == 'layout' %}aria-current="page"{% endif %}>سربرگ و پانویس</a>
+  <a class="tab {% if tab == 'menus' %}active{% endif %}" href="{% url 'themes:menus' %}" {% if tab == 'menus' %}aria-current="page"{% endif %}>منوها</a>
+  <a class="tab {% if tab == 'home' %}active{% endif %}" href="{% url 'themes:home' %}" {% if tab == 'home' %}aria-current="page"{% endif %}>صفحه اصلی</a>
+</nav>
+
+<div class="publish-bar card {% if cfg.has_draft %}has-draft{% endif %}" role="region" aria-label="وضعیت انتشار">
+  <div class="card-body">
+    <p class="publish-state">
+      {% if cfg.has_draft %}
+        <span class="badge badge-warn">منتشرنشده</span>
+        تغییرات شما هنوز روی سایت اعمال نشده است{% if cfg.draft_updated_at %} (آخرین ویرایش: {{ cfg.draft_updated_at|jalali_datetime }}){% endif %}.
+      {% else %}
+        <span class="badge badge-published">منتشرشده</span>
+        سایت دقیقاً مطابق تنظیمات زیر نمایش داده می‌شود.
+      {% endif %}
+      {% if working_theme %}<span class="muted"> قالب: {{ working_theme.display_name }}</span>{% endif %}
+    </p>
+    <div class="publish-actions">
+      <form method="post" action="{% url 'themes:preview_start' %}">{% csrf_token %}<button type="submit" class="btn btn-light">{% icon "eye" 18 %} پیش‌نمایش در سایت</button></form>
+      {% if preview_active %}<form method="post" action="{% url 'themes:preview_stop' %}">{% csrf_token %}<button type="submit" class="btn btn-light">خروج از پیش‌نمایش</button></form>{% endif %}
+      {% if cfg.has_draft %}
+      <form method="post" action="{% url 'themes:discard' %}" data-confirm="تغییرات منتشرنشده دور ریخته شود؟">{% csrf_token %}<button type="submit" class="btn btn-light">دور ریختن تغییرات</button></form>
+      <form method="post" action="{% url 'themes:publish' %}">{% csrf_token %}<button type="submit" class="btn">{% icon "check" 18 %} انتشار تغییرات</button></form>
+      {% endif %}
+    </div>
+  </div>
+</div>

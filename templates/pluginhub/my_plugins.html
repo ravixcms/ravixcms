@@ -1,0 +1,14 @@
+{% extends "layouts/panel.html" %}
+{% load ravin_ui %}
+{% block title %}انتشار افزونه{% endblock %}
+{% block page_title %}انتشار افزونه{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>افزونه‌های من</h1><p>ناشر: {{ publisher.display_name }}</p></div>
+  <div style="display:flex;gap:.5rem"><a class="btn btn-light" href="{% url 'pluginhub:tokens' %}">توکن‌های API</a><a class="btn" href="{% url 'pluginhub:upload' %}">{% icon "plus" 18 %} بارگذاری نسخه</a></div></div>
+<div class="card">
+{% if plugins %}<div class="table-wrap"><table class="table"><thead><tr><th>افزونه</th><th>نسخه‌ها</th><th></th></tr></thead><tbody>
+{% for p in plugins %}<tr><td><strong>{{ p.name }}</strong><br><span class="muted ltr">{{ p.slug }}</span>{% if not p.is_listed %} <span class="badge badge-inactive">خارج از فهرست</span>{% endif %}</td>
+<td class="ltr">{% for v in p.versions.all %}{{ v.version }} ({{ v.status }}){% if not forloop.last %}, {% endif %}{% endfor %}</td>
+<td><a class="btn btn-light btn-sm" href="{% url 'pluginhub:my_plugin' p.slug %}">مدیریت</a></td></tr>{% endfor %}
+</tbody></table></div>{% else %}<div class="empty">هنوز افزونه‌ای منتشر نکرده‌اید.</div>{% endif %}
+</div>{% endblock %}

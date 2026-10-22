@@ -1,0 +1,22 @@
+{% extends "layouts/auth.html" %}
+{% load ravin_ui %}
+{% block title %}تأیید ایمیل{% endblock %}
+{% block auth_content %}
+{% if state == "ok" %}
+  <h2 style="margin-bottom:.75rem">تأیید ایمیل</h2>
+  <p>برای تکمیل تأیید ایمیل حساب خود، دکمهٔ زیر را بزنید.</p>
+  <form method="post" data-once>{% csrf_token %}<button type="submit" class="btn btn-block">{% icon "check" 18 %} تأیید ایمیل</button></form>
+{% elif state == "verified" %}
+  <h2 style="margin-bottom:.75rem">ایمیل تأیید شد</h2>
+  <p>ایمیل حساب شما با موفقیت تأیید شد.</p>
+  <p class="auth-switch"><a class="btn btn-block" href="{% url 'accounts:login' %}">ادامه</a></p>
+{% elif state == "done" %}
+  <h2 style="margin-bottom:.75rem">قبلاً تأیید شده است</h2>
+  <p>ایمیل این حساب پیش‌تر تأیید شده است و نیازی به کار دیگری نیست.</p>
+  <p class="auth-switch"><a href="{% url 'accounts:login' %}">ورود</a></p>
+{% else %}
+  <h2 style="margin-bottom:.75rem">پیوند معتبر نیست</h2>
+  <p>این پیوند نامعتبر است یا منقضی شده است. می‌توانید پیوند تازه بخواهید.</p>
+  <p class="auth-switch"><a href="{% url 'accounts:verify_resend' %}">دریافت پیوند تازه</a></p>
+{% endif %}
+{% endblock %}

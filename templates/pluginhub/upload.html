@@ -1,0 +1,9 @@
+{% extends "layouts/panel.html" %}
+{% block title %}بارگذاری نسخه{% endblock %}
+{% block page_title %}بارگذاری نسخه{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>بارگذاری نسخهٔ افزونه</h1><p>فایل zip شامل یک پوشه به نام شناسهٔ افزونه و <span class="ltr">plugin.json</span> در آن. شناسه و نسخه از manifest خوانده می‌شود و نسخهٔ ثبت‌شده تغییرناپذیر است.</p></div></div>
+<form method="post" enctype="multipart/form-data">{% csrf_token %}
+<div class="card"><div class="card-body">{% include "partials/_form_errors.html" with form=form %}{% for field in form %}{% include "partials/_field.html" with field=field %}{% endfor %}
+<button class="btn" type="submit">بارگذاری</button></div></div></form>
+{% endblock %}

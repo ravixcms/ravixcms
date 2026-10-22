@@ -1,0 +1,45 @@
+{% extends "layouts/panel.html" %}
+{% load ravin_ui %}
+{% block title %}تنظیمات سایت{% endblock %}
+{% block page_title %}تنظیمات سایت{% endblock %}
+{% block content_class %}content-narrow{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>تنظیمات سایت</h1><p>اطلاعات پایه و هویت سایت. آخرین ویرایش: {{ object.updated_at|jalali_datetime }}</p></div></div>
+<form method="post" enctype="multipart/form-data" novalidate data-once>
+  {% csrf_token %}
+  {% include "partials/_form_errors.html" %}
+  <div class="card" style="margin-bottom:1.25rem">
+    <div class="card-header"><h2>اطلاعات عمومی</h2></div>
+    <div class="card-body form-grid">
+      <div>{% include "partials/_field.html" with field=form.site_name %}</div>
+      <div>{% include "partials/_field.html" with field=form.tagline %}</div>
+      <div class="span-2">{% include "partials/_field.html" with field=form.description %}</div>
+      <div>{% include "partials/_field.html" with field=form.logo %}</div>
+      <div>{% include "partials/_field.html" with field=form.favicon %}</div>
+      <div class="span-2">{% include "partials/_field.html" with field=form.default_share_image %}</div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:1.25rem">
+    <div class="card-header"><h2>اطلاعات تماس</h2></div>
+    <div class="card-body form-grid">
+      <div>{% include "partials/_field.html" with field=form.admin_email %}</div>
+      <div>{% include "partials/_field.html" with field=form.contact_phone %}</div>
+      <div class="span-2">{% include "partials/_field.html" with field=form.address %}</div>
+      <div class="span-2">{% include "partials/_field.html" with field=form.footer_text %}</div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:1.25rem">
+    <div class="card-header"><h2>دسترسی کاربران</h2></div>
+    <div class="card-body">{% include "partials/_field.html" with field=form.registration_open %}</div>
+  </div>
+  <div class="card" style="margin-bottom:1.25rem">
+    <div class="card-header"><h2>دیدگاه‌ها</h2></div>
+    <div class="card-body">
+      {% include "partials/_field.html" with field=form.comments_require_approval %}
+      {% include "partials/_field.html" with field=form.comments_notify_admin %}
+      {% include "partials/_field.html" with field=form.comments_blocked_words %}
+    </div>
+  </div>
+  <div class="form-actions"><button type="submit" class="btn">{% icon "check" 18 %} ذخیره تنظیمات</button></div>
+</form>
+{% endblock %}

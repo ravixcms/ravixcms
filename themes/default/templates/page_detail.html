@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load ravin_theme %}
+{% block body_class %}page-static{% if page.builder %} page-built{% endif %}{% endblock %}
+{% block content %}
+{% if page.builder %}
+{# صفحه ساخته‌شده با صفحه‌ساز: بدنه تمام‌عرض و خودکفاست (HTML امن + <style> خودش)؛ فقط عنوان و مسیر را قالب می‌دهد. #}
+{% if page.show_title %}
+<div class="container">
+  {% include "partials/breadcrumbs.html" %}
+  <header class="article-head"><h1>{{ page.title }}</h1></header>
+</div>
+{% else %}<h1 class="sr-only">{{ page.title }}</h1>{% endif %}
+{{ page.body_html }}
+{% else %}
+<div class="container">
+  {% include "partials/breadcrumbs.html" %}
+  <article class="article">
+    <header class="article-head"><h1>{{ page.title }}</h1></header>
+    <div class="prose">{{ page.body_html }}</div>
+    <p class="muted updated">آخرین به‌روزرسانی: <time datetime="{{ page.date_iso }}">{{ page.date_display }}</time></p>
+  </article>
+</div>
+{% endif %}
+{% endblock %}

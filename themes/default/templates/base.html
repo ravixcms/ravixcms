@@ -1,0 +1,87 @@
+{% load ravin_theme %}<!doctype html>
+<html lang="fa" dir="rtl" data-theme="{{ theme.slug }}">
+<head>
+{% theme_head %}
+<meta name="theme-color" content="{{ theme_vars.primary }}">
+<link rel="stylesheet" href="{% theme_static 'css/theme.css' %}">
+{% block head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+{% theme_toolbar %}
+<a class="skip-link" href="#main">پرش به محتوای اصلی</a>
+
+<header class="site-header{% if header.sticky %} is-sticky{% endif %}">
+  <div class="container header-inner">
+    <a class="brand" href="{{ site.home_url }}">
+      {% if site.logo_url %}<img class="brand-logo" src="{{ site.logo_url }}" alt="{{ site.name }}" height="40">{% else %}<span class="brand-name">{{ site.name }}</span>{% endif %}
+    </a>
+    {% if header.show_tagline and site.tagline %}<span class="brand-tagline">{{ site.tagline }}</span>{% endif %}
+
+    {% if menus.header %}
+    <nav class="site-nav" aria-label="منوی اصلی">
+      <ul>
+        {% for link in menus.header %}
+        <li><a href="{{ link.url }}"{% if link.active %} aria-current="page"{% endif %}{% if link.new_tab %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ link.label }}</a></li>
+        {% endfor %}
+      </ul>
+    </nav>
+    {% endif %}
+
+    <div class="header-tools">
+      {% if header.show_search %}
+      <form class="search-form" role="search" action="{{ site.search_url }}" method="get">
+        <label class="sr-only" for="header-q">جستجو در سایت</label>
+        <input id="header-q" type="search" name="q" placeholder="جستجو…" maxlength="100" autocomplete="off">
+        <button type="submit" class="btn btn-quiet">جستجو</button>
+      </form>
+      {% endif %}
+      {% if header.cta %}<a class="btn" href="{{ header.cta.url }}">{{ header.cta.label }}</a>{% endif %}
+    </div>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+{% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-about">
+      <p class="footer-name">{{ site.name }}</p>
+      {% if footer.text %}<p>{{ footer.text }}</p>{% elif site.description %}<p>{{ site.description }}</p>{% endif %}
+    </div>
+    {% if footer.show_menu and menus.footer %}
+    <nav aria-label="پیوندهای پانویس">
+      <p class="footer-head">پیوندها</p>
+      <ul class="plain">
+        {% for link in menus.footer %}
+        <li><a href="{{ link.url }}"{% if link.active %} aria-current="page"{% endif %}{% if link.new_tab %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ link.label }}</a></li>
+        {% endfor %}
+      </ul>
+    </nav>
+    {% endif %}
+    {% if footer.show_contact %}{% if site.email or site.phone or site.address %}
+    <address class="footer-contact">
+      <p class="footer-head">تماس</p>
+      <ul class="plain">
+        {% if site.email %}<li><a href="mailto:{{ site.email }}" dir="ltr">{{ site.email }}</a></li>{% endif %}
+        {% if site.phone %}<li><a href="tel:{{ site.phone }}" dir="ltr">{{ site.phone }}</a></li>{% endif %}
+        {% if site.address %}<li>{{ site.address }}</li>{% endif %}
+      </ul>
+    </address>
+    {% endif %}{% endif %}
+    {% if footer.social %}
+    <div>
+      <p class="footer-head">شبکه‌های اجتماعی</p>
+      <ul class="plain">
+        {% for link in footer.social %}
+        <li><a href="{{ link.url }}" target="_blank" rel="noopener noreferrer me">{{ link.label }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  </div>
+  <div class="container footer-credit"><p>ساخته‌شده با Ravin CMS</p></div>
+</footer>
+</body>
+</html>

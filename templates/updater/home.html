@@ -1,0 +1,45 @@
+{% extends "layouts/panel.html" %}
+{% load ravin_ui %}
+{% block title %}به‌روزرسانی‌ها{% endblock %}
+{% block page_title %}به‌روزرسانی‌ها{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>به‌روزرسانی‌ها</h1><p>نسخهٔ هسته، قالب‌ها و افزونه‌ها، بررسی نسخهٔ جدید از منبع رسمی و تاریخچهٔ ارتقاها. هیچ فایلی بدون بررسی SHA-256 و امضای دیجیتال جایگزین نمی‌شود.</p></div>
+  <form method="post" action="{% url 'updater:check' %}">{% csrf_token %}<button class="btn" type="submit" {% if not has_source %}disabled{% endif %}>بررسی نسخهٔ جدید</button></form></div>
+
+{% if v.core.restart_pending %}<div class="form-errors warn" role="status"><p>کد روی دیسک (<span class="ltr">{{ v.core.disk }}</span>) جدیدتر از پروسهٔ در حال اجراست (<span class="ltr">{{ v.core.running }}</span>). سرویس وب را راه‌اندازی مجدد کنید.</p></div>{% endif %}
+{% if lock %}<div class="form-errors warn" role="status"><p>ارتقایی در جریان است: <span class="ltr">{{ lock.operation }}</span> (از {{ lock.since|jalali_datetime }}). تا پایان آن ارتقای دیگری ممکن نیست.</p></div>{% endif %}
+{% for r in recovery %}<div class="form-errors" role="alert"><p><strong>اجرای #{{ r.pk }} نیازمند بازیابی دستی است.</strong> <a href="{% url 'updater:run' r.pk %}">دستور بازیابی</a></p></div>{% endfor %}
+{% if error %}<div class="form-errors" role="alert"><p>{{ error }}</p></div>{% endif %}
+{% if not has_source %}<div class="form-errors warn" role="status"><p>منبع رسمی به‌روزرسانی تنظیم نشده است (<span class="ltr">RAVIN_UPDATE_URL</span>). تا آن را تنظیم نکنید فقط نسخه‌های نصب‌شده نمایش داده می‌شود. هیچ نسخهٔ جدیدی «حدس» زده نمی‌شود.</p></div>{% endif %}
+{% if not web_apply %}<div class="form-errors warn" role="status"><p>اعمال ارتقا از وب خاموش است (امن‌ترین حالت). با دستور <span class="ltr">python manage.py ravin_update apply core</span> انجام دهید.</p></div>{% endif %}
+
+<div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>هسته</h2></div><div class="card-body">
+  <p>نسخهٔ فعلی: <strong class="ltr">{{ v.core.running }}</strong> — قرارداد افزونه <span class="ltr">{{ v.contracts.plugin_api }}</span>، قرارداد قالب <span class="ltr">{{ v.contracts.theme_api }}</span>، Python <span class="ltr">{{ v.python }}</span></p>
+  {% if plan and plan.latest %}
+    <p>نسخهٔ جدید: <strong class="ltr">{{ plan.latest.version }}</strong> {% if plan.latest.released %}({{ plan.latest.released }}){% endif %}{% if plan.latest.migrations %} — شامل مهاجرت دیتابیس{% endif %}</p>
+    {% if plan.latest.notes %}<p class="muted">{{ plan.latest.notes }}</p>{% endif %}
+    {% if plan.problems %}<div class="form-errors" role="alert"><p>موانع سازگاری:</p><ul>{% for p in plan.problems %}<li>{{ p }}</li>{% endfor %}</ul></div>{% endif %}
+    {% if plan.warnings %}<div class="form-errors warn"><ul>{% for p in plan.warnings %}<li>{{ p }}</li>{% endfor %}</ul></div>{% endif %}
+    {% if can_manage and web_apply and plan.can_apply %}
+      <form method="post" action="{% url 'updater:apply' 'core' %}" data-confirm="پیش از ارتقا از فایل‌ها و دیتابیس پشتیبان گرفته می‌شود و سایت چند لحظه در حالت تعمیر است. ادامه می‌دهید؟">{% csrf_token %}
+        <input type="hidden" name="version" value="{{ plan.latest.version }}"><button class="btn" type="submit">اعتبارسنجی و ارتقا به {{ plan.latest.version }}</button></form>
+    {% endif %}
+  {% elif plan %}<p class="badge badge-published">هسته به‌روز است</p>{% endif %}
+</div></div>
+
+<div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>قالب‌ها و افزونه‌ها</h2></div>
+  <div class="table-wrap"><table class="table"><thead><tr><th>نوع</th><th>نام</th><th>نسخه</th><th>نسخهٔ جدید</th><th></th></tr></thead><tbody>
+  {% for t in v.themes %}<tr><td>قالب</td><td class="ltr">{{ t.slug }}</td><td class="ltr">{{ t.version }}</td><td class="ltr">{{ t.new|default:"—" }}</td>
+    <td>{% if can_manage and web_apply and t.new %}<form method="post" action="{% url 'updater:apply' 'theme' %}">{% csrf_token %}<input type="hidden" name="slug" value="{{ t.slug }}"><button class="btn btn-light btn-sm">ارتقا</button></form>{% endif %}</td></tr>{% endfor %}
+  {% for p in v.plugins %}<tr><td>افزونه</td><td class="ltr">{{ p.slug }}</td><td class="ltr">{{ p.version }}</td><td class="ltr">{{ p.new|default:"—" }}</td>
+    <td>{% if can_manage and web_apply and p.new %}<form method="post" action="{% url 'updater:apply' 'plugin' %}">{% csrf_token %}<input type="hidden" name="slug" value="{{ p.slug }}"><button class="btn btn-light btn-sm">ارتقا</button></form>{% endif %}</td></tr>{% endfor %}
+  </tbody></table></div></div>
+
+<div class="card"><div class="card-header"><h2>تاریخچهٔ به‌روزرسانی</h2></div>
+  {% if runs %}<div class="table-wrap"><table class="table"><thead><tr><th>#</th><th>زمان</th><th>جزء</th><th>نسخه</th><th>وضعیت</th><th>مهاجرت</th><th></th></tr></thead><tbody>
+  {% for r in runs %}<tr><td>{{ r.pk }}</td><td>{{ r.started_at|jalali_datetime }}</td><td>{{ r.get_component_display }}{% if r.slug %} <span class="ltr">{{ r.slug }}</span>{% endif %}{% if r.kind == "rollback" %} (بازگشت){% endif %}</td>
+    <td class="ltr">{{ r.from_version }} → {{ r.to_version }}</td>
+    <td><span class="badge {% if r.status == 'succeeded' %}badge-published{% elif r.status == 'rolled_back' or r.status == 'reverted' or r.status == 'running' %}badge-warn{% else %}badge-inactive{% endif %}">{{ r.get_status_display }}</span></td>
+    <td>{{ r.migrations_applied|length }}</td><td><a class="btn btn-light btn-sm" href="{% url 'updater:run' r.pk %}">جزئیات</a></td></tr>{% endfor %}
+  </tbody></table></div>{% else %}<div class="empty">هنوز ارتقایی انجام نشده است.</div>{% endif %}</div>
+{% endblock %}

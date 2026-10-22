@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load ravin_theme %}
+{% block body_class %}page-error{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="error-box">
+    <p class="error-code" aria-hidden="true">{{ 404|fa_digits }}</p>
+    <h1>صفحه پیدا نشد</h1>
+    <p>آدرس را بررسی کنید یا از جستجو استفاده کنید. ممکن است این صفحه حذف یا منتقل شده باشد.</p>
+    {% include "partials/search_form.html" with input_id="error-q" query="" %}
+    <p><a class="more" href="{{ site.home_url }}">بازگشت به صفحهٔ اصلی</a></p>
+  </div>
+</div>
+{% endblock %}

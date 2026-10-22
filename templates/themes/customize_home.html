@@ -1,0 +1,39 @@
+{% extends "themes/customize_base.html" %}
+{% load ravin_ui %}
+{% block tab_content %}
+<form method="post" novalidate data-once>
+  {% csrf_token %}
+  <p class="help">بخش‌های پشتیبانی‌شده توسط قالب «{{ working_theme.display_name }}»: {{ supported_sections|join:"، " }}. بخش‌های دیگر ذخیره می‌شوند اما نمایش داده نمی‌شوند. ترتیب با عدد «ردیف» مشخص می‌شود.</p>
+  <section class="card formset" aria-labelledby="sections-title">
+    <div class="card-header"><h2 id="sections-title">بخش‌های صفحه اصلی</h2></div>
+    <div class="card-body">
+      {{ formset.management_form }}
+      {% for e in formset.non_form_errors %}<div class="form-errors" role="alert"><p>{{ e }}</p></div>{% endfor %}
+      {% for f in formset %}
+      <fieldset class="formset-row{% if f.errors %} has-errors{% endif %}">
+        <legend class="sr-only">بخش {{ forloop.counter }}</legend>
+        {% for e in f.non_field_errors %}<p class="error-text">{{ e }}</p>{% endfor %}
+        <div class="row-grid">
+          {% include "partials/_field.html" with field=f.type %}
+          {% include "partials/_field.html" with field=f.title %}
+          {% include "partials/_field.html" with field=f.subtitle %}
+          {% include "partials/_field.html" with field=f.category %}
+          {% include "partials/_field.html" with field=f.page %}
+          {% include "partials/_field.html" with field=f.count %}
+          {% include "partials/_field.html" with field=f.button_label %}
+          {% include "partials/_field.html" with field=f.button_url %}
+          {% include "partials/_field.html" with field=f.ORDER %}
+        </div>
+        {% include "partials/_field.html" with field=f.body %}
+        <div class="row-flags">
+          {% include "partials/_field.html" with field=f.hidden %}
+          {% include "partials/_field.html" with field=f.DELETE %}
+        </div>
+      </fieldset>
+      {% endfor %}
+    </div>
+  </section>
+  <div class="form-actions"><button type="submit" class="btn">{% icon "check" 18 %} ذخیره در پیش‌نویس</button></div>
+</form>
+{% include "themes/_preview_frame.html" %}
+{% endblock %}

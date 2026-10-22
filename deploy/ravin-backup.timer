@@ -1,0 +1,11 @@
+[Unit]
+Description=Run Ravin backup daily at 03:17
+
+[Timer]
+OnCalendar=*-*-* 03:17:00
+# اگر سرور در آن ساعت خاموش بود، پس از روشن‌شدن اجرا شود
+Persistent=true
+RandomizedDelaySec=5min
+
+[Install]
+WantedBy=timers.target

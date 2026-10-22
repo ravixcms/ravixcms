@@ -1,0 +1,69 @@
+"""تنظیمات تولید: امنیت سخت‌گیرانه و الزام به متغیرهای محیطی."""
+from django.core.exceptions import ImproperlyConfigured
+
+from .base import *  # noqa: F401,F403
+from .base import DATABASES, SHOP_ALLOW_SANDBOX_IN_PRODUCTION, SHOP_ENABLED, SHOP_PAYMENT_GATEWAY, env, env_bool
+
+DEBUG = False
+
+SECRET_KEY = env("DJANGO_SECRET_KEY", "")
+if not SECRET_KEY or len(SECRET_KEY) < 32:
+    raise ImproperlyConfigured("DJANGO_SECRET_KEY باید تنظیم شده و حداقل ۳۲ کاراکتر باشد.")
+
+if not env("DJANGO_ALLOWED_HOSTS"):
+    raise ImproperlyConfigured("DJANGO_ALLOWED_HOSTS باید در محیط تولید تنظیم شود.")
+
+if DATABASES["default"]["ENGINE"].endswith("sqlite3") and not env_bool("RAVIN_ALLOW_SQLITE_IN_PRODUCTION"):
+    raise ImproperlyConfigured("در محیط تولید باید DATABASE_URL به یک PostgreSQL اشاره کند.")
+
+SECURE_SSL_REDIRECT = env_bool("DJANGO_SECURE_SSL_REDIRECT", True)
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SECURE_HSTS_SECONDS = int(env("DJANGO_HSTS_SECONDS", "31536000"))
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+EMAIL_BACKEND = env("DJANGO_EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
+EMAIL_HOST = env("EMAIL_HOST", "localhost")
+EMAIL_PORT = int(env("EMAIL_PORT", "587"))
+EMAIL_HOST_USER = env("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", True)
+
+# --- فایل‌های استاتیک با نام هش‌دار (کش طولانی امن) ---
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
+}
+WHITENOISE_MAX_AGE = int(env("RAVIN_STATIC_MAX_AGE", "31536000"))  # نام فایل‌ها هش‌دار است
+
+# --- کش مشترک بین ورکرهای Gunicorn (برای محدودیت نرخ و ...) ---
+# با REDIS_URL از Redis استفاده می‌شود (پکیج redis لازم است)؛ در غیر این صورت کش فایلی که بین پردازه‌ها مشترک است.
+_redis = env("REDIS_URL")
+if _redis:
+    CACHES["default"] = {"BACKEND": "django.core.cache.backends.redis.RedisCache", "LOCATION": _redis}
+else:
+    CACHES["default"] = {"BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+                         "LOCATION": env("RAVIN_CACHE_DIR", "/var/cache/ravin")}
+# CACHES["throttle_fallback"] (جدول دیتابیس) از base می‌آید و فقط هنگام خرابی کش اصلی به کار می‌رود.
+
+# --- لاگ: stdout/stderr (systemd/journald آن را نگه می‌دارد) ---
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {"std": {"format": "%(asctime)s %(levelname)s %(name)s: %(message)s"}},
+    "handlers": {"console": {"class": "logging.StreamHandler", "formatter": "std"}},
+    "root": {"handlers": ["console"], "level": env("RAVIN_LOG_LEVEL", "INFO")},
+    "loggers": {"django.request": {"handlers": ["console"], "level": "WARNING", "propagate": False}},
+}
+
+# پشتیبان‌گیری/پردازش ورودی
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024
+SESSION_COOKIE_AGE = int(env("RAVIN_SESSION_AGE", str(60 * 60 * 24 * 14)))
+
+# اگر فروشگاه روشن است و درگاه آزمایشی بدون اجازهٔ صریح انتخاب شده، هشدار بلند (checkout هم رد می‌شود)
+if SHOP_ENABLED and SHOP_PAYMENT_GATEWAY == "sandbox" and not SHOP_ALLOW_SANDBOX_IN_PRODUCTION:
+    import warnings
+
+    warnings.warn("فروشگاه روشن است ولی درگاه واقعی متصل نیست؛ ثبت سفارش تا اتصال درگاه غیرفعال می‌ماند.")

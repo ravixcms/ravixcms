@@ -1,0 +1,15 @@
+{# پارامترها: post، hlevel (۲ یا ۳: سطح عنوان بر اساس جایگاه در صفحه) #}
+<article class="row{% if post.image_url %} has-media{% endif %}">
+  {% if post.image_url %}
+  <a class="row-media" href="{{ post.url }}" tabindex="-1" aria-hidden="true"><img src="{{ post.image_url }}" alt="" loading="lazy" decoding="async"></a>
+  {% endif %}
+  <div class="row-body">
+    {% if post.categories %}<ul class="chips" aria-label="دسته‌بندی‌ها">{% for c in post.categories %}<li><a href="{{ c.url }}">{{ c.name }}</a></li>{% endfor %}</ul>{% endif %}
+    {% if hlevel == 3 %}<h3 class="row-title"><a href="{{ post.url }}">{{ post.title }}</a></h3>{% else %}<h2 class="row-title"><a href="{{ post.url }}">{{ post.title }}</a></h2>{% endif %}
+    {% if post.excerpt %}<p class="row-excerpt">{{ post.excerpt }}</p>{% endif %}
+    <ul class="meta">
+      {% if post.author_name %}<li>{{ post.author_name }}</li>{% endif %}
+      <li><time datetime="{{ post.date_iso }}">{{ post.date_display }}</time></li>
+    </ul>
+  </div>
+</article>

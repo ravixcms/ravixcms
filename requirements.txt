@@ -1,0 +1,11 @@
+Django>=5.2,<6.0
+djangorestframework>=3.16
+python-dotenv>=1.0
+psycopg[binary]>=3.2
+Pillow>=11.0
+whitenoise>=6.8
+jdatetime>=5.0
+markdown>=3.7
+nh3>=0.2
+gunicorn>=23.0
+cryptography>=43.0

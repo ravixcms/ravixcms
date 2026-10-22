@@ -1,0 +1,34 @@
+name: Release
+on:
+  push: { tags: ["v[0-9]+.[0-9]+.[0-9]+*"] }
+permissions: { contents: write }
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.13", cache: pip }
+      - name: Tag matches RAVIN_VERSION
+        run: |
+          v=$(python -c "import re;print(re.search(r'RAVIN_VERSION = \"([^\"]+)\"',open('apps/core/version.py').read()).group(1))")
+          test "v$v" = "${GITHUB_REF_NAME%%-*}" || { echo "tag $GITHUB_REF_NAME != version $v"; exit 1; }
+      - run: pip install -r requirements.lock
+      - run: python manage.py test --parallel 4
+        env: { DJANGO_SECRET_KEY: ci-only-not-a-secret-ci-only-not-a-secret }
+      - name: Build archive
+        run: |
+          name="ravix-${GITHUB_REF_NAME#v}"
+          mkdir -p dist && TZ=UTC git archive --format=zip --prefix="$name/" -o "dist/$name.zip" HEAD
+          (cd dist && sha256sum "$name.zip" > SHA256SUMS)
+      - name: Verify archive and checksum
+        run: |
+          name="ravix-${GITHUB_REF_NAME#v}"
+          (cd dist && sha256sum -c SHA256SUMS)
+          python scripts/verify_release.py "dist/$name.zip" --version "${GITHUB_REF_NAME#v}"
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.zip
+            dist/SHA256SUMS
+          generate_release_notes: true

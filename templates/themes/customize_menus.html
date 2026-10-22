@@ -1,0 +1,37 @@
+{% extends "themes/customize_base.html" %}
+{% load ravin_ui %}
+{% block tab_content %}
+<form method="post" novalidate data-once>
+  {% csrf_token %}
+  <p class="help">ترتیب را با عدد «ردیف» تعیین کنید (عدد کوچک‌تر بالاتر). ردیف‌های بدون نوع پیوند نادیده گرفته می‌شوند. فقط فیلدهای مربوط به نوع پیوند انتخاب‌شده استفاده می‌شوند.</p>
+  {% for title, location, fs in menu_formsets %}
+  <section class="card formset" aria-labelledby="menu-{{ location }}">
+    <div class="card-header"><h2 id="menu-{{ location }}">{{ title }}</h2></div>
+    <div class="card-body">
+      {{ fs.management_form }}
+      {% for e in fs.non_form_errors %}<div class="form-errors" role="alert"><p>{{ e }}</p></div>{% endfor %}
+      {% for f in fs %}
+      <fieldset class="formset-row{% if f.errors %} has-errors{% endif %}">
+        <legend class="sr-only">آیتم {{ forloop.counter }} از {{ title }}</legend>
+        {% for e in f.non_field_errors %}<p class="error-text">{{ e }}</p>{% endfor %}
+        <div class="row-grid">
+          {% include "partials/_field.html" with field=f.label %}
+          {% include "partials/_field.html" with field=f.kind %}
+          {% include "partials/_field.html" with field=f.page %}
+          {% include "partials/_field.html" with field=f.category %}
+          {% include "partials/_field.html" with field=f.url %}
+          {% include "partials/_field.html" with field=f.ORDER %}
+        </div>
+        <div class="row-flags">
+          {% include "partials/_field.html" with field=f.new_tab %}
+          {% include "partials/_field.html" with field=f.DELETE %}
+        </div>
+      </fieldset>
+      {% endfor %}
+    </div>
+  </section>
+  {% endfor %}
+  <div class="form-actions"><button type="submit" class="btn">{% icon "check" 18 %} ذخیره در پیش‌نویس</button></div>
+</form>
+{% include "themes/_preview_frame.html" %}
+{% endblock %}
