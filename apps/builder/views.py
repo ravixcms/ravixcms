@@ -1,6 +1,7 @@
 import json
 
 from django.core.exceptions import PermissionDenied
+from apps.core.params import safe_id, safe_ids, safe_int
 from django.db.models import Count, Q
 from django.http import Http404, HttpResponse, JsonResponse
 from django.middleware.csrf import get_token
@@ -86,9 +87,9 @@ class PreviewView(CapabilityRequiredMixin, View):
     def get(self, request, page_id):
         page = get_object_or_404(Page, pk=page_id)
         design = get_object_or_404(PageDesign, page=page)
-        number = request.GET.get("version", "")
-        if number.isdigit():
-            version = get_object_or_404(DesignVersion, design=design, number=int(number))
+        number = safe_id(request.GET.get("version", ""))
+        if number is not None:
+            version = get_object_or_404(DesignVersion, design=design, number=number)
             doc = version.document
         else:
             doc = design.draft
@@ -276,13 +277,13 @@ class MediaListApi(ApiView):
         qs = Media.objects.filter(kind=Media.Kind.IMAGE).exclude(file="")
         ids = request.GET.get("ids", "")
         if ids:  # دریافت نشانی چند تصویر مشخص (برای نمایش در بوم)؛ حداکثر ۱۰۰ شناسه‌ی عددی
-            wanted = [int(x) for x in ids.split(",")[:100] if x.isdigit()]
+            wanted = safe_ids(ids.split(",")[:100], 100)
             return JsonResponse({"ok": True, "next": None, "items": [
                 {"id": m.pk, "url": m.file.url, "title": m.display_title, "alt": m.alt_text} for m in qs.filter(pk__in=wanted)]})
         q = request.GET.get("q", "").strip()[:100]
         if q:
             qs = qs.filter(Q(title__icontains=q) | Q(original_name__icontains=q) | Q(alt_text__icontains=q))
-        offset = int(request.GET["offset"]) if request.GET.get("offset", "").isdigit() else 0
+        offset = safe_int(request.GET.get("offset"), 0, hi=10**7)
         items = list(qs[offset: offset + self.PAGE + 1])
         return JsonResponse({
             "ok": True,

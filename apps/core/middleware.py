@@ -50,3 +50,24 @@ class SiteRegionalMiddleware:
         finally:
             timezone.deactivate()
             translation.deactivate()
+
+
+class NumericOverflowMiddleware:
+    """عدد بزرگ‌تر از بازهٔ INTEGER دیتابیس در query/POST (مثلاً ``?author=99999999999999999999`` در فیلترهای خود django-admin)
+    ۵۰۰ نمی‌شود؛ ۴۰۰ فارسی برمی‌گردد. فقط OverflowError و DataError «out of range» را می‌گیرد، نه هر خطای دیگر."""
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        return self.get_response(request)
+
+    def process_exception(self, request, exception):
+        from django.db import DataError
+
+        overflow = isinstance(exception, OverflowError) or (isinstance(exception, DataError) and "out of range" in str(exception).lower())
+        if not overflow:
+            return None
+        from .errorpages import standalone_response
+
+        return standalone_response(request, 400, "درخواست نامعتبر", "یکی از مقدارهای عددی درخواست خیلی بزرگ است. صفحه را بدون آن مقدار باز کنید.", icon="⚠️")

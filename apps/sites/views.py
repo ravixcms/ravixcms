@@ -1,5 +1,6 @@
 """مدیریت سایت‌ها (فقط مدیرکل) و تعویض سایت فعال پنل."""
 from django.contrib import messages
+from apps.core.params import safe_id
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import IntegrityError
 from django.http import Http404
@@ -59,7 +60,7 @@ class SiteDetailView(SitesAdmin, View):
                 d.full_clean(exclude=["site"])
                 d.save()
             elif action == "remove_domain":
-                site.domains.filter(pk=request.POST.get("id") or 0).delete()
+                site.domains.filter(pk=safe_id(request.POST.get("id")) or 0).delete()
             elif action == "add_member":
                 user = U.objects.filter(username=request.POST.get("username", "").strip()).first()
                 role = request.POST.get("role")
@@ -67,7 +68,7 @@ class SiteDetailView(SitesAdmin, View):
                     raise ValidationError("کاربر یا نقش نامعتبر است.")
                 SiteMember.objects.update_or_create(site=site, user=user, defaults={"role": role})
             elif action == "remove_member":
-                m = site.members.filter(pk=request.POST.get("id") or 0).first()
+                m = site.members.filter(pk=safe_id(request.POST.get("id")) or 0).first()
                 if m and m.user_id == site.owner_id:
                     raise ValidationError("مالک سایت را نمی‌توان حذف کرد.")
                 if m:

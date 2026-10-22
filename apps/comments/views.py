@@ -1,4 +1,5 @@
 from django.contrib import messages
+from apps.core.params import safe_id, safe_ids
 from django.db.models import Count, Q
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -34,8 +35,9 @@ class CommentListView(CapabilityRequiredMixin, QueryStringMixin, ListView):
         if q:
             qs = qs.filter(Q(body__icontains=q) | Q(author_name__icontains=q) | Q(author_email__icontains=q) | Q(post__title__icontains=q))
         post = self.request.GET.get("post", "")
-        if post.isdigit():
-            qs = qs.filter(post_id=int(post))
+        post_id = safe_id(post)
+        if post_id is not None:
+            qs = qs.filter(post_id=post_id)
         return qs.order_by("-created_at", "-id")
 
     def get_context_data(self, **kwargs):
@@ -63,7 +65,7 @@ class CommentBulkView(CapabilityRequiredMixin, View):
         if action == "empty_trash":
             qs = Comment.objects.filter(status=Comment.Status.TRASH)
         else:
-            ids = [int(i) for i in request.POST.getlist("ids") if i.isdigit()]
+            ids = safe_ids(request.POST.getlist("ids"))
             if not ids:
                 messages.error(request, "هیچ دیدگاهی انتخاب نشده است.")
                 return redirect(target)
