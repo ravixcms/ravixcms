@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-23 19:21+0330\n"
+"POT-Creation-Date: 2026-10-23 19:23+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -12,7 +12,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % "
+"1000000 == 0 ? 1 : 2;\n"
 
 #: static/builder/builder.js
 msgid "Section"
@@ -249,8 +250,8 @@ msgstr "Réglages de la page"
 #: static/builder/builder.js
 msgid "To edit, click a section, row, column or element on the canvas."
 msgstr ""
-"Pour modifier, cliquez sur une section, une ligne, une colonne ou un élément"
-" du canevas."
+"Pour modifier, cliquez sur une section, une ligne, une colonne ou un élément "
+"du canevas."
 
 #: static/builder/builder.js
 msgid "General"
@@ -343,8 +344,8 @@ msgid ""
 "It will be published on the site after an administrator approves it. Until "
 "then the current page is shown."
 msgstr ""
-"Elle sera publiée sur le site après approbation par un administrateur. D’ici"
-" là, la page actuelle est affichée."
+"Elle sera publiée sur le site après approbation par un administrateur. D’ici "
+"là, la page actuelle est affichée."
 
 #: static/builder/builder.js
 msgid "Submitted for approval."
@@ -396,8 +397,8 @@ msgid ""
 "Replace the current draft with version %(n)s? An automatic version of the "
 "current state will be saved."
 msgstr ""
-"Remplacer le brouillon actuel par la version %(n)s ? Une version automatique"
-" de l’état actuel sera enregistrée."
+"Remplacer le brouillon actuel par la version %(n)s ? Une version automatique "
+"de l’état actuel sera enregistrée."
 
 #: static/builder/builder.js
 msgid "Version %(n)s was restored to the draft."
@@ -442,6 +443,39 @@ msgstr "Afficher le mot de passe"
 #: static/js/ravix.js
 msgid "The file is larger than the allowed limit."
 msgstr "Le fichier dépasse la limite autorisée."
+
+#: static/js/ravix.js
+msgid "Choose files"
+msgstr "Choisir des fichiers"
+
+#: static/js/ravix.js
+#| msgid "Choose from library"
+msgid "Choose file"
+msgstr "Choisir un fichier"
+
+#: static/js/ravix.js
+msgid "No files chosen"
+msgstr "Aucun fichier choisi"
+
+#: static/js/ravix.js
+msgid "No file chosen"
+msgstr "Aucun fichier choisi"
+
+#: static/js/ravix.js
+msgid "Files selected: %(n)s"
+msgstr "Fichiers sélectionnés : %(n)s"
+
+#: static/js/ravix.js
+msgid "This file type is not accepted here."
+msgstr "Ce type de fichier n’est pas accepté ici."
+
+#: static/js/ravix.js
+msgid "Drop the files here"
+msgstr "Déposez les fichiers ici"
+
+#: static/js/ravix.js
+msgid "Drop the file here"
+msgstr "Déposez le fichier ici"
 
 #: static/js/ravix.js
 msgid "bold text"

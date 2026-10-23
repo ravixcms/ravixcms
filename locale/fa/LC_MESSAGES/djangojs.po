@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-23 19:21+0330\n"
+"POT-Creation-Date: 2026-10-23 19:23+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -321,8 +321,8 @@ msgid ""
 "The current draft replaces the page content on the site. (The page’s own "
 "status — published or draft — is controlled in the “Pages” section.)"
 msgstr ""
-"پیش‌نویس فعلی در سایت جایگزین محتوای صفحه می‌شود. (وضعیت خود صفحه — منتشرشده"
-" یا پیش‌نویس — از بخش «صفحات» کنترل می‌شود.)"
+"پیش‌نویس فعلی در سایت جایگزین محتوای صفحه می‌شود. (وضعیت خود صفحه — منتشرشده "
+"یا پیش‌نویس — از بخش «صفحات» کنترل می‌شود.)"
 
 #: static/builder/builder.js
 msgid "The layout was published."
@@ -333,8 +333,7 @@ msgid ""
 "It will be published on the site after an administrator approves it. Until "
 "then the current page is shown."
 msgstr ""
-"پس از تأیید مدیر در سایت منتشر می‌شود. تا آن زمان صفحه‌ی فعلی نمایش داده "
-"می‌شود."
+"پس از تأیید مدیر در سایت منتشر می‌شود. تا آن زمان صفحه‌ی فعلی نمایش داده می‌شود."
 
 #: static/builder/builder.js
 msgid "Submitted for approval."
@@ -431,6 +430,39 @@ msgstr "نمایش رمز عبور"
 #: static/js/ravix.js
 msgid "The file is larger than the allowed limit."
 msgstr "حجم فایل بیشتر از حد مجاز است."
+
+#: static/js/ravix.js
+msgid "Choose files"
+msgstr "انتخاب فایل‌ها"
+
+#: static/js/ravix.js
+#| msgid "Choose from library"
+msgid "Choose file"
+msgstr "انتخاب فایل"
+
+#: static/js/ravix.js
+msgid "No files chosen"
+msgstr "فایلی انتخاب نشده"
+
+#: static/js/ravix.js
+msgid "No file chosen"
+msgstr "فایلی انتخاب نشده"
+
+#: static/js/ravix.js
+msgid "Files selected: %(n)s"
+msgstr "فایل‌های انتخاب‌شده: %(n)s"
+
+#: static/js/ravix.js
+msgid "This file type is not accepted here."
+msgstr "این نوع فایل در اینجا پذیرفته نمی‌شود."
+
+#: static/js/ravix.js
+msgid "Drop the files here"
+msgstr "فایل‌ها را اینجا رها کنید"
+
+#: static/js/ravix.js
+msgid "Drop the file here"
+msgstr "فایل را اینجا رها کنید"
 
 #: static/js/ravix.js
 msgid "bold text"
