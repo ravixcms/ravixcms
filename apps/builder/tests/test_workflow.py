@@ -310,7 +310,7 @@ class PublicIntegrationTests(Base):
         r = self.client.get("/fa/about/")
         self.assertContains(r, "site-header")
         self.assertContains(r, "page-built")
-        self.assertContains(r, "<h1>درباره ما</h1>", html=False)
+        self.assertContains(r, "<h1 dir=\"auto\">درباره ما</h1>", html=False)
         self.publish(simple_doc("محتوای ساخته‌شده", show_title=False))
         r = self.client.get("/fa/about/")
         self.assertContains(r, '<h1 class="sr-only">درباره ما</h1>')
