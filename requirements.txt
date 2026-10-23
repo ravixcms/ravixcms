@@ -6,6 +6,6 @@ Pillow>=11.0
 whitenoise>=6.8
 jdatetime>=5.0
 markdown>=3.7
-nh3>=0.2
+nh3>=0.3.7
 gunicorn>=23.0
 cryptography>=43.0
