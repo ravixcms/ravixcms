@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.utils.translation import gettext, gettext_lazy
 from django import forms
 
@@ -29,6 +30,51 @@ class SiteSettingsForm(StyledFormMixin, forms.ModelForm):
                                  help_text=gettext_lazy("Used for visitors and users who have not chosen a language themselves."))
     timezone = forms.ChoiceField(label=gettext_lazy("Time zone"), choices=timezone_choices, required=False,
                                  help_text=gettext_lazy("Dates and times in the panel and on the site are shown in this time zone."))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Per-language texts (name, tagline, description, footer): one optional field per language and text. An empty field
+        # means "use the default-language text".
+        saved = self.instance.translations if isinstance(self.instance.translations, dict) else {}
+        self.translation_groups = []
+        for code, native in settings.LANGUAGES:
+            bound = []
+            for name in SiteSettings.TRANSLATABLE:
+                model_field = SiteSettings._meta.get_field(name)
+                widget = forms.Textarea(attrs={"rows": 3}) if name == "description" else forms.TextInput()
+                key = self.translation_field_name(code, name)
+                self.fields[key] = forms.CharField(label=model_field.verbose_name, max_length=model_field.max_length or 1000,
+                                                   required=False, widget=widget,
+                                                   initial=(saved.get(code) or {}).get(name, ""))
+                widget.attrs["class"] = "input"
+                bound.append(key)
+            self.translation_groups.append((code, native, bound))
+
+    @staticmethod
+    def translation_field_name(code, name):
+        return "tr_%s__%s" % (code.replace("-", "_"), name)
+
+    def translation_sections(self):
+        """[(code, native name, [bound fields])] for the template."""
+        return [(code, native, [self[k] for k in keys]) for code, native, keys in self.translation_groups]
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        default = instance.language
+        translations = {}
+        for code, _native, keys in self.translation_groups:
+            if code == default:
+                continue  # the plain fields are the default language's text
+            values = {name: (self.cleaned_data.get(self.translation_field_name(code, name)) or "").strip()
+                      for name in SiteSettings.TRANSLATABLE}
+            values = {k: v for k, v in values.items() if v}
+            if values:
+                translations[code] = values
+        instance.translations = translations
+        if commit:
+            instance.save()
+            self.save_m2m()
+        return instance
 
     def clean_language(self):
         return self.cleaned_data.get("language") or self.instance.language

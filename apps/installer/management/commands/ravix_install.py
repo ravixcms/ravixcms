@@ -14,7 +14,7 @@ class Command(BaseCommand):
             "رمز عبور فقط از متغیر محیطی (--password-env) یا پرسش تعاملی؛ هرگز از آرگومان خط فرمان.")
 
     def add_arguments(self, parser):
-        parser.add_argument("--site-name", default="راویکس")
+        parser.add_argument("--site-name", default="", help="default: \"Ravix\" in the --language language")
         parser.add_argument("--language", default="fa")
         parser.add_argument("--timezone", default="Asia/Tehran")
         parser.add_argument("--username", required=True)
@@ -39,7 +39,7 @@ class Command(BaseCommand):
         if not o["skip_migrate"]:
             services.run_migrations()
         try:
-            services.perform_install(site_name=o["site_name"], language=o["language"], timezone_name=o["timezone"],
+            services.perform_install(site_name=o["site_name"] or services.default_site_name(o["language"]), language=o["language"], timezone_name=o["timezone"],
                                      username=o["username"], email=o["email"].strip().lower(), password=password)
         except (services.InstallError, services.AlreadyInstalled) as exc:
             raise CommandError(str(exc) or "نصب قبلاً انجام شده است.") from exc

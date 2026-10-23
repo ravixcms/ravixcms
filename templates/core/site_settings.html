@@ -32,6 +32,20 @@
     </div>
   </div>
   <div class="card" style="margin-bottom:1.25rem">
+    <div class="card-header"><h2>{% trans "Texts per language" %}</h2></div>
+    <div class="card-body">
+      <p class="help">{% trans "Optional. The site name, tagline, description and footer text above are used for the default language and for every language that is left empty here." %}</p>
+      {% for code, native, fields in form.translation_sections %}
+      <details class="lang-text" {% if code == object.language %}hidden{% endif %}>
+        <summary><span lang="{{ code }}">{{ native }}</span></summary>
+        <div class="form-grid" style="margin-top:.75rem">
+          {% for field in fields %}<div{% if forloop.last or forloop.counter == 3 %} class="span-2"{% endif %}>{% include "partials/_field.html" with field=field %}</div>{% endfor %}
+        </div>
+      </details>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:1.25rem">
     <div class="card-header"><h2>{% trans "User access" %}</h2></div>
     <div class="card-body">{% include "partials/_field.html" with field=form.registration_open %}</div>
   </div>

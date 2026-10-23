@@ -53,7 +53,12 @@ class SiteSettings(models.Model):
     comments_blocked_words = models.TextField(
         gettext_lazy("Blocked words in comments"), blank=True, max_length=5000,
         help_text=gettext_lazy("One word or phrase per line. A comment that contains one of them (in the name, email or text) is recorded as “spam”."))
+    translations = models.JSONField(default=dict, blank=True, editable=False)  # {language: {site_name, tagline, description, footer_text}}
     updated_at = models.DateTimeField(gettext_lazy("Last edit"), auto_now=True)
+
+    #: Texts a site owner can set per language. The plain fields above are the text in the site's default language and the
+    #: fallback for every language that has no value of its own.
+    TRANSLATABLE = ("site_name", "tagline", "description", "footer_text")
 
     class Meta:
         verbose_name = gettext_lazy("Site settings")
@@ -69,6 +74,32 @@ class SiteSettings(models.Model):
 
     def delete(self, *args, **kwargs):  # جلوگیری از حذف تنظیمات
         pass
+
+    def localized(self, field: str, language: str | None = None) -> str:
+        """``field`` in ``language`` (default: the active one); falls back to the default-language text when there is none."""
+        from .regional import normalize_language
+
+        base = getattr(self, field)
+        if field not in self.TRANSLATABLE:
+            return base
+        if language is None:
+            from django.utils.translation import get_language
+
+            language = get_language() or ""
+        language = normalize_language(language)
+        if not language or language == normalize_language(self.language):
+            return base
+        value = (self.translations or {}).get(language, {}).get(field, "") if isinstance(self.translations, dict) else ""
+        return value if isinstance(value, str) and value.strip() else base
+
+    def localized_copy(self, language: str | None = None) -> "SiteSettings":
+        """A read-only copy whose translatable fields hold the text for ``language`` (for templates; never save it)."""
+        import copy
+
+        clone = copy.copy(self)
+        for field in self.TRANSLATABLE:
+            setattr(clone, field, self.localized(field, language))
+        return clone
 
     @classmethod
     def load(cls) -> "SiteSettings":

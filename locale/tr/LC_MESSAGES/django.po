@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-23 19:10+0330\n"
+"POT-Creation-Date: 2026-10-23 19:21+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -1966,7 +1966,7 @@ msgstr "Son düzenleme"
 msgid "Site name"
 msgstr "Site adı"
 
-#: apps/core/models.py
+#: apps/core/models.py apps/installer/services.py
 msgid "Ravix"
 msgstr "Ravix"
 
@@ -2088,7 +2088,6 @@ msgstr "%(key)s: en fazla %(max_len)s karakter."
 
 #: apps/core/regional.py
 #, python-format
-#| msgid "requires: must be an object {slug: range}."
 msgid "%(key)s: must be text or an object {language code: text}."
 msgstr "%(key)s: metin veya {dil kodu: metin} nesnesi olmalıdır."
 
@@ -2099,13 +2098,11 @@ msgstr "%(key)s: “%(code)s” dil kodu desteklenmiyor."
 
 #: apps/core/regional.py
 #, python-format
-#| msgid "%(key)s: must be text."
 msgid "%(key)s.%(code)s: must be non-empty text."
 msgstr "%(key)s.%(code)s: boş olmayan bir metin olmalıdır."
 
 #: apps/core/regional.py
 #, python-format
-#| msgid "%(key)s: at most %(max_len)s characters."
 msgid "%(key)s.%(code)s: at most %(max_len)s characters."
 msgstr "%(key)s.%(code)s: en fazla %(max_len)s karakter."
 
@@ -8875,6 +8872,19 @@ msgstr "Genel bilgiler"
 #: templates/core/site_settings.html
 msgid "Contact information"
 msgstr "İletişim bilgileri"
+
+#: templates/core/site_settings.html
+#| msgid "Default language"
+msgid "Texts per language"
+msgstr "Dile göre metinler"
+
+#: templates/core/site_settings.html
+msgid ""
+"Optional. The site name, tagline, description and footer text above are used "
+"for the default language and for every language that is left empty here."
+msgstr ""
+"İsteğe bağlı. Yukarıdaki site adı, slogan, açıklama ve alt bilgi metni "
+"varsayılan dil ve burada boş bırakılan her dil için kullanılır."
 
 #: templates/core/site_settings.html
 msgid "User access"

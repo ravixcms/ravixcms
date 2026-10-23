@@ -14,6 +14,7 @@ def site_settings(request):
         except (OperationalError, ProgrammingError):  # پیش از اجرای migrate
             site = SiteSettings()
 
+    site = site.localized_copy()  # name, tagline, description and footer text in the active language
     sidebar = []
     user = getattr(request, "user", None)
     if user is not None and user.is_authenticated:

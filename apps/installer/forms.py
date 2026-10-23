@@ -7,7 +7,7 @@ from apps.accounts.models import User
 from apps.core.forms import StyledFormMixin
 from apps.core.regional import language_choices, timezone_choices
 
-from . import token
+from . import services, token
 
 
 class InstallForm(StyledFormMixin, forms.Form):
@@ -31,8 +31,16 @@ class InstallForm(StyledFormMixin, forms.Form):
         self.db_ready = db_ready
         if not token.required():
             del self.fields["install_token"]
-        self.fields["language"].initial = "fa"
-        self.fields["timezone"].initial = "Asia/Tehran"
+        # Start from the language the installer page is shown in (chosen with the language selector), and suggest that
+        # language's name for the site.
+        from django.utils.translation import get_language
+
+        from apps.core.regional import normalize_language
+
+        language = normalize_language(get_language()) or "fa"
+        self.fields["language"].initial = language
+        self.fields["timezone"].initial = "Asia/Tehran" if language == "fa" else "UTC"
+        self.fields["site_name"].initial = services.default_site_name(language)
 
     def clean_install_token(self):
         value = self.cleaned_data.get("install_token", "")
