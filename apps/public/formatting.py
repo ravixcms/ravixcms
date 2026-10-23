@@ -8,8 +8,9 @@ from django.utils import timezone
 from django.utils.html import strip_tags
 from django.utils.text import Truncator
 
-from apps.core.templatetags.ravix_ui import fa_digits
+from apps.core import localefmt
 
+# Persian month names are used only for the Persian (fa) UI; other languages use Django's locale month names.
 JALALI_MONTHS = ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"]
 _WS = re.compile(r"\s+")
 
@@ -19,8 +20,10 @@ def date_display(value) -> str:
         return ""
     if timezone.is_aware(value):
         value = timezone.localtime(value)
+    if not localefmt.is_persian():
+        return localefmt.long_date(value)
     j = jdatetime.date.fromgregorian(date=value.date() if hasattr(value, "date") else value)
-    return fa_digits(f"{j.day} {JALALI_MONTHS[j.month - 1]} {j.year}")
+    return localefmt.digits(f"{j.day} {JALALI_MONTHS[j.month - 1]} {j.year}")
 
 
 def date_iso(value) -> str:
@@ -46,4 +49,4 @@ def excerpt_from(excerpt: str, html_fragment: str, length: int = 180) -> str:
 def reading_time(html_body: str) -> str:
     words = len(plain_text(html_body).split())
     minutes = max(1, round(words / 200))
-    return fa_digits((gettext("%(minutes)s min read") % {"minutes": minutes}))
+    return localefmt.digits(gettext("%(minutes)s min read") % {"minutes": minutes})

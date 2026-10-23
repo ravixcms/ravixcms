@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-23 17:16+0330\n"
+"POT-Creation-Date: 2026-10-23 18:03+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -616,7 +616,6 @@ msgid "Version %(number)s — %(page)s"
 msgstr "版本 %(number)s — %(page)s"
 
 #: apps/builder/schema.py
-#| msgid "Started"
 msgid "Start side"
 msgstr "起始侧"
 
@@ -5490,6 +5489,14 @@ msgstr "下载“%(name)s”。"
 #: apps/shop/storage.py
 msgid "Digital files do not have a public URL."
 msgstr "数字文件没有公开 URL。"
+
+#: apps/shop/views.py
+msgid "Toman"
+msgstr "托曼"
+
+#: apps/shop/views.py
+msgid "Rial"
+msgstr "里亚尔"
 
 #: apps/shop/views.py
 msgid "Redirect to payment gateway"

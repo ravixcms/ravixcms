@@ -13,6 +13,8 @@ from django.templatetags.static import static
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
+from apps.core import localefmt
+from apps.core.templatetags import ravix_ui as _ui
 from apps.core.templatetags.ravix_ui import fa_digits as _fa_digits
 
 register = template.Library()
@@ -26,7 +28,14 @@ _JSON_ESCAPES = {ord(">"): "\\u003E", ord("<"): "\\u003C", ord("&"): "\\u0026", 
 
 @register.filter(name="fa_digits")
 def fa_digits(value):
+    """Persian digits while the UI language is Persian; other languages keep Latin digits (alias: ``local_digits``)."""
     return _fa_digits(value)
+
+
+register.filter("local_digits", fa_digits)
+register.filter("local_date", _ui.jalali)
+register.filter("local_datetime", _ui.jalali_datetime)
+register.filter("money", _ui.money)
 
 
 @register.simple_tag(takes_context=True)
@@ -59,7 +68,7 @@ def _css_vars(vars_: dict) -> str:
         value = vars_.get(key, "")
         if _HEX_RE.match(value):
             out.append(f"{css_name}:{value}")
-    stack = vars_.get("font_stack", "")
+    stack = localefmt.adapt_font_stack(vars_.get("font_stack", ""))
     if stack and re.fullmatch(r"[A-Za-z0-9 ,'\-]+", stack):
         out.append(f"--rv-font:{stack}")
     size = vars_.get("font_size_px")
@@ -100,7 +109,7 @@ def theme_head(context):
         ("og:title", seo.get("title", "")),
         ("og:description", seo.get("description", "")),
         ("og:url", seo.get("canonical", "")),
-        ("og:locale", "fa_IR"),
+        ("og:locale", localefmt.og_locale()),
         ("og:image", seo.get("og_image", "")),
     ]
     for prop, value in og:
@@ -125,6 +134,8 @@ def theme_head(context):
     else:
         parts.append(mark_safe('<link rel="icon" href="data:,">'))  # از درخواست بی‌فایده /favicon.ico جلوگیری می‌کند
     preload = vars_.get("font_preload_url")
+    if preload and not localefmt.uses_arabic_script():  # the Persian/Arabic font is not used for this language
+        preload = static("fonts/inter-latin-wght-normal.woff2") if localefmt.base_language() != "zh" else ""
     if preload:
         parts.append(format_html('<link rel="preload" href="{}" as="font" type="font/woff2" crossorigin>', preload))
     parts.append(format_html('<link rel="stylesheet" href="{}">', static("public/fonts.css")))
