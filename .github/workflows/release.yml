@@ -82,7 +82,7 @@ jobs:
             type=semver,pattern={{major}}.{{minor}},enable=${{ needs.preflight.outputs.prerelease == 'false' }}
             type=raw,value=latest,enable=${{ needs.preflight.outputs.prerelease == 'false' }}
       - id: push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           push: true
