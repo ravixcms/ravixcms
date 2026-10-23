@@ -76,6 +76,86 @@
     });
   });
 
+  // ---- File inputs: Ravix's own (translated) button and "no file chosen" text, keyboard accessible, with drag and drop.
+  // The real <input type=file> stays in the page (transparent, covering the zone), so it is focusable, announced by screen
+  // readers and works without any of this; the browser's own English "Choose File / No file chosen" is never shown.
+  function acceptsFile(file, accept) {
+    if (!accept) return true;
+    var name = file.name.toLowerCase(), type = (file.type || "").toLowerCase();
+    return accept.split(",").some(function (rule) {
+      rule = rule.trim().toLowerCase();
+      if (!rule) return false;
+      if (rule.charAt(0) === ".") return name.slice(-rule.length) === rule;
+      if (rule.slice(-2) === "/*") return type.indexOf(rule.slice(0, -1)) === 0;
+      return type === rule;
+    });
+  }
+  document.querySelectorAll("input[type=file]").forEach(function (input) {
+    if (input.closest("[data-filedrop]")) return;
+    var multiple = input.multiple;
+    var zone = document.createElement("div");
+    zone.className = "filedrop";
+    zone.setAttribute("data-filedrop", "");
+    var button = document.createElement("span");
+    button.className = "btn btn-light btn-sm filedrop-btn";
+    button.setAttribute("aria-hidden", "true");
+    button.textContent = multiple ? gettext("Choose files") : gettext("Choose file");
+    var text = document.createElement("span");
+    text.className = "filedrop-text";
+    text.id = (input.id || "file-" + Math.random().toString(36).slice(2)) + "-status";
+    text.setAttribute("aria-live", "polite");
+    var idle = multiple ? gettext("No files chosen") : gettext("No file chosen");
+    input.parentNode.insertBefore(zone, input);
+    zone.appendChild(button);
+    zone.appendChild(text);
+    zone.appendChild(input);
+    input.classList.add("filedrop-input");
+    input.setAttribute("aria-describedby", ((input.getAttribute("aria-describedby") || "") + " " + text.id).trim());
+    if (!input.labels || !input.labels.length) {
+      var heading = zone.closest(".field") && zone.closest(".field").querySelector(".field-label");
+      input.setAttribute("aria-label", (heading && heading.textContent.trim()) || button.textContent);
+    }
+    function refresh() {
+      var files = input.files ? Array.prototype.slice.call(input.files) : [];
+      var label = !files.length ? idle : (files.length === 1 ? files[0].name : interpolate(gettext("Files selected: %(n)s"), {n: files.length}, true));
+      text.textContent = label;
+      input.title = label;  // otherwise the browser shows its own English tooltip
+      zone.classList.toggle("has-file", files.length > 0);
+    }
+    function setFiles(list) {
+      var files = Array.prototype.slice.call(list).filter(function (f) { return acceptsFile(f, input.accept); });
+      if (!files.length) { text.textContent = gettext("This file type is not accepted here."); input.title = text.textContent; return; }
+      if (!multiple) files = files.slice(0, 1);
+      try {
+        var dt = new DataTransfer();
+        files.forEach(function (f) { dt.items.add(f); });
+        input.files = dt.files;
+      } catch (e) { return; }
+      input.dispatchEvent(new Event("change", {bubbles: true}));
+    }
+    input.addEventListener("change", refresh);
+    ["dragenter", "dragover"].forEach(function (name) {
+      zone.addEventListener(name, function (e) {
+        if (!e.dataTransfer || Array.prototype.indexOf.call(e.dataTransfer.types || [], "Files") < 0) return;
+        e.preventDefault();
+        zone.classList.add("is-dragover");
+        text.textContent = multiple ? gettext("Drop the files here") : gettext("Drop the file here");
+      });
+    });
+    zone.addEventListener("dragleave", function (e) {
+      if (e.relatedTarget && zone.contains(e.relatedTarget)) return;
+      zone.classList.remove("is-dragover");
+      refresh();
+    });
+    zone.addEventListener("drop", function (e) {
+      zone.classList.remove("is-dragover");
+      if (!e.dataTransfer || !e.dataTransfer.files || !e.dataTransfer.files.length) { refresh(); return; }
+      e.preventDefault();
+      setFiles(e.dataTransfer.files);
+    });
+    refresh();
+  });
+
   // ---- پیش‌نمایش تصویر انتخاب‌شده
   document.querySelectorAll("input[type=file][data-preview]").forEach(function (input) {
     input.addEventListener("change", function () {

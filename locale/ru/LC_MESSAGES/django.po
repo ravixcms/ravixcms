@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-23 19:21+0330\n"
+"POT-Creation-Date: 2026-10-23 19:23+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -8895,7 +8895,6 @@ msgid "Contact information"
 msgstr "Контактные данные"
 
 #: templates/core/site_settings.html
-#| msgid "Default language"
 msgid "Texts per language"
 msgstr "Тексты по языкам"
 

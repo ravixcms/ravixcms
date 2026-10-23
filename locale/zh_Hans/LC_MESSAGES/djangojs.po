@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-23 19:21+0330\n"
+"POT-Creation-Date: 2026-10-23 19:23+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -320,7 +320,9 @@ msgstr "发布布局"
 msgid ""
 "The current draft replaces the page content on the site. (The page’s own "
 "status — published or draft — is controlled in the “Pages” section.)"
-msgstr "当前草稿会替换站点上的页面内容。（页面本身的状态 — 已发布或草稿 — 在“页面”部分控制。）"
+msgstr ""
+"当前草稿会替换站点上的页面内容。（页面本身的状态 — 已发布或草稿 — 在“页面”部"
+"分控制。）"
 
 #: static/builder/builder.js
 msgid "The layout was published."
@@ -425,6 +427,39 @@ msgstr "显示密码"
 #: static/js/ravix.js
 msgid "The file is larger than the allowed limit."
 msgstr "文件大于允许的限制。"
+
+#: static/js/ravix.js
+msgid "Choose files"
+msgstr "选择文件"
+
+#: static/js/ravix.js
+#| msgid "Choose from library"
+msgid "Choose file"
+msgstr "选择文件"
+
+#: static/js/ravix.js
+msgid "No files chosen"
+msgstr "未选择文件"
+
+#: static/js/ravix.js
+msgid "No file chosen"
+msgstr "未选择文件"
+
+#: static/js/ravix.js
+msgid "Files selected: %(n)s"
+msgstr "已选择文件：%(n)s"
+
+#: static/js/ravix.js
+msgid "This file type is not accepted here."
+msgstr "此处不接受该文件类型。"
+
+#: static/js/ravix.js
+msgid "Drop the files here"
+msgstr "将文件拖放到此处"
+
+#: static/js/ravix.js
+msgid "Drop the file here"
+msgstr "将文件拖放到此处"
 
 #: static/js/ravix.js
 msgid "bold text"

@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-23 19:21+0330\n"
+"POT-Creation-Date: 2026-10-23 19:23+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -12,7 +12,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % "
+"1000000 == 0 ? 1 : 2;\n"
 
 #: static/builder/builder.js
 msgid "Section"
@@ -436,6 +437,39 @@ msgstr "Mostrar senha"
 #: static/js/ravix.js
 msgid "The file is larger than the allowed limit."
 msgstr "O arquivo é maior que o limite permitido."
+
+#: static/js/ravix.js
+msgid "Choose files"
+msgstr "Escolher arquivos"
+
+#: static/js/ravix.js
+#| msgid "Choose from library"
+msgid "Choose file"
+msgstr "Escolher arquivo"
+
+#: static/js/ravix.js
+msgid "No files chosen"
+msgstr "Nenhum arquivo selecionado"
+
+#: static/js/ravix.js
+msgid "No file chosen"
+msgstr "Nenhum arquivo selecionado"
+
+#: static/js/ravix.js
+msgid "Files selected: %(n)s"
+msgstr "Arquivos selecionados: %(n)s"
+
+#: static/js/ravix.js
+msgid "This file type is not accepted here."
+msgstr "Este tipo de arquivo não é aceito aqui."
+
+#: static/js/ravix.js
+msgid "Drop the files here"
+msgstr "Solte os arquivos aqui"
+
+#: static/js/ravix.js
+msgid "Drop the file here"
+msgstr "Solte o arquivo aqui"
 
 #: static/js/ravix.js
 msgid "bold text"

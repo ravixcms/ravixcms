@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-23 19:21+0330\n"
+"POT-Creation-Date: 2026-10-23 19:23+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -433,6 +433,39 @@ msgstr "Parolayı göster"
 #: static/js/ravix.js
 msgid "The file is larger than the allowed limit."
 msgstr "Dosya izin verilen sınırdan büyük."
+
+#: static/js/ravix.js
+msgid "Choose files"
+msgstr "Dosyaları seç"
+
+#: static/js/ravix.js
+#| msgid "Choose from library"
+msgid "Choose file"
+msgstr "Dosya seç"
+
+#: static/js/ravix.js
+msgid "No files chosen"
+msgstr "Dosya seçilmedi"
+
+#: static/js/ravix.js
+msgid "No file chosen"
+msgstr "Dosya seçilmedi"
+
+#: static/js/ravix.js
+msgid "Files selected: %(n)s"
+msgstr "Seçilen dosyalar: %(n)s"
+
+#: static/js/ravix.js
+msgid "This file type is not accepted here."
+msgstr "Bu dosya türü burada kabul edilmiyor."
+
+#: static/js/ravix.js
+msgid "Drop the files here"
+msgstr "Dosyaları buraya bırakın"
+
+#: static/js/ravix.js
+msgid "Drop the file here"
+msgstr "Dosyayı buraya bırakın"
 
 #: static/js/ravix.js
 msgid "bold text"

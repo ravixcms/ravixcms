@@ -424,3 +424,13 @@ input[type=color].input{height:2.6rem;padding:.2rem;cursor:pointer}
 .lang-text { border: 1px solid var(--c-border); border-radius: var(--radius-sm); padding: .6rem .9rem; margin-top: .6rem; background: var(--c-surface); }
 .lang-text > summary { cursor: pointer; font-weight: 600; }
 .lang-text[hidden] { display: none; }
+
+/* File input: Ravix's own translated button and status text; the real input is transparent and covers the zone. */
+.filedrop { position: relative; display: flex; align-items: center; gap: .75rem; padding: .55rem .75rem; max-width: 100%; border: 1.5px dashed var(--c-border); border-radius: var(--radius-sm); background: var(--c-surface); transition: border-color .15s, background .15s; }
+.filedrop:hover { border-color: var(--c-primary); }
+.filedrop:focus-within { outline: 2px solid var(--c-primary); outline-offset: 2px; border-color: var(--c-primary); }
+.filedrop.is-dragover { border-color: var(--c-primary); background: var(--c-surface-2); }
+.filedrop-btn { flex: none; pointer-events: none; }
+.filedrop-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--c-muted, #6b7280); font-size: .92rem; }
+.filedrop.has-file .filedrop-text { color: var(--c-text); }
+.filedrop input.filedrop-input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; font-size: 0; padding: 0; margin: 0; border: 0; }

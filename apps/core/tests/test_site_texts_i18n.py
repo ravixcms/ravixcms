@@ -105,3 +105,26 @@ class InstallerNameTests(TestCase):
             call_command("ravix_install", "--username=cli", "--email=cli@e.com", "--password-env=RAVIX_T_PW", "--language=fa",
                          "--timezone=UTC", stdout=StringIO())
         self.assertEqual(SiteSettings.load().site_name, "راویکس")
+
+
+class FileInputStringsTests(TestCase):
+    """The panel replaces the browser's English «Choose File / No file chosen» with these (static/js/ravix.js)."""
+
+    STRINGS = ["Choose file", "Choose files", "No file chosen", "No files chosen", "Files selected: %(n)s", "Drop the file here",
+               "Drop the files here", "This file type is not accepted here."]
+
+    def test_every_language_translates_them(self):
+        from django.conf import settings
+        import gettext as gettext_module
+
+        from django.utils.translation import to_locale
+
+        source = (settings.BASE_DIR / "static/js/ravix.js").read_text(encoding="utf-8")
+        for text in self.STRINGS:
+            self.assertIn(f'gettext("{text}")', source)
+        for code, _name in settings.LANGUAGES:
+            if code == "en":
+                continue
+            catalog = gettext_module.translation("djangojs", settings.BASE_DIR / "locale", [to_locale(code)])
+            for text in self.STRINGS:
+                self.assertNotEqual(catalog.gettext(text), text, f"{code}: {text}")
