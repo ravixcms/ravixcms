@@ -125,6 +125,7 @@ jobs:
           DJANGO_SETTINGS_MODULE: config.settings.production
           DJANGO_ALLOWED_HOSTS: example.com
           DATABASE_URL: postgres://u:p@localhost/db
+          RAVIX_CACHE_DIR: ${{ runner.temp }}/ravix-cache   # the runner user cannot write to /var/cache; settings never create folders
         run: |
           DJANGO_SECRET_KEY="$(python -c 'import secrets;print(secrets.token_urlsafe(60))')" \
           python manage.py check --deploy --fail-level WARNING
