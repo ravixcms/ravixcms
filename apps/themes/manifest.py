@@ -44,6 +44,7 @@ class ThemeInfo:
     name: str = ""
     version: str = ""
     author: str = ""
+    homepage: str = ""
     description: str = ""
     names: dict = field(default_factory=dict)  # {"fa": "…", "en": "…"} from a multilingual «name» (empty for a plain string)
     descriptions: dict = field(default_factory=dict)
@@ -196,7 +197,7 @@ def inspect_theme_dir(theme_dir: Path) -> ThemeInfo:
         except (ValueError, UnicodeDecodeError) as exc:
             errors.append((gettext("theme.json is not valid: %(exc)s") % {"exc": exc}))
 
-    name = version = author = description = screenshot = ravix = ""
+    name = version = author = homepage = description = screenshot = ravix = ""
     names: dict = {}
     descriptions: dict = {}
     home_sections = tuple(HOME_SECTION_TYPES)
@@ -212,6 +213,10 @@ def inspect_theme_dir(theme_dir: Path) -> ThemeInfo:
         if version and not VERSION_RE.match(version):
             errors.append(gettext("“version” must be in semantic versioning form (e.g. 1.0.0)."))
         author = _str_field(data, "author", errors, max_len=80)
+        homepage = _str_field(data, "homepage", errors, max_len=200, required=False)
+        if homepage and not re.match(r"^https?://[^\s<>\"']+$", homepage):
+            errors.append(gettext("homepage: not a valid http(s) address."))
+            homepage = ""
         data = upgrade_legacy_key(data, f"theme.json ({slug})")
         ravix = _str_field(data, "ravix", errors, max_len=50, required=False)
         if ravix:
@@ -249,6 +254,7 @@ def inspect_theme_dir(theme_dir: Path) -> ThemeInfo:
         name=name,
         version=version,
         author=author,
+        homepage=homepage,
         description=description,
         names=names,
         descriptions=descriptions,

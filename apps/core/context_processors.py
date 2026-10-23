@@ -1,8 +1,20 @@
 from django.db.utils import OperationalError, ProgrammingError
 from django.urls import reverse
 
+from django.conf import settings
+
 from .models import SiteSettings
+from .version import RAVIX_VERSION
 from .navigation import SECTIONS, get_nav_items
+
+
+def official_links() -> dict:
+    """Project website / docs / repository for footers and the installer. Only http(s) addresses are passed on to templates."""
+    out = {}
+    for key, name in (("website", "RAVIX_WEBSITE_URL"), ("docs", "RAVIX_DOCS_URL"), ("repo", "RAVIX_REPO_URL")):
+        value = str(getattr(settings, name, "") or "")
+        out[key] = value if value.startswith(("https://", "http://")) else ""
+    return out
 
 
 def site_settings(request):
@@ -50,4 +62,5 @@ def site_settings(request):
                 active_site = panel_site(request)
         except Exception:  # noqa: BLE001
             pass
-    return {"site": site, "sidebar": sidebar, "panel_sites": panel_sites if len(panel_sites) > 1 else [], "active_site": active_site}
+    return {"site": site, "sidebar": sidebar, "panel_sites": panel_sites if len(panel_sites) > 1 else [], "active_site": active_site,
+            "ravix_version": RAVIX_VERSION, "ravix_links": official_links()}

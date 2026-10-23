@@ -80,7 +80,7 @@
 - هم‌چنین این الگو را در هر قابلیت جدید با «شناسه از query/POST» بازبینی کنید؛ بقیهٔ مسیرهای آزموده‌شده سالم بودند.
 
 ### ۱-۷. `SECURITY.md` و `LICENSE` ناقص‌اند
-- `SECURITY.md` هنوز عبارت «[مالک مخزن: پیش از انتشار این بخش را … کامل کنید]» را دارد و **راه تماس واقعی ندارد** (فعال‌کردن Private vulnerability reporting روی GitHub یا ایمیل امنیتی لازم است).
+- ~~`SECURITY.md` بدون راه تماس~~ — رفع شد: ایمیل و پیوند گزارش خصوصی GitHub (`ravixcms/ravixcms`) در `SECURITY.md` هست. فعال‌بودن Private vulnerability reporting در تنظیمات مخزن باید دستی بررسی شود.
 - `LICENSE`: `Copyright (c) 2026 Ravix contributors` — دارندهٔ حق نشر واقعی را تعیین کنید. مجوز MIT را هم تأیید کنید (به‌ویژه با توجه به `psycopg` که LGPL است و در `THIRD_PARTY_NOTICES.md` آمده).
 
 ### ۱-۸. شمارهٔ نسخه و آزمون‌های وابسته به آن

@@ -162,7 +162,7 @@ class Command(BaseCommand):
         if settings.RAVIX_UPDATE_URL:
             need(settings.RAVIX_UPDATE_URL.startswith("https://"), cli_gettext("The update source is HTTPS"), cli_gettext("RAVIX_UPDATE_URL must be https"))
         if settings.RAVIX_UPDATE_URL or settings.RAVIX_UPDATE_DIR:
-            advise(bool(signing.trusted_keys()), cli_gettext("A trusted public key for package signatures is configured"), cli_gettext("There is no trusted key (RAVIX_TRUSTED_PUBLIC_KEYS); no update package is accepted"))
+            advise(bool(signing.trusted_keys()), cli_gettext("A trusted public key for package signatures is configured"), cli_gettext("There is no trusted key (RAVIX_TRUSTED_PUBLIC_KEYS): the official update source stays disabled and no update package is accepted"))
         advise(not settings.RAVIX_UPDATE_WEB_APPLY, cli_gettext("Applying upgrades from the web is off (recommended)"), cli_gettext("RAVIX_UPDATE_WEB_APPLY is on; the web service must have write access to the code and the database"))
         try:
             plan = MigrationExecutor(connection).migration_plan(MigrationExecutor(connection).loader.graph.leaf_nodes())

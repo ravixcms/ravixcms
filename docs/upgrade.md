@@ -42,7 +42,7 @@
 ## ۳. راهنمای مدیر
 ### تنظیمات سرور (فقط سرور؛ نه از پنل)
 ```
-RAVIX_UPDATE_URL=https://updates.example.com      # یا RAVIX_UPDATE_DIR=/srv/ravix/update_source (آفلاین)
+RAVIX_UPDATE_URL=https://updates.ravixcms.com      # یا RAVIX_UPDATE_DIR=/srv/ravix/update_source (آفلاین)
 RAVIX_TRUSTED_PUBLIC_KEYS=publisher:<کلید_عمومی_base64>
 RAVIX_UPDATE_BACKUP_DIR=/srv/ravix/update_backups  # خارج از media، ۰۷۰۰
 RAVIX_UPDATE_WEB_APPLY=false                       # پیش‌فرض: اعمال فقط با دستور

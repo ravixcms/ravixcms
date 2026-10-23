@@ -155,16 +155,33 @@ class DirSource:
             raise UpdateError(gettext("The package file was not found in the source."))
 
 
-def get_source():
+def source_state() -> str:
+    """"directory" | "ok" | "no_key" | "none".
+
+    An HTTPS source is only usable when at least one trusted public key exists (the publisher's key in apps/core/official.py,
+    RAVIX_TRUSTED_PUBLIC_KEYS, or a key added in the panel); without one it is reported as "no_key" and never contacted."""
     if settings.RAVIX_UPDATE_DIR:
-        return DirSource(settings.RAVIX_UPDATE_DIR)
+        return "directory"
     if settings.RAVIX_UPDATE_URL:
+        from apps.plugins.signing import trusted_keys
+
+        return "ok" if trusted_keys() else "no_key"
+    return "none"
+
+
+def get_source():
+    state = source_state()
+    if state == "directory":
+        return DirSource(settings.RAVIX_UPDATE_DIR)
+    if state == "ok":
         return HttpSource(settings.RAVIX_UPDATE_URL)
+    if state == "no_key":
+        raise UpdateError(gettext("The official update source is disabled until a trusted public key is configured: no package can be verified without one. Nothing is wrong with the server; updates are simply not checked yet."))
     raise UpdateError(gettext("The official update source is not configured (RAVIX_UPDATE_URL)."))
 
 
 def has_source() -> bool:
-    return bool(settings.RAVIX_UPDATE_DIR or settings.RAVIX_UPDATE_URL)
+    return source_state() in ("directory", "ok")
 
 
 def cached_index(force: bool = False) -> dict:

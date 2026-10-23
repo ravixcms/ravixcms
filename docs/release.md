@@ -23,7 +23,7 @@
 1. `apps/core/version.py` → `RAVIX_VERSION` را بالا ببرید و در `CHANGELOG.md` بخش `## [X.Y.Z]` بنویسید.
 2. commit را به `main` ببرید و CI سبز شود.
 3. تگ: `git tag -a vX.Y.Z -m "Ravix X.Y.Z" && git push origin vX.Y.Z` (برای پیش‌انتشار `vX.Y.Z-rc1`).
-4. خودکار: **preflight** (تگ = `RAVIX_VERSION`، بخش CHANGELOG موجود، commit در تاریخچهٔ `main`) ← **ci** (همهٔ بالا) ← موازی: **package** (`ravix-X.Y.Z.zip` با `TZ=UTC` + `SHA256SUMS` + `verify_release.py`) و **docker** (image روی `ghcr.io/<owner>/<repo>` با برچسب `X.Y.Z`، `X.Y` و `latest`؛ برای نسخهٔ `-rc/-beta` فقط برچسب خودش؛ provenance و SBOM روشن) ← **release** (GitHub Release با zip و `SHA256SUMS`؛ تگ دارای `-` به‌صورت pre-release).
+4. خودکار: **preflight** (تگ = `RAVIX_VERSION`، بخش CHANGELOG موجود، commit در تاریخچهٔ `main`) ← **ci** (همهٔ بالا) ← موازی: **package** (`ravix-X.Y.Z.zip` با `TZ=UTC` + `SHA256SUMS` + `verify_release.py`) و **docker** (image روی `ghcr.io/ravixcms/ravixcms` با برچسب `X.Y.Z`، `X.Y` و `latest`؛ برای نسخهٔ `-rc/-beta` فقط برچسب خودش؛ provenance و SBOM روشن) ← **release** (GitHub Release با zip و `SHA256SUMS`؛ تگ دارای `-` به‌صورت pre-release).
 5. مجوز: `contents: write` فقط در job نهایی Release و `packages: write` فقط در job داکر؛ بقیه فقط‌خواندنی.
 
 ## امضا دستی و آفلاین است (عمداً در CI نیست)
@@ -61,14 +61,14 @@ python manage.py ravix_release keygen --key-file ~/ravix-keys/release-2026.key
 ### ۲. قراردادن کلید عمومی (و آدرس‌ها) در کد
 تنها نقطهٔ ویرایش، فایل **`apps/core/official.py`** است:
 ```python
-OFFICIAL_UPDATE_URL   = "https://updates.example.com"      # <URL>/updates/v1/index.json
-OFFICIAL_REGISTRY_URL = "https://registry.example.com"     # مخزن افزونه‌ها (docs/registry.md)
+OFFICIAL_UPDATE_URL   = "https://updates.ravixcms.com"      # <URL>/updates/v1/index.json
+OFFICIAL_REGISTRY_URL = "https://plugins.ravixcms.com"     # مخزن افزونه‌ها (docs/registry.md)
 OFFICIAL_PUBLIC_KEYS  = (
     "release-2026:<کلید عمومی base64>",
 )
 REVOKED_KEY_IDS = ()
 ```
-۱. مقدارها را پر کنید (فقط **عمومی**).
+۱. آدرس‌ها از پیش پر شده‌اند (`ravixcms.com`)؛ فقط `OFFICIAL_PUBLIC_KEYS` را پر کنید (فقط کلید **عمومی**). **تا وقتی هیچ کلید مورد اعتمادی نباشد، منبع رسمی به‌روزرسانی و مخزن افزونه غیرفعال می‌مانند**: چیزی دانلود نمی‌شود و پنل به‌روزرسانی و «سلامت سایت» پیام روشن (نه خطا) نشان می‌دهند.
 ۲. آزمون `test_shipped_defaults_are_empty_placeholders` در `apps/updater/tests/test_official_source.py` عمداً می‌شکند تا شما آگاهانه مقدار تازه را در آن ثبت کنید.
 ۳. `python manage.py test`، commit و نسخه‌دهی طبق «انتشار» بالا.
 ۴. از این نسخه به بعد هر نصب تازه کلید شما را از کد می‌شناسد. **سایت‌های قدیمی‌تر** از نسخه‌ای که این کلید را ندارد نمی‌توانند خودکار ارتقا یابند (کلیدی ندارند که امضای شما را بسنجد): مدیرشان یک‌بار کلید را با `RAVIX_TRUSTED_PUBLIC_KEYS=release-2026:<کلید>` یا از پنل ← افزونه‌ها ← کلیدهای مورد اعتماد (مدیرکل) اضافه می‌کند، یا نسخهٔ جدید را دستی نصب می‌کند.
@@ -99,14 +99,14 @@ ls dist/    # index.json  index.json.sig  ravix-core-X.Y.Z.zip  ravix-theme-…z
 ```
 `index.json` با اجرای بعدی ادغام می‌شود (نسخه‌های قبلی حفظ می‌شوند)؛ پوشهٔ `dist/` را نگه دارید. سپس **فقط فایل‌های عمومی** را به سرور بفرستید:
 ```bash
-rsync -av --delete-after dist/ deploy@updates.example.com:/var/www/updates/v1/
+rsync -av --delete-after dist/ deploy@updates.ravixcms.com:/var/www/updates/v1/
 ```
 نمونهٔ Nginx (فایل‌های استاتیک؛ هیچ برنامه‌ای روی این میزبان اجرا نمی‌شود و هیچ کلیدی روی آن نیست):
 ```nginx
 server {
-    listen 443 ssl; http2 on; server_name updates.example.com;
-    ssl_certificate     /etc/letsencrypt/live/updates.example.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/updates.example.com/privkey.pem;
+    listen 443 ssl; http2 on; server_name updates.ravixcms.com;
+    ssl_certificate     /etc/letsencrypt/live/updates.ravixcms.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/updates.ravixcms.com/privkey.pem;
     root /var/www;
     location /updates/v1/ {
         autoindex off;
@@ -148,7 +148,7 @@ server {
 - **سقف انتظار** فهرست ۸ ثانیه است و **شکست ۵ دقیقه کش می‌شود** (برای افزونه‌ها ۶۰ ثانیه)، پس با قطع بودن سرور هر بازشدن صفحه معطل نمی‌ماند. دکمهٔ «بررسی» (`force`) کش شکست را دور می‌زند و پس از بازگشت سرور بلافاصله ریکاوری می‌شود.
 - دستور `ravix_update check` با پیام خطای روشن و کد خروج غیر صفر تمام می‌شود (نه traceback)؛ ارتقای نیمه‌کاره‌ای رخ نمی‌دهد چون دانلود و بررسی SHA/امضا **پیش از** هر تغییر فایل انجام می‌شود.
 - سایت‌هایی که آدرس را خالی گذاشته‌اند فقط پیام «منبع تنظیم نشده» می‌بینند.
-برای پایش، `curl -fsS https://updates.example.com/updates/v1/index.json -o /dev/null` را در پایشگر خودتان بگذارید؛ از سمت سایت‌ها خطا گزارش نمی‌شود.
+برای پایش، `curl -fsS https://updates.ravixcms.com/updates/v1/index.json -o /dev/null` را در پایشگر خودتان بگذارید؛ از سمت سایت‌ها خطا گزارش نمی‌شود.
 
 ### ۸. چک‌لیست راه‌اندازی
 - [ ] کلید فعال + کلید یدک ساخته، دو نسخهٔ رمزشده پشتیبان‌گیری شد.
@@ -168,7 +168,7 @@ server {
 ## راستی‌آزمایی توسط کاربر
 ```
 sha256sum -c SHA256SUMS      # باید «ravix-X.Y.Z.zip: OK» بدهد
-docker pull ghcr.io/<owner>/<repo>:X.Y.Z   # digest در متن Release آمده
+docker pull ghcr.io/ravixcms/ravixcms:X.Y.Z   # digest در متن Release آمده
 ```
 `SHA256SUMS` فقط یکپارچگی دانلود را تضمین می‌کند؛ اعتماد به ناشر فقط با امضای دستی بالا و کلید عمومی معتبر حاصل می‌شود.
 

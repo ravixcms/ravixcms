@@ -6,11 +6,18 @@
 ⚠ فقط کلید **عمومی** اینجا بیاید. کلید خصوصی هرگز در کد، مخزن git، CI یا سرور سایت نمی‌رود.
 """
 
-# منبع رسمی به‌روزرسانی هسته/قالب: <URL>/updates/v1/index.json ؛ فقط HTTPS.  متغیر محیطی: RAVIX_UPDATE_URL
-OFFICIAL_UPDATE_URL = ""            # مثال: "https://updates.example.com"
+# وب‌سایت، مستندات و مخزن کد پروژه (فقط برای نمایش پیوند در پنل/نصب‌کننده/User-Agent). متغیرهای محیطی: RAVIX_WEBSITE_URL، RAVIX_DOCS_URL، RAVIX_REPO_URL
+OFFICIAL_WEBSITE_URL = "https://ravixcms.com"
+OFFICIAL_DOCS_URL = "https://ravixcms.com/docs"
+OFFICIAL_REPO_URL = "https://github.com/ravixcms/ravixcms"
 
-# مخزن رسمی افزونه‌ها: <URL>/registry/v1/ ؛ فقط HTTPS.  متغیر محیطی: RAVIX_OFFICIAL_REGISTRY_URL
-OFFICIAL_REGISTRY_URL = ""          # مثال: "https://registry.example.com"
+# منبع رسمی به‌روزرسانی هسته/قالب: <URL>/updates/v1/index.json ؛ فقط HTTPS.  متغیر محیطی: RAVIX_UPDATE_URL
+# تا وقتی هیچ کلید عمومی مورد اعتمادی تنظیم نشده (OFFICIAL_PUBLIC_KEYS خالی و RAVIX_TRUSTED_PUBLIC_KEYS خالی) این منبع **غیرفعال** است:
+# بدون کلید هیچ بسته‌ای قابل راستی‌آزمایی نیست. پنل به‌روزرسانی و «سلامت سایت» این را با پیام روشن (نه خطا) نشان می‌دهند.
+OFFICIAL_UPDATE_URL = "https://updates.ravixcms.com"
+
+# مخزن رسمی افزونه‌ها و قالب‌ها: <URL>/registry/v1/ ؛ فقط HTTPS.  متغیر محیطی: RAVIX_OFFICIAL_REGISTRY_URL (همان قاعدهٔ کلید)
+OFFICIAL_REGISTRY_URL = "https://plugins.ravixcms.com"
 
 # کلیدهای عمومی Ed25519 ناشر که همهٔ سایت‌ها به‌طور پیش‌فرض به آن‌ها اعتماد دارند: «برچسب:کلید_عمومی_base64».
 # چرخش: کلید جدید را اضافه کنید (قدیمی بماند)، نسخه بدهید، بعد قدیمی را در REVOKED_KEY_IDS بنویسید.

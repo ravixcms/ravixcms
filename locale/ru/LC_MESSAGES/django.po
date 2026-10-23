@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-24 00:56+0330\n"
+"POT-Creation-Date: 2026-10-24 01:30+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -2690,6 +2690,40 @@ msgid "Upgrade to Python 3.11 or later."
 msgstr "Обновитесь до Python 3.11 или новее."
 
 #: apps/core/sitehealth.py
+msgid "Update source"
+msgstr "Источник обновлений"
+
+#: apps/core/sitehealth.py templates/updater/home.html
+msgid ""
+"The official update source is disabled until a trusted public key is "
+"configured, because no package can be verified without one. This is not an "
+"error; new versions are simply not checked yet."
+msgstr ""
+"Официальный источник обновлений отключён, пока не настроен доверенный "
+"открытый ключ, так как без него нельзя проверить ни один пакет. Это не "
+"ошибка; новые версии просто пока не проверяются."
+
+#: apps/core/sitehealth.py
+msgid ""
+"Nothing to do unless you want update checks: add the publisher’s public key "
+"(RAVIX_TRUSTED_PUBLIC_KEYS)."
+msgstr ""
+"Ничего делать не нужно, если вам не нужна проверка обновлений; иначе "
+"добавьте открытый ключ издателя (RAVIX_TRUSTED_PUBLIC_KEYS)."
+
+#: apps/core/sitehealth.py
+msgid "No update source is configured, so new versions are not checked."
+msgstr "Источник обновлений не настроен, поэтому новые версии не проверяются."
+
+#: apps/core/sitehealth.py
+msgid "Set RAVIX_UPDATE_URL if you want update checks."
+msgstr "Задайте RAVIX_UPDATE_URL, если нужна проверка обновлений."
+
+#: apps/core/sitehealth.py
+msgid "The update source is configured and a trusted public key is present."
+msgstr "Источник обновлений настроен, доверенный открытый ключ присутствует."
+
+#: apps/core/sitehealth.py
 msgid "Database migrations"
 msgstr "Миграции базы данных"
 
@@ -4008,7 +4042,7 @@ msgstr "slug: должен совпадать с именем папки (%(expe
 msgid "version: must look like 1.2.3."
 msgstr "version: должна выглядеть как 1.2.3."
 
-#: apps/plugins/manifest.py
+#: apps/plugins/manifest.py apps/themes/manifest.py
 msgid "homepage: not a valid http(s) address."
 msgstr "homepage: недопустимый адрес http(s)."
 
@@ -4807,6 +4841,14 @@ msgstr "Плагин не найден в реестре."
 #: apps/plugins/sources.py
 msgid "The package file is not available in the registry."
 msgstr "Файл пакета недоступен в реестре."
+
+#: apps/plugins/sources.py
+msgid ""
+"The official registry is disabled until a trusted public key is configured: "
+"no package can be verified without one."
+msgstr ""
+"Официальный реестр отключён, пока не настроен доверенный открытый ключ: без "
+"него невозможно проверить ни один пакет."
 
 #: apps/plugins/sources.py
 msgid "The official registry is not configured (RAVIX_OFFICIAL_REGISTRY_URL)."
@@ -7785,6 +7827,16 @@ msgid "The package file was not found in the source."
 msgstr "Файл пакета не найден в источнике."
 
 #: apps/updater/sources.py
+msgid ""
+"The official update source is disabled until a trusted public key is "
+"configured: no package can be verified without one. Nothing is wrong with "
+"the server; updates are simply not checked yet."
+msgstr ""
+"Официальный источник обновлений отключён, пока не настроен доверенный "
+"открытый ключ: без него невозможно проверить ни один пакет. С сервером всё в"
+" порядке; новые версии просто пока не проверяются."
+
+#: apps/updater/sources.py
 msgid "The official update source is not configured (RAVIX_UPDATE_URL)."
 msgstr "Официальный источник обновлений не настроен (RAVIX_UPDATE_URL)."
 
@@ -9179,6 +9231,10 @@ msgstr ""
 "%(media_dir)s</code>) не существует или недоступна для записи; загрузка "
 "файлов работать не будет."
 
+#: templates/installer/install.html
+msgid "Installation guide and documentation"
+msgstr "Руководство по установке и документация"
+
 #: templates/layouts/auth.html
 msgid "Powered by Ravix"
 msgstr "Работает на Ravix"
@@ -9205,8 +9261,13 @@ msgid "Toggle menu"
 msgstr "Показать или скрыть меню"
 
 #: templates/layouts/panel.html
-msgid "Ravix — version 0.1"
-msgstr "Ravix — версия 0.1"
+#, python-format
+msgid "Ravix %(ravix_version)s"
+msgstr "Ravix %(ravix_version)s"
+
+#: templates/layouts/panel.html
+msgid "Documentation"
+msgstr "Документация"
 
 #: templates/media_library/media_detail.html
 msgid "Media details"

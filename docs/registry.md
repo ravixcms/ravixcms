@@ -60,12 +60,12 @@
   "latest": {"version": "1.2.0", "ravix": ">=0.5.0,<1.0.0", "api_version": 1, "size": 4210,
              "sha256": "…", "fingerprint": "…", "published_at": "…",
              "compatibility": {"compatible": true, "problems": [], "ravix_version": "0.5.0", "plugin_api_version": 1},
-             "download_url": "https://registry.example.com/registry/v1/plugins/contact_form/versions/1.2.0/download/"}}]}
+             "download_url": "https://plugins.ravixcms.com/registry/v1/plugins/contact_form/versions/1.2.0/download/"}}]}
 ```
 نمونهٔ انتشار با curl:
 ```bash
 curl -sS -H "Authorization: Bearer $RAVIX_PUBLISH_TOKEN" -F package=@my_plugin.zip -F changelog="رفع باگ" -F publish=1 \
-     https://registry.example.com/registry/v1/publish/
+     https://plugins.ravixcms.com/registry/v1/publish/
 ```
 کدهای خطا: `400` اعتبارسنجی/نسخهٔ تکراری/مالکیت، `401` توکن نامعتبر، `403` غیر-HTTPS، `404`، `429` (۳۰ درخواست انتشار در ۱۰ دقیقه به‌ازای IP)، `500` عدم تطابق هش فایل ذخیره‌شده (هرگز سرو نمی‌شود).
 
@@ -126,7 +126,7 @@ shred -u registry-2026.key        # نسخهٔ رمزشدهٔ آفلاین را 
 RAVIX_REGISTRY_ENABLED=true
 RAVIX_REGISTRY_SIGNING_KEY_FILE=/etc/ravix/registry-signing.key
 RAVIX_REGISTRY_NAME=Ravix Plugin Registry
-RAVIX_SITE_URL=https://registry.example.com
+RAVIX_SITE_URL=https://plugins.ravixcms.com
 RAVIX_OFFICIAL_REGISTRY_URL=              # خالیِ صریح: این نمونه خودش مخزن است (LocalHubSource)، نه کلاینت مخزن دیگر
 RAVIX_UPDATE_URL=                          # اختیاری: سرور مخزن لازم نیست بررسی نسخهٔ هسته را از جای دیگری بخواند
 ```
@@ -135,7 +135,7 @@ RAVIX_UPDATE_URL=                          # اختیاری: سرور مخزن �
 ## ۳. قراردادن کلید عمومی و آدرس در کد
 در `apps/core/official.py` (جزئیات و چک‌لیست: `release.md` §۲):
 ```python
-OFFICIAL_REGISTRY_URL = "https://registry.example.com"
+OFFICIAL_REGISTRY_URL = "https://plugins.ravixcms.com"
 OFFICIAL_PUBLIC_KEYS  = (
     "release-2026:<کلید عمومی انتشار هسته>",
     "registry-2026:<کلید عمومی امضای مخزن>",
@@ -148,8 +148,8 @@ OFFICIAL_PUBLIC_KEYS  = (
 ۱. استقرار مثل هر Ravix (`docs/deployment.md`/`installer.md`)، **پشت HTTPS** (دانلود در `DEBUG=False` فقط HTTPS است).
 ۲. `RAVIX_REGISTRY_STORAGE` را خارج از کد و `media` بگذارید (مالک کاربر سرویس) و در `deploy/backup.sh` پشتیبان می‌شود؛ فایل `.env` و کلید امضا را **جداگانه و رمزشده** پشتیبان بگیرید.
 ۳. مدیرکل: پنل ← مدیریت مخزن ← ناشران ← مجاز کردن کاربر؛ ناشر: بارگذاری یا توکن + `curl` (بالاتر).
-۴. بررسی: `curl -s https://registry.example.com/registry/v1/` متادیتا بدهد و پس از انتشار یک نسخهٔ آزمایشی، `signature` و `signature_key_id` در جزئیات نسخه پر باشد.
-۵. روی یک سایت آزمایشی (با کلید عمومی مخزن مورد اعتماد): `python manage.py plugin_fetch --registry https://registry.example.com <slug>` سپس نصب در پنل؛ باید «امضاشده و معتبر» نشان دهد.
+۴. بررسی: `curl -s https://plugins.ravixcms.com/registry/v1/` متادیتا بدهد و پس از انتشار یک نسخهٔ آزمایشی، `signature` و `signature_key_id` در جزئیات نسخه پر باشد.
+۵. روی یک سایت آزمایشی (با کلید عمومی مخزن مورد اعتماد): `python manage.py plugin_fetch --registry https://plugins.ravixcms.com <slug>` سپس نصب در پنل؛ باید «امضاشده و معتبر» نشان دهد.
 
 ## ۵. چرخش و ابطال کلید مخزن
 **چرخش برنامه‌ریزی‌شده** (کلید فعلی سالم است):

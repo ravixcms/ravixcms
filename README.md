@@ -2,11 +2,14 @@
 
 **سیستم مدیریت محتوای فارسی و راست‌چین** برای وبلاگ، سایت شرکتی و فروشگاه کوچک — با Python و Django. نسخهٔ `0.9.0`.
 
+[ravixcms.com](https://ravixcms.com) · [مستندات](https://ravixcms.com/docs) · [کد منبع در GitHub](https://github.com/ravixcms/ravixcms) · [به‌روزرسانی‌ها](https://updates.ravixcms.com) · [افزونه‌ها و قالب‌ها](https://plugins.ravixcms.com)
+
 سایت را نصب می‌کنید، با پنل فارسی می‌نویسید و منتشر می‌کنید؛ تاریخ شمسی، راست‌چین و فونت فارسی از همان ابتدا هست.
 
 ## نصب با یک دستور
 در پوشهٔ برنامه (به Docker نیاز دارد):
 ```bash
+git clone https://github.com/ravixcms/ravixcms.git && cd ravixcms
 docker compose up -d --build
 ```
 سپس `http://localhost/install/` را باز کنید: نام سایت و مدیرکل را وارد کنید، تمام. (کد امنیتی نصب: `docker compose exec ravix python manage.py ravix_install_token`.)
@@ -26,7 +29,7 @@ docker compose up -d --build
 | **همراه هسته** | سئو و Open Graph، ریدایرکت، دیدگاه با ضداسپم، صفحه‌ساز، «سلامت سایت»، پشتیبان‌گیری روزانه، API نسخهٔ ۱؛ فروشگاه و چندسایتی اختیاری | ویرایشگر بلوکی و دیدگاه در هسته؛ سئو، ریدایرکت، پشتیبان و فروشگاه معمولاً با افزونه |
 | اکوسیستم | **کوچک و جوان**: یک قالب، سه افزونهٔ نمونه | بسیار بزرگ |
 
-**صادقانه، Ravix هنوز:** با قالب و افزونهٔ وردپرس سازگار نیست و ابزار انتقال از وردپرس ندارد؛ درگاه پرداخت واقعی ندارد (فقط درگاه آزمایشی؛ درگاه واقعی افزونه است)؛ سرور رسمی به‌روزرسانی و مخزن افزونه را خودتان باید راه بیندازید ([`docs/release.md`](docs/release.md)، [`docs/registry.md`](docs/registry.md)).
+**صادقانه، Ravix هنوز:** با قالب و افزونهٔ وردپرس سازگار نیست و ابزار انتقال از وردپرس ندارد؛ درگاه پرداخت واقعی ندارد (فقط درگاه آزمایشی؛ درگاه واقعی افزونه است)؛ نشانی‌های رسمی به‌روزرسانی (`updates.ravixcms.com`) و مخزن افزونه (`plugins.ravixcms.com`) در کد هست، ولی تا وقتی کلید عمومی ناشر تنظیم نشده **غیرفعال‌اند** (پنل پیام روشن می‌دهد، خطا نیست). راه‌اندازی سرور آن‌ها: [`docs/release.md`](docs/release.md)، [`docs/registry.md`](docs/registry.md).
 اگر اکوسیستم بزرگ و ابزارهای آمادهٔ فراوان برایتان مهم‌تر است، فعلاً وردپرس انتخاب بهتری است.
 
 ## مستندات
@@ -42,7 +45,7 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.lock
 .venv/bin/python manage.py migrate && .venv/bin/python manage.py runserver   # SQLite؛ فقط توسعه
 .venv/bin/python manage.py test
 ```
-مشارکت: [`CONTRIBUTING.md`](CONTRIBUTING.md) · تغییرات: [`CHANGELOG.md`](CHANGELOG.md) · امنیت: [`SECURITY.md`](SECURITY.md) و گزارش آسیب‌پذیری.
+مشارکت: [`CONTRIBUTING.md`](CONTRIBUTING.md) · گزارش مشکل: [Issues](https://github.com/ravixcms/ravixcms/issues) · تغییرات: [`CHANGELOG.md`](CHANGELOG.md) · امنیت: [`SECURITY.md`](SECURITY.md).
 
 ## مجوز
 MIT — [`LICENSE`](LICENSE). اعلان‌های شخص ثالث (فونت‌ها): [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).

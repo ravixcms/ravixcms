@@ -4,7 +4,8 @@
 لطفاً آسیب‌پذیری را **به‌صورت عمومی گزارش نکنید** (نه در Issue، نه در Discussions و نه در شبکه‌های اجتماعی)؛ انتشار عمومی پیش از وصله، کاربران را در معرض خطر می‌گذارد.
 
 - **ایمیل:** [ravixcms@gmail.com](mailto:ravixcms@gmail.com)
-- یا از «Report a vulnerability» در تب Security مخزن GitHub (Private vulnerability reporting) استفاده کنید.
+- یا از «Report a vulnerability» در تب Security مخزن [github.com/ravixcms/ravixcms](https://github.com/ravixcms/ravixcms/security/advisories/new) (Private vulnerability reporting) استفاده کنید.
+- وب‌سایت پروژه: [ravixcms.com](https://ravixcms.com)
 
 گزارش شامل این‌ها باشد: نسخهٔ Ravix، مراحل بازتولید، اثر امنیتی، و در صورت امکان پیشنهاد رفع. اسرار واقعی (رمز، کلید) را در گزارش نفرستید.
 

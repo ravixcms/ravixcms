@@ -12,7 +12,7 @@
     "pt-br": "Ferramentas de SEO",
     "zh-hans": "SEO 工具包"
   },
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": {
     "fa": "عنوان، توضیحات متا، noindex، canonical و تصویر اشتراک‌گذاری هر برگه و نوشته را مدیریت می‌کند و الگوی عنوان سراسری دارد.",
     "en": "Manages the title, meta description, noindex, canonical and sharing image of each page/post, and has a global title pattern.",
@@ -26,6 +26,7 @@
     "zh-hans": "管理每个页面和文章的标题、元描述、noindex、canonical 和分享图片，并提供全站标题模板。"
   },
   "author": "Ravix",
+  "homepage": "https://ravixcms.com",
   "api_version": 1,
   "ravix": ">=0.9,<2.0",
   "models": true,

@@ -1,4 +1,5 @@
 # مستندات Ravix
+نسخهٔ برخط: <https://ravixcms.com/docs> · وب‌سایت: <https://ravixcms.com> · کد: <https://github.com/ravixcms/ravixcms>
 
 ## برای مدیر سایت — زبان ساده
 بدون اصطلاح فنی؛ [شروع از اینجا](admin/README.md).

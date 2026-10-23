@@ -814,8 +814,8 @@ msgstr "مقدار نوشته‌شده خوانده نشد"
 msgid "Theme slug: lowercase English letters, digits, “-” and “_”"
 msgstr "نامک قالب: حروف کوچک انگلیسی، عدد، «-» و «_»"
 
-msgid "There is no trusted key (RAVIX_TRUSTED_PUBLIC_KEYS); no update package is accepted"
-msgstr "هیچ کلید مورد اعتمادی (RAVIX_TRUSTED_PUBLIC_KEYS) نیست؛ هیچ بستهٔ به‌روزرسانی پذیرفته نمی‌شود"
+msgid "There is no trusted key (RAVIX_TRUSTED_PUBLIC_KEYS): the official update source stays disabled and no update package is accepted"
+msgstr "هیچ کلید مورد اعتمادی (RAVIX_TRUSTED_PUBLIC_KEYS) نیست: منبع رسمی به‌روزرسانی غیرفعال می‌ماند و هیچ بستهٔ به‌روزرسانی پذیرفته نمی‌شود"
 
 msgid "Trusted keys (env) are valid"
 msgstr "کلیدهای مورد اعتماد (env) معتبرند"
@@ -940,3 +940,6 @@ msgstr "پوشهٔ کش وجود ندارد یا قابل نوشتن نیست"
 #, python-format
 msgid "The cache folder %(a1)s is missing or not writable (%(a2)s: %(a3)s). Provision it with CacheDirectory=ravix in the systemd unit or set RAVIX_CACHE_DIR; until then nothing is cached and login throttling uses the database table."
 msgstr "پوشهٔ کش %(a1)s وجود ندارد یا قابل نوشتن نیست (%(a2)s: %(a3)s). آن را با CacheDirectory=ravix در unit سیستم‌دی فراهم کنید یا RAVIX_CACHE_DIR را تنظیم کنید؛ تا آن زمان چیزی کش نمی‌شود و محدودسازی ورود از جدول دیتابیس استفاده می‌کند."
+
+msgid "The official update source is disabled until a trusted public key is configured (RAVIX_TRUSTED_PUBLIC_KEYS); nothing was checked."
+msgstr "منبع رسمی به‌روزرسانی تا تنظیم‌شدن یک کلید عمومی مورد اعتماد (RAVIX_TRUSTED_PUBLIC_KEYS) غیرفعال است؛ چیزی بررسی نشد."

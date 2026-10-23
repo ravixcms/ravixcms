@@ -410,6 +410,10 @@ RAVIX_REGISTRY_SIGNING_KEY = env("RAVIX_REGISTRY_SIGNING_KEY", "")  # جایگز
 # ---------------------------------------------------------------------------
 # به‌روزرسانی یکپارچه (apps.updater) — docs/upgrade.md
 # ---------------------------------------------------------------------------
+# پیوندهای رسمی پروژه (نمایش در پنل، نصب‌کننده و User-Agent درخواست‌های به‌روزرسانی)؛ با متغیر محیطی قابل تغییرند.
+RAVIX_WEBSITE_URL = env("RAVIX_WEBSITE_URL", official.OFFICIAL_WEBSITE_URL).strip().rstrip("/")
+RAVIX_DOCS_URL = env("RAVIX_DOCS_URL", official.OFFICIAL_DOCS_URL).strip().rstrip("/")
+RAVIX_REPO_URL = env("RAVIX_REPO_URL", official.OFFICIAL_REPO_URL).strip().rstrip("/")
 RAVIX_UPDATE_URL = env("RAVIX_UPDATE_URL", official.OFFICIAL_UPDATE_URL).strip().rstrip("/")  # منبع رسمی (فقط HTTPS): <URL>/updates/v1/index.json
 RAVIX_UPDATE_DIR = env("RAVIX_UPDATE_DIR", "")  # منبع پوشه‌ای (آفلاین/آزمایشی): index.json + بسته‌ها؛ فقط تنظیم سرور
 RAVIX_UPDATE_WEB_APPLY = env_bool("RAVIX_UPDATE_WEB_APPLY", False)  # false: اعمال ارتقا فقط با دستور مدیریتی (check/نمایش همیشه آزاد است)

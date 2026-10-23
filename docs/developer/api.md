@@ -25,9 +25,9 @@ curl -b cookies.txt -H "X-CSRFToken: $CSRF" -H 'Content-Type: application/json' 
 ## API مخزن افزونه‌ها (`/registry/v1/`)
 خواندن عمومی؛ انتشار با توکن ناشر.
 ```bash
-curl 'https://registry.example.com/registry/v1/plugins/?q=form&compatible=1'
-curl  https://registry.example.com/registry/v1/plugins/contact_form/
-curl -H "Authorization: Bearer $TOKEN" -F package=@my_plugin.zip -F publish=1 https://registry.example.com/registry/v1/publish/
+curl 'https://plugins.ravixcms.com/registry/v1/plugins/?q=form&compatible=1'
+curl  https://plugins.ravixcms.com/registry/v1/plugins/contact_form/
+curl -H "Authorization: Bearer $TOKEN" -F package=@my_plugin.zip -F publish=1 https://plugins.ravixcms.com/registry/v1/publish/
 ```
 هر نسخه `sha256`، `fingerprint`، `signature`، `signature_key_id` و `compatibility` دارد. دانلود فقط HTTPS و با هدر `X-Checksum-SHA256`؛ کلاینت‌ها باید هش و امضا را با **کلید مورد اعتماد خودشان** بسنجند، نه مقادیر ادعاشدهٔ پاسخ.
 

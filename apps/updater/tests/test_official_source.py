@@ -4,6 +4,7 @@ import urllib.error
 from unittest import mock
 
 from django.core.cache import cache
+from django.core.management import call_command
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
@@ -15,6 +16,7 @@ from apps.plugins.models import TrustedKey
 from apps.updater import signing as usigning
 from apps.updater import sources
 
+_TEST_SEED, _TEST_PUBKEY = psigning.generate_keypair()  # in-memory test key only
 DEAD = "https://updates.invalid.example"
 DEAD_REG = "https://registry.invalid.example"
 FAILURES = [
@@ -32,7 +34,7 @@ def _urlopen_fail(exc):
     return opener
 
 
-@override_settings(RAVIX_UPDATE_URL=DEAD, RAVIX_UPDATE_DIR="", RAVIX_OFFICIAL_REGISTRY_URL=DEAD_REG)
+@override_settings(RAVIX_UPDATE_URL=DEAD, RAVIX_UPDATE_DIR="", RAVIX_OFFICIAL_REGISTRY_URL=DEAD_REG, RAVIX_TRUSTED_PUBLIC_KEYS=[f"t:{_TEST_PUBKEY}"])
 class UnreachableServerTests(TestCase):
     def setUp(self):
         cache.clear()
@@ -140,10 +142,13 @@ class OfficialDefaultsTests(TestCase):
             os.environ.pop(name, None)
         importlib.reload(base)
 
-    def test_shipped_defaults_are_empty_placeholders(self):
+    def test_shipped_defaults_and_empty_key(self):
         # این آزمون عمداً می‌شکند تا ناشر پس از پر کردن official.py آن را آگاهانه به‌روز کند.
-        self.assertEqual((official.OFFICIAL_UPDATE_URL, official.OFFICIAL_REGISTRY_URL, official.OFFICIAL_PUBLIC_KEYS, official.REVOKED_KEY_IDS),
-                         ("", "", (), ()))
+        self.assertEqual((official.OFFICIAL_WEBSITE_URL, official.OFFICIAL_DOCS_URL, official.OFFICIAL_REPO_URL, official.OFFICIAL_UPDATE_URL, official.OFFICIAL_REGISTRY_URL),
+                         ("https://ravixcms.com", "https://ravixcms.com/docs", "https://github.com/ravixcms/ravixcms",
+                          "https://updates.ravixcms.com", "https://plugins.ravixcms.com"))
+        # The publisher's public key is not known yet: it stays empty, which keeps the official sources disabled.
+        self.assertEqual((official.OFFICIAL_PUBLIC_KEYS, official.REVOKED_KEY_IDS), ((), ()))
 
 
 class KeyTrustTests(TestCase):
@@ -248,3 +253,73 @@ class EndToEndOverHttpTests(__import__("apps.updater.tests.helpers", fromlist=["
             with self.assertRaises(UpdateError):
                 self.apply("0.9.0", source=sources.get_source())
         self.assertEqual(self.disk(), before)
+
+
+class NoKeyDisablesOfficialSourcesTests(TestCase):
+    """Until a trusted public key exists, the HTTPS update source and the remote registry are disabled: never contacted, clear message, no error."""
+
+    def setUp(self):
+        cache.clear()
+        self.addCleanup(cache.clear)
+        self.c = Client()
+        self.c.force_login(make_user("boss", Role.SUPER_ADMIN))
+
+    def no_key(self):
+        return override_settings(RAVIX_UPDATE_URL="https://updates.ravixcms.com", RAVIX_UPDATE_DIR="", RAVIX_OFFICIAL_REGISTRY_URL="https://plugins.ravixcms.com",
+                                 RAVIX_TRUSTED_PUBLIC_KEYS=[])
+
+    def test_state_and_get_source(self):
+        with self.no_key(), mock.patch.object(official, "OFFICIAL_PUBLIC_KEYS", ()):
+            self.assertEqual(sources.source_state(), "no_key")
+            self.assertFalse(sources.has_source())
+            with self.assertRaises(sources.UpdateError):
+                sources.get_source()
+            from apps.plugins import sources as psources
+
+            self.assertEqual(psources.registry_state(), "no_key")
+            self.assertFalse(psources.has_source())
+        with self.no_key(), mock.patch.object(official, "OFFICIAL_PUBLIC_KEYS", (f"pub:{_TEST_PUBKEY}",)):
+            self.assertEqual(sources.source_state(), "ok")
+            self.assertTrue(sources.has_source())
+
+    def test_directory_source_does_not_need_a_key(self):
+        with self.no_key(), override_settings(RAVIX_UPDATE_DIR="/tmp/some-dir"), mock.patch.object(official, "OFFICIAL_PUBLIC_KEYS", ()):
+            self.assertEqual(sources.source_state(), "directory")
+
+    def test_pages_show_a_clear_message_and_never_touch_the_network(self):
+        with self.no_key(), mock.patch.object(official, "OFFICIAL_PUBLIC_KEYS", ()), \
+                mock.patch("urllib.request.OpenerDirector.open", side_effect=AssertionError("network used")) as m:
+            for lang in ("fa", "en", "de"):
+                self.c.cookies["ravix_lang"] = lang
+                r = self.c.get(reverse("updater:home"))
+                self.assertEqual(r.status_code, 200)
+                self.assertNotContains(r, 'class="form-errors" role="alert"')
+                if lang == "en":
+                    self.assertContains(r, "disabled until a trusted public key is configured")
+            self.assertEqual(self.c.get(reverse("plugins:list")).status_code, 200)
+            health = self.c.get(reverse("core:site_health"))
+            self.assertEqual(health.status_code, 200)
+        m.assert_not_called()
+
+    def test_health_check_is_informational_not_critical(self):
+        from apps.core import sitehealth
+
+        with self.no_key(), mock.patch.object(official, "OFFICIAL_PUBLIC_KEYS", ()):
+            [check] = [c for c in sitehealth.check_versions() if c.key == "update_source"]
+        self.assertEqual(check.status, sitehealth.UNKNOWN)
+
+    def test_command_reports_without_failing(self):
+        from io import StringIO as _S
+
+        out = _S()
+        with self.no_key(), mock.patch.object(official, "OFFICIAL_PUBLIC_KEYS", ()):
+            call_command("ravix_update", "check", stdout=out, stderr=_S())
+        self.assertIn("RAVIX_TRUSTED_PUBLIC_KEYS", out.getvalue())
+
+    def test_user_agent_names_version_and_site(self):
+        from apps.core.version import RAVIX_VERSION
+        from apps.plugins import sources as psources
+
+        self.assertEqual(psources.user_agent(), f"Ravix/{RAVIX_VERSION} (+https://ravixcms.com)")
+        with override_settings(RAVIX_WEBSITE_URL="javascript:alert(1)"):
+            self.assertEqual(psources.user_agent(), f"Ravix/{RAVIX_VERSION}")

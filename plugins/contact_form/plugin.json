@@ -12,7 +12,7 @@
     "pt-br": "Formulário de contato",
     "zh-hans": "联系表单"
   },
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": {
     "fa": "فرم تماس عمومی در /ext/contact_form/ که پیام‌ها را در پایگاه داده ذخیره می‌کند و در پنل صندوق ورودی دارد.",
     "en": "A public contact form at /ext/contact_form/ that stores messages in the database and has an inbox in the panel.",
@@ -26,6 +26,7 @@
     "zh-hans": "位于 /ext/contact_form/ 的公开联系表单，将留言保存到数据库，并在管理面板中提供收件箱。"
   },
   "author": "Ravix",
+  "homepage": "https://ravixcms.com",
   "api_version": 1,
   "ravix": ">=0.9,<2.0",
   "models": true,

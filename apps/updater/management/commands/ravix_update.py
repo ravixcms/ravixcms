@@ -46,6 +46,9 @@ class Command(BaseCommand):
                 for r in UpdateRun.objects.filter(status="needs_recovery")[:5]:
                     self.stdout.write(self.style.ERROR(cli_gettext("Needs recovery: run #%(a1)s\n%(a2)s") % {"a1": r.pk, "a2": r.recovery}))
             elif act == "check":
+                if sources.source_state() == "no_key":
+                    self.stdout.write(self.style.WARNING(cli_gettext("The official update source is disabled until a trusted public key is configured (RAVIX_TRUSTED_PUBLIC_KEYS); nothing was checked.")))
+                    return
                 if not sources.has_source():
                     raise CommandError(cli_gettext("No update source is configured (RAVIX_UPDATE_URL or RAVIX_UPDATE_DIR)."))
                 plan = pipeline.plan_core(sources.cached_index(force=True))

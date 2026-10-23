@@ -12,7 +12,7 @@
     "pt-br": "Gateway de exemplo (modelo de gateway)",
     "zh-hans": "示例支付网关（网关模板）"
   },
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": {
     "fa": "افزونهٔ نمونهٔ درگاه پرداخت برای یادگیری و آزمایش. به یک API فرضی (ExamplePay) وصل می‌شود نه سرویس واقعی؛ برای درگاه واقعی نشانی‌ها و قراردادها را طبق مستندات رسمی همان ارائه‌دهنده تغییر دهید.",
     "en": "A sample payment-gateway plugin for learning and testing. It connects to a hypothetical API (ExamplePay) and to no real service; for a real gateway change the addresses and contracts according to that provider’s official documentation.",
@@ -26,6 +26,7 @@
     "zh-hans": "用于学习和测试的示例支付网关插件。它连接的是假想的 API（ExamplePay），而非真实服务；用于真实网关时，请按服务商官方文档修改地址和约定。"
   },
   "author": "Ravix",
+  "homepage": "https://ravixcms.com",
   "api_version": 1,
   "ravix": ">=0.9,<2.0",
   "hooks": [

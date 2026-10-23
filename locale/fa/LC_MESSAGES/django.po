@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-24 00:56+0330\n"
+"POT-Creation-Date: 2026-10-24 01:30+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -2658,6 +2658,40 @@ msgid "Upgrade to Python 3.11 or later."
 msgstr "به Python 3.11 یا بالاتر ارتقا دهید."
 
 #: apps/core/sitehealth.py
+msgid "Update source"
+msgstr "منبع به‌روزرسانی"
+
+#: apps/core/sitehealth.py templates/updater/home.html
+msgid ""
+"The official update source is disabled until a trusted public key is "
+"configured, because no package can be verified without one. This is not an "
+"error; new versions are simply not checked yet."
+msgstr ""
+"منبع رسمی به‌روزرسانی تا تنظیم‌شدن یک کلید عمومی مورد اعتماد غیرفعال است، "
+"چون بدون آن هیچ بسته‌ای قابل راستی‌آزمایی نیست. این خطا نیست؛ فقط هنوز نسخهٔ"
+" جدید بررسی نمی‌شود."
+
+#: apps/core/sitehealth.py
+msgid ""
+"Nothing to do unless you want update checks: add the publisher’s public key "
+"(RAVIX_TRUSTED_PUBLIC_KEYS)."
+msgstr ""
+"اگر بررسی نسخهٔ جدید را می‌خواهید، کلید عمومی ناشر را اضافه کنید "
+"(RAVIX_TRUSTED_PUBLIC_KEYS)؛ وگرنه کاری لازم نیست."
+
+#: apps/core/sitehealth.py
+msgid "No update source is configured, so new versions are not checked."
+msgstr "هیچ منبع به‌روزرسانی تنظیم نشده است، پس نسخهٔ جدید بررسی نمی‌شود."
+
+#: apps/core/sitehealth.py
+msgid "Set RAVIX_UPDATE_URL if you want update checks."
+msgstr "اگر بررسی نسخهٔ جدید را می‌خواهید RAVIX_UPDATE_URL را تنظیم کنید."
+
+#: apps/core/sitehealth.py
+msgid "The update source is configured and a trusted public key is present."
+msgstr "منبع به‌روزرسانی تنظیم شده و یک کلید عمومی مورد اعتماد وجود دارد."
+
+#: apps/core/sitehealth.py
 msgid "Database migrations"
 msgstr "مهاجرت‌های دیتابیس"
 
@@ -3953,7 +3987,7 @@ msgstr "slug: باید با نام پوشه (%(expected_slug)s) یکی باشد.
 msgid "version: must look like 1.2.3."
 msgstr "version: باید به شکل 1.2.3 باشد."
 
-#: apps/plugins/manifest.py
+#: apps/plugins/manifest.py apps/themes/manifest.py
 msgid "homepage: not a valid http(s) address."
 msgstr "homepage: نشانی http(s) معتبر نیست."
 
@@ -4736,6 +4770,14 @@ msgstr "افزونه در مخزن پیدا نشد."
 #: apps/plugins/sources.py
 msgid "The package file is not available in the registry."
 msgstr "فایل بسته در مخزن در دسترس نیست."
+
+#: apps/plugins/sources.py
+msgid ""
+"The official registry is disabled until a trusted public key is configured: "
+"no package can be verified without one."
+msgstr ""
+"مخزن رسمی تا تنظیم‌شدن یک کلید عمومی مورد اعتماد غیرفعال است: بدون آن هیچ "
+"بسته‌ای قابل راستی‌آزمایی نیست."
 
 #: apps/plugins/sources.py
 msgid "The official registry is not configured (RAVIX_OFFICIAL_REGISTRY_URL)."
@@ -7650,6 +7692,16 @@ msgid "The package file was not found in the source."
 msgstr "فایل بسته در منبع پیدا نشد."
 
 #: apps/updater/sources.py
+msgid ""
+"The official update source is disabled until a trusted public key is "
+"configured: no package can be verified without one. Nothing is wrong with "
+"the server; updates are simply not checked yet."
+msgstr ""
+"منبع رسمی به‌روزرسانی تا تنظیم‌شدن یک کلید عمومی مورد اعتماد غیرفعال است: "
+"بدون آن هیچ بسته‌ای قابل راستی‌آزمایی نیست. مشکلی در سرور نیست؛ فقط هنوز "
+"نسخهٔ جدید بررسی نمی‌شود."
+
+#: apps/updater/sources.py
 msgid "The official update source is not configured (RAVIX_UPDATE_URL)."
 msgstr "منبع رسمی به‌روزرسانی تنظیم نشده است (RAVIX_UPDATE_URL)."
 
@@ -9025,6 +9077,10 @@ msgstr ""
 "%(media_dir)s</code>) وجود ندارد یا قابل‌نوشتن نیست؛ بارگذاری فایل کار "
 "نخواهد کرد."
 
+#: templates/installer/install.html
+msgid "Installation guide and documentation"
+msgstr "راهنمای نصب و مستندات"
+
 #: templates/layouts/auth.html
 msgid "Powered by Ravix"
 msgstr "قدرت‌گرفته از Ravix"
@@ -9051,8 +9107,13 @@ msgid "Toggle menu"
 msgstr "باز و بسته کردن منو"
 
 #: templates/layouts/panel.html
-msgid "Ravix — version 0.1"
-msgstr "Ravix — نسخه ۰٫۱"
+#, python-format
+msgid "Ravix %(ravix_version)s"
+msgstr "راویکس %(ravix_version)s"
+
+#: templates/layouts/panel.html
+msgid "Documentation"
+msgstr "مستندات"
 
 #: templates/media_library/media_detail.html
 msgid "Media details"

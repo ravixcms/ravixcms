@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-24 00:56+0330\n"
+"POT-Creation-Date: 2026-10-24 01:30+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -2739,6 +2739,46 @@ msgid "Upgrade to Python 3.11 or later."
 msgstr "Passez à Python 3.11 ou ultérieur."
 
 #: apps/core/sitehealth.py
+msgid "Update source"
+msgstr "Source de mises à jour"
+
+#: apps/core/sitehealth.py templates/updater/home.html
+msgid ""
+"The official update source is disabled until a trusted public key is "
+"configured, because no package can be verified without one. This is not an "
+"error; new versions are simply not checked yet."
+msgstr ""
+"La source officielle de mises à jour est désactivée tant qu’aucune clé "
+"publique de confiance n’est configurée, car aucun paquet ne peut être "
+"vérifié sans elle. Ce n’est pas une erreur ; les nouvelles versions ne sont "
+"simplement pas encore recherchées."
+
+#: apps/core/sitehealth.py
+msgid ""
+"Nothing to do unless you want update checks: add the publisher’s public key "
+"(RAVIX_TRUSTED_PUBLIC_KEYS)."
+msgstr ""
+"Rien à faire sauf si vous voulez la recherche de mises à jour : ajoutez la "
+"clé publique de l’éditeur (RAVIX_TRUSTED_PUBLIC_KEYS)."
+
+#: apps/core/sitehealth.py
+msgid "No update source is configured, so new versions are not checked."
+msgstr ""
+"Aucune source de mises à jour n’est configurée ; les nouvelles versions ne "
+"sont donc pas recherchées."
+
+#: apps/core/sitehealth.py
+msgid "Set RAVIX_UPDATE_URL if you want update checks."
+msgstr ""
+"Définissez RAVIX_UPDATE_URL si vous voulez la recherche de mises à jour."
+
+#: apps/core/sitehealth.py
+msgid "The update source is configured and a trusted public key is present."
+msgstr ""
+"La source de mises à jour est configurée et une clé publique de confiance "
+"est présente."
+
+#: apps/core/sitehealth.py
 msgid "Database migrations"
 msgstr "Migrations de la base de données"
 
@@ -4105,7 +4145,7 @@ msgstr "slug : doit correspondre au nom du dossier (%(expected_slug)s)."
 msgid "version: must look like 1.2.3."
 msgstr "version : doit ressembler à 1.2.3."
 
-#: apps/plugins/manifest.py
+#: apps/plugins/manifest.py apps/themes/manifest.py
 msgid "homepage: not a valid http(s) address."
 msgstr "homepage : n’est pas une adresse http(s) valide."
 
@@ -4921,6 +4961,14 @@ msgstr "L’extension est introuvable dans le registre."
 #: apps/plugins/sources.py
 msgid "The package file is not available in the registry."
 msgstr "Le fichier du paquet n’est pas disponible dans le registre."
+
+#: apps/plugins/sources.py
+msgid ""
+"The official registry is disabled until a trusted public key is configured: "
+"no package can be verified without one."
+msgstr ""
+"Le registre officiel est désactivé tant qu’aucune clé publique de confiance "
+"n’est configurée : aucun paquet ne peut être vérifié sans elle."
 
 #: apps/plugins/sources.py
 msgid "The official registry is not configured (RAVIX_OFFICIAL_REGISTRY_URL)."
@@ -8017,6 +8065,17 @@ msgid "The package file was not found in the source."
 msgstr "Le fichier du paquet est introuvable dans la source."
 
 #: apps/updater/sources.py
+msgid ""
+"The official update source is disabled until a trusted public key is "
+"configured: no package can be verified without one. Nothing is wrong with "
+"the server; updates are simply not checked yet."
+msgstr ""
+"La source officielle de mises à jour est désactivée tant qu’aucune clé "
+"publique de confiance n’est configurée : aucun paquet ne peut être vérifié "
+"sans elle. Le serveur n’a aucun problème ; les nouvelles versions ne sont "
+"simplement pas encore recherchées."
+
+#: apps/updater/sources.py
 msgid "The official update source is not configured (RAVIX_UPDATE_URL)."
 msgstr ""
 "La source officielle de mise à jour n’est pas configurée (RAVIX_UPDATE_URL)."
@@ -9426,6 +9485,10 @@ msgstr ""
 "%(media_dir)s</code>) n’existe pas ou n’est pas accessible en écriture ; le "
 "téléversement de fichiers ne fonctionnera pas."
 
+#: templates/installer/install.html
+msgid "Installation guide and documentation"
+msgstr "Guide d’installation et documentation"
+
 #: templates/layouts/auth.html
 msgid "Powered by Ravix"
 msgstr "Propulsé par Ravix"
@@ -9452,8 +9515,13 @@ msgid "Toggle menu"
 msgstr "Afficher/masquer le menu"
 
 #: templates/layouts/panel.html
-msgid "Ravix — version 0.1"
-msgstr "Ravix — version 0.1"
+#, python-format
+msgid "Ravix %(ravix_version)s"
+msgstr "Ravix %(ravix_version)s"
+
+#: templates/layouts/panel.html
+msgid "Documentation"
+msgstr "Documentation"
 
 #: templates/media_library/media_detail.html
 msgid "Media details"

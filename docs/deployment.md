@@ -32,7 +32,7 @@ sudo chown ravix:ravix /var/backups/ravix && sudo chmod 700 /var/backups/ravix
 
 ## ۳. کد و وابستگی‌ها
 ```bash
-sudo -u ravix git clone <آدرس-مخزن-کد-شما> /srv/ravix/app      # یا فایل zip را باز کنید
+sudo -u ravix git clone https://github.com/ravixcms/ravixcms.git /srv/ravix/app      # یا فایل zip را باز کنید
 sudo -u ravix python3 -m venv /srv/ravix/venv
 sudo -u ravix /srv/ravix/venv/bin/pip install -r /srv/ravix/app/requirements.lock   # نسخه‌های دقیقِ آزموده‌شده؛ یا requirements.txt برای آخرین نسخه‌های سازگار
 ```

@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-24 00:56+0330\n"
+"POT-Creation-Date: 2026-10-24 01:30+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -2581,6 +2581,35 @@ msgid "Upgrade to Python 3.11 or later."
 msgstr "请升级到 Python 3.11 或更高版本。"
 
 #: apps/core/sitehealth.py
+msgid "Update source"
+msgstr "更新源"
+
+#: apps/core/sitehealth.py templates/updater/home.html
+msgid ""
+"The official update source is disabled until a trusted public key is "
+"configured, because no package can be verified without one. This is not an "
+"error; new versions are simply not checked yet."
+msgstr "在配置受信任的公钥之前，官方更新源处于停用状态，因为没有公钥就无法验证任何更新包。这不是错误，只是暂时不会检查新版本。"
+
+#: apps/core/sitehealth.py
+msgid ""
+"Nothing to do unless you want update checks: add the publisher’s public key "
+"(RAVIX_TRUSTED_PUBLIC_KEYS)."
+msgstr "除非需要检查更新，否则无需操作；如需检查，请添加发布者的公钥（RAVIX_TRUSTED_PUBLIC_KEYS）。"
+
+#: apps/core/sitehealth.py
+msgid "No update source is configured, so new versions are not checked."
+msgstr "未配置更新源，因此不会检查新版本。"
+
+#: apps/core/sitehealth.py
+msgid "Set RAVIX_UPDATE_URL if you want update checks."
+msgstr "如需检查更新，请设置 RAVIX_UPDATE_URL。"
+
+#: apps/core/sitehealth.py
+msgid "The update source is configured and a trusted public key is present."
+msgstr "已配置更新源，且存在受信任的公钥。"
+
+#: apps/core/sitehealth.py
 msgid "Database migrations"
 msgstr "数据库迁移"
 
@@ -3819,7 +3848,7 @@ msgstr "slug：必须与文件夹名称一致（%(expected_slug)s）。"
 msgid "version: must look like 1.2.3."
 msgstr "version：必须形如 1.2.3。"
 
-#: apps/plugins/manifest.py
+#: apps/plugins/manifest.py apps/themes/manifest.py
 msgid "homepage: not a valid http(s) address."
 msgstr "homepage：不是有效的 http(s) 地址。"
 
@@ -4582,6 +4611,12 @@ msgstr "在注册表中未找到该插件。"
 #: apps/plugins/sources.py
 msgid "The package file is not available in the registry."
 msgstr "注册表中没有该软件包文件。"
+
+#: apps/plugins/sources.py
+msgid ""
+"The official registry is disabled until a trusted public key is configured: "
+"no package can be verified without one."
+msgstr "在配置受信任的公钥之前，官方仓库处于停用状态：没有公钥就无法验证任何软件包。"
 
 #: apps/plugins/sources.py
 msgid "The official registry is not configured (RAVIX_OFFICIAL_REGISTRY_URL)."
@@ -7401,6 +7436,13 @@ msgid "The package file was not found in the source."
 msgstr "在源中未找到软件包文件。"
 
 #: apps/updater/sources.py
+msgid ""
+"The official update source is disabled until a trusted public key is "
+"configured: no package can be verified without one. Nothing is wrong with "
+"the server; updates are simply not checked yet."
+msgstr "在配置受信任的公钥之前，官方更新源处于停用状态：没有公钥就无法验证任何更新包。服务器没有问题，只是暂时不会检查新版本。"
+
+#: apps/updater/sources.py
 msgid "The official update source is not configured (RAVIX_UPDATE_URL)."
 msgstr "未配置官方更新源（RAVIX_UPDATE_URL）。"
 
@@ -8731,6 +8773,10 @@ msgid ""
 "not work."
 msgstr "%(media_dir)s</code>）不存在或不可写；文件上传将无法使用。"
 
+#: templates/installer/install.html
+msgid "Installation guide and documentation"
+msgstr "安装指南与文档"
+
 #: templates/layouts/auth.html
 msgid "Powered by Ravix"
 msgstr "由 Ravix 驱动"
@@ -8757,8 +8803,13 @@ msgid "Toggle menu"
 msgstr "切换菜单"
 
 #: templates/layouts/panel.html
-msgid "Ravix — version 0.1"
-msgstr "Ravix — 版本 0.1"
+#, python-format
+msgid "Ravix %(ravix_version)s"
+msgstr "Ravix %(ravix_version)s"
+
+#: templates/layouts/panel.html
+msgid "Documentation"
+msgstr "文档"
 
 #: templates/media_library/media_detail.html
 msgid "Media details"

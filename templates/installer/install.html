@@ -19,4 +19,5 @@
   {% for field in form %}{% include "partials/_field.html" %}{% endfor %}
   <button type="submit" class="btn btn-block"{% if checks.db_error %} disabled{% endif %}>{% icon "check" 18 %} {% trans "Install" %}</button>
 </form>
+{% if ravix_links.docs or ravix_links.website %}<p class="help" style="margin-top:1rem">{% if ravix_links.docs %}<a href="{{ ravix_links.docs }}" rel="noopener" target="_blank">{% trans "Installation guide and documentation" %}</a>{% endif %}{% if ravix_links.docs and ravix_links.website %} · {% endif %}{% if ravix_links.website %}<a class="ltr" href="{{ ravix_links.website }}" rel="noopener" target="_blank">{{ ravix_links.website|cut:"https://"|cut:"http://" }}</a>{% endif %}</p>{% endif %}
 {% endblock %}

@@ -296,6 +296,20 @@ def check_versions() -> list[Check]:
 
     out.append(_c("django", g, "Django", GOOD, f"Django {django.get_version()}."))
     try:
+        from apps.updater import sources as upd_sources
+
+        state = upd_sources.source_state()
+        title = gettext("Update source")
+        if state == "no_key":
+            out.append(_c("update_source", g, title, UNKNOWN, gettext("The official update source is disabled until a trusted public key is configured, because no package can be verified without one. This is not an error; new versions are simply not checked yet."),
+                          gettext("Nothing to do unless you want update checks: add the publisher’s public key (RAVIX_TRUSTED_PUBLIC_KEYS).")))
+        elif state == "none":
+            out.append(_c("update_source", g, title, UNKNOWN, gettext("No update source is configured, so new versions are not checked."), gettext("Set RAVIX_UPDATE_URL if you want update checks.")))
+        else:
+            out.append(_c("update_source", g, title, GOOD, gettext("The update source is configured and a trusted public key is present.")))
+    except Exception:  # noqa: BLE001
+        pass
+    try:
         from django.db import connection
         from django.db.migrations.executor import MigrationExecutor
 

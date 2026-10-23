@@ -13,8 +13,9 @@
     "pt-br": "Ravix padrão",
     "zh-hans": "Ravix 默认主题"
   },
-  "version": "1.1.1",
+  "version": "1.1.2",
   "author": "Ravix",
+  "homepage": "https://ravixcms.com",
   "description": {
     "fa": "قالبی خوانا و سریع برای وبلاگ‌ها و سایت‌های محتوایی؛ بدون جاوااسکریپت، با نوشتهٔ ویژه و فهرست افقی نوشته‌ها.",
     "en": "A readable, fast theme for blogs and content sites; no JavaScript, with a featured post and a horizontal post list.",

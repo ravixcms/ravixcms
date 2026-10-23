@@ -46,7 +46,9 @@
     <main class="content {% block content_class %}{% endblock %}">
       {% block content %}{% endblock %}
     </main>
-    <footer class="site-footer">{% if site.footer_text %}{{ site.footer_text }}{% else %}{% trans "Ravix — version 0.1" %}{% endif %}</footer>
+    <footer class="site-footer">{% if site.footer_text %}{{ site.footer_text }}{% else %}{% blocktrans %}Ravix {{ ravix_version }}{% endblocktrans %}{% endif %}
+      {% if ravix_links.website %}<span class="ltr"> · <a href="{{ ravix_links.website }}" rel="noopener" target="_blank">{{ ravix_links.website|cut:"https://"|cut:"http://" }}</a></span>{% endif %}
+      {% if ravix_links.docs %} · <a href="{{ ravix_links.docs }}" rel="noopener" target="_blank">{% trans "Documentation" %}</a>{% endif %}</footer>
   </div>
 </div>
 {% endblock %}

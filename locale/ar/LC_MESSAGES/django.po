@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-24 00:56+0330\n"
+"POT-Creation-Date: 2026-10-24 01:30+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -2642,6 +2642,39 @@ msgid "Upgrade to Python 3.11 or later."
 msgstr "رقِّ إلى Python 3.11 أو أحدث."
 
 #: apps/core/sitehealth.py
+msgid "Update source"
+msgstr "مصدر التحديثات"
+
+#: apps/core/sitehealth.py templates/updater/home.html
+msgid ""
+"The official update source is disabled until a trusted public key is "
+"configured, because no package can be verified without one. This is not an "
+"error; new versions are simply not checked yet."
+msgstr ""
+"مصدر التحديثات الرسمي معطّل حتى يتم ضبط مفتاح عام موثوق، لأنه لا يمكن التحقق"
+" من أي حزمة بدونه. هذا ليس خطأً؛ فقط لا يتم فحص الإصدارات الجديدة بعد."
+
+#: apps/core/sitehealth.py
+msgid ""
+"Nothing to do unless you want update checks: add the publisher’s public key "
+"(RAVIX_TRUSTED_PUBLIC_KEYS)."
+msgstr ""
+"لا حاجة لأي إجراء إلا إذا أردت فحص التحديثات: أضف المفتاح العام للناشر "
+"(RAVIX_TRUSTED_PUBLIC_KEYS)."
+
+#: apps/core/sitehealth.py
+msgid "No update source is configured, so new versions are not checked."
+msgstr "لم يتم ضبط أي مصدر للتحديثات، لذلك لا يتم فحص الإصدارات الجديدة."
+
+#: apps/core/sitehealth.py
+msgid "Set RAVIX_UPDATE_URL if you want update checks."
+msgstr "اضبط RAVIX_UPDATE_URL إذا أردت فحص التحديثات."
+
+#: apps/core/sitehealth.py
+msgid "The update source is configured and a trusted public key is present."
+msgstr "تم ضبط مصدر التحديثات ويوجد مفتاح عام موثوق."
+
+#: apps/core/sitehealth.py
 msgid "Database migrations"
 msgstr "ترحيلات قاعدة البيانات"
 
@@ -3931,7 +3964,7 @@ msgstr "slug: يجب أن يطابق اسم المجلد (%(expected_slug)s)."
 msgid "version: must look like 1.2.3."
 msgstr "version: يجب أن يشبه 1.2.3."
 
-#: apps/plugins/manifest.py
+#: apps/plugins/manifest.py apps/themes/manifest.py
 msgid "homepage: not a valid http(s) address."
 msgstr "homepage: ليس عنوان http(s) صالحًا."
 
@@ -4715,6 +4748,14 @@ msgstr "لم يُعثر على الإضافة في السجل."
 #: apps/plugins/sources.py
 msgid "The package file is not available in the registry."
 msgstr "ملف الحزمة غير متاح في السجل."
+
+#: apps/plugins/sources.py
+msgid ""
+"The official registry is disabled until a trusted public key is configured: "
+"no package can be verified without one."
+msgstr ""
+"السجل الرسمي معطّل حتى يتم ضبط مفتاح عام موثوق: لا يمكن التحقق من أي حزمة "
+"بدونه."
 
 #: apps/plugins/sources.py
 msgid "The official registry is not configured (RAVIX_OFFICIAL_REGISTRY_URL)."
@@ -7629,6 +7670,16 @@ msgid "The package file was not found in the source."
 msgstr "لم يُعثر على ملف الحزمة في المصدر."
 
 #: apps/updater/sources.py
+msgid ""
+"The official update source is disabled until a trusted public key is "
+"configured: no package can be verified without one. Nothing is wrong with "
+"the server; updates are simply not checked yet."
+msgstr ""
+"مصدر التحديثات الرسمي معطّل حتى يتم ضبط مفتاح عام موثوق: لا يمكن التحقق من "
+"أي حزمة بدونه. لا توجد مشكلة في الخادم؛ فقط لا يتم فحص الإصدارات الجديدة "
+"بعد."
+
+#: apps/updater/sources.py
 msgid "The official update source is not configured (RAVIX_UPDATE_URL)."
 msgstr "مصدر التحديث الرسمي غير مضبوط (RAVIX_UPDATE_URL)."
 
@@ -8996,6 +9047,10 @@ msgid ""
 msgstr ""
 "%(media_dir)s</code>) غير موجود أو غير قابل للكتابة؛ لن يعمل رفع الملفات."
 
+#: templates/installer/install.html
+msgid "Installation guide and documentation"
+msgstr "دليل التثبيت والتوثيق"
+
 #: templates/layouts/auth.html
 msgid "Powered by Ravix"
 msgstr "بدعم من Ravix"
@@ -9022,8 +9077,13 @@ msgid "Toggle menu"
 msgstr "تبديل القائمة"
 
 #: templates/layouts/panel.html
-msgid "Ravix — version 0.1"
-msgstr "Ravix — الإصدار 0.1"
+#, python-format
+msgid "Ravix %(ravix_version)s"
+msgstr "راويكس %(ravix_version)s"
+
+#: templates/layouts/panel.html
+msgid "Documentation"
+msgstr "التوثيق"
 
 #: templates/media_library/media_detail.html
 msgid "Media details"

@@ -30,11 +30,19 @@ class _NoRedirect(urllib.request.HTTPRedirectHandler):
         return None
 
 
+def user_agent() -> str:
+    """``Ravix/<version> (+<project website>)`` for requests to the update source / registry, so the publisher can see which versions call."""
+    from apps.core.version import RAVIX_VERSION
+
+    site = str(getattr(settings, "RAVIX_WEBSITE_URL", "") or "")
+    return f"Ravix/{RAVIX_VERSION}" + (f" (+{site})" if site.startswith(("https://", "http://")) and not any(c in site for c in " \r\n") else "")
+
+
 def http_get(url: str, max_bytes: int, allow_insecure: bool = False, timeout: int = 30) -> tuple[bytes, dict]:
     parsed = urllib.parse.urlparse(url)
     if parsed.scheme != "https" and not (allow_insecure and settings.DEBUG and parsed.scheme == "http"):
         raise RegistryUnavailable(gettext("Only HTTPS addresses are allowed."))
-    req = urllib.request.Request(url, headers={"User-Agent": "ravix-plugin-installer/1"})
+    req = urllib.request.Request(url, headers={"User-Agent": user_agent()})
     opener = urllib.request.build_opener(_NoRedirect)
     try:
         with opener.open(req, timeout=timeout) as resp:
@@ -118,10 +126,23 @@ class LocalHubSource:
         return {p.slug: (c.version if c else None) for p, _l, c in hub.search()}
 
 
+def registry_state() -> str:
+    """"ok" | "no_key" | "local" | "none". The remote registry needs a trusted public key (its packages must be signed); without one it is not contacted."""
+    if getattr(settings, "RAVIX_OFFICIAL_REGISTRY_URL", ""):
+        from apps.plugins.signing import trusted_keys
+
+        return "ok" if trusted_keys() else "no_key"
+    if getattr(settings, "RAVIX_REGISTRY_ENABLED", False) and django_apps.is_installed("apps.pluginhub"):
+        return "local"
+    return "none"
+
+
 def get_source():
     url = getattr(settings, "RAVIX_OFFICIAL_REGISTRY_URL", "")
-    if url:
+    if url and registry_state() == "ok":
         return RemoteSource(url)
+    if url:
+        raise RegistryUnavailable(gettext("The official registry is disabled until a trusted public key is configured: no package can be verified without one."))
     if getattr(settings, "RAVIX_REGISTRY_ENABLED", False) and django_apps.is_installed("apps.pluginhub"):
         return LocalHubSource()
     raise RegistryUnavailable(gettext("The official registry is not configured (RAVIX_OFFICIAL_REGISTRY_URL)."))

@@ -76,7 +76,7 @@ class HomeView(ViewMixin, TemplateView):
             t["new"] = theme_updates.get(t["slug"])
         for p in v["plugins"]:
             p["new"] = plugin_updates.get(p["slug"])
-        ctx.update(v=v, plan=plan, error=error, has_source=sources.has_source(), lock=pipeline.lock_state(), web_apply=settings.RAVIX_UPDATE_WEB_APPLY,
+        ctx.update(v=v, plan=plan, error=error, has_source=sources.has_source(), source_state=sources.source_state(), lock=pipeline.lock_state(), web_apply=settings.RAVIX_UPDATE_WEB_APPLY,
                    can_manage=self.request.user.has_cap("updates.manage"), theme_updates=theme_updates, plugin_updates={k: x for k, x in plugin_updates.items() if x},
                    runs=UpdateRun.objects.select_related("started_by")[:25], recovery=UpdateRun.objects.filter(status="needs_recovery")[:3])
         return ctx

@@ -62,7 +62,7 @@ sudo install -d -o ravix -g ravix -m 700 /srv/ravix/plugin_backups
 #   RAVIX_PLUGIN_INSTALL_DIR=/srv/ravix/plugins_installed
 #   RAVIX_PLUGIN_BACKUP_DIR=/srv/ravix/plugin_backups
 #   RAVIX_TRUSTED_PUBLIC_KEYS=publisher:<کلید عمومی ناشر>
-#   RAVIX_OFFICIAL_REGISTRY_URL=https://registry.example.com   # در صورت وجود
+#   RAVIX_OFFICIAL_REGISTRY_URL=https://plugins.ravixcms.com   # در صورت وجود
 sudo systemctl restart ravix && sudo -u ravix ... python manage.py ravix_preflight
 ```
 اگر `ProtectSystem=strict` در systemd دارید، این دو پوشه را به `ReadWritePaths=` اضافه کنید. پوشهٔ `plugins/` پروژه فقط‌خواندنی بماند.
