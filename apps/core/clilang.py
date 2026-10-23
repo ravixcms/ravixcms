@@ -1,7 +1,8 @@
 """Language of the operator-facing text: management commands, start-up/settings errors, preflight and log lines.
 
 These messages are written in English (the msgid) and marked with :func:`cli_gettext`. They are shown in another language only
-when the operator asks for it: ``RAVIX_CLI_LANG`` (environment variable / ``.env``) wins, otherwise Django's ``LANGUAGE_CODE``.
+when the operator asks for it with ``RAVIX_CLI_LANG`` (environment variable / ``.env``). It does **not** depend on Django's
+``LANGUAGE_CODE`` (that one is only the fallback language of the web interface).
 ``fa`` ships with Ravix; for any other language drop a compiled ``locale/<lang>/LC_MESSAGES/cli.mo`` next to it (see
 docs/translation.md). A language without a catalog simply shows the English text.
 
@@ -36,18 +37,17 @@ def _read_env(name: str) -> str:
 
 
 def cli_language() -> str:
-    """``RAVIX_CLI_LANG``, else ``LANGUAGE_CODE`` (the Django settings; before they exist the environment / .env), else English.
-    Returned like "pt_BR"."""
+    """``RAVIX_CLI_LANG`` (the Django setting; before settings exist the environment / .env), else English. Returned like "pt_BR"."""
     code = ""
     try:
         from django.conf import settings
 
         if settings.configured:  # never triggers the lazy import (we may be running inside the settings module itself)
-            code = getattr(settings, "RAVIX_CLI_LANG", "") or settings.LANGUAGE_CODE
+            code = getattr(settings, "RAVIX_CLI_LANG", "")
     except Exception:  # noqa: BLE001
         code = ""
     if not code:  # settings do not exist yet (start-up errors)
-        code = _read_env("RAVIX_CLI_LANG") or _read_env("LANGUAGE_CODE")
+        code = _read_env("RAVIX_CLI_LANG")
     return (code or "en").strip().replace("-", "_")
 
 

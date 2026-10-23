@@ -12,7 +12,7 @@ class RavixTestRunner(DiscoverRunner):
         # The suite was written against Persian as the default language (gettext outside a request, command output, log lines),
         # whatever LANGUAGE_CODE the environment has; tests of other languages switch explicitly.
         self._language_before = (settings.LANGUAGE_CODE, getattr(settings, "RAVIX_CLI_LANG", ""))
-        settings.LANGUAGE_CODE, settings.RAVIX_CLI_LANG = "fa", ""
+        settings.LANGUAGE_CODE, settings.RAVIX_CLI_LANG = "fa", "fa"
         from django.utils.translation import trans_real
 
         trans_real._default = None
