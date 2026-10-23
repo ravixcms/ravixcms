@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-23 18:33+0330\n"
+"POT-Creation-Date: 2026-10-23 18:38+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -12,7 +12,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % "
+"1000000 == 0 ? 1 : 2;\n"
 
 #: apps/accounts/admin.py
 msgid "Ravix profile"
@@ -60,14 +61,13 @@ msgid ""
 "This account’s email has not been verified yet. Open the verification link "
 "in your inbox or ask for it to be sent again."
 msgstr ""
-"L’adresse e-mail de ce compte n’a pas encore été vérifiée. Ouvrez le lien de"
-" vérification dans votre boîte de réception ou demandez à le recevoir de "
+"L’adresse e-mail de ce compte n’a pas encore été vérifiée. Ouvrez le lien de "
+"vérification dans votre boîte de réception ou demandez à le recevoir de "
 "nouveau."
 
 #: apps/accounts/forms.py
 msgid "Too many failed attempts. Please try again in a few minutes."
-msgstr ""
-"Trop de tentatives échouées. Veuillez réessayer dans quelques minutes."
+msgstr "Trop de tentatives échouées. Veuillez réessayer dans quelques minutes."
 
 #: apps/accounts/forms.py
 msgid "Letters, digits and the symbols @ . + - _ are allowed."
@@ -92,8 +92,7 @@ msgid "Language"
 msgstr "Langue"
 
 #: apps/accounts/forms.py apps/accounts/models.py
-msgid ""
-"Your preferred interface language. Leave empty to use the site default."
+msgid "Your preferred interface language. Leave empty to use the site default."
 msgstr ""
 "Votre langue d’interface préférée. Laissez vide pour utiliser celle du site."
 
@@ -265,8 +264,8 @@ msgstr "Gérer le thème et l’apparence du site"
 #: apps/accounts/permissions.py
 msgid "Upload and install a theme from a ZIP file (superadmin only)"
 msgstr ""
-"Téléverser et installer un thème depuis un fichier ZIP (super-administrateur"
-" uniquement)"
+"Téléverser et installer un thème depuis un fichier ZIP (super-administrateur "
+"uniquement)"
 
 #: apps/accounts/permissions.py
 msgid "Design pages with the visual page builder"
@@ -283,16 +282,16 @@ msgstr "Gérer les extensions (installation, activation, paramètres)"
 #: apps/accounts/permissions.py
 msgid "Manage trusted plugin signing keys (root of trust; superadmin only)"
 msgstr ""
-"Gérer les clés de signature d’extensions de confiance (racine de confiance ;"
-" super-administrateur uniquement)"
+"Gérer les clés de signature d’extensions de confiance (racine de confiance ; "
+"super-administrateur uniquement)"
 
 #: apps/accounts/permissions.py
 msgid ""
 "Manage the plugin registry: publishers, categories, delisting (superadmin "
 "only)"
 msgstr ""
-"Gérer le registre des extensions : éditeurs, catégories, retrait de la liste"
-" (super-administrateur uniquement)"
+"Gérer le registre des extensions : éditeurs, catégories, retrait de la liste "
+"(super-administrateur uniquement)"
 
 #: apps/accounts/permissions.py
 msgid "Manage sites, domains and members (superadmin only)"
@@ -325,8 +324,8 @@ msgid ""
 "Apply/roll back core and theme updates (superadmin only; replaces the "
 "application code)"
 msgstr ""
-"Appliquer/annuler les mises à jour du cœur et du thème (super-administrateur"
-" uniquement ; remplace le code de l’application)"
+"Appliquer/annuler les mises à jour du cœur et du thème (super-administrateur "
+"uniquement ; remplace le code de l’application)"
 
 #: apps/accounts/views.py
 msgid "You have been signed out successfully."
@@ -346,16 +345,16 @@ msgid ""
 "Your account was created. To sign in, open the verification link we sent to "
 "your email."
 msgstr ""
-"Votre compte a été créé. Pour vous connecter, ouvrez le lien de vérification"
-" envoyé à votre adresse e-mail."
+"Votre compte a été créé. Pour vous connecter, ouvrez le lien de vérification "
+"envoyé à votre adresse e-mail."
 
 #: apps/accounts/views.py
 msgid ""
 "Your account was created successfully. Welcome! To verify your email, open "
 "the link sent to your inbox."
 msgstr ""
-"Votre compte a été créé avec succès. Bienvenue ! Pour vérifier votre e-mail,"
-" ouvrez le lien envoyé dans votre boîte de réception."
+"Votre compte a été créé avec succès. Bienvenue ! Pour vérifier votre e-mail, "
+"ouvrez le lien envoyé dans votre boîte de réception."
 
 #: apps/accounts/views.py
 msgid "Registration did not complete. Please check the form errors."
@@ -432,8 +431,7 @@ msgstr "; "
 #, python-format
 msgid "Changes to user “%(display_name)s” were saved."
 msgstr ""
-"Les modifications de l’utilisateur « %(display_name)s » ont été "
-"enregistrées."
+"Les modifications de l’utilisateur « %(display_name)s » ont été enregistrées."
 
 #: apps/accounts/views.py
 msgid "Could not save. Please check the errors."
@@ -461,10 +459,10 @@ msgstr "Modifier"
 #: templates/content/post_detail.html templates/content/post_list.html
 #: templates/media_library/media_detail.html
 #: templates/media_library/media_list.html
-#: templates/pluginhub/admin_categories.html
-#: templates/pluginhub/my_plugin.html templates/plugins/trusted_keys.html
-#: templates/shop/panel/categories.html templates/shop/panel/product_form.html
-#: templates/shop/panel/products.html templates/sites/detail.html
+#: templates/pluginhub/admin_categories.html templates/pluginhub/my_plugin.html
+#: templates/plugins/trusted_keys.html templates/shop/panel/categories.html
+#: templates/shop/panel/product_form.html templates/shop/panel/products.html
+#: templates/sites/detail.html
 msgid "Delete"
 msgstr "Supprimer"
 
@@ -617,12 +615,11 @@ msgstr "Document"
 #: templates/accounts/user_list.html templates/comments/list.html
 #: templates/content/page_list.html templates/content/post_list.html
 #: templates/pluginhub/admin_publishers.html
-#: templates/pluginhub/directory_detail.html
-#: templates/pluginhub/my_plugin.html templates/plugins/list.html
-#: templates/plugins/trusted_keys.html templates/shop/panel/gateways.html
-#: templates/shop/panel/orders.html templates/shop/panel/products.html
-#: templates/shop/public/my_orders.html templates/sites/list.html
-#: templates/updater/home.html
+#: templates/pluginhub/directory_detail.html templates/pluginhub/my_plugin.html
+#: templates/plugins/list.html templates/plugins/trusted_keys.html
+#: templates/shop/panel/gateways.html templates/shop/panel/orders.html
+#: templates/shop/panel/products.html templates/shop/public/my_orders.html
+#: templates/sites/list.html templates/updater/home.html
 msgid "Status"
 msgstr "Statut"
 
@@ -1159,8 +1156,7 @@ msgstr "Vous n’avez pas la permission d’approuver et de publier."
 #: apps/builder/views.py
 msgid "The layout is not complete yet; fix the items below."
 msgstr ""
-"La mise en page n’est pas encore complète ; corrigez les éléments ci-"
-"dessous."
+"La mise en page n’est pas encore complète ; corrigez les éléments ci-dessous."
 
 #: apps/builder/views.py
 msgid "This version is not valid."
@@ -1173,8 +1169,7 @@ msgid "Comments"
 msgstr "Commentaires"
 
 #: apps/comments/models.py apps/pluginhub/models.py
-#: templates/pluginhub/admin_publishers.html
-#: templates/pluginhub/directory.html
+#: templates/pluginhub/admin_publishers.html templates/pluginhub/directory.html
 msgid "Verified"
 msgstr "Vérifié"
 
@@ -1260,15 +1255,13 @@ msgstr "Saisissez votre nom (2 à 80 caractères)."
 
 #: apps/comments/services.py
 msgid "Enter a valid email. Your email will not be shown."
-msgstr ""
-"Saisissez une adresse e-mail valide. Votre e-mail ne sera pas affiché."
+msgstr "Saisissez une adresse e-mail valide. Votre e-mail ne sera pas affiché."
 
 #: apps/comments/services.py
 #, python-format
 msgid "The comment can be at most %(RAVIX_COMMENT_MAX_LENGTH)s characters."
 msgstr ""
-"Le commentaire peut contenir au plus %(RAVIX_COMMENT_MAX_LENGTH)s "
-"caractères."
+"Le commentaire peut contenir au plus %(RAVIX_COMMENT_MAX_LENGTH)s caractères."
 
 #: apps/comments/services.py
 msgid "Write the comment text."
@@ -1346,8 +1339,7 @@ msgstr "Contenu"
 msgid "Posts"
 msgstr "Articles"
 
-#: apps/content/apps.py apps/content/models.py
-#: templates/content/page_list.html
+#: apps/content/apps.py apps/content/models.py templates/content/page_list.html
 msgid "Pages"
 msgstr "Pages"
 
@@ -1360,9 +1352,8 @@ msgstr "Pages"
 msgid "Content categories"
 msgstr "Catégories de contenu"
 
-#: apps/content/apps.py apps/content/models.py
-#: templates/content/post_form.html templates/content/tag_list.html
-#: themes/default/templates/post_detail.html
+#: apps/content/apps.py apps/content/models.py templates/content/post_form.html
+#: templates/content/tag_list.html themes/default/templates/post_detail.html
 msgid "Tags"
 msgstr "Étiquettes"
 
@@ -1548,11 +1539,11 @@ msgstr "Contenu d’exemple"
 
 #: apps/content/models.py
 msgid ""
-"A sample post created during installation; after its first edit it no longer"
-" counts as a sample."
+"A sample post created during installation; after its first edit it no longer "
+"counts as a sample."
 msgstr ""
-"Un article d’exemple créé à l’installation ; après sa première modification,"
-" il n’est plus considéré comme un exemple."
+"Un article d’exemple créé à l’installation ; après sa première modification, "
+"il n’est plus considéré comme un exemple."
 
 #: apps/content/models.py
 msgid "For example about-us. If left empty, it is generated automatically."
@@ -1574,8 +1565,8 @@ msgstr "De préférence de 120 à 160 caractères."
 
 #: apps/content/models.py
 msgid ""
-"A sample page created during installation; after its first edit it no longer"
-" counts as a sample."
+"A sample page created during installation; after its first edit it no longer "
+"counts as a sample."
 msgstr ""
 "Page d’exemple créée lors de l’installation ; après sa première "
 "modification, elle n’est plus considérée comme un exemple."
@@ -1594,11 +1585,10 @@ msgstr "Ancien chemin"
 
 #: apps/content/models.py
 msgid ""
-"An internal site path, e.g. /blog/old-slug/ (without domain and without "
-"?query)."
+"An internal site path, e.g. /blog/old-slug/ (without domain and without ?"
+"query)."
 msgstr ""
-"Chemin interne du site, p. ex. /blog/ancien-slug/ (sans domaine ni "
-"?requête)."
+"Chemin interne du site, p. ex. /blog/ancien-slug/ (sans domaine ni ?requête)."
 
 #: apps/content/models.py templates/content/redirect_list.html
 msgid "New path"
@@ -1607,8 +1597,7 @@ msgstr "Nouveau chemin"
 #: apps/content/models.py
 msgid "An internal path (e.g. /blog/new-slug/) or a full http(s):// URL"
 msgstr ""
-"Un chemin interne (p. ex. /blog/nouveau-slug/) ou une URL http(s):// "
-"complète"
+"Un chemin interne (p. ex. /blog/nouveau-slug/) ou une URL http(s):// complète"
 
 #: apps/content/models.py
 msgid "Status code"
@@ -1669,7 +1658,8 @@ msgstr "Bienvenue sur Ravix"
 msgid ""
 "Hello and welcome! 👋\n"
 "\n"
-"This is a **sample post** so you can see what a post looks like on your site. You can edit it from the panel or delete it.\n"
+"This is a **sample post** so you can see what a post looks like on your "
+"site. You can edit it from the panel or delete it.\n"
 "\n"
 "## What’s next?\n"
 "\n"
@@ -1681,7 +1671,9 @@ msgid ""
 msgstr ""
 "Bonjour et bienvenue ! 👋\n"
 "\n"
-"Ceci est un **article d’exemple** pour vous montrer à quoi ressemble un article sur votre site. Vous pouvez le modifier ou le supprimer depuis le panneau.\n"
+"Ceci est un **article d’exemple** pour vous montrer à quoi ressemble un "
+"article sur votre site. Vous pouvez le modifier ou le supprimer depuis le "
+"panneau.\n"
 "\n"
 "## Et maintenant ?\n"
 "\n"
@@ -1693,7 +1685,8 @@ msgstr ""
 
 #: apps/content/samples.py
 msgid ""
-"This is a sample page. Write about yourself, your business or the purpose of your site here.\n"
+"This is a sample page. Write about yourself, your business or the purpose of "
+"your site here.\n"
 "\n"
 "## Who are we?\n"
 "\n"
@@ -1703,7 +1696,8 @@ msgid ""
 "\n"
 "The services, products or topics you read about on this site.\n"
 msgstr ""
-"Ceci est une page d’exemple. Écrivez ici à propos de vous, de votre activité ou de l’objectif de votre site.\n"
+"Ceci est une page d’exemple. Écrivez ici à propos de vous, de votre activité "
+"ou de l’objectif de votre site.\n"
 "\n"
 "## Qui sommes-nous ?\n"
 "\n"
@@ -1721,15 +1715,18 @@ msgid ""
 "- Phone: 555-0100\n"
 "- Address: city, street, number\n"
 "\n"
-"Also write your response hours here so visitors know when to expect an answer.\n"
+"Also write your response hours here so visitors know when to expect an "
+"answer.\n"
 msgstr ""
-"Ceci est une page d’exemple. Écrivez ici comment les gens peuvent vous joindre.\n"
+"Ceci est une page d’exemple. Écrivez ici comment les gens peuvent vous "
+"joindre.\n"
 "\n"
 "- E-mail : `you@example.com`\n"
 "- Téléphone : 555-0100\n"
 "- Adresse : ville, rue, numéro\n"
 "\n"
-"Indiquez aussi vos horaires de réponse pour que les visiteurs sachent quand attendre une réponse.\n"
+"Indiquez aussi vos horaires de réponse pour que les visiteurs sachent quand "
+"attendre une réponse.\n"
 
 #: apps/content/samples.py
 msgid "A sample post to get to know Ravix."
@@ -1828,8 +1825,7 @@ msgstr "Fuseau horaire"
 msgid ""
 "Dates and times in the panel and on the site are shown in this time zone."
 msgstr ""
-"Les dates et heures du panneau et du site s’affichent dans ce fuseau "
-"horaire."
+"Les dates et heures du panneau et du site s’affichent dans ce fuseau horaire."
 
 #: apps/core/forms.py
 msgid "The site name cannot be empty."
@@ -1845,8 +1841,8 @@ msgid ""
 "database and has an inbox in the panel."
 msgstr ""
 "Un formulaire de contact public sur /ext/contact_form/ qui enregistre les "
-"messages dans la base de données et dispose d’une boîte de réception dans le"
-" panneau."
+"messages dans la base de données et dispose d’une boîte de réception dans le "
+"panneau."
 
 #: apps/core/manifest_strings.py
 msgid "View and manage contact form messages"
@@ -1905,8 +1901,8 @@ msgstr "Boîte à outils SEO"
 
 #: apps/core/manifest_strings.py
 msgid ""
-"Manages the title, meta description, noindex, canonical and sharing image of"
-" each page/post, and has a global title pattern."
+"Manages the title, meta description, noindex, canonical and sharing image of "
+"each page/post, and has a global title pattern."
 msgstr ""
 "Gère le titre, la méta-description, le noindex, le canonical et l’image de "
 "partage de chaque page/article, avec un modèle de titre global."
@@ -1962,8 +1958,8 @@ msgstr "Requête non valide"
 
 #: apps/core/middleware.py
 msgid ""
-"One of the numeric values in the request is too large. Open the page without"
-" that value."
+"One of the numeric values in the request is too large. Open the page without "
+"that value."
 msgstr ""
 "L’une des valeurs numériques de la requête est trop grande. Ouvrez la page "
 "sans cette valeur."
@@ -2234,13 +2230,13 @@ msgstr "Détection de l’IP du visiteur"
 #: apps/core/sitehealth.py
 msgid ""
 "Behind Nginx on a unix socket no setting is needed. If Nginx/a proxy "
-"connects over TCP, put its address in RAVIX_TRUSTED_PROXIES (e.g. 127.0.0.1)"
-" and make sure the proxy sends X-Forwarded-For (deploy/ravix-proxy.conf)."
+"connects over TCP, put its address in RAVIX_TRUSTED_PROXIES (e.g. 127.0.0.1) "
+"and make sure the proxy sends X-Forwarded-For (deploy/ravix-proxy.conf)."
 msgstr ""
 "Derrière Nginx via un socket Unix, aucun réglage n’est nécessaire. Si Nginx "
 "ou un proxy se connecte en TCP, mettez son adresse dans "
-"RAVIX_TRUSTED_PROXIES (p. ex. 127.0.0.1) et vérifiez que le proxy envoie "
-"X-Forwarded-For (deploy/ravix-proxy.conf)."
+"RAVIX_TRUSTED_PROXIES (p. ex. 127.0.0.1) et vérifiez que le proxy envoie X-"
+"Forwarded-For (deploy/ravix-proxy.conf)."
 
 #: apps/core/sitehealth.py
 #, python-format
@@ -2269,8 +2265,8 @@ msgstr "socket Unix"
 #: apps/core/sitehealth.py
 #, python-format
 msgid ""
-"Requests arrive from proxy %(value)s but it is not trusted; all visitors are"
-" counted as one IP."
+"Requests arrive from proxy %(value)s but it is not trusted; all visitors are "
+"counted as one IP."
 msgstr ""
 "Les requêtes arrivent du proxy %(value)s, mais il n’est pas de confiance ; "
 "tous les visiteurs comptent comme une seule IP."
@@ -2281,9 +2277,9 @@ msgid ""
 "or X-Real-IP); the IP cannot be determined and only the per-username limit "
 "is applied."
 msgstr ""
-"Les requêtes arrivent d’un proxy de confiance, mais sans en-tête d’IP "
-"(X-Forwarded-For ou X-Real-IP) ; l’IP ne peut pas être déterminée et la "
-"limite s’applique uniquement par nom d’utilisateur."
+"Les requêtes arrivent d’un proxy de confiance, mais sans en-tête d’IP (X-"
+"Forwarded-For ou X-Real-IP) ; l’IP ne peut pas être déterminée et la limite "
+"s’applique uniquement par nom d’utilisateur."
 
 #: apps/core/sitehealth.py
 msgid ""
@@ -2316,26 +2312,26 @@ msgstr ""
 
 #: apps/core/sitehealth.py
 msgid ""
-"Fill in DJANGO_EMAIL_BACKEND and the "
-"EMAIL_HOST/EMAIL_HOST_USER/EMAIL_HOST_PASSWORD settings for a real SMTP."
+"Fill in DJANGO_EMAIL_BACKEND and the EMAIL_HOST/EMAIL_HOST_USER/"
+"EMAIL_HOST_PASSWORD settings for a real SMTP."
 msgstr ""
-"Renseignez DJANGO_EMAIL_BACKEND et les réglages "
-"EMAIL_HOST/EMAIL_HOST_USER/EMAIL_HOST_PASSWORD d’un vrai SMTP."
+"Renseignez DJANGO_EMAIL_BACKEND et les réglages EMAIL_HOST/EMAIL_HOST_USER/"
+"EMAIL_HOST_PASSWORD d’un vrai SMTP."
 
 #: apps/core/sitehealth.py
 msgid ""
 "SMTP is configured on this same server without authentication; most emails "
 "land in spam or are rejected."
 msgstr ""
-"Le SMTP est configuré sur ce même serveur sans authentification ; la plupart"
-" des e-mails iront dans les indésirables ou seront rejetés."
+"Le SMTP est configuré sur ce même serveur sans authentification ; la plupart "
+"des e-mails iront dans les indésirables ou seront rejetés."
 
 #: apps/core/sitehealth.py
 msgid ""
 "Use a reputable SMTP service and test it with the “Send test email” button."
 msgstr ""
-"Utilisez un service SMTP fiable et testez-le avec le bouton « Envoyer un "
-"e-mail de test »."
+"Utilisez un service SMTP fiable et testez-le avec le bouton « Envoyer un e-"
+"mail de test »."
 
 #: apps/core/sitehealth.py
 #, python-format
@@ -2454,8 +2450,8 @@ msgstr "Le dossier d’envoi est accessible en écriture."
 #: apps/core/sitehealth.py
 #, python-format
 msgid ""
-"The media folder (%(media)s) does not exist or is not writable; image upload"
-" does not work."
+"The media folder (%(media)s) does not exist or is not writable; image upload "
+"does not work."
 msgstr ""
 "Le dossier des médias (%(media)s) n’existe pas ou n’est pas accessible en "
 "écriture ; l’envoi d’images ne fonctionne pas."
@@ -2463,8 +2459,8 @@ msgstr ""
 #: apps/core/sitehealth.py
 msgid "Fix the folder ownership/permissions for the service user."
 msgstr ""
-"Corrigez le propriétaire et les permissions du dossier pour l’utilisateur du"
-" service."
+"Corrigez le propriétaire et les permissions du dossier pour l’utilisateur du "
+"service."
 
 #: apps/core/sitehealth.py
 msgid "Disk space"
@@ -2478,8 +2474,8 @@ msgstr "Seulement %(free_gb)s Go libres."
 #: apps/core/sitehealth.py
 msgid "Delete extra files and old backups or enlarge the disk."
 msgstr ""
-"Supprimez les fichiers superflus et les anciennes sauvegardes ou agrandissez"
-" le disque."
+"Supprimez les fichiers superflus et les anciennes sauvegardes ou agrandissez "
+"le disque."
 
 #: apps/core/sitehealth.py
 #, python-format
@@ -2548,12 +2544,12 @@ msgstr "Articles planifiés en retard"
 #: apps/core/sitehealth.py
 #, python-format
 msgid ""
-"%(overdue)s posts are past their publish time but are still “scheduled” "
-"(they are shown to visitors but the timer has not run)."
+"%(overdue)s posts are past their publish time but are still "
+"“scheduled” (they are shown to visitors but the timer has not run)."
 msgstr ""
 "%(overdue)s articles ont dépassé leur heure de publication mais sont encore "
-"« planifiés » (ils sont montrés aux visiteurs, mais le minuteur ne s’est pas"
-" exécuté)."
+"« planifiés » (ils sont montrés aux visiteurs, mais le minuteur ne s’est pas "
+"exécuté)."
 
 #: apps/core/sitehealth.py
 msgid ""
@@ -2639,8 +2635,7 @@ msgstr "Redémarrer"
 
 #: apps/core/sitehealth.py
 #, python-format
-msgid ""
-"Version %(disk_version)s is on disk but version %(running)s is running."
+msgid "Version %(disk_version)s is on disk but version %(running)s is running."
 msgstr ""
 "La version %(disk_version)s est sur le disque mais la version %(running)s "
 "est en cours d’exécution."
@@ -2986,8 +2981,7 @@ msgstr "Le fuseau horaire n’est pas valide."
 #, python-format
 msgid "Saved to %(path)s; or run: python manage.py ravix_install_token"
 msgstr ""
-"Enregistré dans %(path)s ; ou exécutez : python manage.py "
-"ravix_install_token"
+"Enregistré dans %(path)s ; ou exécutez : python manage.py ravix_install_token"
 
 #: apps/installer/token.py
 msgid ""
@@ -2999,8 +2993,8 @@ msgstr ""
 
 #: apps/installer/views.py
 msgid ""
-"The installation ran into an error; details are in the server log. Check the"
-" database and migrations."
+"The installation ran into an error; details are in the server log. Check the "
+"database and migrations."
 msgstr ""
 "L’installation a rencontré une erreur ; les détails sont dans le journal du "
 "serveur. Vérifiez la base de données et les migrations."
@@ -3314,8 +3308,7 @@ msgid "No active user with this name was found."
 msgstr "Aucun utilisateur actif portant ce nom n’a été trouvé."
 
 #: apps/pluginhub/models.py templates/pluginhub/admin_plugins.html
-#: templates/pluginhub/admin_publishers.html
-#: templates/pluginhub/directory.html
+#: templates/pluginhub/admin_publishers.html templates/pluginhub/directory.html
 msgid "Publisher"
 msgstr "Éditeur"
 
@@ -3368,10 +3361,9 @@ msgid "Withdrawn"
 msgstr "Retirée"
 
 #: apps/pluginhub/models.py apps/plugins/models.py
-#: templates/pluginhub/directory_detail.html
-#: templates/pluginhub/my_plugin.html templates/plugins/_manifest_summary.html
-#: templates/plugins/detail.html templates/plugins/list.html
-#: templates/updater/home.html
+#: templates/pluginhub/directory_detail.html templates/pluginhub/my_plugin.html
+#: templates/plugins/_manifest_summary.html templates/plugins/detail.html
+#: templates/plugins/list.html templates/updater/home.html
 msgid "Version"
 msgstr "Version"
 
@@ -3483,8 +3475,8 @@ msgstr ""
 #: apps/pluginhub/services.py
 msgid "Only drafts can be deleted; “withdraw” a published version instead."
 msgstr ""
-"Seuls les brouillons peuvent être supprimés ; « retirez » plutôt une version"
-" publiée."
+"Seuls les brouillons peuvent être supprimés ; « retirez » plutôt une version "
+"publiée."
 
 #: apps/pluginhub/storage.py
 msgid "Packages do not have a public URL."
@@ -3496,8 +3488,8 @@ msgid ""
 "Version %(version)s of plugin “%(slug)s” was uploaded to the registry "
 "(%(status)s)"
 msgstr ""
-"La version %(version)s de l’extension « %(slug)s » a été envoyée au registre"
-" (%(status)s)"
+"La version %(version)s de l’extension « %(slug)s » a été envoyée au registre "
+"(%(status)s)"
 
 #: apps/pluginhub/views.py
 #, python-format
@@ -3641,8 +3633,8 @@ msgstr "Seul un administrateur peut faire cela."
 #: apps/plugins/installer.py
 msgid ""
 "Web installation is off. To enable it, set RAVIX_PLUGIN_WEB_INSTALL=true in "
-"the server settings (only when you have made the install folder writable for"
-" the service)."
+"the server settings (only when you have made the install folder writable for "
+"the service)."
 msgstr ""
 "L’installation web est désactivée. Pour l’activer, définissez "
 "RAVIX_PLUGIN_WEB_INSTALL=true dans les réglages du serveur (seulement après "
@@ -3679,8 +3671,8 @@ msgstr ""
 
 #: apps/plugins/installer.py
 msgid ""
-"The file’s SHA-256 does not match the declared value; the file is corrupt or"
-" tampered with and was discarded."
+"The file’s SHA-256 does not match the declared value; the file is corrupt or "
+"tampered with and was discarded."
 msgstr ""
 "Le SHA-256 du fichier ne correspond pas à la valeur déclarée ; le fichier "
 "est corrompu ou altéré et a été écarté."
@@ -3797,11 +3789,10 @@ msgstr "%(source)s, %(sig)s"
 
 #: apps/plugins/installer.py
 #, python-format
-msgid ""
-"Creating the backup failed and the operation was not performed: %(exc)s"
+msgid "Creating the backup failed and the operation was not performed: %(exc)s"
 msgstr ""
-"La création de la sauvegarde a échoué et l’opération n’a pas été effectuée :"
-" %(exc)s"
+"La création de la sauvegarde a échoué et l’opération n’a pas été effectuée : "
+"%(exc)s"
 
 #: apps/plugins/installer.py
 msgid "The backup path is invalid."
@@ -3885,11 +3876,11 @@ msgstr "Cette sauvegarde a déjà été utilisée."
 
 #: apps/plugins/installer.py
 msgid ""
-"The backup content does not match the recorded fingerprint; the rollback was"
-" stopped."
+"The backup content does not match the recorded fingerprint; the rollback was "
+"stopped."
 msgstr ""
-"Le contenu de la sauvegarde ne correspond pas à l’empreinte enregistrée ; le"
-" retour arrière a été arrêté."
+"Le contenu de la sauvegarde ne correspond pas à l’empreinte enregistrée ; le "
+"retour arrière a été arrêté."
 
 #: apps/plugins/installer.py
 #, python-format
@@ -3918,8 +3909,8 @@ msgid ""
 "the confirmation option."
 msgstr ""
 "Le retour arrière doit annuler les migrations de base de données de la "
-"version plus récente et les données qu’elles ont ajoutées seront supprimées."
-" Après avoir fait une sauvegarde de la base de données, cochez l’option de "
+"version plus récente et les données qu’elles ont ajoutées seront supprimées. "
+"Après avoir fait une sauvegarde de la base de données, cochez l’option de "
 "confirmation."
 
 #: apps/plugins/installer.py
@@ -4061,8 +4052,8 @@ msgid ""
 "capabilities.%(cap)s: must start with “%(slug)s.” (the plugin namespace); "
 "core permissions cannot be redefined."
 msgstr ""
-"capabilities.%(cap)s : doit commencer par « %(slug)s. » (l’espace de noms de"
-" l’extension) ; les permissions du noyau ne peuvent pas être redéfinies."
+"capabilities.%(cap)s : doit commencer par « %(slug)s. » (l’espace de noms de "
+"l’extension) ; les permissions du noyau ne peuvent pas être redéfinies."
 
 #: apps/plugins/manifest.py
 #, python-format
@@ -4485,8 +4476,7 @@ msgstr ""
 #: apps/plugins/services.py
 #, python-format
 msgid ""
-"Requires Ravix version “%(ravix)s”; the current version is "
-"%(RAVIX_VERSION)s."
+"Requires Ravix version “%(ravix)s”; the current version is %(RAVIX_VERSION)s."
 msgstr ""
 "Nécessite la version « %(ravix)s » de Ravix ; la version actuelle est "
 "%(RAVIX_VERSION)s."
@@ -4518,11 +4508,11 @@ msgstr ""
 #: apps/plugins/services.py
 #, python-format
 msgid ""
-"Migration %(name)s: the operation %(op_name)s is not allowed "
-"(RunPython/RunSQL are forbidden)."
+"Migration %(name)s: the operation %(op_name)s is not allowed (RunPython/"
+"RunSQL are forbidden)."
 msgstr ""
-"Migration %(name)s : l’opération %(op_name)s n’est pas autorisée "
-"(RunPython/RunSQL sont interdites)."
+"Migration %(name)s : l’opération %(op_name)s n’est pas autorisée (RunPython/"
+"RunSQL sont interdites)."
 
 #: apps/plugins/services.py
 #, python-format
@@ -4709,8 +4699,8 @@ msgstr "« %(label)s » n’est pas un e-mail valide."
 msgid ""
 "“%(label)s” must be a permitted address (an internal path or http/https)."
 msgstr ""
-"« %(label)s » doit être une adresse autorisée (un chemin interne ou "
-"http/https)."
+"« %(label)s » doit être une adresse autorisée (un chemin interne ou http/"
+"https)."
 
 #: apps/plugins/settings_schema.py
 #, python-format
@@ -4780,19 +4770,18 @@ msgstr "Le format de la signature n’est pas valide."
 
 #: apps/plugins/signing.py apps/updater/signing.py
 msgid ""
-"The signing key is not in the list of trusted keys (or it has been "
-"disabled)."
+"The signing key is not in the list of trusted keys (or it has been disabled)."
 msgstr ""
-"La clé de signature n’est pas dans la liste des clés de confiance (ou elle a"
-" été désactivée)."
+"La clé de signature n’est pas dans la liste des clés de confiance (ou elle a "
+"été désactivée)."
 
 #: apps/plugins/signing.py apps/updater/signing.py
 msgid ""
 "The signature does not match the package contents (the package was modified "
 "or signed with a different key)."
 msgstr ""
-"La signature ne correspond pas au contenu du paquet (le paquet a été modifié"
-" ou signé avec une autre clé)."
+"La signature ne correspond pas au contenu du paquet (le paquet a été modifié "
+"ou signé avec une autre clé)."
 
 #: apps/plugins/sources.py
 msgid "Only HTTPS addresses are allowed."
@@ -5169,8 +5158,8 @@ msgstr "Supprimer la valeur de « %(label)s »"
 #: apps/shop/forms.py
 #, python-format
 msgid ""
-"%(help_text)s (It comes from an environment variable, which takes precedence"
-" over this value.)"
+"%(help_text)s (It comes from an environment variable, which takes precedence "
+"over this value.)"
 msgstr ""
 "%(help_text)s (Elle provient d’une variable d’environnement, qui est "
 "prioritaire sur cette valeur.)"
@@ -5547,8 +5536,8 @@ msgstr ""
 #, python-format
 msgid "Payment status inquiry %(reference)s for order %(number)s: %(outcome)s"
 msgstr ""
-"Interrogation du statut du paiement %(reference)s de la commande %(number)s "
-": %(outcome)s"
+"Interrogation du statut du paiement %(reference)s de la commande "
+"%(number)s : %(outcome)s"
 
 #: apps/shop/payments/http.py
 msgid "The gateway host name was not found."
@@ -5557,8 +5546,7 @@ msgstr "Le nom d’hôte de la passerelle est introuvable."
 #: apps/shop/payments/http.py
 msgid "The gateway address points to a private network and is not accepted."
 msgstr ""
-"L’adresse de la passerelle pointe vers un réseau privé et n’est pas "
-"acceptée."
+"L’adresse de la passerelle pointe vers un réseau privé et n’est pas acceptée."
 
 #: apps/shop/payments/http.py
 msgid "Could not connect to the gateway."
@@ -5719,8 +5707,8 @@ msgid ""
 "The gateway did not accept the transaction; please try again or choose "
 "another gateway."
 msgstr ""
-"La passerelle n’a pas accepté la transaction ; veuillez réessayer ou choisir"
-" une autre passerelle."
+"La passerelle n’a pas accepté la transaction ; veuillez réessayer ou choisir "
+"une autre passerelle."
 
 #: apps/shop/services.py
 msgid "Internal gateway error"
@@ -5736,8 +5724,7 @@ msgstr "L’identifiant de transaction de la passerelle est en double."
 
 #: apps/shop/services.py
 msgid "The gateway returned a duplicate ID; please try again."
-msgstr ""
-"La passerelle a renvoyé un identifiant en double ; veuillez réessayer."
+msgstr "La passerelle a renvoyé un identifiant en double ; veuillez réessayer."
 
 #: apps/shop/services.py
 #, python-format
@@ -5866,8 +5853,8 @@ msgid ""
 "Download is possible only after a successful payment (and as long as the "
 "order is not cancelled/refunded)."
 msgstr ""
-"Le téléchargement n’est possible qu’après un paiement réussi (et tant que la"
-" commande n’est pas annulée/remboursée)."
+"Le téléchargement n’est possible qu’après un paiement réussi (et tant que la "
+"commande n’est pas annulée/remboursée)."
 
 #: apps/shop/services.py
 msgid "The file for this item is not available."
@@ -5924,8 +5911,8 @@ msgstr "Panier"
 msgid ""
 "The payment gateway is not active; placing orders is not possible right now."
 msgstr ""
-"La passerelle de paiement n’est pas active ; il n’est pas possible de passer"
-" commande pour le moment."
+"La passerelle de paiement n’est pas active ; il n’est pas possible de passer "
+"commande pour le moment."
 
 #: apps/shop/views.py
 msgid "Please sign in before placing an order."
@@ -6057,8 +6044,8 @@ msgstr ""
 #, python-format
 msgid ""
 "The contrast of “primary color” with the background is not sufficient "
-"(%(worst)s of the minimum %(MIN_CONTRAST)s). Links in this color will not be"
-" readable; make the primary color stronger."
+"(%(worst)s of the minimum %(MIN_CONTRAST)s). Links in this color will not be "
+"readable; make the primary color stronger."
 msgstr ""
 "Le contraste de la « couleur principale » avec l’arrière-plan est "
 "insuffisant (%(worst)s pour un minimum de %(MIN_CONTRAST)s). Les liens de "
@@ -6227,8 +6214,7 @@ msgstr "Le bouton n’est affiché que lorsque les deux champs sont remplis."
 #: apps/themes/forms.py
 msgid "If left empty, the “Footer text” from the site settings is used."
 msgstr ""
-"S’il est vide, le « Texte du pied de page » des réglages du site est "
-"utilisé."
+"S’il est vide, le « Texte du pied de page » des réglages du site est utilisé."
 
 #: apps/themes/forms.py
 msgid "Show the footer menu"
@@ -6248,8 +6234,8 @@ msgid ""
 "One link per line, in the form: Title | URL  (at most %(MAX_SOCIAL_LINKS)s "
 "items). Example: Instagram | https://instagram.com/example"
 msgstr ""
-"Un lien par ligne, sous la forme : Titre | URL (au plus %(MAX_SOCIAL_LINKS)s"
-" éléments). Exemple : Instagram | https://instagram.com/example"
+"Un lien par ligne, sous la forme : Titre | URL (au plus %(MAX_SOCIAL_LINKS)s "
+"éléments). Exemple : Instagram | https://instagram.com/example"
 
 #: apps/themes/forms.py
 #, python-format
@@ -6257,8 +6243,8 @@ msgid ""
 "Line %(number)s: the correct format is “Title | URL” (title at most 40 "
 "characters)."
 msgstr ""
-"Ligne %(number)s : le bon format est « Titre | URL » (titre de 40 caractères"
-" au maximum)."
+"Ligne %(number)s : le bon format est « Titre | URL » (titre de 40 caractères "
+"au maximum)."
 
 #: apps/themes/forms.py
 #, python-format
@@ -6362,8 +6348,7 @@ msgid ""
 "RAVIX_THEME_INSTALL_DIR and its permissions."
 msgstr ""
 "Le dossier d’installation des thèmes n’a pas pu être créé ou n’est pas "
-"accessible en écriture ; vérifiez RAVIX_THEME_INSTALL_DIR et ses "
-"permissions."
+"accessible en écriture ; vérifiez RAVIX_THEME_INSTALL_DIR et ses permissions."
 
 #: apps/themes/installer.py
 msgid ""
@@ -6380,8 +6365,8 @@ msgid ""
 "install was not performed to avoid conflicts. Put the install folder on a "
 "local disk."
 msgstr ""
-"Le système de fichiers du dossier d’installation (%(fstype)s) n’offre pas de"
-" verrouillage fiable ; l’installation n’a pas été effectuée pour éviter les "
+"Le système de fichiers du dossier d’installation (%(fstype)s) n’offre pas de "
+"verrouillage fiable ; l’installation n’a pas été effectuée pour éviter les "
 "conflits. Placez le dossier d’installation sur un disque local."
 
 #: apps/themes/installer.py
@@ -6389,8 +6374,8 @@ msgid ""
 "The install lock file could not be created; check the install folder "
 "permissions."
 msgstr ""
-"Le fichier de verrouillage de l’installation n’a pas pu être créé ; vérifiez"
-" les permissions du dossier d’installation."
+"Le fichier de verrouillage de l’installation n’a pas pu être créé ; vérifiez "
+"les permissions du dossier d’installation."
 
 #: apps/themes/installer.py
 msgid "Another install is in progress right now; try again shortly."
@@ -6514,8 +6499,7 @@ msgstr "Le champ « %(key)s » est obligatoire dans theme.json."
 
 #: apps/themes/manifest.py
 #, python-format
-msgid ""
-"The field “%(key)s” must be a string of at most %(max_len)s characters."
+msgid "The field “%(key)s” must be a string of at most %(max_len)s characters."
 msgstr ""
 "Le champ « %(key)s » doit être une chaîne de %(max_len)s caractères au "
 "maximum."
@@ -6538,8 +6522,8 @@ msgstr "Les liens symboliques ne sont pas autorisés : « %(rel)s »."
 #: apps/themes/manifest.py
 #, python-format
 msgid ""
-"The file type of “%(rel)s” is not allowed in a theme (only files that cannot"
-" run on the server)."
+"The file type of “%(rel)s” is not allowed in a theme (only files that cannot "
+"run on the server)."
 msgstr ""
 "Le type de fichier de « %(rel)s » n’est pas autorisé dans un thème "
 "(uniquement des fichiers non exécutables sur le serveur)."
@@ -6565,8 +6549,7 @@ msgid ""
 "to its translation (text only, within the size limits)."
 msgstr ""
 "Le fichier de traduction « %(rel)s » doit être un objet JSON associant le "
-"texte anglais à sa traduction (texte uniquement, dans les limites de "
-"taille)."
+"texte anglais à sa traduction (texte uniquement, dans les limites de taille)."
 
 #: apps/themes/manifest.py
 #, python-format
@@ -6574,8 +6557,8 @@ msgid ""
 "html files are not allowed in the static folder: “%(rel)s” (html templates "
 "must be in templates)."
 msgstr ""
-"Les fichiers html ne sont pas autorisés dans le dossier static : « %(rel)s »"
-" (les modèles html doivent être dans templates)."
+"Les fichiers html ne sont pas autorisés dans le dossier static : « %(rel)s "
+"» (les modèles html doivent être dans templates)."
 
 #: apps/themes/manifest.py
 #, python-format
@@ -6657,8 +6640,8 @@ msgstr "theme.json n’est pas valide : %(exc)s"
 #: apps/themes/manifest.py
 #, python-format
 msgid ""
-"api_version must be %(API_VERSION)s (the theme was built for another version"
-" of the contract)."
+"api_version must be %(API_VERSION)s (the theme was built for another version "
+"of the contract)."
 msgstr ""
 "api_version doit être %(API_VERSION)s (le thème a été conçu pour une autre "
 "version du contrat)."
@@ -6684,8 +6667,8 @@ msgid ""
 "The “screenshot” path is invalid (it must be a png/jpg/webp file inside "
 "static)."
 msgstr ""
-"Le chemin de « screenshot » n’est pas valide (ce doit être un fichier "
-"png/jpg/webp dans static)."
+"Le chemin de « screenshot » n’est pas valide (ce doit être un fichier png/"
+"jpg/webp dans static)."
 
 #: apps/themes/manifest.py
 msgid "The templates folder does not exist."
@@ -6755,8 +6738,7 @@ msgstr "Les chemins absolus ne sont pas autorisés dans le ZIP : « %(show)s ».
 #: apps/themes/package.py
 #, python-format
 msgid "Unsafe path in ZIP (. or .. or an empty segment): “%(show)s”."
-msgstr ""
-"Chemin dangereux dans le ZIP (. ou .. ou segment vide) : « %(show)s »."
+msgstr "Chemin dangereux dans le ZIP (. ou .. ou segment vide) : « %(show)s »."
 
 #: apps/themes/package.py
 #, python-format
@@ -6767,12 +6749,12 @@ msgstr "Le chemin « %(show)s » est trop long ou trop profond."
 #, python-format
 msgid ""
 "The name “%(show)s” is not allowed; file and folder names may only contain "
-"English letters, digits, “.”, “-” and “_” (no spaces, no Persian characters,"
-" no leading dot)."
+"English letters, digits, “.”, “-” and “_” (no spaces, no Persian characters, "
+"no leading dot)."
 msgstr ""
-"Le nom « %(show)s » n’est pas autorisé ; les noms de fichiers et de dossiers"
-" ne peuvent contenir que des lettres anglaises, des chiffres, « . », « - » "
-"et « _ » (pas d’espaces, pas de caractères persans, pas de point initial)."
+"Le nom « %(show)s » n’est pas autorisé ; les noms de fichiers et de dossiers "
+"ne peuvent contenir que des lettres anglaises, des chiffres, « . », « - » et "
+"« _ » (pas d’espaces, pas de caractères persans, pas de point initial)."
 
 #: apps/themes/package.py
 #, python-format
@@ -6833,8 +6815,7 @@ msgstr "Les fichiers ZIP chiffrés ne sont pas autorisés."
 
 #: apps/themes/package.py
 msgid ""
-"The ZIP compression method is not supported (only Deflate or no "
-"compression)."
+"The ZIP compression method is not supported (only Deflate or no compression)."
 msgstr ""
 "La méthode de compression du ZIP n’est pas prise en charge (Deflate ou "
 "aucune compression uniquement)."
@@ -6856,9 +6837,9 @@ msgid ""
 "The file “%(show)s” is outside the theme folder. All files must be inside "
 "one folder named after the theme ID (e.g. my-theme/theme.json)."
 msgstr ""
-"Le fichier « %(show)s » est en dehors du dossier du thème. Tous les fichiers"
-" doivent se trouver dans un seul dossier nommé d’après l’ID du thème (p. ex."
-" my-theme/theme.json)."
+"Le fichier « %(show)s » est en dehors du dossier du thème. Tous les fichiers "
+"doivent se trouver dans un seul dossier nommé d’après l’ID du thème (p. ex. "
+"my-theme/theme.json)."
 
 #: apps/themes/package.py
 #, python-format
@@ -6868,8 +6849,7 @@ msgstr "La taille du fichier « %(show)s » dépasse %(value)s Mo."
 #: apps/themes/package.py
 msgid "The ZIP is suspicious (a zero-size file in the compressed data)."
 msgstr ""
-"Le ZIP est suspect (un fichier de taille nulle dans les données "
-"compressées)."
+"Le ZIP est suspect (un fichier de taille nulle dans les données compressées)."
 
 #: apps/themes/package.py
 #, python-format
@@ -6899,8 +6879,8 @@ msgid ""
 "English letters, digits, “-” and “_” (at most 49 characters)."
 msgstr ""
 "Le nom du dossier racine (« %(show)s ») n’est pas un ID de thème valide ; "
-"uniquement des lettres anglaises minuscules, des chiffres, « - » et « _ » "
-"(49 caractères au maximum)."
+"uniquement des lettres anglaises minuscules, des chiffres, « - » et « _ "
+"» (49 caractères au maximum)."
 
 #: apps/themes/package.py
 msgid "Conflicting paths in ZIP (one name is both a file and a folder)."
@@ -6944,14 +6924,13 @@ msgid ""
 "Could not write to the temporary folder; check the server’s permissions and "
 "disk space."
 msgstr ""
-"Impossible d’écrire dans le dossier temporaire ; vérifiez les permissions du"
-" serveur et l’espace disque."
+"Impossible d’écrire dans le dossier temporaire ; vérifiez les permissions du "
+"serveur et l’espace disque."
 
 #: apps/themes/services.py
 msgid "This theme was not found. Its folder must exist in the themes path."
 msgstr ""
-"Ce thème est introuvable. Son dossier doit exister dans le chemin des "
-"thèmes."
+"Ce thème est introuvable. Son dossier doit exister dans le chemin des thèmes."
 
 #: apps/themes/services.py
 #, python-format
@@ -7007,8 +6986,8 @@ msgid ""
 "The draft colors are not valid or readable; first fix the “Appearance” "
 "section."
 msgstr ""
-"Les couleurs du brouillon ne sont pas valides ou lisibles ; corrigez d’abord"
-" la section « Apparence »."
+"Les couleurs du brouillon ne sont pas valides ou lisibles ; corrigez d’abord "
+"la section « Apparence »."
 
 #: apps/themes/services.py
 #, python-format
@@ -7060,8 +7039,8 @@ msgid ""
 "<strong>Preview mode:</strong> these changes are not published yet and "
 "visitors do not see them."
 msgstr ""
-"<strong>Mode aperçu :</strong> ces modifications ne sont pas encore publiées"
-" et les visiteurs ne les voient pas."
+"<strong>Mode aperçu :</strong> ces modifications ne sont pas encore publiées "
+"et les visiteurs ne les voient pas."
 
 #: apps/themes/templatetags/ravix_theme.py
 msgid "Signed in: {}"
@@ -7120,8 +7099,7 @@ msgid ""
 "activated, and you can activate it yourself whenever you want."
 msgstr ""
 "Le thème « %(name)s » a été installé et ajouté à la liste ci-dessous ; il "
-"n’est pas activé, et vous pouvez l’activer vous-même quand vous le "
-"souhaitez."
+"n’est pas activé, et vous pouvez l’activer vous-même quand vous le souhaitez."
 
 #: apps/themes/views.py
 #, python-format
@@ -7142,8 +7120,8 @@ msgstr "Vous avez quitté le mode aperçu."
 msgid ""
 "The site appearance changes were published and are applied for all visitors."
 msgstr ""
-"Les modifications de l’apparence du site ont été publiées et sont appliquées"
-" pour tous les visiteurs."
+"Les modifications de l’apparence du site ont été publiées et sont appliquées "
+"pour tous les visiteurs."
 
 #: apps/themes/views.py
 msgid "The unpublished changes were discarded."
@@ -7209,8 +7187,8 @@ msgstr "Le fichier de sauvegarde de la base de données n’a pas été créé."
 #: apps/updater/backup.py
 #, python-format
 msgid ""
-"The backup is corrupted or incomplete (%(info)s); automatic restore will not"
-" be performed."
+"The backup is corrupted or incomplete (%(info)s); automatic restore will not "
+"be performed."
 msgstr ""
 "La sauvegarde est corrompue ou incomplète (%(info)s) ; la restauration "
 "automatique ne sera pas effectuée."
@@ -7409,8 +7387,8 @@ msgstr ""
 #: apps/updater/pipeline.py
 #, python-format
 msgid ""
-"%(value)sThe run was left unfinished (process/server interrupted); check the"
-" state of the files and the database."
+"%(value)sThe run was left unfinished (process/server interrupted); check the "
+"state of the files and the database."
 msgstr ""
 "%(value)sL’exécution est restée inachevée (processus/serveur interrompu) ; "
 "vérifiez l’état des fichiers et de la base de données."
@@ -7490,18 +7468,17 @@ msgstr ""
 #: apps/updater/pipeline.py
 #, python-format
 msgid ""
-"To reach %(new_version)s you must first upgrade to %(requires)s (or higher);"
-" the current version is %(cur)s."
+"To reach %(new_version)s you must first upgrade to %(requires)s (or higher); "
+"the current version is %(cur)s."
 msgstr ""
-"Pour atteindre %(new_version)s, vous devez d’abord passer à %(requires)s (ou"
-" supérieur) ; la version actuelle est %(cur)s."
+"Pour atteindre %(new_version)s, vous devez d’abord passer à %(requires)s (ou "
+"supérieur) ; la version actuelle est %(cur)s."
 
 #: apps/updater/pipeline.py
 #, python-format
 msgid "This version needs Ravix “%(need)s”; the current version is %(cur)s."
 msgstr ""
-"Cette version nécessite Ravix « %(need)s » ; la version actuelle est "
-"%(cur)s."
+"Cette version nécessite Ravix « %(need)s » ; la version actuelle est %(cur)s."
 
 #: apps/updater/pipeline.py
 #, python-format
@@ -7539,8 +7516,8 @@ msgstr "Nécessite Ravix « %(th)s »"
 #, python-format
 msgid "Theme “%(th)s” may not be compatible with the new version (%(bad)s)."
 msgstr ""
-"Le thème « %(th)s » pourrait ne pas être compatible avec la nouvelle version"
-" (%(bad)s)."
+"Le thème « %(th)s » pourrait ne pas être compatible avec la nouvelle version "
+"(%(bad)s)."
 
 #: apps/updater/pipeline.py
 #, python-format
@@ -7548,11 +7525,10 @@ msgid "Version %(version)s is not in the update source."
 msgstr "La version %(version)s n’est pas dans la source de mise à jour."
 
 #: apps/updater/pipeline.py
-msgid ""
-"There is no newer version in the update source; the site is up to date."
+msgid "There is no newer version in the update source; the site is up to date."
 msgstr ""
-"Il n’y a pas de version plus récente dans la source de mise à jour ; le site"
-" est à jour."
+"Il n’y a pas de version plus récente dans la source de mise à jour ; le site "
+"est à jour."
 
 #: apps/updater/pipeline.py
 #, python-format
@@ -7565,8 +7541,8 @@ msgstr "Le paquet dépasse la limite de taille."
 
 #: apps/updater/pipeline.py
 msgid ""
-"The SHA-256 of the downloaded package does not match the index (corrupted or"
-" tampered download); rejected."
+"The SHA-256 of the downloaded package does not match the index (corrupted or "
+"tampered download); rejected."
 msgstr ""
 "Le SHA-256 du paquet téléchargé ne correspond pas à l’index (téléchargement "
 "corrompu ou falsifié) ; rejeté."
@@ -7574,8 +7550,7 @@ msgstr ""
 #: apps/updater/pipeline.py
 #, python-format
 msgid "The package’s digital signature could not be verified: %(reason)s"
-msgstr ""
-"La signature numérique du paquet n’a pas pu être vérifiée : %(reason)s"
+msgstr "La signature numérique du paquet n’a pas pu être vérifiée : %(reason)s"
 
 #: apps/updater/pipeline.py
 #, python-format
@@ -7597,8 +7572,8 @@ msgstr "Version cible %(entry)s"
 #: apps/updater/pipeline.py
 msgid "A plugin install/upgrade is in progress; try again after it finishes."
 msgstr ""
-"Une installation/mise à niveau d’extension est en cours ; réessayez une fois"
-" terminée."
+"Une installation/mise à niveau d’extension est en cours ; réessayez une fois "
+"terminée."
 
 #: apps/updater/pipeline.py
 #, python-format
@@ -7649,8 +7624,8 @@ msgid ""
 "After replacement, the version on disk (%(disk)s) does not match the target "
 "version."
 msgstr ""
-"Après le remplacement, la version sur le disque (%(disk)s) ne correspond pas"
-" à la version cible."
+"Après le remplacement, la version sur le disque (%(disk)s) ne correspond pas "
+"à la version cible."
 
 #: apps/updater/pipeline.py
 msgid "Files replaced"
@@ -7672,9 +7647,8 @@ msgid ""
 "The upgrade succeeded. Restart the web service to load the new code. If "
 "there is a problem: `python manage.py ravix_update rollback --run %d`."
 msgstr ""
-"La mise à niveau a réussi. Redémarrez le service web pour charger le nouveau"
-" code. En cas de problème : `python manage.py ravix_update rollback --run "
-"%d`."
+"La mise à niveau a réussi. Redémarrez le service web pour charger le nouveau "
+"code. En cas de problème : `python manage.py ravix_update rollback --run %d`."
 
 #: apps/updater/pipeline.py
 msgid "The database was restored from backup"
@@ -7719,8 +7693,7 @@ msgid "The core upgrade run was not found."
 msgstr "L’exécution de la mise à niveau du noyau est introuvable."
 
 #: apps/updater/pipeline.py
-msgid ""
-"Only a successful upgrade (or one needing recovery) can be rolled back."
+msgid "Only a successful upgrade (or one needing recovery) can be rolled back."
 msgstr ""
 "Seule une mise à niveau réussie (ou nécessitant une récupération) peut être "
 "annulée."
@@ -7735,14 +7708,14 @@ msgid ""
 "destroys data created after it; explicit confirmation is required."
 msgstr ""
 "Le retour arrière restaure la base de données à l’état précédant la mise à "
-"niveau et détruit les données créées depuis ; une confirmation explicite est"
-" requise."
+"niveau et détruit les données créées depuis ; une confirmation explicite est "
+"requise."
 
 #: apps/updater/pipeline.py
 #, python-format
 msgid ""
-"The code on disk (%(disk)s) is not the upgraded version (%(to_version)s); an"
-" automatic rollback is not safe."
+"The code on disk (%(disk)s) is not the upgraded version (%(to_version)s); an "
+"automatic rollback is not safe."
 msgstr ""
 "Le code présent sur le disque (%(disk)s) n’est pas la version mise à niveau "
 "(%(to_version)s) ; un retour arrière automatique n’est pas sûr."
@@ -7782,8 +7755,7 @@ msgstr ""
 #: apps/updater/pipeline.py
 #, python-format
 msgid "Version %(version)s of theme “%(slug)s” is not in the source."
-msgstr ""
-"La version %(version)s du thème « %(slug)s » n’est pas dans la source."
+msgstr "La version %(version)s du thème « %(slug)s » n’est pas dans la source."
 
 #: apps/updater/pipeline.py
 msgid "There is no compatible new version for this theme."
@@ -7833,8 +7805,8 @@ msgstr "La mise à niveau du thème a échoué (%(status)s) : %(err)s"
 msgid ""
 "The theme was updated. Restart the service to apply it in all processes."
 msgstr ""
-"Le thème a été mis à jour. Redémarrez le service pour l’appliquer à tous les"
-" processus."
+"Le thème a été mis à jour. Redémarrez le service pour l’appliquer à tous les "
+"processus."
 
 #: apps/updater/pipeline.py
 #, python-format
@@ -7842,8 +7814,7 @@ msgid "Unexpected error: %(exc)s"
 msgstr "Erreur inattendue : %(exc)s"
 
 #: apps/updater/pipeline.py
-msgid ""
-"An unexpected error occurred; the details were recorded in the history."
+msgid "An unexpected error occurred; the details were recorded in the history."
 msgstr ""
 "Une erreur inattendue s’est produite ; les détails ont été consignés dans "
 "l’historique."
@@ -7856,8 +7827,8 @@ msgstr ""
 
 #: apps/updater/pipeline.py
 msgid ""
-"The previous version of the plugin is untouched; see the “Plugin report” for"
-" details."
+"The previous version of the plugin is untouched; see the “Plugin report” for "
+"details."
 msgstr ""
 "La version précédente de l’extension n’a pas été touchée ; consultez le « "
 "Rapport de l’extension » pour les détails."
@@ -7868,9 +7839,9 @@ msgid ""
 "changes, enable it on the plugin page (rolling back from that page is "
 "possible)."
 msgstr ""
-"Le nouveau code a été mis en place ; l’extension est désactivée. Après avoir"
-" vérifié les modifications, activez-la sur la page de l’extension (le retour"
-" arrière est possible depuis cette page)."
+"Le nouveau code a été mis en place ; l’extension est désactivée. Après avoir "
+"vérifié les modifications, activez-la sur la page de l’extension (le retour "
+"arrière est possible depuis cette page)."
 
 #: apps/updater/release.py
 msgid "RAVIX_VERSION was not found in apps/core/version.py."
@@ -7895,8 +7866,8 @@ msgid ""
 "The update index has no signature and this site’s policy requires a signed "
 "index."
 msgstr ""
-"L’index de mise à jour n’a pas de signature et la politique de ce site exige"
-" un index signé."
+"L’index de mise à jour n’a pas de signature et la politique de ce site exige "
+"un index signé."
 
 #: apps/updater/sources.py
 #, python-format
@@ -7965,9 +7936,9 @@ msgstr "Nécessite Python « %(spec)s » ; la version actuelle est %(cur)s."
 
 #: apps/updater/views.py
 msgid ""
-"Applying updates from the web is turned off. Run it with the command “python"
-" manage.py ravix_update apply ...” or set RAVIX_UPDATE_WEB_APPLY=true in the"
-" server settings."
+"Applying updates from the web is turned off. Run it with the command “python "
+"manage.py ravix_update apply ...” or set RAVIX_UPDATE_WEB_APPLY=true in the "
+"server settings."
 msgstr ""
 "L’application des mises à jour depuis le web est désactivée. Exécutez-la "
 "avec la commande « python manage.py ravix_update apply ... » ou définissez "
@@ -7976,8 +7947,7 @@ msgstr ""
 #: apps/updater/views.py
 msgid "The version list was fetched from the official source and validated."
 msgstr ""
-"La liste des versions a été récupérée depuis la source officielle et "
-"validée."
+"La liste des versions a été récupérée depuis la source officielle et validée."
 
 #: apps/updater/views.py
 #, python-format
@@ -8110,8 +8080,8 @@ msgstr "ExamplePay (exemple)"
 #: plugins/example_pay/gateway.py
 msgid "A tutorial sample gateway; it is not connected to a real service."
 msgstr ""
-"Une passerelle d’exemple de tutoriel ; elle n’est pas connectée à un service"
-" réel."
+"Une passerelle d’exemple de tutoriel ; elle n’est pas connectée à un service "
+"réel."
 
 #: plugins/example_pay/gateway.py
 msgid "API URL (live)"
@@ -8184,11 +8154,11 @@ msgid "Save"
 msgstr "Enregistrer"
 
 #: plugins/seo_toolkit/templates/edit.html templates/content/page_detail.html
-#: templates/content/post_detail.html
-#: templates/pluginhub/directory_detail.html templates/plugins/install.html
-#: templates/plugins/install_package.html templates/plugins/settings.html
-#: templates/plugins/trusted_keys.html templates/shop/panel/order.html
-#: templates/sites/detail.html templates/updater/run.html
+#: templates/content/post_detail.html templates/pluginhub/directory_detail.html
+#: templates/plugins/install.html templates/plugins/install_package.html
+#: templates/plugins/settings.html templates/plugins/trusted_keys.html
+#: templates/shop/panel/order.html templates/sites/detail.html
+#: templates/updater/run.html
 msgid "Back"
 msgstr "Retour"
 
@@ -8242,14 +8212,13 @@ msgid ""
 "A request was made to reset your account password. To set a new password, "
 "open the link below:"
 msgstr ""
-"Une demande de réinitialisation du mot de passe de votre compte a été faite."
-" Pour définir un nouveau mot de passe, ouvrez le lien ci-dessous :"
+"Une demande de réinitialisation du mot de passe de votre compte a été faite. "
+"Pour définir un nouveau mot de passe, ouvrez le lien ci-dessous :"
 
 #: templates/accounts/email/password_reset.txt
 msgid "This link can be used only once and expires after one hour."
 msgstr ""
-"Ce lien ne peut être utilisé qu’une seule fois et expire au bout d’une "
-"heure."
+"Ce lien ne peut être utilisé qu’une seule fois et expire au bout d’une heure."
 
 #: templates/accounts/email/password_reset.txt
 msgid ""
@@ -8265,11 +8234,11 @@ msgstr "Réinitialisez le mot de passe de votre compte"
 
 #: templates/accounts/email/verify.txt
 msgid ""
-"To verify your account email, open the link below and press the verification"
-" button:"
+"To verify your account email, open the link below and press the verification "
+"button:"
 msgstr ""
-"Pour vérifier l’e-mail de votre compte, ouvrez le lien ci-dessous et appuyez"
-" sur le bouton de vérification :"
+"Pour vérifier l’e-mail de votre compte, ouvrez le lien ci-dessous et appuyez "
+"sur le bouton de vérification :"
 
 #: templates/accounts/email/verify.txt
 #, python-format
@@ -8358,8 +8327,8 @@ msgstr "Demande reçue"
 
 #: templates/accounts/email_verify_resend_done.html
 msgid ""
-"If an account exists with this email and is not yet verified, a verification"
-" link will reach your inbox in a few minutes."
+"If an account exists with this email and is not yet verified, a verification "
+"link will reach your inbox in a few minutes."
 msgstr ""
 "S’il existe un compte avec cet e-mail et qu’il n’est pas encore vérifié, un "
 "lien de vérification arrivera dans votre boîte de réception dans quelques "
@@ -8436,8 +8405,8 @@ msgid ""
 "your inbox in a few minutes. Check your spam folder too."
 msgstr ""
 "S’il existe un compte avec cet e-mail, un lien de récupération du mot de "
-"passe arrivera dans votre boîte de réception dans quelques minutes. Vérifiez"
-" aussi votre dossier de courrier indésirable."
+"passe arrivera dans votre boîte de réception dans quelques minutes. Vérifiez "
+"aussi votre dossier de courrier indésirable."
 
 #: templates/accounts/password_reset_done.html
 msgid "The link is valid for one hour and can be used only once."
@@ -8570,8 +8539,8 @@ msgid ""
 "Records sign-ins, sign-outs and important changes to content, media, users "
 "and settings"
 msgstr ""
-"Enregistre les connexions, les déconnexions et les changements importants du"
-" contenu, des médias, des utilisateurs et des réglages"
+"Enregistre les connexions, les déconnexions et les changements importants du "
+"contenu, des médias, des utilisateurs et des réglages"
 
 #: templates/audit/log_list.html
 msgid "Search by description, user or title"
@@ -8666,8 +8635,8 @@ msgstr "Glissez-déposez sur le canevas, ou cliquez sur un élément."
 #: templates/builder/editor.html
 msgid "Shortcuts: Ctrl+S save · Ctrl+Z undo · Delete remove the selected item"
 msgstr ""
-"Raccourcis : Ctrl+S enregistrer · Ctrl+Z annuler · Suppr supprimer l’élément"
-" sélectionné"
+"Raccourcis : Ctrl+S enregistrer · Ctrl+Z annuler · Suppr supprimer l’élément "
+"sélectionné"
 
 #: templates/builder/editor.html
 msgid "Design canvas"
@@ -8712,8 +8681,8 @@ msgid ""
 "does not change until you publish."
 msgstr ""
 "Chaque version est un instantané figé de la page. « Restaurer » place la "
-"version dans le brouillon (l’état actuel est versionné automatiquement) ; le"
-" site public ne change pas tant que vous ne publiez pas."
+"version dans le brouillon (l’état actuel est versionné automatiquement) ; le "
+"site public ne change pas tant que vous ne publiez pas."
 
 #: templates/builder/editor.html
 msgid "Save new version"
@@ -8778,8 +8747,8 @@ msgstr "Concevoir"
 #: templates/builder/list.html
 msgid "No page was found. First create a static page in the “Pages” section."
 msgstr ""
-"Aucune page trouvée. Commencez par créer une page statique dans la section «"
-" Pages »."
+"Aucune page trouvée. Commencez par créer une page statique dans la section « "
+"Pages »."
 
 #: templates/comments/list.html
 msgid ""
@@ -8927,11 +8896,11 @@ msgstr "SEO et partage"
 
 #: templates/content/post_form.html
 msgid ""
-"The featured image is used as the preview image on social networks "
-"(og:image)."
+"The featured image is used as the preview image on social networks (og:"
+"image)."
 msgstr ""
-"L’image mise en avant sert d’image d’aperçu sur les réseaux sociaux "
-"(og:image)."
+"L’image mise en avant sert d’image d’aperçu sur les réseaux sociaux (og:"
+"image)."
 
 #: templates/content/post_form.html
 msgid "There is no category yet."
@@ -9122,11 +9091,11 @@ msgstr "Supprimer %(object_label)s"
 #: templates/crud/confirm_delete.html
 #, python-format
 msgid ""
-"Are you sure you want to delete %(object_label)s "
-"“<strong>%(object)s</strong>”? This cannot be undone."
+"Are you sure you want to delete %(object_label)s “<strong>%(object)s</"
+"strong>”? This cannot be undone."
 msgstr ""
-"Voulez-vous vraiment supprimer %(object_label)s « "
-"<strong>%(object)s</strong> » ? Cette action est irréversible."
+"Voulez-vous vraiment supprimer %(object_label)s « <strong>%(object)s</"
+"strong> » ? Cette action est irréversible."
 
 #: templates/crud/confirm_delete.html
 msgid "Yes, delete"
@@ -9170,11 +9139,10 @@ msgstr "Terminé"
 #: templates/dashboard/home.html
 msgid ""
 "Your site has one sample post and two sample pages (“About us” and “Contact "
-"us”). Edit any of them and it becomes yours; you can delete the rest at "
-"once."
+"us”). Edit any of them and it becomes yours; you can delete the rest at once."
 msgstr ""
-"Votre site contient un article d’exemple et deux pages d’exemple (« À propos"
-" » et « Contact »). Modifiez-en une et elle devient la vôtre ; vous pouvez "
+"Votre site contient un article d’exemple et deux pages d’exemple (« À propos "
+"» et « Contact »). Modifiez-en une et elle devient la vôtre ; vous pouvez "
 "supprimer le reste d’un coup."
 
 #: templates/dashboard/home.html
@@ -9288,8 +9256,8 @@ msgstr "Installer Ravix"
 
 #: templates/installer/install.html
 msgid ""
-"A few simple details; after submitting, the superadmin is created, this page"
-" is closed for good and you are signed in to the panel."
+"A few simple details; after submitting, the superadmin is created, this page "
+"is closed for good and you are signed in to the panel."
 msgstr ""
 "Quelques informations simples ; après l’envoi, le super-administrateur est "
 "créé, cette page est fermée définitivement et vous êtes connecté au panneau."
@@ -9448,14 +9416,14 @@ msgid ""
 "%(help_text)s Images up to 5 MB, documents up to 15, audio up to 25 and "
 "video up to 50 MB."
 msgstr ""
-"%(help_text)s Images jusqu’à 5 Mo, documents jusqu’à 15, audio jusqu’à 25 et"
-" vidéo jusqu’à 50 Mo."
+"%(help_text)s Images jusqu’à 5 Mo, documents jusqu’à 15, audio jusqu’à 25 et "
+"vidéo jusqu’à 50 Mo."
 
 #: templates/media_library/media_upload.html
 msgid ""
-"Allowed formats: JPG, PNG, GIF, WEBP, PDF, TXT, CSV, DOC/DOCX, XLS/XLSX, "
-"PPT/PPTX, MP3, WAV, OGG, MP4, WEBM. Executable files, scripts, HTML and SVG "
-"are not accepted."
+"Allowed formats: JPG, PNG, GIF, WEBP, PDF, TXT, CSV, DOC/DOCX, XLS/XLSX, PPT/"
+"PPTX, MP3, WAV, OGG, MP4, WEBM. Executable files, scripts, HTML and SVG are "
+"not accepted."
 msgstr ""
 "Formats autorisés : JPG, PNG, GIF, WEBP, PDF, TXT, CSV, DOC/DOCX, XLS/XLSX, "
 "PPT/PPTX, MP3, WAV, OGG, MP4, WEBM. Les fichiers exécutables, les scripts, "
@@ -9601,6 +9569,11 @@ msgstr "Révoquer la vérification"
 msgid "Verify identity"
 msgstr "Vérifier l’identité"
 
+#: templates/pluginhub/directory.html templates/plugins/list.html
+#| msgid "Plugin registry"
+msgid "Plugin directory"
+msgstr "Répertoire des extensions"
+
 #: templates/pluginhub/directory.html
 msgid ""
 "Plugins published in the registry. Nothing is downloaded or installed "
@@ -9693,8 +9666,8 @@ msgstr "Télécharger (dernière version compatible :"
 
 #: templates/pluginhub/directory_detail.html
 msgid ""
-"The package is downloaded only over HTTPS with a SHA-256 check and is placed"
-" in the folder"
+"The package is downloaded only over HTTPS with a SHA-256 check and is placed "
+"in the folder"
 msgstr ""
 "Le paquet est téléchargé uniquement via HTTPS avec une vérification SHA-256 "
 "et placé dans le dossier"
@@ -9893,8 +9866,8 @@ msgid ""
 "The code of this plugin differs from the approved version, so it is not "
 "running. If you expected this change, review and approve it."
 msgstr ""
-"Le code de cette extension diffère de la version approuvée ; elle n’est donc"
-" pas en cours d’exécution. Si vous attendiez ce changement, examinez-le et "
+"Le code de cette extension diffère de la version approuvée ; elle n’est donc "
+"pas en cours d’exécution. Si vous attendiez ce changement, examinez-le et "
 "approuvez-le."
 
 #: templates/plugins/detail.html
@@ -10021,11 +9994,11 @@ msgstr "Cette section n’est pas disponible"
 
 #: templates/plugins/error.html
 msgid ""
-"The admin panel and other sections work fine. The error details are recorded"
-" in the plugin log."
+"The admin panel and other sections work fine. The error details are recorded "
+"in the plugin log."
 msgstr ""
-"Le panneau d’administration et les autres sections fonctionnent normalement."
-" Les détails de l’erreur sont enregistrés dans le journal des extensions."
+"Le panneau d’administration et les autres sections fonctionnent normalement. "
+"Les détails de l’erreur sont enregistrés dans le journal des extensions."
 
 #: templates/plugins/error.html
 msgid "Back to the dashboard"
@@ -10080,8 +10053,8 @@ msgid ""
 "change to the files stops the plugin immediately."
 msgstr ""
 "<strong>Avertissement de sécurité :</strong> une extension est du code "
-"Python et s’exécute avec un accès complet au serveur ; il n’y a pas de bac à"
-" sable. N’approuvez qu’une extension dont vous avez examiné le code ou "
+"Python et s’exécute avec un accès complet au serveur ; il n’y a pas de bac à "
+"sable. N’approuvez qu’une extension dont vous avez examiné le code ou "
 "provenant d’une source de confiance. Lorsque vous approuvez, seul ce code "
 "exact (l’empreinte ci-dessous) est autorisé à s’exécuter ; toute "
 "modification ultérieure des fichiers arrête immédiatement l’extension."
@@ -10119,8 +10092,8 @@ msgstr "Installer une extension depuis un paquet"
 
 #: templates/plugins/install_package.html
 msgid ""
-"Safely fetch and place a package. After that you review the details and code"
-" and explicitly confirm the installation; no plugin is installed or enabled "
+"Safely fetch and place a package. After that you review the details and code "
+"and explicitly confirm the installation; no plugin is installed or enabled "
 "automatically."
 msgstr ""
 "Récupérez et placez un paquet en toute sécurité. Vous examinez ensuite les "
@@ -10210,8 +10183,8 @@ msgstr "Identifiant de la clé de signature (facultatif)"
 #: templates/plugins/install_package.html
 msgid "If this plugin is installed, replace it as an upgrade (with a backup)."
 msgstr ""
-"Si cette extension est installée, remplacez-la comme une mise à niveau (avec"
-" sauvegarde)."
+"Si cette extension est installée, remplacez-la comme une mise à niveau (avec "
+"sauvegarde)."
 
 #: templates/plugins/install_package.html
 msgid "Upload and review"
@@ -10223,8 +10196,7 @@ msgid ""
 "install only plugins you trust."
 msgstr ""
 "Ajoutez de nouvelles fonctionnalités sans modifier le noyau. Les extensions "
-"exécutent du code côté serveur ; n’installez que des extensions de "
-"confiance."
+"exécutent du code côté serveur ; n’installez que des extensions de confiance."
 
 #: templates/plugins/list.html
 msgid "Install from package"
@@ -10250,8 +10222,8 @@ msgstr "Le mode sans échec est activé ("
 msgid ""
 "): no plugin code runs. Only management (install/remove/log) is available."
 msgstr ""
-") : aucun code d’extension ne s’exécute. Seule la gestion "
-"(installation/suppression/journal) est disponible."
+") : aucun code d’extension ne s’exécute. Seule la gestion (installation/"
+"suppression/journal) est disponible."
 
 #: templates/plugins/list.html
 msgid "<strong>Latest errors:</strong>"
@@ -10340,8 +10312,7 @@ msgstr "Aucune clé n’a été enregistrée."
 msgid "Site: %(name)s"
 msgstr "Site : %(name)s"
 
-#: templates/shop/panel/categories.html
-#: templates/shop/panel/category_form.html
+#: templates/shop/panel/categories.html templates/shop/panel/category_form.html
 msgid "New product category"
 msgstr "Nouvelle catégorie de produits"
 
@@ -10370,9 +10341,8 @@ msgid ""
 "use the environment variable"
 msgstr ""
 "Les clés sont stockées chiffrées et ne sont plus jamais affichées. Laissez "
-"le champ secret vide pour conserver la valeur actuelle. Pour garder les clés"
-" hors de la base de données, vous pouvez utiliser la variable "
-"d’environnement"
+"le champ secret vide pour conserver la valeur actuelle. Pour garder les clés "
+"hors de la base de données, vous pouvez utiliser la variable d’environnement"
 
 #: templates/shop/panel/gateway_form.html
 #, python-format
@@ -10390,8 +10360,8 @@ msgstr ""
 
 #: templates/shop/panel/gateways.html
 msgid ""
-"The encryption key <code>RAVIX_SECRETS_KEY</code> is not set; in production,"
-" storing gateway keys is not possible without it."
+"The encryption key <code>RAVIX_SECRETS_KEY</code> is not set; in production, "
+"storing gateway keys is not possible without it."
 msgstr ""
 "La clé de chiffrement <code>RAVIX_SECRETS_KEY</code> n’est pas définie ; en "
 "production, le stockage des clés de passerelle est impossible sans elle."
@@ -10454,8 +10424,8 @@ msgstr "Note de changement de statut"
 
 #: templates/shop/panel/order.html
 msgid ""
-"“Refund” only records the status; the money is not returned from the gateway"
-" automatically."
+"“Refund” only records the status; the money is not returned from the gateway "
+"automatically."
 msgstr ""
 "« Remboursement » enregistre uniquement le statut ; l’argent n’est pas "
 "restitué automatiquement par la passerelle."
@@ -10501,9 +10471,9 @@ msgid ""
 "for an order that cannot accept it). Reconcile with the gateway’s support "
 "before any action."
 msgstr ""
-"Ce paiement nécessite une vérification manuelle (écart de "
-"montant/identifiant, ou paiement d’une commande qui ne peut pas l’accepter)."
-" Rapprochez avec le support de la passerelle avant toute action."
+"Ce paiement nécessite une vérification manuelle (écart de montant/"
+"identifiant, ou paiement d’une commande qui ne peut pas l’accepter). "
+"Rapprochez avec le support de la passerelle avant toute action."
 
 #: templates/shop/panel/order.html
 msgid "Change history"
@@ -10791,16 +10761,15 @@ msgstr "Historique des commandes"
 
 #: templates/shop/public/order.html
 msgid ""
-"Keep this address to track the order; anyone who has the address can see the"
-" order."
+"Keep this address to track the order; anyone who has the address can see the "
+"order."
 msgstr ""
 "Conservez cette adresse pour suivre la commande ; toute personne qui la "
 "possède peut voir la commande."
 
 #: templates/shop/public/sandbox.html
 msgid ""
-"⚠ This is a <strong>test payment gateway</strong> page and no money is "
-"moved."
+"⚠ This is a <strong>test payment gateway</strong> page and no money is moved."
 msgstr ""
 "⚠ Ceci est une page de <strong>passerelle de paiement de test</strong> et "
 "aucun argent n’est déplacé."
@@ -10952,11 +10921,11 @@ msgstr "Couleurs, police et marque du site"
 
 #: templates/themes/customize_appearance.html
 msgid ""
-"Colors must be readable (contrast at least 4.5 to 1); otherwise they are not"
-" saved."
+"Colors must be readable (contrast at least 4.5 to 1); otherwise they are not "
+"saved."
 msgstr ""
-"Les couleurs doivent être lisibles (contraste d’au moins 4,5 pour 1) ; sinon"
-" elles ne sont pas enregistrées."
+"Les couleurs doivent être lisibles (contraste d’au moins 4,5 pour 1) ; sinon "
+"elles ne sont pas enregistrées."
 
 #: templates/themes/customize_appearance.html
 #: templates/themes/customize_home.html templates/themes/customize_layout.html
@@ -11021,8 +10990,8 @@ msgstr ""
 
 #: templates/themes/theme_list.html
 msgid ""
-"<strong>The theme was not installed and no change was applied on the "
-"server.</strong>"
+"<strong>The theme was not installed and no change was applied on the server."
+"</strong>"
 msgstr ""
 "<strong>Le thème n’a pas été installé et aucune modification n’a été "
 "appliquée sur le serveur.</strong>"
@@ -11030,8 +10999,8 @@ msgstr ""
 #: templates/themes/theme_list.html
 #, python-format
 msgid ""
-"<strong>Validation succeeded; theme “%(installed)s” was installed but is not"
-" active yet.</strong>"
+"<strong>Validation succeeded; theme “%(installed)s” was installed but is not "
+"active yet.</strong>"
 msgstr ""
 "<strong>La validation a réussi ; le thème « %(installed)s » a été installé "
 "mais n’est pas encore actif.</strong>"
@@ -11042,10 +11011,9 @@ msgid ""
 "not been published yet, and until then theme pages look incomplete. The "
 "server administrator must run the command"
 msgstr ""
-"<strong>État des fichiers statiques :</strong> les fichiers CSS/JS/images de"
-" ce thème n’ont pas encore été publiés et, d’ici là, les pages du thème "
-"paraissent incomplètes. L’administrateur du serveur doit exécuter la "
-"commande"
+"<strong>État des fichiers statiques :</strong> les fichiers CSS/JS/images de "
+"ce thème n’ont pas encore été publiés et, d’ici là, les pages du thème "
+"paraissent incomplètes. L’administrateur du serveur doit exécuter la commande"
 
 #: templates/themes/theme_list.html
 msgid ""
@@ -11057,8 +11025,8 @@ msgstr ""
 
 #: templates/themes/theme_list.html
 msgid ""
-"<strong>Static files status:</strong> this theme has no static files or they"
-" are already published."
+"<strong>Static files status:</strong> this theme has no static files or they "
+"are already published."
 msgstr ""
 "<strong>État des fichiers statiques :</strong> ce thème n’a pas de fichiers "
 "statiques ou ils sont déjà publiés."
@@ -11093,8 +11061,8 @@ msgid ""
 "“default”) is never overwritten."
 msgstr ""
 ". Les fichiers SVG, py et php ne sont pas acceptés. Le thème n’est pas "
-"activé automatiquement après l’installation, et un thème existant (y compris"
-" « default ») n’est jamais écrasé."
+"activé automatiquement après l’installation, et un thème existant (y compris "
+"« default ») n’est jamais écrasé."
 
 #: templates/themes/theme_list.html
 msgid "Upload and install"
@@ -11106,8 +11074,8 @@ msgstr "Téléversement et vérification en cours ; veuillez patienter…"
 
 #: templates/themes/theme_list.html
 msgid ""
-"Installing themes from the panel is <strong>off</strong> on this server. The"
-" server administrator must deliberately set"
+"Installing themes from the panel is <strong>off</strong> on this server. The "
+"server administrator must deliberately set"
 msgstr ""
 "L’installation de thèmes depuis le panneau est <strong>désactivée</strong> "
 "sur ce serveur. L’administrateur du serveur doit définir délibérément"
@@ -11173,9 +11141,9 @@ msgid ""
 "official source, and the upgrade history. No file is replaced without a "
 "SHA-256 check and a digital signature."
 msgstr ""
-"Versions du noyau, des thèmes et des extensions, vérification d’une nouvelle"
-" version depuis la source officielle et historique des mises à niveau. Aucun"
-" fichier n’est remplacé sans vérification SHA-256 ni signature numérique."
+"Versions du noyau, des thèmes et des extensions, vérification d’une nouvelle "
+"version depuis la source officielle et historique des mises à niveau. Aucun "
+"fichier n’est remplacé sans vérification SHA-256 ni signature numérique."
 
 #: templates/updater/home.html
 msgid "Check for a new version"
@@ -11220,8 +11188,8 @@ msgstr "La source officielle de mise à jour n’est pas configurée ("
 
 #: templates/updater/home.html
 msgid ""
-"). Until you configure it, only installed versions are shown. No new version"
-" is ever “guessed”."
+"). Until you configure it, only installed versions are shown. No new version "
+"is ever “guessed”."
 msgstr ""
 "). Tant que vous ne la configurez pas, seules les versions installées sont "
 "affichées. Une nouvelle version n’est jamais « devinée »."
@@ -11356,8 +11324,8 @@ msgid ""
 "(%(signer_label)s) — the signature confirms the package’s authenticity, not "
 "that the code is harmless."
 msgstr ""
-"(%(signer_label)s) — la signature confirme l’authenticité du paquet, pas que"
-" le code est inoffensif."
+"(%(signer_label)s) — la signature confirme l’authenticité du paquet, pas que "
+"le code est inoffensif."
 
 #: templates/updater/run.html
 msgid "Backup:"
@@ -11479,8 +11447,8 @@ msgstr "Fil d’Ariane"
 
 #: themes/default/templates/partials/comments.html
 msgid ""
-"Your comment was received and will be shown after the administrator approves"
-" it."
+"Your comment was received and will be shown after the administrator approves "
+"it."
 msgstr ""
 "Votre commentaire a bien été reçu et s’affichera après approbation par "
 "l’administrateur."
@@ -11559,8 +11527,8 @@ msgstr "%(total)s résultats pour « %(query)s »"
 msgid ""
 "No result was found for “%(query)s”. Try a shorter phrase or another word."
 msgstr ""
-"Aucun résultat trouvé pour « %(query)s ». Essayez une expression plus courte"
-" ou un autre mot."
+"Aucun résultat trouvé pour « %(query)s ». Essayez une expression plus courte "
+"ou un autre mot."
 
 #: themes/default/templates/search.html
 msgid "Enter at least two characters."
@@ -11573,9 +11541,3 @@ msgstr "Résultats de pages"
 #: themes/default/templates/tag_detail.html
 msgid "No post with this tag was found."
 msgstr "Aucun article avec cette étiquette n’a été trouvé."
-
-#~ msgid "Right"
-#~ msgstr "راست"
-
-#~ msgid "Left"
-#~ msgstr "چپ"
