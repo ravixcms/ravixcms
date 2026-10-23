@@ -65,7 +65,7 @@
 {% endif %}
 
 <div class="grid-2">
-  <div style="display:grid;gap:1.25rem">
+  <div class="stack-grid">
     {% if latest_users %}
     <section class="card">
       <div class="card-header"><h2>{% trans "Latest registered users" %}</h2><a href="{% url 'accounts:user_list' %}" class="btn btn-light btn-sm">{% trans "All users" %}</a></div>
@@ -96,7 +96,7 @@
     {% endif %}
   </div>
 
-  <div style="display:grid;gap:1.25rem">
+  <div class="stack-grid">
     <section class="card">
       <div class="card-header"><h2>{% trans "Shortcuts" %}</h2></div>
       <div class="card-body shortcuts">
