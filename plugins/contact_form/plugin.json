@@ -12,7 +12,7 @@
     "pt-br": "Formulário de contato",
     "zh-hans": "联系表单"
   },
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": {
     "fa": "فرم تماس عمومی در /ext/contact_form/ که پیام‌ها را در پایگاه داده ذخیره می‌کند و در پنل صندوق ورودی دارد.",
     "en": "A public contact form at /ext/contact_form/ that stores messages in the database and has an inbox in the panel.",

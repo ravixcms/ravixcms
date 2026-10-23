@@ -51,6 +51,20 @@ class PluginAPI:
 
         return SiteSettings.load()
 
+    # --- language of messages written for somebody else
+    def recipient_language(self, email: str = "") -> str:
+        """Language for a message to ``email``: the profile language of the account that owns it, else the site default language."""
+        from apps.core.recipient import language_for_email
+
+        return language_for_email(email)
+
+    def use_language(self, code: str = ""):
+        """Context manager: build a message (``gettext``, templates, dates) in ``code`` (default: the site language). Use it for any
+        email or notification whose reader is not the visitor of the current request."""
+        from apps.core.recipient import use_language
+
+        return use_language(code)
+
     # --- گزارش
     def log(self, message, level="info", detail=""):
         """رویداد را در «گزارش افزونه‌ها» ثبت می‌کند. level: info | warning | error"""

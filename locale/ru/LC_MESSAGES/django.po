@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-23 19:23+0330\n"
+"POT-Creation-Date: 2026-10-23 22:56+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -12,9 +12,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
-"(n%100>=11 && n%100<=14) ? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14) ? 2 : 3);\n"
 
 #: apps/accounts/admin.py
 msgid "Ravix profile"
@@ -62,8 +60,8 @@ msgid ""
 "This account’s email has not been verified yet. Open the verification link "
 "in your inbox or ask for it to be sent again."
 msgstr ""
-"E-mail этой учётной записи ещё не подтверждён. Откройте ссылку подтверждения "
-"во входящих или запросите её повторную отправку."
+"E-mail этой учётной записи ещё не подтверждён. Откройте ссылку подтверждения"
+" во входящих или запросите её повторную отправку."
 
 #: apps/accounts/forms.py
 msgid "Too many failed attempts. Please try again in a few minutes."
@@ -86,13 +84,15 @@ msgid "Site default"
 msgstr "По умолчанию для сайта"
 
 #: apps/accounts/forms.py apps/accounts/models.py apps/core/models.py
-#: apps/installer/forms.py apps/themes/templatetags/ravix_theme.py
+#: apps/installer/forms.py apps/shop/models.py
+#: apps/themes/templatetags/ravix_theme.py
 #: templates/partials/_language_switcher.html
 msgid "Language"
 msgstr "Язык"
 
 #: apps/accounts/forms.py apps/accounts/models.py
-msgid "Your preferred interface language. Leave empty to use the site default."
+msgid ""
+"Your preferred interface language. Leave empty to use the site default."
 msgstr ""
 "Предпочитаемый язык интерфейса. Оставьте пустым, чтобы использовать язык "
 "сайта по умолчанию."
@@ -144,6 +144,19 @@ msgstr "Повторите новый пароль"
 #: apps/accounts/forms.py
 msgid "Account email"
 msgstr "E-mail учётной записи"
+
+#: apps/accounts/management/commands/send_test_email.py apps/core/views.py
+msgid "Ravix test email"
+msgstr "Тестовое письмо Ravix"
+
+#: apps/accounts/management/commands/send_test_email.py
+#, python-format
+msgid ""
+"This is a test message; it shows that Ravix email is being sent from "
+"%(hostname)s."
+msgstr ""
+"Это тестовое сообщение; оно показывает, что почта Ravix отправляется с "
+"%(hostname)s."
 
 #: apps/accounts/models.py templates/accounts/user_list.html
 #: templates/dashboard/home.html
@@ -293,7 +306,8 @@ msgstr ""
 
 #: apps/accounts/permissions.py
 msgid "Manage sites, domains and members (superadmin only)"
-msgstr "Управление сайтами, доменами и участниками (только суперадминистратор)"
+msgstr ""
+"Управление сайтами, доменами и участниками (только суперадминистратор)"
 
 #: apps/accounts/permissions.py
 msgid "Manage shop products"
@@ -318,8 +332,8 @@ msgid ""
 "Apply/roll back core and theme updates (superadmin only; replaces the "
 "application code)"
 msgstr ""
-"Применение/откат обновлений ядра и темы (только суперадминистратор; заменяет "
-"код приложения)"
+"Применение/откат обновлений ядра и темы (только суперадминистратор; заменяет"
+" код приложения)"
 
 #: apps/accounts/views.py
 msgid "You have been signed out successfully."
@@ -347,8 +361,8 @@ msgid ""
 "Your account was created successfully. Welcome! To verify your email, open "
 "the link sent to your inbox."
 msgstr ""
-"Ваша учётная запись успешно создана. Добро пожаловать! Чтобы подтвердить e-"
-"mail, откройте ссылку из письма во входящих."
+"Ваша учётная запись успешно создана. Добро пожаловать! Чтобы подтвердить "
+"e-mail, откройте ссылку из письма во входящих."
 
 #: apps/accounts/views.py
 msgid "Registration did not complete. Please check the form errors."
@@ -448,10 +462,10 @@ msgstr "Изменение"
 #: templates/content/post_detail.html templates/content/post_list.html
 #: templates/media_library/media_detail.html
 #: templates/media_library/media_list.html
-#: templates/pluginhub/admin_categories.html templates/pluginhub/my_plugin.html
-#: templates/plugins/trusted_keys.html templates/shop/panel/categories.html
-#: templates/shop/panel/product_form.html templates/shop/panel/products.html
-#: templates/sites/detail.html
+#: templates/pluginhub/admin_categories.html
+#: templates/pluginhub/my_plugin.html templates/plugins/trusted_keys.html
+#: templates/shop/panel/categories.html templates/shop/panel/product_form.html
+#: templates/shop/panel/products.html templates/sites/detail.html
 msgid "Delete"
 msgstr "Удаление"
 
@@ -604,11 +618,12 @@ msgstr "Документ"
 #: templates/accounts/user_list.html templates/comments/list.html
 #: templates/content/page_list.html templates/content/post_list.html
 #: templates/pluginhub/admin_publishers.html
-#: templates/pluginhub/directory_detail.html templates/pluginhub/my_plugin.html
-#: templates/plugins/list.html templates/plugins/trusted_keys.html
-#: templates/shop/panel/gateways.html templates/shop/panel/orders.html
-#: templates/shop/panel/products.html templates/shop/public/my_orders.html
-#: templates/sites/list.html templates/updater/home.html
+#: templates/pluginhub/directory_detail.html
+#: templates/pluginhub/my_plugin.html templates/plugins/list.html
+#: templates/plugins/trusted_keys.html templates/shop/panel/gateways.html
+#: templates/shop/panel/orders.html templates/shop/panel/products.html
+#: templates/shop/public/my_orders.html templates/sites/list.html
+#: templates/updater/home.html
 msgid "Status"
 msgstr "Статус"
 
@@ -1159,7 +1174,8 @@ msgid "Comments"
 msgstr "Комментарии"
 
 #: apps/comments/models.py apps/pluginhub/models.py
-#: templates/pluginhub/admin_publishers.html templates/pluginhub/directory.html
+#: templates/pluginhub/admin_publishers.html
+#: templates/pluginhub/directory.html
 msgid "Verified"
 msgstr "Проверено"
 
@@ -1328,7 +1344,8 @@ msgstr "Контент"
 msgid "Posts"
 msgstr "Записи"
 
-#: apps/content/apps.py apps/content/models.py templates/content/page_list.html
+#: apps/content/apps.py apps/content/models.py
+#: templates/content/page_list.html
 msgid "Pages"
 msgstr "Страницы"
 
@@ -1341,8 +1358,9 @@ msgstr "Страницы"
 msgid "Content categories"
 msgstr "Рубрики содержимого"
 
-#: apps/content/apps.py apps/content/models.py templates/content/post_form.html
-#: templates/content/tag_list.html themes/default/templates/post_detail.html
+#: apps/content/apps.py apps/content/models.py
+#: templates/content/post_form.html templates/content/tag_list.html
+#: themes/default/templates/post_detail.html
 msgid "Tags"
 msgstr "Метки"
 
@@ -1367,7 +1385,8 @@ msgstr ""
 msgid ""
 "Publishing is done by an administrator; your post will be saved as a draft."
 msgstr ""
-"Публикацию выполняет администратор; ваша запись будет сохранена как черновик."
+"Публикацию выполняет администратор; ваша запись будет сохранена как "
+"черновик."
 
 #: apps/content/forms.py
 msgid "For a scheduled post, specify the publish time."
@@ -1394,6 +1413,11 @@ msgstr "— Без родителя —"
 #: apps/content/forms.py
 msgid "The name cannot be empty."
 msgstr "Имя не может быть пустым."
+
+#: apps/content/management/commands/publish_scheduled.py
+#, python-format
+msgid "The post “%(post)s” was published on schedule."
+msgstr "Запись «%(post)s» опубликована по расписанию."
 
 #: apps/content/models.py apps/pluginhub/models.py apps/plugins/models.py
 #: apps/shop/models.py templates/content/category_list.html
@@ -1460,7 +1484,8 @@ msgid ""
 "The last part of the post URL. If left empty, it is generated automatically "
 "from the title."
 msgstr ""
-"Последняя часть URL записи. Если пусто, создаётся автоматически из заголовка."
+"Последняя часть URL записи. Если пусто, создаётся автоматически из "
+"заголовка."
 
 #: apps/content/models.py apps/pluginhub/models.py
 msgid "Summary"
@@ -1523,8 +1548,8 @@ msgstr "Пример содержимого"
 
 #: apps/content/models.py
 msgid ""
-"A sample post created during installation; after its first edit it no longer "
-"counts as a sample."
+"A sample post created during installation; after its first edit it no longer"
+" counts as a sample."
 msgstr ""
 "Пример записи, созданный при установке; после первого редактирования она "
 "больше не считается примером."
@@ -1548,8 +1573,8 @@ msgstr "Желательно от 120 до 160 символов."
 
 #: apps/content/models.py
 msgid ""
-"A sample page created during installation; after its first edit it no longer "
-"counts as a sample."
+"A sample page created during installation; after its first edit it no longer"
+" counts as a sample."
 msgstr ""
 "Пример страницы, созданный при установке; после первого редактирования она "
 "больше не считается примером."
@@ -1568,8 +1593,8 @@ msgstr "Старый путь"
 
 #: apps/content/models.py
 msgid ""
-"An internal site path, e.g. /blog/old-slug/ (without domain and without ?"
-"query)."
+"An internal site path, e.g. /blog/old-slug/ (without domain and without "
+"?query)."
 msgstr ""
 "Внутренний путь сайта, например /blog/old-slug/ (без домена и ?запроса)."
 
@@ -1638,8 +1663,7 @@ msgstr "Добро пожаловать в Ravix"
 msgid ""
 "Hello and welcome! 👋\n"
 "\n"
-"This is a **sample post** so you can see what a post looks like on your "
-"site. You can edit it from the panel or delete it.\n"
+"This is a **sample post** so you can see what a post looks like on your site. You can edit it from the panel or delete it.\n"
 "\n"
 "## What’s next?\n"
 "\n"
@@ -1651,8 +1675,7 @@ msgid ""
 msgstr ""
 "Здравствуйте и добро пожаловать! 👋\n"
 "\n"
-"Это **пример записи**, чтобы вы увидели, как запись выглядит на вашем сайте. "
-"Вы можете изменить или удалить её в панели.\n"
+"Это **пример записи**, чтобы вы увидели, как запись выглядит на вашем сайте. Вы можете изменить или удалить её в панели.\n"
 "\n"
 "## Что дальше?\n"
 "\n"
@@ -1664,8 +1687,7 @@ msgstr ""
 
 #: apps/content/samples.py
 msgid ""
-"This is a sample page. Write about yourself, your business or the purpose of "
-"your site here.\n"
+"This is a sample page. Write about yourself, your business or the purpose of your site here.\n"
 "\n"
 "## Who are we?\n"
 "\n"
@@ -1675,8 +1697,7 @@ msgid ""
 "\n"
 "The services, products or topics you read about on this site.\n"
 msgstr ""
-"Это пример страницы. Напишите здесь о себе, о своём деле или о цели вашего "
-"сайта.\n"
+"Это пример страницы. Напишите здесь о себе, о своём деле или о цели вашего сайта.\n"
 "\n"
 "## Кто мы?\n"
 "\n"
@@ -1694,8 +1715,7 @@ msgid ""
 "- Phone: 555-0100\n"
 "- Address: city, street, number\n"
 "\n"
-"Also write your response hours here so visitors know when to expect an "
-"answer.\n"
+"Also write your response hours here so visitors know when to expect an answer.\n"
 msgstr ""
 "Это пример страницы. Напишите здесь, как с вами можно связаться.\n"
 "\n"
@@ -1874,8 +1894,8 @@ msgid ""
 "change the addresses and contracts according to that provider’s official "
 "documentation."
 msgstr ""
-"Пример плагина платёжного шлюза для обучения и тестирования. Он подключается "
-"к вымышленному API (ExamplePay), а не к реальному сервису; для реального "
+"Пример плагина платёжного шлюза для обучения и тестирования. Он подключается"
+" к вымышленному API (ExamplePay), а не к реальному сервису; для реального "
 "шлюза измените адреса и контракты согласно официальной документации этого "
 "провайдера."
 
@@ -1885,8 +1905,8 @@ msgstr "SEO-инструменты"
 
 #: apps/core/manifest_strings.py
 msgid ""
-"Manages the title, meta description, noindex, canonical and sharing image of "
-"each page/post, and has a global title pattern."
+"Manages the title, meta description, noindex, canonical and sharing image of"
+" each page/post, and has a global title pattern."
 msgstr ""
 "Управляет заголовком, мета-описанием, noindex, canonical и изображением для "
 "публикации каждой страницы/записи, с общим шаблоном заголовка."
@@ -1942,8 +1962,8 @@ msgstr "Недопустимый запрос"
 
 #: apps/core/middleware.py
 msgid ""
-"One of the numeric values in the request is too large. Open the page without "
-"that value."
+"One of the numeric values in the request is too large. Open the page without"
+" that value."
 msgstr ""
 "Одно из числовых значений в запросе слишком велико. Откройте страницу без "
 "этого значения."
@@ -2180,7 +2200,8 @@ msgstr "Автоматическое перенаправление и cookie «
 
 #: apps/core/sitehealth.py
 msgid "Automatic redirect to HTTPS or the “Secure” cookie is disabled."
-msgstr "Автоматическое перенаправление на HTTPS или cookie «Secure» отключено."
+msgstr ""
+"Автоматическое перенаправление на HTTPS или cookie «Secure» отключено."
 
 #: apps/core/sitehealth.py
 msgid "Turn on DJANGO_SECURE_SSL_REDIRECT."
@@ -2237,8 +2258,8 @@ msgstr "Определение IP посетителя"
 #: apps/core/sitehealth.py
 msgid ""
 "Behind Nginx on a unix socket no setting is needed. If Nginx/a proxy "
-"connects over TCP, put its address in RAVIX_TRUSTED_PROXIES (e.g. 127.0.0.1) "
-"and make sure the proxy sends X-Forwarded-For (deploy/ravix-proxy.conf)."
+"connects over TCP, put its address in RAVIX_TRUSTED_PROXIES (e.g. 127.0.0.1)"
+" and make sure the proxy sends X-Forwarded-For (deploy/ravix-proxy.conf)."
 msgstr ""
 "За Nginx через Unix-сокет никаких настроек не требуется. Если Nginx/прокси "
 "подключается по TCP, укажите его адрес в RAVIX_TRUSTED_PROXIES (например, "
@@ -2272,8 +2293,8 @@ msgstr "Unix-сокет"
 #: apps/core/sitehealth.py
 #, python-format
 msgid ""
-"Requests arrive from proxy %(value)s but it is not trusted; all visitors are "
-"counted as one IP."
+"Requests arrive from proxy %(value)s but it is not trusted; all visitors are"
+" counted as one IP."
 msgstr ""
 "Запросы приходят с прокси %(value)s, но он не является доверенным; все "
 "посетители считаются одним IP."
@@ -2318,11 +2339,11 @@ msgstr ""
 
 #: apps/core/sitehealth.py
 msgid ""
-"Fill in DJANGO_EMAIL_BACKEND and the EMAIL_HOST/EMAIL_HOST_USER/"
-"EMAIL_HOST_PASSWORD settings for a real SMTP."
+"Fill in DJANGO_EMAIL_BACKEND and the "
+"EMAIL_HOST/EMAIL_HOST_USER/EMAIL_HOST_PASSWORD settings for a real SMTP."
 msgstr ""
-"Заполните DJANGO_EMAIL_BACKEND и настройки EMAIL_HOST/EMAIL_HOST_USER/"
-"EMAIL_HOST_PASSWORD для реального SMTP."
+"Заполните DJANGO_EMAIL_BACKEND и настройки "
+"EMAIL_HOST/EMAIL_HOST_USER/EMAIL_HOST_PASSWORD для реального SMTP."
 
 #: apps/core/sitehealth.py
 msgid ""
@@ -2336,8 +2357,8 @@ msgstr ""
 msgid ""
 "Use a reputable SMTP service and test it with the “Send test email” button."
 msgstr ""
-"Используйте надёжный SMTP-сервис и проверьте его кнопкой «Отправить тестовое "
-"письмо»."
+"Используйте надёжный SMTP-сервис и проверьте его кнопкой «Отправить тестовое"
+" письмо»."
 
 #: apps/core/sitehealth.py
 #, python-format
@@ -2454,8 +2475,8 @@ msgstr "Папка загрузок доступна для записи."
 #: apps/core/sitehealth.py
 #, python-format
 msgid ""
-"The media folder (%(media)s) does not exist or is not writable; image upload "
-"does not work."
+"The media folder (%(media)s) does not exist or is not writable; image upload"
+" does not work."
 msgstr ""
 "Папка медиа (%(media)s) не существует или недоступна для записи; загрузка "
 "изображений не работает."
@@ -2544,8 +2565,8 @@ msgstr "Просроченные запланированные записи"
 #: apps/core/sitehealth.py
 #, python-format
 msgid ""
-"%(overdue)s posts are past their publish time but are still "
-"“scheduled” (they are shown to visitors but the timer has not run)."
+"%(overdue)s posts are past their publish time but are still “scheduled” "
+"(they are shown to visitors but the timer has not run)."
 msgstr ""
 "У %(overdue)s записей время публикации прошло, но они всё ещё "
 "«запланированы» (посетителям они показываются, но таймер не запускался)."
@@ -2588,7 +2609,8 @@ msgstr "Полная резервная копия не найдена."
 #: apps/core/sitehealth.py
 msgid "Run deploy/backup.sh once and enable the backup timer."
 msgstr ""
-"Один раз запустите deploy/backup.sh и включите таймер резервного копирования."
+"Один раз запустите deploy/backup.sh и включите таймер резервного "
+"копирования."
 
 #: apps/core/sitehealth.py
 #, python-format
@@ -2634,7 +2656,8 @@ msgstr "Перезапуск"
 
 #: apps/core/sitehealth.py
 #, python-format
-msgid "Version %(disk_version)s is on disk but version %(running)s is running."
+msgid ""
+"Version %(disk_version)s is on disk but version %(running)s is running."
 msgstr "На диске версия %(disk_version)s, но запущена версия %(running)s."
 
 #: apps/core/sitehealth.py
@@ -2725,7 +2748,8 @@ msgstr "Адреса страниц и записей"
 
 #: apps/core/sitehealth.py
 msgid "No page or post uses a language code as its address."
-msgstr "Ни одна страница или запись не использует код языка в качестве адреса."
+msgstr ""
+"Ни одна страница или запись не использует код языка в качестве адреса."
 
 #: apps/core/sitehealth.py
 #, python-format
@@ -2809,10 +2833,6 @@ msgstr "В вашей учётной записи нет эл. почты; сн�
 #: apps/core/views.py
 msgid "Wait a few seconds and try again."
 msgstr "Подождите несколько секунд и повторите попытку."
-
-#: apps/core/views.py
-msgid "Ravix test email"
-msgstr "Тестовое письмо Ravix"
 
 #: apps/core/views.py
 msgid ""
@@ -3008,8 +3028,8 @@ msgstr ""
 
 #: apps/installer/views.py
 msgid ""
-"The installation ran into an error; details are in the server log. Check the "
-"database and migrations."
+"The installation ran into an error; details are in the server log. Check the"
+" database and migrations."
 msgstr ""
 "При установке произошла ошибка; подробности в журнале сервера. Проверьте "
 "базу данных и миграции."
@@ -3317,7 +3337,8 @@ msgid "No active user with this name was found."
 msgstr "Активный пользователь с таким именем не найден."
 
 #: apps/pluginhub/models.py templates/pluginhub/admin_plugins.html
-#: templates/pluginhub/admin_publishers.html templates/pluginhub/directory.html
+#: templates/pluginhub/admin_publishers.html
+#: templates/pluginhub/directory.html
 msgid "Publisher"
 msgstr "Издатель"
 
@@ -3370,9 +3391,10 @@ msgid "Withdrawn"
 msgstr "Отозван"
 
 #: apps/pluginhub/models.py apps/plugins/models.py
-#: templates/pluginhub/directory_detail.html templates/pluginhub/my_plugin.html
-#: templates/plugins/_manifest_summary.html templates/plugins/detail.html
-#: templates/plugins/list.html templates/updater/home.html
+#: templates/pluginhub/directory_detail.html
+#: templates/pluginhub/my_plugin.html templates/plugins/_manifest_summary.html
+#: templates/plugins/detail.html templates/plugins/list.html
+#: templates/updater/home.html
 msgid "Version"
 msgstr "Версия"
 
@@ -3585,7 +3607,8 @@ msgstr "администратором реестра"
 msgid ""
 "Version %(version)s of plugin “%(slug)s” was withdrawn by the registry "
 "administrator"
-msgstr "Версия %(version)s плагина «%(slug)s» отозвана администратором реестра"
+msgstr ""
+"Версия %(version)s плагина «%(slug)s» отозвана администратором реестра"
 
 #: apps/pluginhub/views.py apps/plugins/views.py
 msgid "Done."
@@ -3629,8 +3652,8 @@ msgstr "Это может сделать только администратор
 #: apps/plugins/installer.py
 msgid ""
 "Web installation is off. To enable it, set RAVIX_PLUGIN_WEB_INSTALL=true in "
-"the server settings (only when you have made the install folder writable for "
-"the service)."
+"the server settings (only when you have made the install folder writable for"
+" the service)."
 msgstr ""
 "Веб-установка отключена. Чтобы включить её, задайте "
 "RAVIX_PLUGIN_WEB_INSTALL=true в настройках сервера (только после того, как "
@@ -3662,8 +3685,8 @@ msgstr ""
 
 #: apps/plugins/installer.py
 msgid ""
-"The file’s SHA-256 does not match the declared value; the file is corrupt or "
-"tampered with and was discarded."
+"The file’s SHA-256 does not match the declared value; the file is corrupt or"
+" tampered with and was discarded."
 msgstr ""
 "SHA-256 файла не совпадает с заявленным значением; файл повреждён или "
 "подменён и был отброшен."
@@ -3711,7 +3734,8 @@ msgid ""
 "accept unsigned packages (registry packages must always be signed)."
 msgstr ""
 "У пакета нет действительной цифровой подписи, а политика этого сайта не "
-"принимает неподписанные пакеты (пакеты реестра должны быть подписаны всегда)."
+"принимает неподписанные пакеты (пакеты реестра должны быть подписаны "
+"всегда)."
 
 #: apps/plugins/installer.py
 #, python-format
@@ -3774,7 +3798,8 @@ msgstr "%(source)s, %(sig)s"
 
 #: apps/plugins/installer.py
 #, python-format
-msgid "Creating the backup failed and the operation was not performed: %(exc)s"
+msgid ""
+"Creating the backup failed and the operation was not performed: %(exc)s"
 msgstr "Не удалось создать резервную копию, операция не выполнена: %(exc)s"
 
 #: apps/plugins/installer.py
@@ -3825,8 +3850,8 @@ msgid ""
 "The package version (%(version)s) is not newer than the installed version "
 "(%(version2)s); use “Rollback” for an earlier version."
 msgstr ""
-"Версия пакета (%(version)s) не новее установленной (%(version2)s); для более "
-"ранней версии используйте «Откатить»."
+"Версия пакета (%(version)s) не новее установленной (%(version2)s); для более"
+" ранней версии используйте «Откатить»."
 
 #: apps/plugins/installer.py
 msgid ""
@@ -3855,8 +3880,8 @@ msgstr "Эта резервная копия уже использована."
 
 #: apps/plugins/installer.py
 msgid ""
-"The backup content does not match the recorded fingerprint; the rollback was "
-"stopped."
+"The backup content does not match the recorded fingerprint; the rollback was"
+" stopped."
 msgstr ""
 "Содержимое резервной копии не совпадает с записанным отпечатком; откат "
 "остановлен."
@@ -3954,8 +3979,8 @@ msgid ""
 "slug: lowercase English letters, digits and _ (3 to 31 characters, starting "
 "with a letter)."
 msgstr ""
-"slug: строчные английские буквы, цифры и _ (от 3 до 31 символа, начинается с "
-"буквы)."
+"slug: строчные английские буквы, цифры и _ (от 3 до 31 символа, начинается с"
+" буквы)."
 
 #: apps/plugins/manifest.py
 #, python-format
@@ -4377,8 +4402,8 @@ msgstr ""
 #: apps/plugins/registry.py
 msgid "The new approved version has models; restart the server to apply them."
 msgstr ""
-"У новой одобренной версии есть модели; перезапустите сервер, чтобы применить "
-"их."
+"У новой одобренной версии есть модели; перезапустите сервер, чтобы применить"
+" их."
 
 #: apps/plugins/registry.py
 #, python-format
@@ -4434,7 +4459,8 @@ msgstr ""
 #: apps/plugins/services.py
 #, python-format
 msgid ""
-"Requires Ravix version “%(ravix)s”; the current version is %(RAVIX_VERSION)s."
+"Requires Ravix version “%(ravix)s”; the current version is "
+"%(RAVIX_VERSION)s."
 msgstr ""
 "Требуется Ravix версии «%(ravix)s»; текущая версия — %(RAVIX_VERSION)s."
 
@@ -4462,8 +4488,8 @@ msgstr "Миграция %(name)s: зависимость от «%(dep_app)s» �
 #: apps/plugins/services.py
 #, python-format
 msgid ""
-"Migration %(name)s: the operation %(op_name)s is not allowed (RunPython/"
-"RunSQL are forbidden)."
+"Migration %(name)s: the operation %(op_name)s is not allowed "
+"(RunPython/RunSQL are forbidden)."
 msgstr ""
 "Миграция %(name)s: операция %(op_name)s не разрешена (RunPython/RunSQL "
 "запрещены)."
@@ -4537,15 +4563,16 @@ msgid ""
 "The plugin code has changed from the approved version; review and approve "
 "the changes first."
 msgstr ""
-"Код плагина изменился по сравнению с одобренной версией; сначала проверьте и "
-"одобрите изменения."
+"Код плагина изменился по сравнению с одобренной версией; сначала проверьте и"
+" одобрите изменения."
 
 #: apps/plugins/services.py
 msgid ""
 "The plugin failed to load and was not enabled; details are in the “Plugin "
 "log”."
 msgstr ""
-"Не удалось загрузить плагин, он не включён; подробности в «Журнале плагинов»."
+"Не удалось загрузить плагин, он не включён; подробности в «Журнале "
+"плагинов»."
 
 #: apps/plugins/services.py
 msgid "Enabled."
@@ -4616,7 +4643,8 @@ msgstr ""
 #: apps/plugins/services.py
 #, python-format
 msgid "Approve update of plugin “%(name)s” (%(old_version)s → %(version)s)"
-msgstr "Одобрить обновление плагина «%(name)s» (%(old_version)s → %(version)s)"
+msgstr ""
+"Одобрить обновление плагина «%(name)s» (%(old_version)s → %(version)s)"
 
 #: apps/plugins/services.py
 msgid "The stored manifest is corrupt."
@@ -4646,7 +4674,8 @@ msgstr "«%(label)s» — недопустимый адрес эл. почты."
 msgid ""
 "“%(label)s” must be a permitted address (an internal path or http/https)."
 msgstr ""
-"«%(label)s» должно быть разрешённым адресом (внутренний путь или http/https)."
+"«%(label)s» должно быть разрешённым адресом (внутренний путь или "
+"http/https)."
 
 #: apps/plugins/settings_schema.py
 #, python-format
@@ -4715,7 +4744,8 @@ msgstr "Формат подписи недопустим."
 
 #: apps/plugins/signing.py apps/updater/signing.py
 msgid ""
-"The signing key is not in the list of trusted keys (or it has been disabled)."
+"The signing key is not in the list of trusted keys (or it has been "
+"disabled)."
 msgstr "Ключа подписи нет в списке доверенных ключей (или он отключён)."
 
 #: apps/plugins/signing.py apps/updater/signing.py
@@ -5092,8 +5122,8 @@ msgstr "Удалить значение «%(label)s»"
 #: apps/shop/forms.py
 #, python-format
 msgid ""
-"%(help_text)s (It comes from an environment variable, which takes precedence "
-"over this value.)"
+"%(help_text)s (It comes from an environment variable, which takes precedence"
+" over this value.)"
 msgstr ""
 "%(help_text)s (Оно берётся из переменной окружения, которая имеет приоритет "
 "над этим значением.)"
@@ -5112,7 +5142,8 @@ msgstr "Тестовый шлюз (симулятор)"
 
 #: apps/shop/gateways.py
 msgid "For development and demos only; no real money is moved."
-msgstr "Только для разработки и демонстраций; реальные деньги не перемещаются."
+msgstr ""
+"Только для разработки и демонстраций; реальные деньги не перемещаются."
 
 #: apps/shop/models.py
 msgid "Category name"
@@ -5461,7 +5492,8 @@ msgstr "Запрос не удался (ошибка соединения со �
 #: apps/shop/panel.py
 #, python-format
 msgid "Payment status inquiry %(reference)s for order %(number)s: %(outcome)s"
-msgstr "Запрос статуса платежа %(reference)s по заказу %(number)s: %(outcome)s"
+msgstr ""
+"Запрос статуса платежа %(reference)s по заказу %(number)s: %(outcome)s"
 
 #: apps/shop/payments/http.py
 msgid "The gateway host name was not found."
@@ -5514,7 +5546,8 @@ msgstr "Шлюз «%(name)s» уже зарегистрирован."
 msgid ""
 "The test gateway is not allowed in production; first connect a real gateway."
 msgstr ""
-"Тестовый шлюз не разрешён в рабочей среде; сначала подключите настоящий шлюз."
+"Тестовый шлюз не разрешён в рабочей среде; сначала подключите настоящий "
+"шлюз."
 
 #: apps/shop/payments/registry.py
 msgid "The payment gateway is not active."
@@ -5623,7 +5656,8 @@ msgstr "Не удалось подключиться к шлюзу; повтор
 msgid ""
 "The gateway did not accept the transaction; please try again or choose "
 "another gateway."
-msgstr "Шлюз не принял транзакцию; повторите попытку или выберите другой шлюз."
+msgstr ""
+"Шлюз не принял транзакцию; повторите попытку или выберите другой шлюз."
 
 #: apps/shop/services.py
 msgid "Internal gateway error"
@@ -5766,8 +5800,8 @@ msgid ""
 "Download is possible only after a successful payment (and as long as the "
 "order is not cancelled/refunded)."
 msgstr ""
-"Скачивание возможно только после успешной оплаты (и пока заказ не отменён/не "
-"возвращён)."
+"Скачивание возможно только после успешной оплаты (и пока заказ не отменён/не"
+" возвращён)."
 
 #: apps/shop/services.py
 msgid "The file for this item is not available."
@@ -5952,8 +5986,8 @@ msgstr ""
 #, python-format
 msgid ""
 "The contrast of “primary color” with the background is not sufficient "
-"(%(worst)s of the minimum %(MIN_CONTRAST)s). Links in this color will not be "
-"readable; make the primary color stronger."
+"(%(worst)s of the minimum %(MIN_CONTRAST)s). Links in this color will not be"
+" readable; make the primary color stronger."
 msgstr ""
 "Контраст «основного цвета» с фоном недостаточен (%(worst)s при минимуме "
 "%(MIN_CONTRAST)s). Ссылки этого цвета будут плохо читаться; сделайте "
@@ -6076,7 +6110,8 @@ msgstr "— Логотип из «Настроек сайта» (по умолч
 #: apps/themes/forms.py
 msgid "Choose from the media library; upload a new image under “Media” first."
 msgstr ""
-"Выберите из медиатеки; сначала загрузите новое изображение в разделе «Медиа»."
+"Выберите из медиатеки; сначала загрузите новое изображение в разделе "
+"«Медиа»."
 
 #: apps/themes/forms.py
 msgid "Site icon (favicon)"
@@ -6141,8 +6176,8 @@ msgid ""
 "items). Example: Instagram | https://instagram.com/example"
 msgstr ""
 "По одной ссылке в строке, в виде: Название | URL (не более "
-"%(MAX_SOCIAL_LINKS)s элементов). Пример: Instagram | https://instagram.com/"
-"example"
+"%(MAX_SOCIAL_LINKS)s элементов). Пример: Instagram | "
+"https://instagram.com/example"
 
 #: apps/themes/forms.py
 #, python-format
@@ -6241,8 +6276,8 @@ msgid ""
 "docs/themes.md)."
 msgstr ""
 "Установка тем через веб на этом сервере отключена. Администратор сервера "
-"должен намеренно задать RAVIX_THEME_WEB_INSTALL=true (руководство: docs/"
-"themes.md)."
+"должен намеренно задать RAVIX_THEME_WEB_INSTALL=true (руководство: "
+"docs/themes.md)."
 
 #: apps/themes/installer.py
 msgid "Only the superadmin may install themes."
@@ -6261,8 +6296,8 @@ msgid ""
 "The theme install folder is not writable; check RAVIX_THEME_INSTALL_DIR and "
 "its permissions."
 msgstr ""
-"Папка установки тем недоступна для записи; проверьте RAVIX_THEME_INSTALL_DIR "
-"и её права."
+"Папка установки тем недоступна для записи; проверьте RAVIX_THEME_INSTALL_DIR"
+" и её права."
 
 #: apps/themes/installer.py
 #, python-format
@@ -6397,7 +6432,8 @@ msgstr "Поле «%(key)s» обязательно в theme.json."
 
 #: apps/themes/manifest.py
 #, python-format
-msgid "The field “%(key)s” must be a string of at most %(max_len)s characters."
+msgid ""
+"The field “%(key)s” must be a string of at most %(max_len)s characters."
 msgstr "Поле «%(key)s» должно быть строкой не длиннее %(max_len)s символов."
 
 #: apps/themes/manifest.py
@@ -6418,8 +6454,8 @@ msgstr "Символические ссылки не разрешены: «%(rel
 #: apps/themes/manifest.py
 #, python-format
 msgid ""
-"The file type of “%(rel)s” is not allowed in a theme (only files that cannot "
-"run on the server)."
+"The file type of “%(rel)s” is not allowed in a theme (only files that cannot"
+" run on the server)."
 msgstr ""
 "Тип файла «%(rel)s» не разрешён в теме (только файлы, которые нельзя "
 "выполнить на сервере)."
@@ -6444,8 +6480,8 @@ msgid ""
 "The translation file “%(rel)s” must be a JSON object that maps English text "
 "to its translation (text only, within the size limits)."
 msgstr ""
-"Файл перевода «%(rel)s» должен быть JSON-объектом, сопоставляющим английский "
-"текст с его переводом (только текст, в пределах ограничений размера)."
+"Файл перевода «%(rel)s» должен быть JSON-объектом, сопоставляющим английский"
+" текст с его переводом (только текст, в пределах ограничений размера)."
 
 #: apps/themes/manifest.py
 #, python-format
@@ -6482,8 +6518,8 @@ msgid ""
 "Loading the library “%(lib)s” in “%(rel)s” is not allowed (only ravix_theme "
 "and i18n)."
 msgstr ""
-"Загрузка библиотеки «%(lib)s» в «%(rel)s» не разрешена (только ravix_theme и "
-"i18n)."
+"Загрузка библиотеки «%(lib)s» в «%(rel)s» не разрешена (только ravix_theme и"
+" i18n)."
 
 #: apps/themes/manifest.py
 #, python-format
@@ -6536,8 +6572,8 @@ msgstr "theme.json недопустим: %(exc)s"
 #: apps/themes/manifest.py
 #, python-format
 msgid ""
-"api_version must be %(API_VERSION)s (the theme was built for another version "
-"of the contract)."
+"api_version must be %(API_VERSION)s (the theme was built for another version"
+" of the contract)."
 msgstr ""
 "api_version должен быть %(API_VERSION)s (тема создана для другой версии "
 "контракта)."
@@ -6563,7 +6599,8 @@ msgid ""
 "The “screenshot” path is invalid (it must be a png/jpg/webp file inside "
 "static)."
 msgstr ""
-"Путь «screenshot» недопустим (должен быть файлом png/jpg/webp внутри static)."
+"Путь «screenshot» недопустим (должен быть файлом png/jpg/webp внутри "
+"static)."
 
 #: apps/themes/manifest.py
 msgid "The templates folder does not exist."
@@ -6643,8 +6680,8 @@ msgstr "Путь «%(show)s» слишком длинный или слишко�
 #, python-format
 msgid ""
 "The name “%(show)s” is not allowed; file and folder names may only contain "
-"English letters, digits, “.”, “-” and “_” (no spaces, no Persian characters, "
-"no leading dot)."
+"English letters, digits, “.”, “-” and “_” (no spaces, no Persian characters,"
+" no leading dot)."
 msgstr ""
 "Имя «%(show)s» не разрешено; имена файлов и папок могут содержать только "
 "английские буквы, цифры, «.», «-» и «_» (без пробелов, без персидских "
@@ -6705,7 +6742,8 @@ msgstr "Зашифрованные ZIP-файлы не разрешены."
 
 #: apps/themes/package.py
 msgid ""
-"The ZIP compression method is not supported (only Deflate or no compression)."
+"The ZIP compression method is not supported (only Deflate or no "
+"compression)."
 msgstr "Метод сжатия ZIP не поддерживается (только Deflate или без сжатия)."
 
 #: apps/themes/package.py
@@ -7020,7 +7058,8 @@ msgstr "Резервное копирование базы данных в па�
 #, python-format
 msgid ""
 "The %(cmd)s tool is not installed on the server; %(what)s was not possible."
-msgstr "Инструмент %(cmd)s не установлен на сервере; %(what)s было невозможно."
+msgstr ""
+"Инструмент %(cmd)s не установлен на сервере; %(what)s было невозможно."
 
 #: apps/updater/backup.py
 #, python-format
@@ -7053,8 +7092,8 @@ msgstr "Файл резервной копии базы данных не соз
 #: apps/updater/backup.py
 #, python-format
 msgid ""
-"The backup is corrupted or incomplete (%(info)s); automatic restore will not "
-"be performed."
+"The backup is corrupted or incomplete (%(info)s); automatic restore will not"
+" be performed."
 msgstr ""
 "Резервная копия повреждена или неполна (%(info)s); автоматическое "
 "восстановление не будет выполнено."
@@ -7247,8 +7286,8 @@ msgstr ""
 #: apps/updater/pipeline.py
 #, python-format
 msgid ""
-"%(value)sThe run was left unfinished (process/server interrupted); check the "
-"state of the files and the database."
+"%(value)sThe run was left unfinished (process/server interrupted); check the"
+" state of the files and the database."
 msgstr ""
 "%(value)sВыполнение осталось незавершённым (процесс/сервер прерван); "
 "проверьте состояние файлов и базы данных."
@@ -7275,8 +7314,8 @@ msgid ""
 "2) Files: tar -xzf %(value)s -C %(RAVIX_UPDATE_APP_ROOT)s  (first set aside "
 "the apps, config, static, templates, etc. folders)"
 msgstr ""
-"2) Файлы: tar -xzf %(value)s -C %(RAVIX_UPDATE_APP_ROOT)s  (сначала отложите "
-"в сторону папки apps, config, static, templates и т. д.)"
+"2) Файлы: tar -xzf %(value)s -C %(RAVIX_UPDATE_APP_ROOT)s  (сначала отложите"
+" в сторону папки apps, config, static, templates и т. д.)"
 
 #: apps/updater/pipeline.py
 #, python-format
@@ -7291,8 +7330,8 @@ msgid ""
 "3) Database: put the file %(value)s in place of the site’s database file "
 "(and delete the -wal/-shm files next to it)."
 msgstr ""
-"3) База данных: поместите файл %(value)s на место файла базы данных сайта (и "
-"удалите соседние файлы -wal/-shm)."
+"3) База данных: поместите файл %(value)s на место файла базы данных сайта (и"
+" удалите соседние файлы -wal/-shm)."
 
 #: apps/updater/pipeline.py
 msgid ""
@@ -7306,8 +7345,8 @@ msgid ""
 "4) Restart the service and run `python manage.py ravix_update status` and "
 "`python manage.py ravix_preflight`."
 msgstr ""
-"4) Перезапустите службу и выполните `python manage.py ravix_update status` и "
-"`python manage.py ravix_preflight`."
+"4) Перезапустите службу и выполните `python manage.py ravix_update status` и"
+" `python manage.py ravix_preflight`."
 
 #: apps/updater/pipeline.py
 msgid "Full guide: docs/upgrade.md"
@@ -7325,8 +7364,8 @@ msgstr ""
 #: apps/updater/pipeline.py
 #, python-format
 msgid ""
-"To reach %(new_version)s you must first upgrade to %(requires)s (or higher); "
-"the current version is %(cur)s."
+"To reach %(new_version)s you must first upgrade to %(requires)s (or higher);"
+" the current version is %(cur)s."
 msgstr ""
 "Чтобы дойти до %(new_version)s, сначала нужно обновиться до %(requires)s "
 "(или выше); текущая версия — %(cur)s."
@@ -7376,7 +7415,8 @@ msgid "Version %(version)s is not in the update source."
 msgstr "Версии %(version)s нет в источнике обновлений."
 
 #: apps/updater/pipeline.py
-msgid "There is no newer version in the update source; the site is up to date."
+msgid ""
+"There is no newer version in the update source; the site is up to date."
 msgstr "В источнике обновлений нет более новой версии; сайт обновлён."
 
 #: apps/updater/pipeline.py
@@ -7390,8 +7430,8 @@ msgstr "Пакет больше предела размера."
 
 #: apps/updater/pipeline.py
 msgid ""
-"The SHA-256 of the downloaded package does not match the index (corrupted or "
-"tampered download); rejected."
+"The SHA-256 of the downloaded package does not match the index (corrupted or"
+" tampered download); rejected."
 msgstr ""
 "SHA-256 загруженного пакета не совпадает с индексом (повреждённая или "
 "подделанная загрузка); отклонено."
@@ -7410,8 +7450,8 @@ msgstr "Ключ %(key_id)s (%(label)s)"
 msgid ""
 "Not enough disk space for the upgrade (download, extraction and backup)."
 msgstr ""
-"Недостаточно места на диске для обновления (загрузка, извлечение и резервная "
-"копия)."
+"Недостаточно места на диске для обновления (загрузка, извлечение и резервная"
+" копия)."
 
 #: apps/updater/pipeline.py
 #, python-format
@@ -7535,7 +7575,8 @@ msgid "The core upgrade run was not found."
 msgstr "Запуск обновления ядра не найден."
 
 #: apps/updater/pipeline.py
-msgid "Only a successful upgrade (or one needing recovery) can be rolled back."
+msgid ""
+"Only a successful upgrade (or one needing recovery) can be rolled back."
 msgstr ""
 "Откатить можно только успешное обновление (или обновление, требующее "
 "восстановления)."
@@ -7555,8 +7596,8 @@ msgstr ""
 #: apps/updater/pipeline.py
 #, python-format
 msgid ""
-"The code on disk (%(disk)s) is not the upgraded version (%(to_version)s); an "
-"automatic rollback is not safe."
+"The code on disk (%(disk)s) is not the upgraded version (%(to_version)s); an"
+" automatic rollback is not safe."
 msgstr ""
 "Код на диске (%(disk)s) — не обновлённая версия (%(to_version)s); "
 "автоматический откат небезопасен."
@@ -7651,7 +7692,8 @@ msgid "Unexpected error: %(exc)s"
 msgstr "Непредвиденная ошибка: %(exc)s"
 
 #: apps/updater/pipeline.py
-msgid "An unexpected error occurred; the details were recorded in the history."
+msgid ""
+"An unexpected error occurred; the details were recorded in the history."
 msgstr "Произошла непредвиденная ошибка; подробности записаны в журнал."
 
 #: apps/updater/pipeline.py
@@ -7661,8 +7703,8 @@ msgstr ""
 
 #: apps/updater/pipeline.py
 msgid ""
-"The previous version of the plugin is untouched; see the “Plugin report” for "
-"details."
+"The previous version of the plugin is untouched; see the “Plugin report” for"
+" details."
 msgstr ""
 "Предыдущая версия плагина не затронута; подробности см. в «Отчёте плагина»."
 
@@ -7698,8 +7740,8 @@ msgid ""
 "The update index has no signature and this site’s policy requires a signed "
 "index."
 msgstr ""
-"У индекса обновлений нет подписи, а политика этого сайта требует подписанный "
-"индекс."
+"У индекса обновлений нет подписи, а политика этого сайта требует подписанный"
+" индекс."
 
 #: apps/updater/sources.py
 #, python-format
@@ -7765,9 +7807,9 @@ msgstr "Требуется Python «%(spec)s»; текущая версия — 
 
 #: apps/updater/views.py
 msgid ""
-"Applying updates from the web is turned off. Run it with the command “python "
-"manage.py ravix_update apply ...” or set RAVIX_UPDATE_WEB_APPLY=true in the "
-"server settings."
+"Applying updates from the web is turned off. Run it with the command “python"
+" manage.py ravix_update apply ...” or set RAVIX_UPDATE_WEB_APPLY=true in the"
+" server settings."
 msgstr ""
 "Применение обновлений через веб отключено. Запустите его командой «python "
 "manage.py ravix_update apply ...» или задайте RAVIX_UPDATE_WEB_APPLY=true в "
@@ -7929,8 +7971,8 @@ msgid ""
 "Hostname only, e.g. pay.examplepay.invalid; redirecting is allowed only to "
 "this host."
 msgstr ""
-"Только имя хоста, например pay.examplepay.invalid; перенаправление разрешено "
-"только на этот хост."
+"Только имя хоста, например pay.examplepay.invalid; перенаправление разрешено"
+" только на этот хост."
 
 #: plugins/example_pay/gateway.py
 msgid "API key"
@@ -7979,11 +8021,11 @@ msgid "Save"
 msgstr "Сохранить"
 
 #: plugins/seo_toolkit/templates/edit.html templates/content/page_detail.html
-#: templates/content/post_detail.html templates/pluginhub/directory_detail.html
-#: templates/plugins/install.html templates/plugins/install_package.html
-#: templates/plugins/settings.html templates/plugins/trusted_keys.html
-#: templates/shop/panel/order.html templates/sites/detail.html
-#: templates/updater/run.html
+#: templates/content/post_detail.html
+#: templates/pluginhub/directory_detail.html templates/plugins/install.html
+#: templates/plugins/install_package.html templates/plugins/settings.html
+#: templates/plugins/trusted_keys.html templates/shop/panel/order.html
+#: templates/sites/detail.html templates/updater/run.html
 msgid "Back"
 msgstr "Назад"
 
@@ -8042,7 +8084,8 @@ msgstr ""
 
 #: templates/accounts/email/password_reset.txt
 msgid "This link can be used only once and expires after one hour."
-msgstr "Эту ссылку можно использовать только один раз; она действует один час."
+msgstr ""
+"Эту ссылку можно использовать только один раз; она действует один час."
 
 #: templates/accounts/email/password_reset.txt
 msgid ""
@@ -8058,8 +8101,8 @@ msgstr "Сброс пароля вашей учётной записи"
 
 #: templates/accounts/email/verify.txt
 msgid ""
-"To verify your account email, open the link below and press the verification "
-"button:"
+"To verify your account email, open the link below and press the verification"
+" button:"
 msgstr ""
 "Чтобы подтвердить адрес электронной почты вашей учётной записи, откройте "
 "ссылку ниже и нажмите кнопку подтверждения:"
@@ -8085,8 +8128,8 @@ msgstr "Подтверждение электронной почты"
 #: templates/accounts/email_verify.html
 msgid "To complete your account email verification, press the button below."
 msgstr ""
-"Чтобы завершить подтверждение адреса электронной почты вашей учётной записи, "
-"нажмите кнопку ниже."
+"Чтобы завершить подтверждение адреса электронной почты вашей учётной записи,"
+" нажмите кнопку ниже."
 
 #: templates/accounts/email_verify.html
 msgid "Email verified"
@@ -8151,11 +8194,11 @@ msgstr "Запрос получен"
 
 #: templates/accounts/email_verify_resend_done.html
 msgid ""
-"If an account exists with this email and is not yet verified, a verification "
-"link will reach your inbox in a few minutes."
+"If an account exists with this email and is not yet verified, a verification"
+" link will reach your inbox in a few minutes."
 msgstr ""
-"Если существует учётная запись с этим адресом, ещё не подтверждённая, ссылка "
-"для подтверждения придёт в ваш почтовый ящик в течение нескольких минут."
+"Если существует учётная запись с этим адресом, ещё не подтверждённая, ссылка"
+" для подтверждения придёт в ваш почтовый ящик в течение нескольких минут."
 
 #: templates/accounts/login.html
 #: templates/accounts/password_reset_complete.html
@@ -8190,7 +8233,8 @@ msgstr "Пароль изменён"
 msgid ""
 "You can now sign in with the new password. Your previous sessions have been "
 "closed."
-msgstr "Теперь вы можете войти с новым паролем. Ваши прежние сеансы завершены."
+msgstr ""
+"Теперь вы можете войти с новым паролем. Ваши прежние сеансы завершены."
 
 #: templates/accounts/password_reset_confirm.html
 msgid "Set a new password"
@@ -8209,8 +8253,8 @@ msgid ""
 "This link is invalid, has expired or was already used. Request again to get "
 "a fresh link."
 msgstr ""
-"Эта ссылка недействительна, устарела или уже использовалась. Запросите новую "
-"ссылку."
+"Эта ссылка недействительна, устарела или уже использовалась. Запросите новую"
+" ссылку."
 
 #: templates/accounts/password_reset_confirm.html
 msgid "Request a fresh link"
@@ -8359,8 +8403,8 @@ msgid ""
 "Records sign-ins, sign-outs and important changes to content, media, users "
 "and settings"
 msgstr ""
-"Записывает входы, выходы и важные изменения контента, медиа, пользователей и "
-"настроек"
+"Записывает входы, выходы и важные изменения контента, медиа, пользователей и"
+" настроек"
 
 #: templates/audit/log_list.html
 msgid "Search by description, user or title"
@@ -8716,8 +8760,8 @@ msgstr "SEO и публикация в соцсетях"
 
 #: templates/content/post_form.html
 msgid ""
-"The featured image is used as the preview image on social networks (og:"
-"image)."
+"The featured image is used as the preview image on social networks "
+"(og:image)."
 msgstr ""
 "Главное изображение используется как изображение предпросмотра в социальных "
 "сетях (og:image)."
@@ -8900,8 +8944,8 @@ msgstr "Тексты по языкам"
 
 #: templates/core/site_settings.html
 msgid ""
-"Optional. The site name, tagline, description and footer text above are used "
-"for the default language and for every language that is left empty here."
+"Optional. The site name, tagline, description and footer text above are used"
+" for the default language and for every language that is left empty here."
 msgstr ""
 "Необязательно. Название, слоган, описание и текст подвала выше используются "
 "для языка по умолчанию и для каждого языка, оставленного здесь пустым."
@@ -8922,11 +8966,11 @@ msgstr "Удалить: %(object_label)s"
 #: templates/crud/confirm_delete.html
 #, python-format
 msgid ""
-"Are you sure you want to delete %(object_label)s “<strong>%(object)s</"
-"strong>”? This cannot be undone."
+"Are you sure you want to delete %(object_label)s "
+"“<strong>%(object)s</strong>”? This cannot be undone."
 msgstr ""
-"Вы уверены, что хотите удалить: %(object_label)s «<strong>%(object)s</"
-"strong>»? Это действие нельзя отменить."
+"Вы уверены, что хотите удалить: %(object_label)s "
+"«<strong>%(object)s</strong>»? Это действие нельзя отменить."
 
 #: templates/crud/confirm_delete.html
 msgid "Yes, delete"
@@ -8968,7 +9012,8 @@ msgstr "Готово"
 #: templates/dashboard/home.html
 msgid ""
 "Your site has one sample post and two sample pages (“About us” and “Contact "
-"us”). Edit any of them and it becomes yours; you can delete the rest at once."
+"us”). Edit any of them and it becomes yours; you can delete the rest at "
+"once."
 msgstr ""
 "На вашем сайте есть одна пример-запись и две пример-страницы («О нас» и "
 "«Контакты»). Отредактируйте любую из них, и она станет вашей; остальные "
@@ -9085,8 +9130,8 @@ msgstr "Установка Ravix"
 
 #: templates/installer/install.html
 msgid ""
-"A few simple details; after submitting, the superadmin is created, this page "
-"is closed for good and you are signed in to the panel."
+"A few simple details; after submitting, the superadmin is created, this page"
+" is closed for good and you are signed in to the panel."
 msgstr ""
 "Несколько простых данных; после отправки будет создан суперадминистратор, "
 "эта страница закроется навсегда, а вы войдёте в панель."
@@ -9199,8 +9244,8 @@ msgstr "Альтернативный текст: %(alt_text)s"
 #: templates/media_library/media_detail.html
 msgid "Only the uploader or an administrator can edit or delete this file."
 msgstr ""
-"Изменить или удалить этот файл может только загрузивший его пользователь или "
-"администратор."
+"Изменить или удалить этот файл может только загрузивший его пользователь или"
+" администратор."
 
 #: templates/media_library/media_list.html
 msgid "Uploaded images and files"
@@ -9250,9 +9295,9 @@ msgstr ""
 
 #: templates/media_library/media_upload.html
 msgid ""
-"Allowed formats: JPG, PNG, GIF, WEBP, PDF, TXT, CSV, DOC/DOCX, XLS/XLSX, PPT/"
-"PPTX, MP3, WAV, OGG, MP4, WEBM. Executable files, scripts, HTML and SVG are "
-"not accepted."
+"Allowed formats: JPG, PNG, GIF, WEBP, PDF, TXT, CSV, DOC/DOCX, XLS/XLSX, "
+"PPT/PPTX, MP3, WAV, OGG, MP4, WEBM. Executable files, scripts, HTML and SVG "
+"are not accepted."
 msgstr ""
 "Допустимые форматы: JPG, PNG, GIF, WEBP, PDF, TXT, CSV, DOC/DOCX, XLS/XLSX, "
 "PPT/PPTX, MP3, WAV, OGG, MP4, WEBM. Исполняемые файлы, скрипты, HTML и SVG "
@@ -9337,8 +9382,8 @@ msgid ""
 "Markdown is used for writing. You can copy image addresses from the “Media” "
 "page."
 msgstr ""
-"Для написания используется Markdown. Адреса изображений можно скопировать на "
-"странице «Медиа»."
+"Для написания используется Markdown. Адреса изображений можно скопировать на"
+" странице «Медиа»."
 
 #: templates/partials/_messages.html
 msgid "System messages"
@@ -9494,8 +9539,8 @@ msgstr "Скачать (последняя совместимая версия:"
 
 #: templates/pluginhub/directory_detail.html
 msgid ""
-"The package is downloaded only over HTTPS with a SHA-256 check and is placed "
-"in the folder"
+"The package is downloaded only over HTTPS with a SHA-256 check and is placed"
+" in the folder"
 msgstr ""
 "Пакет скачивается только по HTTPS с проверкой SHA-256 и помещается в папку"
 
@@ -9813,8 +9858,8 @@ msgstr "Этот раздел недоступен"
 
 #: templates/plugins/error.html
 msgid ""
-"The admin panel and other sections work fine. The error details are recorded "
-"in the plugin log."
+"The admin panel and other sections work fine. The error details are recorded"
+" in the plugin log."
 msgstr ""
 "Панель администратора и остальные разделы работают нормально. Подробности "
 "ошибки записаны в журнал плагинов."
@@ -9909,8 +9954,8 @@ msgstr "Установить плагин из пакета"
 
 #: templates/plugins/install_package.html
 msgid ""
-"Safely fetch and place a package. After that you review the details and code "
-"and explicitly confirm the installation; no plugin is installed or enabled "
+"Safely fetch and place a package. After that you review the details and code"
+" and explicitly confirm the installation; no plugin is installed or enabled "
 "automatically."
 msgstr ""
 "Безопасно получите и разместите пакет. После этого вы проверяете сведения и "
@@ -10036,8 +10081,8 @@ msgstr "Включён безопасный режим ("
 msgid ""
 "): no plugin code runs. Only management (install/remove/log) is available."
 msgstr ""
-"): код плагинов не выполняется. Доступно только управление (установка/"
-"удаление/журнал)."
+"): код плагинов не выполняется. Доступно только управление "
+"(установка/удаление/журнал)."
 
 #: templates/plugins/list.html
 msgid "<strong>Latest errors:</strong>"
@@ -10124,7 +10169,8 @@ msgstr "Ни один ключ не зарегистрирован."
 msgid "Site: %(name)s"
 msgstr "Сайт: %(name)s"
 
-#: templates/shop/panel/categories.html templates/shop/panel/category_form.html
+#: templates/shop/panel/categories.html
+#: templates/shop/panel/category_form.html
 msgid "New product category"
 msgstr "Новая категория товаров"
 
@@ -10153,8 +10199,8 @@ msgid ""
 "use the environment variable"
 msgstr ""
 "Ключи хранятся в зашифрованном виде и больше не показываются. Оставьте "
-"секретное поле пустым, чтобы сохранить текущее значение. Чтобы хранить ключи "
-"вне базы данных, можно использовать переменную окружения"
+"секретное поле пустым, чтобы сохранить текущее значение. Чтобы хранить ключи"
+" вне базы данных, можно использовать переменную окружения"
 
 #: templates/shop/panel/gateway_form.html
 #, python-format
@@ -10172,11 +10218,11 @@ msgstr ""
 
 #: templates/shop/panel/gateways.html
 msgid ""
-"The encryption key <code>RAVIX_SECRETS_KEY</code> is not set; in production, "
-"storing gateway keys is not possible without it."
+"The encryption key <code>RAVIX_SECRETS_KEY</code> is not set; in production,"
+" storing gateway keys is not possible without it."
 msgstr ""
-"Ключ шифрования <code>RAVIX_SECRETS_KEY</code> не задан; в рабочей среде без "
-"него хранить ключи шлюзов нельзя."
+"Ключ шифрования <code>RAVIX_SECRETS_KEY</code> не задан; в рабочей среде без"
+" него хранить ключи шлюзов нельзя."
 
 #: templates/shop/panel/gateways.html
 msgid "Gateway"
@@ -10236,8 +10282,8 @@ msgstr "Заметка об изменении статуса"
 
 #: templates/shop/panel/order.html
 msgid ""
-"“Refund” only records the status; the money is not returned from the gateway "
-"automatically."
+"“Refund” only records the status; the money is not returned from the gateway"
+" automatically."
 msgstr ""
 "«Возврат» лишь записывает статус; деньги из шлюза автоматически не "
 "возвращаются."
@@ -10284,8 +10330,8 @@ msgid ""
 "before any action."
 msgstr ""
 "Этот платёж требует ручной проверки (несовпадение суммы/идентификатора или "
-"платёж по заказу, который не может его принять). Прежде чем что-либо делать, "
-"сверьтесь со службой поддержки шлюза."
+"платёж по заказу, который не может его принять). Прежде чем что-либо делать,"
+" сверьтесь со службой поддержки шлюза."
 
 #: templates/shop/panel/order.html
 msgid "Change history"
@@ -10570,15 +10616,16 @@ msgstr "История заказов"
 
 #: templates/shop/public/order.html
 msgid ""
-"Keep this address to track the order; anyone who has the address can see the "
-"order."
+"Keep this address to track the order; anyone who has the address can see the"
+" order."
 msgstr ""
 "Сохраните этот адрес для отслеживания заказа; любой, у кого есть адрес, "
 "может увидеть заказ."
 
 #: templates/shop/public/sandbox.html
 msgid ""
-"⚠ This is a <strong>test payment gateway</strong> page and no money is moved."
+"⚠ This is a <strong>test payment gateway</strong> page and no money is "
+"moved."
 msgstr ""
 "⚠ Это страница <strong>тестового платёжного шлюза</strong>, деньги не "
 "списываются."
@@ -10729,8 +10776,8 @@ msgstr "Цвета, шрифт и знак сайта"
 
 #: templates/themes/customize_appearance.html
 msgid ""
-"Colors must be readable (contrast at least 4.5 to 1); otherwise they are not "
-"saved."
+"Colors must be readable (contrast at least 4.5 to 1); otherwise they are not"
+" saved."
 msgstr ""
 "Цвета должны быть читаемыми (контраст не менее 4,5 к 1); иначе они не "
 "сохраняются."
@@ -10797,17 +10844,17 @@ msgstr ""
 
 #: templates/themes/theme_list.html
 msgid ""
-"<strong>The theme was not installed and no change was applied on the server."
-"</strong>"
+"<strong>The theme was not installed and no change was applied on the "
+"server.</strong>"
 msgstr ""
-"<strong>Тема не установлена, на сервере никаких изменений не применено.</"
-"strong>"
+"<strong>Тема не установлена, на сервере никаких изменений не "
+"применено.</strong>"
 
 #: templates/themes/theme_list.html
 #, python-format
 msgid ""
-"<strong>Validation succeeded; theme “%(installed)s” was installed but is not "
-"active yet.</strong>"
+"<strong>Validation succeeded; theme “%(installed)s” was installed but is not"
+" active yet.</strong>"
 msgstr ""
 "<strong>Проверка прошла успешно; тема «%(installed)s» установлена, но пока "
 "не активна.</strong>"
@@ -10831,8 +10878,8 @@ msgstr ""
 
 #: templates/themes/theme_list.html
 msgid ""
-"<strong>Static files status:</strong> this theme has no static files or they "
-"are already published."
+"<strong>Static files status:</strong> this theme has no static files or they"
+" are already published."
 msgstr ""
 "<strong>Статус статических файлов:</strong> у этой темы нет статических "
 "файлов, либо они уже опубликованы."
@@ -10880,8 +10927,8 @@ msgstr "Идёт загрузка и проверка; подождите…"
 
 #: templates/themes/theme_list.html
 msgid ""
-"Installing themes from the panel is <strong>off</strong> on this server. The "
-"server administrator must deliberately set"
+"Installing themes from the panel is <strong>off</strong> on this server. The"
+" server administrator must deliberately set"
 msgstr ""
 "Установка тем из панели на этом сервере <strong>отключена</strong>. "
 "Администратор сервера должен намеренно задать"
@@ -10945,8 +10992,8 @@ msgid ""
 "official source, and the upgrade history. No file is replaced without a "
 "SHA-256 check and a digital signature."
 msgstr ""
-"Версии ядра, тем и плагинов, проверка новой версии в официальном источнике и "
-"история обновлений. Ни один файл не заменяется без проверки SHA-256 и "
+"Версии ядра, тем и плагинов, проверка новой версии в официальном источнике и"
+" история обновлений. Ни один файл не заменяется без проверки SHA-256 и "
 "цифровой подписи."
 
 #: templates/updater/home.html
@@ -10989,11 +11036,11 @@ msgstr "Официальный источник обновлений не нас
 
 #: templates/updater/home.html
 msgid ""
-"). Until you configure it, only installed versions are shown. No new version "
-"is ever “guessed”."
+"). Until you configure it, only installed versions are shown. No new version"
+" is ever “guessed”."
 msgstr ""
-"). Пока вы его не настроите, показываются только установленные версии. Новая "
-"версия никогда не «угадывается»."
+"). Пока вы его не настроите, показываются только установленные версии. Новая"
+" версия никогда не «угадывается»."
 
 #: templates/updater/home.html
 msgid ""
@@ -11247,8 +11294,8 @@ msgstr "Навигационная цепочка"
 
 #: themes/default/templates/partials/comments.html
 msgid ""
-"Your comment was received and will be shown after the administrator approves "
-"it."
+"Your comment was received and will be shown after the administrator approves"
+" it."
 msgstr ""
 "Ваш комментарий получен и будет показан после одобрения администратором."
 

@@ -4,6 +4,10 @@ import socket
 from django.conf import settings
 from django.core.mail import EmailMessage
 from django.core.management.base import BaseCommand, CommandError
+from django.utils.translation import gettext
+
+from apps.core.recipient import language_for_email, use_language
+from apps.core.regional import normalize_language
 
 
 class Command(BaseCommand):
@@ -11,9 +15,10 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("to", help=cli_gettext("Recipient email address"))
-        parser.add_argument("--subject", default=cli_gettext("Ravix test email"))
+        parser.add_argument("--subject", default="", help=cli_gettext("Subject (default: “Ravix test email” in the message language)"))
+        parser.add_argument("--lang", default="", help=cli_gettext("Language of the message (default: the profile language of the account that owns the address, else the site language). The terminal output stays in the CLI language."))
 
-    def handle(self, *args, to, subject, **options):
+    def handle(self, *args, to, subject, lang, **options):
         if "@" not in to or " " in to:
             raise CommandError(cli_gettext("The email address is not valid."))
         backend = settings.EMAIL_BACKEND
@@ -23,7 +28,17 @@ class Command(BaseCommand):
             password_state = cli_gettext("set") if settings.EMAIL_HOST_PASSWORD else cli_gettext("empty")
             self.stdout.write(cli_gettext("smtp:     %(a1)s:%(a2)s (TLS=%(a3)s, user=%(user_state)s, password=%(password_state)s)") % {"a1": settings.EMAIL_HOST, "a2": settings.EMAIL_PORT, "a3": settings.EMAIL_USE_TLS, "user_state": user_state, "password_state": password_state})
         self.stdout.write(f"from:     {settings.DEFAULT_FROM_EMAIL}")
-        body = cli_gettext("This is a test message; it shows that Ravix email is being sent from %(a1)s.") % {"a1": socket.gethostname()}
+        if lang:
+            code = normalize_language(lang)
+            if not code:
+                raise CommandError(cli_gettext("Unsupported language “%(a1)s” (choose one of: %(a2)s).") % {"a1": lang, "a2": ", ".join(c for c, _n in settings.LANGUAGES)})
+        else:
+            code = language_for_email(to)
+        # The message is for the recipient: their language, never the terminal's.
+        with use_language(code):
+            subject = subject or gettext("Ravix test email")
+            body = gettext("This is a test message; it shows that Ravix email is being sent from %(hostname)s.") % {"hostname": socket.gethostname()}
+        self.stdout.write(cli_gettext("message language: %(a1)s") % {"a1": code})
         try:
             sent = EmailMessage(subject, body, to=[to]).send(fail_silently=False)
         except Exception as exc:  # noqa: BLE001 - هر خطای SMTP/شبکه را روشن گزارش بده

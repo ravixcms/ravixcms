@@ -8,6 +8,9 @@ from apps.core.clilang import cli_gettext
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils import timezone
+from django.utils.translation import gettext
+
+from apps.core.recipient import use_language
 
 from apps.audit.models import AuditLog
 from apps.audit.services import log_event
@@ -24,6 +27,7 @@ class Command(BaseCommand):
             with transaction.atomic():
                 post.status = PublishStatus.PUBLISHED  # publish_at همان زمان زمان‌بندی‌شده می‌ماند
                 post.save(update_fields=["status", "updated_at"])
-                log_event(None, AuditLog.Action.PUBLISH, post, cli_gettext("The post “%(post)s” was published on schedule.") % {"post": post})
+                with use_language():  # the audit log is read by the site's staff: site language, not the terminal's
+                    log_event(None, AuditLog.Action.PUBLISH, post, gettext("The post “%(post)s” was published on schedule.") % {"post": post})
             count += 1
         self.stdout.write(self.style.SUCCESS(cli_gettext("%(count)s posts were published.") % {"count": count}))

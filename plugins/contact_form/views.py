@@ -37,8 +37,11 @@ def form(request, api):
             notify = api.setting("notify_email", "")
             if notify:
                 try:
-                    send_mail((gettext("New contact form message: %(value)s") % {"value": (msg.subject or msg.name)})[:150].replace("\n", " "), (gettext("From: %(name)s <%(email)s>\n\n%(message)s") % {"name": msg.name, "email": msg.email, "message": msg.message}),
-                              None, [notify], fail_silently=False)
+                    # The reader is the site owner, not the visitor who filled in the form: write the mail in the owner's language.
+                    with api.use_language(api.recipient_language(notify)):
+                        subject = (gettext("New contact form message: %(value)s") % {"value": (msg.subject or msg.name)})[:150].replace("\n", " ")
+                        body = gettext("From: %(name)s <%(email)s>\n\n%(message)s") % {"name": msg.name, "email": msg.email, "message": msg.message}
+                    send_mail(subject, body, None, [notify], fail_silently=False)
                 except Exception as exc:  # noqa: BLE001 - خطای ایمیل نباید ثبت پیام را خراب کند
                     api.log((gettext("Sending the notification email failed: %(exc)s") % {"exc": exc}), level="warning")
             from django.shortcuts import redirect

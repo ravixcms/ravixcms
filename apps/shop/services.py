@@ -18,6 +18,8 @@ from django.urls import reverse
 from apps.public.seo import absolute_url
 
 from . import gateways
+from apps.core.recipient import current_language, language_for_order, use_language
+
 from .models import Order, OrderEvent, OrderItem, Payment, PaymentEvent, Product
 from .payments import TransactionContext, VerifyStatus, vault
 
@@ -142,7 +144,7 @@ def create_order(site, lines, data: dict, user=None) -> Order:
     if not needs_shipping:
         data["address"] = ""
     order = Order.objects.create(site=site, currency=settings.SHOP_CURRENCY_CODE, subtotal=subtotal, discount_total=discount, total=total, needs_shipping=needs_shipping,
-                                 user=user if authed else None, **data)
+                                 user=user if authed else None, language=current_language(), **data)
     OrderItem.objects.bulk_create([
         OrderItem(order=order, product=p, name=p.name, kind=p.kind, list_price=p.price, unit_discount=p.discount_amount, unit_price=p.final_price,
                   quantity=q, line_total=p.final_price * q, tracked=p.track_stock) for p, q in reserved])
@@ -265,6 +267,12 @@ def _check(payment, order, result, gw) -> list[str]:
 
 
 def _run(payment, params, *, inquire):
+    """Runs the state machine with every message it stores (order history is shown to the customer) in the order's language."""
+    with use_language(language_for_order(payment.order)):
+        return _run_in_language(payment, params, inquire=inquire)
+
+
+def _run_in_language(payment, params, *, inquire):
     """ماشین حالت: ← (payment, order, outcome) ؛ outcome ∈ applied|pending|unknown|duplicate. تماس شبکه بیرون از قفل دیتابیس انجام می‌شود."""
     order = payment.order
     if payment.status != Payment.Status.INITIATED:
@@ -376,7 +384,8 @@ def expire_stale_payments(now=None) -> int:
         _, _, outcome = _run(payment, None, inquire=True)
         payment.refresh_from_db()
         if payment.status == Payment.Status.INITIATED:
-            _fail(payment, gettext("The transaction expired with no result."))
+            with use_language(language_for_order(payment.order)):
+                _fail(payment, gettext("The transaction expired with no result."))
             n += 1
     return n
 
@@ -411,7 +420,8 @@ def change_status(order, new_status, *, actor=None, note=""):
     order.save(update_fields=["status", "updated_at"])
     msg = (note or "").strip()[:250]
     if new_status == S.REFUNDED:
-        msg = ((gettext("The refund was recorded; returning the money to the customer must be done separately. %(msg)s") % {"msg": msg})).strip()
+        with use_language(language_for_order(order)):  # the history line is shown to the customer too
+            msg = ((gettext("The refund was recorded; returning the money to the customer must be done separately. %(msg)s") % {"msg": msg})).strip()
     record_event(order, OrderEvent.Kind.STATUS, from_status=old, to_status=new_status, message=msg, actor=actor)
     return order
 
@@ -437,9 +447,11 @@ def expire_pending(now=None) -> int:
                     continue
                 _restore_stock(order)
                 order.status = Order.Status.CANCELLED
-                order.admin_note = ((gettext("%(admin_note)s Automatic cancellation: the payment deadline passed.") % {"admin_note": order.admin_note})).strip()[:500]
+                with use_language(language_for_order(order)):  # the customer sees this line on the order page
+                    order.admin_note = ((gettext("%(admin_note)s Automatic cancellation: the payment deadline passed.") % {"admin_note": order.admin_note})).strip()[:500]
+                    event_message = gettext("Automatic cancellation: the payment deadline passed.")
                 order.save(update_fields=["status", "admin_note", "updated_at"])
-                record_event(order, OrderEvent.Kind.STATUS, from_status=S.PENDING, to_status=S.CANCELLED, message=gettext("Automatic cancellation: the payment deadline passed."))
+                record_event(order, OrderEvent.Kind.STATUS, from_status=S.PENDING, to_status=S.CANCELLED, message=event_message)
                 n += 1
         except Order.DoesNotExist:
             continue

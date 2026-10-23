@@ -76,7 +76,11 @@ class SiteHealthTestEmailView(CapabilityRequiredMixin, View):
             messages.warning(request, gettext("Wait a few seconds and try again."))
             return redirect("core:site_health")
         try:
-            sent = EmailMessage(gettext("Ravix test email"), gettext("This is a test message and shows that sending email from your site works."), to=[to]).send(fail_silently=False)
+            from .recipient import current_language, language_for_email, use_language
+
+            with use_language(language_for_email(to, fallback=current_language())):  # in the language of the person who will read it
+                subject, text = gettext("Ravix test email"), gettext("This is a test message and shows that sending email from your site works.")
+            sent = EmailMessage(subject, text, to=[to]).send(fail_silently=False)
         except Exception as exc:  # noqa: BLE001
             messages.error(request, (gettext("Sending failed (%(name)s). Check the SMTP settings.") % {"name": type(exc).__name__}))
         else:

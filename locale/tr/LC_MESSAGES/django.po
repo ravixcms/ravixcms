@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-23 19:23+0330\n"
+"POT-Creation-Date: 2026-10-23 22:56+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -65,7 +65,8 @@ msgstr ""
 
 #: apps/accounts/forms.py
 msgid "Too many failed attempts. Please try again in a few minutes."
-msgstr "Çok fazla başarısız deneme. Lütfen birkaç dakika sonra tekrar deneyin."
+msgstr ""
+"Çok fazla başarısız deneme. Lütfen birkaç dakika sonra tekrar deneyin."
 
 #: apps/accounts/forms.py
 msgid "Letters, digits and the symbols @ . + - _ are allowed."
@@ -84,13 +85,15 @@ msgid "Site default"
 msgstr "Site varsayılanı"
 
 #: apps/accounts/forms.py apps/accounts/models.py apps/core/models.py
-#: apps/installer/forms.py apps/themes/templatetags/ravix_theme.py
+#: apps/installer/forms.py apps/shop/models.py
+#: apps/themes/templatetags/ravix_theme.py
 #: templates/partials/_language_switcher.html
 msgid "Language"
 msgstr "Dil"
 
 #: apps/accounts/forms.py apps/accounts/models.py
-msgid "Your preferred interface language. Leave empty to use the site default."
+msgid ""
+"Your preferred interface language. Leave empty to use the site default."
 msgstr ""
 "Tercih ettiğiniz arayüz dili. Site varsayılanını kullanmak için boş bırakın."
 
@@ -141,6 +144,19 @@ msgstr "Yeni parolayı tekrarlayın"
 #: apps/accounts/forms.py
 msgid "Account email"
 msgstr "Hesap e-postası"
+
+#: apps/accounts/management/commands/send_test_email.py apps/core/views.py
+msgid "Ravix test email"
+msgstr "Ravix deneme e-postası"
+
+#: apps/accounts/management/commands/send_test_email.py
+#, python-format
+msgid ""
+"This is a test message; it shows that Ravix email is being sent from "
+"%(hostname)s."
+msgstr ""
+"Bu bir deneme iletisidir; Ravix e-postasının %(hostname)s üzerinden "
+"gönderildiğini gösterir."
 
 #: apps/accounts/models.py templates/accounts/user_list.html
 #: templates/dashboard/home.html
@@ -303,8 +319,8 @@ msgstr "Mağaza siparişlerini görüntüle ve işle"
 #: apps/accounts/permissions.py
 msgid "Manage shop payment gateways (enable/disable and connection keys)"
 msgstr ""
-"Mağaza ödeme geçitlerini yönet (etkinleştirme/devre dışı bırakma ve bağlantı "
-"anahtarları)"
+"Mağaza ödeme geçitlerini yönet (etkinleştirme/devre dışı bırakma ve bağlantı"
+" anahtarları)"
 
 #: apps/accounts/permissions.py
 msgid "View versions, available updates and the upgrade history"
@@ -336,8 +352,8 @@ msgid ""
 "Your account was created. To sign in, open the verification link we sent to "
 "your email."
 msgstr ""
-"Hesabınız oluşturuldu. Giriş yapmak için e-postanıza gönderdiğimiz doğrulama "
-"bağlantısını açın."
+"Hesabınız oluşturuldu. Giriş yapmak için e-postanıza gönderdiğimiz doğrulama"
+" bağlantısını açın."
 
 #: apps/accounts/views.py
 msgid ""
@@ -445,10 +461,10 @@ msgstr "Düzenle"
 #: templates/content/post_detail.html templates/content/post_list.html
 #: templates/media_library/media_detail.html
 #: templates/media_library/media_list.html
-#: templates/pluginhub/admin_categories.html templates/pluginhub/my_plugin.html
-#: templates/plugins/trusted_keys.html templates/shop/panel/categories.html
-#: templates/shop/panel/product_form.html templates/shop/panel/products.html
-#: templates/sites/detail.html
+#: templates/pluginhub/admin_categories.html
+#: templates/pluginhub/my_plugin.html templates/plugins/trusted_keys.html
+#: templates/shop/panel/categories.html templates/shop/panel/product_form.html
+#: templates/shop/panel/products.html templates/sites/detail.html
 msgid "Delete"
 msgstr "Sil"
 
@@ -601,11 +617,12 @@ msgstr "Belge"
 #: templates/accounts/user_list.html templates/comments/list.html
 #: templates/content/page_list.html templates/content/post_list.html
 #: templates/pluginhub/admin_publishers.html
-#: templates/pluginhub/directory_detail.html templates/pluginhub/my_plugin.html
-#: templates/plugins/list.html templates/plugins/trusted_keys.html
-#: templates/shop/panel/gateways.html templates/shop/panel/orders.html
-#: templates/shop/panel/products.html templates/shop/public/my_orders.html
-#: templates/sites/list.html templates/updater/home.html
+#: templates/pluginhub/directory_detail.html
+#: templates/pluginhub/my_plugin.html templates/plugins/list.html
+#: templates/plugins/trusted_keys.html templates/shop/panel/gateways.html
+#: templates/shop/panel/orders.html templates/shop/panel/products.html
+#: templates/shop/public/my_orders.html templates/sites/list.html
+#: templates/updater/home.html
 msgid "Status"
 msgstr "Durum"
 
@@ -923,8 +940,8 @@ msgid ""
 "The URL of “%(label)s” is not allowed (only internal paths, http(s), mailto "
 "and tel)."
 msgstr ""
-"“%(label)s” URL’sine izin verilmiyor (yalnızca iç yollar, http(s), mailto ve "
-"tel)."
+"“%(label)s” URL’sine izin verilmiyor (yalnızca iç yollar, http(s), mailto ve"
+" tel)."
 
 #: apps/builder/schema.py
 msgid "Properties must be an object."
@@ -1004,7 +1021,8 @@ msgstr "Sayfa bileşenlerinin toplam sayısı %(LIMITS)s’i aşmamalıdır."
 #: apps/builder/services.py
 #, python-format
 msgid "The selected media is not valid or is not an image (ID: %(items)s)."
-msgstr "Seçilen medya geçerli değil veya bir görsel değil (kimlik: %(items)s)."
+msgstr ""
+"Seçilen medya geçerli değil veya bir görsel değil (kimlik: %(items)s)."
 
 #: apps/builder/services.py
 msgid "Manual save"
@@ -1151,7 +1169,8 @@ msgid "Comments"
 msgstr "Yorumlar"
 
 #: apps/comments/models.py apps/pluginhub/models.py
-#: templates/pluginhub/admin_publishers.html templates/pluginhub/directory.html
+#: templates/pluginhub/admin_publishers.html
+#: templates/pluginhub/directory.html
 msgid "Verified"
 msgstr "Doğrulandı"
 
@@ -1318,7 +1337,8 @@ msgstr "İçerik"
 msgid "Posts"
 msgstr "Yazılar"
 
-#: apps/content/apps.py apps/content/models.py templates/content/page_list.html
+#: apps/content/apps.py apps/content/models.py
+#: templates/content/page_list.html
 msgid "Pages"
 msgstr "Sayfalar"
 
@@ -1331,8 +1351,9 @@ msgstr "Sayfalar"
 msgid "Content categories"
 msgstr "İçerik kategorileri"
 
-#: apps/content/apps.py apps/content/models.py templates/content/post_form.html
-#: templates/content/tag_list.html themes/default/templates/post_detail.html
+#: apps/content/apps.py apps/content/models.py
+#: templates/content/post_form.html templates/content/tag_list.html
+#: themes/default/templates/post_detail.html
 msgid "Tags"
 msgstr "Etiketler"
 
@@ -1386,6 +1407,11 @@ msgstr "— Üst öğe yok —"
 #: apps/content/forms.py
 msgid "The name cannot be empty."
 msgstr "Ad boş olamaz."
+
+#: apps/content/management/commands/publish_scheduled.py
+#, python-format
+msgid "The post “%(post)s” was published on schedule."
+msgstr "“%(post)s” yazısı zamanlandığı gibi yayımlandı."
 
 #: apps/content/models.py apps/pluginhub/models.py apps/plugins/models.py
 #: apps/shop/models.py templates/content/category_list.html
@@ -1514,8 +1540,8 @@ msgstr "Örnek içerik"
 
 #: apps/content/models.py
 msgid ""
-"A sample post created during installation; after its first edit it no longer "
-"counts as a sample."
+"A sample post created during installation; after its first edit it no longer"
+" counts as a sample."
 msgstr ""
 "Kurulum sırasında oluşturulan örnek bir yazı; ilk düzenlemeden sonra artık "
 "örnek sayılmaz."
@@ -1539,8 +1565,8 @@ msgstr "Tercihen 120 ila 160 karakter."
 
 #: apps/content/models.py
 msgid ""
-"A sample page created during installation; after its first edit it no longer "
-"counts as a sample."
+"A sample page created during installation; after its first edit it no longer"
+" counts as a sample."
 msgstr ""
 "Kurulum sırasında oluşturulan örnek bir sayfa; ilk düzenlemeden sonra artık "
 "örnek sayılmaz."
@@ -1559,8 +1585,8 @@ msgstr "Eski yol"
 
 #: apps/content/models.py
 msgid ""
-"An internal site path, e.g. /blog/old-slug/ (without domain and without ?"
-"query)."
+"An internal site path, e.g. /blog/old-slug/ (without domain and without "
+"?query)."
 msgstr ""
 "Sitenin iç yolu, örn. /blog/eski-kisa-ad/ (alan adı ve ?sorgu olmadan)."
 
@@ -1628,8 +1654,7 @@ msgstr "Ravix’e hoş geldiniz"
 msgid ""
 "Hello and welcome! 👋\n"
 "\n"
-"This is a **sample post** so you can see what a post looks like on your "
-"site. You can edit it from the panel or delete it.\n"
+"This is a **sample post** so you can see what a post looks like on your site. You can edit it from the panel or delete it.\n"
 "\n"
 "## What’s next?\n"
 "\n"
@@ -1641,8 +1666,7 @@ msgid ""
 msgstr ""
 "Merhaba ve hoş geldiniz! 👋\n"
 "\n"
-"Bu bir **örnek yazıdır**; sitenizde bir yazının nasıl göründüğünü "
-"görebilmeniz için. Panelden düzenleyebilir veya silebilirsiniz.\n"
+"Bu bir **örnek yazıdır**; sitenizde bir yazının nasıl göründüğünü görebilmeniz için. Panelden düzenleyebilir veya silebilirsiniz.\n"
 "\n"
 "## Sırada ne var?\n"
 "\n"
@@ -1654,8 +1678,7 @@ msgstr ""
 
 #: apps/content/samples.py
 msgid ""
-"This is a sample page. Write about yourself, your business or the purpose of "
-"your site here.\n"
+"This is a sample page. Write about yourself, your business or the purpose of your site here.\n"
 "\n"
 "## Who are we?\n"
 "\n"
@@ -1665,8 +1688,7 @@ msgid ""
 "\n"
 "The services, products or topics you read about on this site.\n"
 msgstr ""
-"Bu bir örnek sayfadır. Buraya kendiniz, işiniz veya sitenizin amacı hakkında "
-"yazın.\n"
+"Bu bir örnek sayfadır. Buraya kendiniz, işiniz veya sitenizin amacı hakkında yazın.\n"
 "\n"
 "## Biz kimiz?\n"
 "\n"
@@ -1684,8 +1706,7 @@ msgid ""
 "- Phone: 555-0100\n"
 "- Address: city, street, number\n"
 "\n"
-"Also write your response hours here so visitors know when to expect an "
-"answer.\n"
+"Also write your response hours here so visitors know when to expect an answer.\n"
 msgstr ""
 "Bu bir örnek sayfadır. Buraya insanların size nasıl ulaşabileceğini yazın.\n"
 "\n"
@@ -1693,8 +1714,7 @@ msgstr ""
 "- Telefon: 555-0100\n"
 "- Adres: şehir, sokak, numara\n"
 "\n"
-"Ziyaretçiler yanıtı ne zaman bekleyeceklerini bilsin diye yanıt saatlerinizi "
-"de buraya yazın.\n"
+"Ziyaretçiler yanıtı ne zaman bekleyeceklerini bilsin diye yanıt saatlerinizi de buraya yazın.\n"
 
 #: apps/content/samples.py
 msgid "A sample post to get to know Ravix."
@@ -1793,7 +1813,8 @@ msgstr "Varsayılan dil"
 
 #: apps/core/forms.py
 msgid "Used for visitors and users who have not chosen a language themselves."
-msgstr "Kendisi bir dil seçmemiş ziyaretçiler ve kullanıcılar için kullanılır."
+msgstr ""
+"Kendisi bir dil seçmemiş ziyaretçiler ve kullanıcılar için kullanılır."
 
 #: apps/core/forms.py apps/core/models.py apps/installer/forms.py
 msgid "Time zone"
@@ -1817,8 +1838,8 @@ msgid ""
 "A public contact form at /ext/contact_form/ that stores messages in the "
 "database and has an inbox in the panel."
 msgstr ""
-"Mesajları veritabanına kaydeden ve panelde gelen kutusu olan, /ext/"
-"contact_form/ adresinde herkese açık bir iletişim formu."
+"Mesajları veritabanına kaydeden ve panelde gelen kutusu olan, "
+"/ext/contact_form/ adresinde herkese açık bir iletişim formu."
 
 #: apps/core/manifest_strings.py
 msgid "View and manage contact form messages"
@@ -1875,8 +1896,8 @@ msgstr "SEO araç seti"
 
 #: apps/core/manifest_strings.py
 msgid ""
-"Manages the title, meta description, noindex, canonical and sharing image of "
-"each page/post, and has a global title pattern."
+"Manages the title, meta description, noindex, canonical and sharing image of"
+" each page/post, and has a global title pattern."
 msgstr ""
 "Her sayfa/yazının başlığını, meta açıklamasını, noindex, canonical ve "
 "paylaşım görselini yönetir; genel bir başlık kalıbı vardır."
@@ -1932,8 +1953,8 @@ msgstr "Geçersiz istek"
 
 #: apps/core/middleware.py
 msgid ""
-"One of the numeric values in the request is too large. Open the page without "
-"that value."
+"One of the numeric values in the request is too large. Open the page without"
+" that value."
 msgstr ""
 "İstekteki sayısal değerlerden biri çok büyük. Sayfayı bu değer olmadan açın."
 
@@ -2046,7 +2067,8 @@ msgstr "Yeni yorumları yönetici e-postasına bildir"
 #: apps/core/models.py
 msgid "Sent to “Admin / support email”; if empty, no email is sent."
 msgstr ""
-"“Yönetici / destek e-postası” adresine gönderilir; boşsa e-posta gönderilmez."
+"“Yönetici / destek e-postası” adresine gönderilir; boşsa e-posta "
+"gönderilmez."
 
 #: apps/core/models.py
 msgid "Blocked words in comments"
@@ -2225,13 +2247,13 @@ msgstr "Ziyaretçi IP tespiti"
 #: apps/core/sitehealth.py
 msgid ""
 "Behind Nginx on a unix socket no setting is needed. If Nginx/a proxy "
-"connects over TCP, put its address in RAVIX_TRUSTED_PROXIES (e.g. 127.0.0.1) "
-"and make sure the proxy sends X-Forwarded-For (deploy/ravix-proxy.conf)."
+"connects over TCP, put its address in RAVIX_TRUSTED_PROXIES (e.g. 127.0.0.1)"
+" and make sure the proxy sends X-Forwarded-For (deploy/ravix-proxy.conf)."
 msgstr ""
 "Unix soketi üzerinden Nginx arkasında hiçbir ayara gerek yoktur. Nginx/bir "
 "vekil TCP ile bağlanıyorsa adresini RAVIX_TRUSTED_PROXIES içine koyun (örn. "
-"127.0.0.1) ve vekilin X-Forwarded-For gönderdiğinden emin olun (deploy/ravix-"
-"proxy.conf)."
+"127.0.0.1) ve vekilin X-Forwarded-For gönderdiğinden emin olun "
+"(deploy/ravix-proxy.conf)."
 
 #: apps/core/sitehealth.py
 #, python-format
@@ -2260,8 +2282,8 @@ msgstr "unix soketi"
 #: apps/core/sitehealth.py
 #, python-format
 msgid ""
-"Requests arrive from proxy %(value)s but it is not trusted; all visitors are "
-"counted as one IP."
+"Requests arrive from proxy %(value)s but it is not trusted; all visitors are"
+" counted as one IP."
 msgstr ""
 "İstekler %(value)s vekilinden geliyor ancak güvenilir değil; tüm "
 "ziyaretçiler tek bir IP olarak sayılıyor."
@@ -2305,11 +2327,11 @@ msgstr ""
 
 #: apps/core/sitehealth.py
 msgid ""
-"Fill in DJANGO_EMAIL_BACKEND and the EMAIL_HOST/EMAIL_HOST_USER/"
-"EMAIL_HOST_PASSWORD settings for a real SMTP."
+"Fill in DJANGO_EMAIL_BACKEND and the "
+"EMAIL_HOST/EMAIL_HOST_USER/EMAIL_HOST_PASSWORD settings for a real SMTP."
 msgstr ""
-"Gerçek bir SMTP için DJANGO_EMAIL_BACKEND ve EMAIL_HOST/EMAIL_HOST_USER/"
-"EMAIL_HOST_PASSWORD ayarlarını doldurun."
+"Gerçek bir SMTP için DJANGO_EMAIL_BACKEND ve "
+"EMAIL_HOST/EMAIL_HOST_USER/EMAIL_HOST_PASSWORD ayarlarını doldurun."
 
 #: apps/core/sitehealth.py
 msgid ""
@@ -2345,8 +2367,8 @@ msgstr "DEFAULT_FROM_EMAIL hâlâ varsayılan değerde (localhost)."
 msgid ""
 "Set a real address on your own domain, e.g. “My Site <noreply@example.com>”."
 msgstr ""
-"Kendi alan adınızda gerçek bir adres ayarlayın, örn. “Sitem <noreply@example."
-"com>”."
+"Kendi alan adınızda gerçek bir adres ayarlayın, örn. “Sitem "
+"<noreply@example.com>”."
 
 #: apps/core/sitehealth.py
 msgid "Admin email"
@@ -2443,8 +2465,8 @@ msgstr "Yükleme klasörü yazılabilir."
 #: apps/core/sitehealth.py
 #, python-format
 msgid ""
-"The media folder (%(media)s) does not exist or is not writable; image upload "
-"does not work."
+"The media folder (%(media)s) does not exist or is not writable; image upload"
+" does not work."
 msgstr ""
 "Medya klasörü (%(media)s) yok veya yazılamıyor; görsel yükleme çalışmıyor."
 
@@ -2504,8 +2526,8 @@ msgid ""
 "systemd is not available (container or development); the status of this "
 "scheduler cannot be seen from here."
 msgstr ""
-"systemd kullanılamıyor (konteyner veya geliştirme); bu zamanlayıcının durumu "
-"buradan görülemez."
+"systemd kullanılamıyor (konteyner veya geliştirme); bu zamanlayıcının durumu"
+" buradan görülemez."
 
 #: apps/core/sitehealth.py
 msgid ""
@@ -2532,8 +2554,8 @@ msgstr "Geciken zamanlanmış yazılar"
 #: apps/core/sitehealth.py
 #, python-format
 msgid ""
-"%(overdue)s posts are past their publish time but are still "
-"“scheduled” (they are shown to visitors but the timer has not run)."
+"%(overdue)s posts are past their publish time but are still “scheduled” "
+"(they are shown to visitors but the timer has not run)."
 msgstr ""
 "%(overdue)s yazının yayın zamanı geçti ancak hâlâ “zamanlanmış” durumda "
 "(ziyaretçilere gösteriliyor ama zamanlayıcı çalışmadı)."
@@ -2622,7 +2644,8 @@ msgstr "Yeniden başlat"
 
 #: apps/core/sitehealth.py
 #, python-format
-msgid "Version %(disk_version)s is on disk but version %(running)s is running."
+msgid ""
+"Version %(disk_version)s is on disk but version %(running)s is running."
 msgstr "Diskte %(disk_version)s sürümü var ama %(running)s sürümü çalışıyor."
 
 #: apps/core/sitehealth.py
@@ -2729,8 +2752,8 @@ msgid ""
 "Run python manage.py ravix_fix_slugs: it renames the address, adds a 301 "
 "redirect and logs the change."
 msgstr ""
-"python manage.py ravix_fix_slugs komutunu çalıştırın: adresi değiştirir, 301 "
-"yönlendirmesi ekler ve değişikliği kaydeder."
+"python manage.py ravix_fix_slugs komutunu çalıştırın: adresi değiştirir, 301"
+" yönlendirmesi ekler ve değişikliği kaydeder."
 
 #: apps/core/sitehealth.py
 msgid "System"
@@ -2797,10 +2820,6 @@ msgstr "Hesabınızda e-posta yok; önce profilinize bir e-posta ekleyin."
 #: apps/core/views.py
 msgid "Wait a few seconds and try again."
 msgstr "Birkaç saniye bekleyip tekrar deneyin."
-
-#: apps/core/views.py
-msgid "Ravix test email"
-msgstr "Ravix deneme e-postası"
 
 #: apps/core/views.py
 msgid ""
@@ -2996,8 +3015,8 @@ msgstr ""
 
 #: apps/installer/views.py
 msgid ""
-"The installation ran into an error; details are in the server log. Check the "
-"database and migrations."
+"The installation ran into an error; details are in the server log. Check the"
+" database and migrations."
 msgstr ""
 "Kurulum bir hatayla karşılaştı; ayrıntılar sunucu günlüğünde. Veritabanını "
 "ve geçişleri kontrol edin."
@@ -3043,7 +3062,8 @@ msgstr ""
 #: apps/media_library/forms.py
 #, python-format
 msgid "You can upload at most %(MAX_FILES_PER_UPLOAD)s files at a time."
-msgstr "Bir seferde en fazla %(MAX_FILES_PER_UPLOAD)s dosya yükleyebilirsiniz."
+msgstr ""
+"Bir seferde en fazla %(MAX_FILES_PER_UPLOAD)s dosya yükleyebilirsiniz."
 
 #: apps/media_library/models.py
 msgid "Audio"
@@ -3184,7 +3204,8 @@ msgstr "%(created_count)s dosya başarıyla yüklendi."
 
 #: apps/media_library/views.py
 msgid "To improve accessibility, add alternative (Alt) text for the image."
-msgstr "Erişilebilirliği artırmak için görsele alternatif (Alt) metin ekleyin."
+msgstr ""
+"Erişilebilirliği artırmak için görsele alternatif (Alt) metin ekleyin."
 
 #: apps/media_library/views.py
 msgid "The upload did not complete. Please check the errors."
@@ -3306,7 +3327,8 @@ msgid "No active user with this name was found."
 msgstr "Bu ada sahip etkin bir kullanıcı bulunamadı."
 
 #: apps/pluginhub/models.py templates/pluginhub/admin_plugins.html
-#: templates/pluginhub/admin_publishers.html templates/pluginhub/directory.html
+#: templates/pluginhub/admin_publishers.html
+#: templates/pluginhub/directory.html
 msgid "Publisher"
 msgstr "Yayıncı"
 
@@ -3359,9 +3381,10 @@ msgid "Withdrawn"
 msgstr "Geri çekildi"
 
 #: apps/pluginhub/models.py apps/plugins/models.py
-#: templates/pluginhub/directory_detail.html templates/pluginhub/my_plugin.html
-#: templates/plugins/_manifest_summary.html templates/plugins/detail.html
-#: templates/plugins/list.html templates/updater/home.html
+#: templates/pluginhub/directory_detail.html
+#: templates/pluginhub/my_plugin.html templates/plugins/_manifest_summary.html
+#: templates/plugins/detail.html templates/plugins/list.html
+#: templates/updater/home.html
 msgid "Version"
 msgstr "Sürüm"
 
@@ -3626,8 +3649,8 @@ msgstr "Bunu yalnızca bir yönetici yapabilir."
 #: apps/plugins/installer.py
 msgid ""
 "Web installation is off. To enable it, set RAVIX_PLUGIN_WEB_INSTALL=true in "
-"the server settings (only when you have made the install folder writable for "
-"the service)."
+"the server settings (only when you have made the install folder writable for"
+" the service)."
 msgstr ""
 "Web üzerinden kurulum kapalı. Etkinleştirmek için sunucu ayarlarında "
 "RAVIX_PLUGIN_WEB_INSTALL=true ayarlayın (yalnızca kurulum klasörünü hizmet "
@@ -3661,8 +3684,8 @@ msgstr ""
 
 #: apps/plugins/installer.py
 msgid ""
-"The file’s SHA-256 does not match the declared value; the file is corrupt or "
-"tampered with and was discarded."
+"The file’s SHA-256 does not match the declared value; the file is corrupt or"
+" tampered with and was discarded."
 msgstr ""
 "Dosyanın SHA-256 değeri bildirilen değerle eşleşmiyor; dosya bozuk veya "
 "üzerinde oynanmış ve atıldı."
@@ -3710,7 +3733,8 @@ msgid ""
 "accept unsigned packages (registry packages must always be signed)."
 msgstr ""
 "Paketin geçerli bir dijital imzası yok ve bu sitenin ilkesi imzasız "
-"paketleri kabul etmiyor (kayıt defteri paketleri her zaman imzalı olmalıdır)."
+"paketleri kabul etmiyor (kayıt defteri paketleri her zaman imzalı "
+"olmalıdır)."
 
 #: apps/plugins/installer.py
 #, python-format
@@ -3772,7 +3796,8 @@ msgstr "%(source)s, %(sig)s"
 
 #: apps/plugins/installer.py
 #, python-format
-msgid "Creating the backup failed and the operation was not performed: %(exc)s"
+msgid ""
+"Creating the backup failed and the operation was not performed: %(exc)s"
 msgstr "Yedek oluşturma başarısız oldu ve işlem yapılmadı: %(exc)s"
 
 #: apps/plugins/installer.py
@@ -3800,8 +3825,8 @@ msgid ""
 "This plugin was placed manually (outside the automatic install folder); "
 "automatic upgrade and rollback are not possible for it."
 msgstr ""
-"Bu eklenti elle (otomatik kurulum klasörünün dışına) yerleştirildi; otomatik "
-"yükseltme ve geri alma onun için mümkün değil."
+"Bu eklenti elle (otomatik kurulum klasörünün dışına) yerleştirildi; otomatik"
+" yükseltme ve geri alma onun için mümkün değil."
 
 #: apps/plugins/installer.py
 #, python-format
@@ -3853,8 +3878,8 @@ msgstr "Bu yedek zaten kullanıldı."
 
 #: apps/plugins/installer.py
 msgid ""
-"The backup content does not match the recorded fingerprint; the rollback was "
-"stopped."
+"The backup content does not match the recorded fingerprint; the rollback was"
+" stopped."
 msgstr "Yedek içeriği kayıtlı parmak iziyle eşleşmiyor; geri alma durduruldu."
 
 #: apps/plugins/installer.py
@@ -4128,7 +4153,8 @@ msgstr "models: true/false olmalıdır."
 
 #: apps/plugins/manifest.py
 msgid "category: must be an English slug (lowercase letters, digits and -)."
-msgstr "category: İngilizce bir slug olmalıdır (küçük harfler, rakamlar ve -)."
+msgstr ""
+"category: İngilizce bir slug olmalıdır (küçük harfler, rakamlar ve -)."
 
 #: apps/plugins/manifest.py
 #, python-format
@@ -4431,8 +4457,10 @@ msgstr ""
 #: apps/plugins/services.py
 #, python-format
 msgid ""
-"Requires Ravix version “%(ravix)s”; the current version is %(RAVIX_VERSION)s."
-msgstr "Ravix “%(ravix)s” sürümünü gerektirir; mevcut sürüm %(RAVIX_VERSION)s."
+"Requires Ravix version “%(ravix)s”; the current version is "
+"%(RAVIX_VERSION)s."
+msgstr ""
+"Ravix “%(ravix)s” sürümünü gerektirir; mevcut sürüm %(RAVIX_VERSION)s."
 
 #: apps/plugins/services.py
 #, python-format
@@ -4457,10 +4485,11 @@ msgstr "%(name)s geçişi: “%(dep_app)s” bağımlılığına izin verilmez."
 #: apps/plugins/services.py
 #, python-format
 msgid ""
-"Migration %(name)s: the operation %(op_name)s is not allowed (RunPython/"
-"RunSQL are forbidden)."
+"Migration %(name)s: the operation %(op_name)s is not allowed "
+"(RunPython/RunSQL are forbidden)."
 msgstr ""
-"%(name)s geçişi: %(op_name)s işlemine izin verilmez (RunPython/RunSQL yasak)."
+"%(name)s geçişi: %(op_name)s işlemine izin verilmez (RunPython/RunSQL "
+"yasak)."
 
 #: apps/plugins/services.py
 #, python-format
@@ -4611,7 +4640,8 @@ msgstr ""
 #, python-format
 msgid "Approve update of plugin “%(name)s” (%(old_version)s → %(version)s)"
 msgstr ""
-"“%(name)s” eklentisinin güncellemesini onayla (%(old_version)s → %(version)s)"
+"“%(name)s” eklentisinin güncellemesini onayla (%(old_version)s → "
+"%(version)s)"
 
 #: apps/plugins/services.py
 msgid "The stored manifest is corrupt."
@@ -4640,7 +4670,8 @@ msgstr "“%(label)s” geçerli bir e-posta değil."
 #, python-format
 msgid ""
 "“%(label)s” must be a permitted address (an internal path or http/https)."
-msgstr "“%(label)s” izin verilen bir adres olmalıdır (iç yol veya http/https)."
+msgstr ""
+"“%(label)s” izin verilen bir adres olmalıdır (iç yol veya http/https)."
 
 #: apps/plugins/settings_schema.py
 #, python-format
@@ -4709,7 +4740,8 @@ msgstr "İmza biçimi geçersiz."
 
 #: apps/plugins/signing.py apps/updater/signing.py
 msgid ""
-"The signing key is not in the list of trusted keys (or it has been disabled)."
+"The signing key is not in the list of trusted keys (or it has been "
+"disabled)."
 msgstr ""
 "İmza anahtarı güvenilir anahtarlar listesinde değil (veya devre dışı "
 "bırakılmış)."
@@ -5091,8 +5123,8 @@ msgstr "“%(label)s” değerini sil"
 #: apps/shop/forms.py
 #, python-format
 msgid ""
-"%(help_text)s (It comes from an environment variable, which takes precedence "
-"over this value.)"
+"%(help_text)s (It comes from an environment variable, which takes precedence"
+" over this value.)"
 msgstr ""
 "%(help_text)s (Bir ortam değişkeninden geliyor ve bu değerden önceliklidir.)"
 
@@ -5749,7 +5781,8 @@ msgstr "Bu durum değişikliğine izin verilmiyor."
 msgid ""
 "The refund was recorded; returning the money to the customer must be done "
 "separately. %(msg)s"
-msgstr "İade kaydedildi; paranın müşteriye iadesi ayrıca yapılmalıdır. %(msg)s"
+msgstr ""
+"İade kaydedildi; paranın müşteriye iadesi ayrıca yapılmalıdır. %(msg)s"
 
 #: apps/shop/services.py
 #, python-format
@@ -5765,8 +5798,8 @@ msgid ""
 "Download is possible only after a successful payment (and as long as the "
 "order is not cancelled/refunded)."
 msgstr ""
-"İndirme yalnızca başarılı bir ödemeden sonra (ve sipariş iptal edilmediği/"
-"iade edilmediği sürece) mümkündür."
+"İndirme yalnızca başarılı bir ödemeden sonra (ve sipariş iptal "
+"edilmediği/iade edilmediği sürece) mümkündür."
 
 #: apps/shop/services.py
 msgid "The file for this item is not available."
@@ -5952,8 +5985,8 @@ msgstr ""
 #, python-format
 msgid ""
 "The contrast of “primary color” with the background is not sufficient "
-"(%(worst)s of the minimum %(MIN_CONTRAST)s). Links in this color will not be "
-"readable; make the primary color stronger."
+"(%(worst)s of the minimum %(MIN_CONTRAST)s). Links in this color will not be"
+" readable; make the primary color stronger."
 msgstr ""
 "“Ana renk”in arka planla kontrastı yeterli değil (en az %(MIN_CONTRAST)s "
 "gerekirken %(worst)s). Bu renkteki bağlantılar okunamaz; ana rengi "
@@ -6240,8 +6273,8 @@ msgid ""
 "docs/themes.md)."
 msgstr ""
 "Web üzerinden tema kurulumu bu sunucuda kapalı. Sunucu yöneticisi "
-"RAVIX_THEME_WEB_INSTALL=true değerini bilerek ayarlamalıdır (kılavuz: docs/"
-"themes.md)."
+"RAVIX_THEME_WEB_INSTALL=true değerini bilerek ayarlamalıdır (kılavuz: "
+"docs/themes.md)."
 
 #: apps/themes/installer.py
 msgid "Only the superadmin may install themes."
@@ -6367,8 +6400,8 @@ msgid ""
 "The install stopped with an unexpected error; the details are only in the "
 "server log and no changes were applied."
 msgstr ""
-"Kurulum beklenmeyen bir hatayla durdu; ayrıntılar yalnızca sunucu günlüğünde "
-"ve hiçbir değişiklik uygulanmadı."
+"Kurulum beklenmeyen bir hatayla durdu; ayrıntılar yalnızca sunucu günlüğünde"
+" ve hiçbir değişiklik uygulanmadı."
 
 #: apps/themes/installer.py
 msgid ""
@@ -6394,7 +6427,8 @@ msgstr "theme.json içinde “%(key)s” alanı gerekli."
 
 #: apps/themes/manifest.py
 #, python-format
-msgid "The field “%(key)s” must be a string of at most %(max_len)s characters."
+msgid ""
+"The field “%(key)s” must be a string of at most %(max_len)s characters."
 msgstr "“%(key)s” alanı en fazla %(max_len)s karakterlik bir metin olmalıdır."
 
 #: apps/themes/manifest.py
@@ -6415,8 +6449,8 @@ msgstr "Sembolik bağlantılara izin verilmez: “%(rel)s”."
 #: apps/themes/manifest.py
 #, python-format
 msgid ""
-"The file type of “%(rel)s” is not allowed in a theme (only files that cannot "
-"run on the server)."
+"The file type of “%(rel)s” is not allowed in a theme (only files that cannot"
+" run on the server)."
 msgstr ""
 "“%(rel)s” dosya türüne bir temada izin verilmez (yalnızca sunucuda "
 "çalıştırılamayan dosyalar)."
@@ -6450,8 +6484,8 @@ msgid ""
 "html files are not allowed in the static folder: “%(rel)s” (html templates "
 "must be in templates)."
 msgstr ""
-"static klasöründe html dosyalarına izin verilmez: “%(rel)s” (html şablonları "
-"templates içinde olmalıdır)."
+"static klasöründe html dosyalarına izin verilmez: “%(rel)s” (html şablonları"
+" templates içinde olmalıdır)."
 
 #: apps/themes/manifest.py
 #, python-format
@@ -6479,8 +6513,8 @@ msgid ""
 "Loading the library “%(lib)s” in “%(rel)s” is not allowed (only ravix_theme "
 "and i18n)."
 msgstr ""
-"“%(rel)s” içinde “%(lib)s” kitaplığının yüklenmesine izin verilmez (yalnızca "
-"ravix_theme ve i18n)."
+"“%(rel)s” içinde “%(lib)s” kitaplığının yüklenmesine izin verilmez (yalnızca"
+" ravix_theme ve i18n)."
 
 #: apps/themes/manifest.py
 #, python-format
@@ -6533,8 +6567,8 @@ msgstr "theme.json geçerli değil: %(exc)s"
 #: apps/themes/manifest.py
 #, python-format
 msgid ""
-"api_version must be %(API_VERSION)s (the theme was built for another version "
-"of the contract)."
+"api_version must be %(API_VERSION)s (the theme was built for another version"
+" of the contract)."
 msgstr ""
 "api_version %(API_VERSION)s olmalıdır (tema, sözleşmenin başka bir sürümü "
 "için hazırlanmış)."
@@ -6639,8 +6673,8 @@ msgstr "“%(show)s” yolu çok uzun veya çok derin."
 #, python-format
 msgid ""
 "The name “%(show)s” is not allowed; file and folder names may only contain "
-"English letters, digits, “.”, “-” and “_” (no spaces, no Persian characters, "
-"no leading dot)."
+"English letters, digits, “.”, “-” and “_” (no spaces, no Persian characters,"
+" no leading dot)."
 msgstr ""
 "“%(show)s” adına izin verilmiyor; dosya ve klasör adları yalnızca İngilizce "
 "harfler, rakamlar, “.”, “-” ve “_” içerebilir (boşluk yok, Farsça karakter "
@@ -6666,8 +6700,8 @@ msgid ""
 "SVG files are not allowed in this version: “%(show)s”. Use png, webp or jpg "
 "instead."
 msgstr ""
-"Bu sürümde SVG dosyalarına izin verilmez: “%(show)s”. Bunun yerine png, webp "
-"veya jpg kullanın."
+"Bu sürümde SVG dosyalarına izin verilmez: “%(show)s”. Bunun yerine png, webp"
+" veya jpg kullanın."
 
 #: apps/themes/package.py
 #, python-format
@@ -6700,7 +6734,8 @@ msgstr "Şifreli ZIP dosyalarına izin verilmez."
 
 #: apps/themes/package.py
 msgid ""
-"The ZIP compression method is not supported (only Deflate or no compression)."
+"The ZIP compression method is not supported (only Deflate or no "
+"compression)."
 msgstr ""
 "ZIP sıkıştırma yöntemi desteklenmiyor (yalnızca Deflate veya sıkıştırmasız)."
 
@@ -6712,7 +6747,8 @@ msgstr "ZIP’te tutarsız girdi: “%(show)s”."
 #: apps/themes/package.py
 #, python-format
 msgid "Duplicate name (or differing only in letter case) in ZIP: “%(show)s”."
-msgstr "ZIP’te yinelenen ad (veya yalnızca harf büyüklüğü farklı): “%(show)s”."
+msgstr ""
+"ZIP’te yinelenen ad (veya yalnızca harf büyüklüğü farklı): “%(show)s”."
 
 #: apps/themes/package.py
 #, python-format
@@ -6799,7 +6835,8 @@ msgid ""
 "Could not write to the temporary folder; check the server’s permissions and "
 "disk space."
 msgstr ""
-"Geçici klasöre yazılamadı; sunucunun izinlerini ve disk alanını kontrol edin."
+"Geçici klasöre yazılamadı; sunucunun izinlerini ve disk alanını kontrol "
+"edin."
 
 #: apps/themes/services.py
 msgid "This theme was not found. Its folder must exist in the themes path."
@@ -6971,7 +7008,8 @@ msgstr ""
 #: apps/themes/views.py
 #, python-format
 msgid "Theme “%(display_name)s” was activated and is now applied to the site."
-msgstr "“%(display_name)s” teması etkinleştirildi ve şimdi siteye uygulanıyor."
+msgstr ""
+"“%(display_name)s” teması etkinleştirildi ve şimdi siteye uygulanıyor."
 
 #: apps/themes/views.py
 msgid "The theme was deactivated and replaced by the default theme."
@@ -7043,9 +7081,10 @@ msgstr "Veritabanı yedek dosyası oluşturulmadı."
 #: apps/updater/backup.py
 #, python-format
 msgid ""
-"The backup is corrupted or incomplete (%(info)s); automatic restore will not "
-"be performed."
-msgstr "Yedek bozuk veya eksik (%(info)s); otomatik geri yükleme yapılmayacak."
+"The backup is corrupted or incomplete (%(info)s); automatic restore will not"
+" be performed."
+msgstr ""
+"Yedek bozuk veya eksik (%(info)s); otomatik geri yükleme yapılmayacak."
 
 #: apps/updater/logs.py
 msgid "[private key removed]"
@@ -7235,8 +7274,8 @@ msgstr ""
 #: apps/updater/pipeline.py
 #, python-format
 msgid ""
-"%(value)sThe run was left unfinished (process/server interrupted); check the "
-"state of the files and the database."
+"%(value)sThe run was left unfinished (process/server interrupted); check the"
+" state of the files and the database."
 msgstr ""
 "%(value)sÇalıştırma yarım bırakıldı (işlem/sunucu kesintiye uğradı); "
 "dosyaların ve veritabanının durumunu kontrol edin."
@@ -7286,8 +7325,8 @@ msgstr ""
 msgid ""
 "No backup was recorded; use the latest manual backup (deploy/backup.sh)."
 msgstr ""
-"Hiçbir yedek kaydedilmedi; en son elle alınan yedeği kullanın (deploy/backup."
-"sh)."
+"Hiçbir yedek kaydedilmedi; en son elle alınan yedeği kullanın "
+"(deploy/backup.sh)."
 
 #: apps/updater/pipeline.py
 msgid ""
@@ -7313,11 +7352,11 @@ msgstr ""
 #: apps/updater/pipeline.py
 #, python-format
 msgid ""
-"To reach %(new_version)s you must first upgrade to %(requires)s (or higher); "
-"the current version is %(cur)s."
+"To reach %(new_version)s you must first upgrade to %(requires)s (or higher);"
+" the current version is %(cur)s."
 msgstr ""
-"%(new_version)s sürümüne ulaşmak için önce %(requires)s (veya üstü) sürümüne "
-"yükseltmelisiniz; mevcut sürüm %(cur)s."
+"%(new_version)s sürümüne ulaşmak için önce %(requires)s (veya üstü) sürümüne"
+" yükseltmelisiniz; mevcut sürüm %(cur)s."
 
 #: apps/updater/pipeline.py
 #, python-format
@@ -7364,7 +7403,8 @@ msgid "Version %(version)s is not in the update source."
 msgstr "%(version)s sürümü güncelleme kaynağında yok."
 
 #: apps/updater/pipeline.py
-msgid "There is no newer version in the update source; the site is up to date."
+msgid ""
+"There is no newer version in the update source; the site is up to date."
 msgstr "Güncelleme kaynağında daha yeni bir sürüm yok; site güncel."
 
 #: apps/updater/pipeline.py
@@ -7378,8 +7418,8 @@ msgstr "Paket boyut sınırından büyük."
 
 #: apps/updater/pipeline.py
 msgid ""
-"The SHA-256 of the downloaded package does not match the index (corrupted or "
-"tampered download); rejected."
+"The SHA-256 of the downloaded package does not match the index (corrupted or"
+" tampered download); rejected."
 msgstr ""
 "İndirilen paketin SHA-256 değeri dizinle eşleşmiyor (bozuk veya kurcalanmış "
 "indirme); reddedildi."
@@ -7514,15 +7554,16 @@ msgid ""
 "The upgrade failed and the site was rolled back to the previous version "
 "(files and database). The cause is given in the error section."
 msgstr ""
-"Yükseltme başarısız oldu ve site önceki sürüme (dosyalar ve veritabanı) geri "
-"alındı. Neden hata bölümünde belirtilmiştir."
+"Yükseltme başarısız oldu ve site önceki sürüme (dosyalar ve veritabanı) geri"
+" alındı. Neden hata bölümünde belirtilmiştir."
 
 #: apps/updater/pipeline.py
 msgid "The core upgrade run was not found."
 msgstr "Çekirdek yükseltme çalıştırması bulunamadı."
 
 #: apps/updater/pipeline.py
-msgid "Only a successful upgrade (or one needing recovery) can be rolled back."
+msgid ""
+"Only a successful upgrade (or one needing recovery) can be rolled back."
 msgstr ""
 "Yalnızca başarılı bir yükseltme (veya kurtarma gerektiren bir yükseltme) "
 "geri alınabilir."
@@ -7542,8 +7583,8 @@ msgstr ""
 #: apps/updater/pipeline.py
 #, python-format
 msgid ""
-"The code on disk (%(disk)s) is not the upgraded version (%(to_version)s); an "
-"automatic rollback is not safe."
+"The code on disk (%(disk)s) is not the upgraded version (%(to_version)s); an"
+" automatic rollback is not safe."
 msgstr ""
 "Diskteki kod (%(disk)s) yükseltilmiş sürüm (%(to_version)s) değil; otomatik "
 "geri alma güvenli değil."
@@ -7635,17 +7676,19 @@ msgid "Unexpected error: %(exc)s"
 msgstr "Beklenmeyen hata: %(exc)s"
 
 #: apps/updater/pipeline.py
-msgid "An unexpected error occurred; the details were recorded in the history."
+msgid ""
+"An unexpected error occurred; the details were recorded in the history."
 msgstr "Beklenmeyen bir hata oluştu; ayrıntılar geçmişe kaydedildi."
 
 #: apps/updater/pipeline.py
 msgid "A core/theme upgrade is in progress; try again after it finishes."
-msgstr "Bir çekirdek/tema yükseltmesi sürüyor; bittikten sonra tekrar deneyin."
+msgstr ""
+"Bir çekirdek/tema yükseltmesi sürüyor; bittikten sonra tekrar deneyin."
 
 #: apps/updater/pipeline.py
 msgid ""
-"The previous version of the plugin is untouched; see the “Plugin report” for "
-"details."
+"The previous version of the plugin is untouched; see the “Plugin report” for"
+" details."
 msgstr ""
 "Eklentinin önceki sürümüne dokunulmadı; ayrıntılar için “Eklenti raporu”na "
 "bakın."
@@ -7749,9 +7792,9 @@ msgstr "Python “%(spec)s” gerektirir; mevcut sürüm %(cur)s."
 
 #: apps/updater/views.py
 msgid ""
-"Applying updates from the web is turned off. Run it with the command “python "
-"manage.py ravix_update apply ...” or set RAVIX_UPDATE_WEB_APPLY=true in the "
-"server settings."
+"Applying updates from the web is turned off. Run it with the command “python"
+" manage.py ravix_update apply ...” or set RAVIX_UPDATE_WEB_APPLY=true in the"
+" server settings."
 msgstr ""
 "Web üzerinden güncelleme uygulama kapalı. “python manage.py ravix_update "
 "apply ...” komutuyla çalıştırın veya sunucu ayarlarında "
@@ -7913,8 +7956,8 @@ msgid ""
 "Hostname only, e.g. pay.examplepay.invalid; redirecting is allowed only to "
 "this host."
 msgstr ""
-"Yalnızca ana makine adı, örn. pay.examplepay.invalid; yönlendirmeye yalnızca "
-"bu ana makineye izin verilir."
+"Yalnızca ana makine adı, örn. pay.examplepay.invalid; yönlendirmeye yalnızca"
+" bu ana makineye izin verilir."
 
 #: plugins/example_pay/gateway.py
 msgid "API key"
@@ -7963,11 +8006,11 @@ msgid "Save"
 msgstr "Kaydet"
 
 #: plugins/seo_toolkit/templates/edit.html templates/content/page_detail.html
-#: templates/content/post_detail.html templates/pluginhub/directory_detail.html
-#: templates/plugins/install.html templates/plugins/install_package.html
-#: templates/plugins/settings.html templates/plugins/trusted_keys.html
-#: templates/shop/panel/order.html templates/sites/detail.html
-#: templates/updater/run.html
+#: templates/content/post_detail.html
+#: templates/pluginhub/directory_detail.html templates/plugins/install.html
+#: templates/plugins/install_package.html templates/plugins/settings.html
+#: templates/plugins/trusted_keys.html templates/shop/panel/order.html
+#: templates/sites/detail.html templates/updater/run.html
 msgid "Back"
 msgstr "Geri"
 
@@ -8043,8 +8086,8 @@ msgstr "Hesabınızın parolasını sıfırlayın"
 
 #: templates/accounts/email/verify.txt
 msgid ""
-"To verify your account email, open the link below and press the verification "
-"button:"
+"To verify your account email, open the link below and press the verification"
+" button:"
 msgstr ""
 "Hesap e-postanızı doğrulamak için aşağıdaki bağlantıyı açın ve doğrulama "
 "düğmesine basın:"
@@ -8135,11 +8178,11 @@ msgstr "İstek alındı"
 
 #: templates/accounts/email_verify_resend_done.html
 msgid ""
-"If an account exists with this email and is not yet verified, a verification "
-"link will reach your inbox in a few minutes."
+"If an account exists with this email and is not yet verified, a verification"
+" link will reach your inbox in a few minutes."
 msgstr ""
-"Bu e-postaya sahip henüz doğrulanmamış bir hesap varsa, birkaç dakika içinde "
-"gelen kutunuza bir doğrulama bağlantısı ulaşacaktır."
+"Bu e-postaya sahip henüz doğrulanmamış bir hesap varsa, birkaç dakika içinde"
+" gelen kutunuza bir doğrulama bağlantısı ulaşacaktır."
 
 #: templates/accounts/login.html
 #: templates/accounts/password_reset_complete.html
@@ -8697,11 +8740,11 @@ msgstr "SEO ve paylaşım"
 
 #: templates/content/post_form.html
 msgid ""
-"The featured image is used as the preview image on social networks (og:"
-"image)."
+"The featured image is used as the preview image on social networks "
+"(og:image)."
 msgstr ""
-"Öne çıkan görsel, sosyal ağlarda önizleme görseli olarak kullanılır (og:"
-"image)."
+"Öne çıkan görsel, sosyal ağlarda önizleme görseli olarak kullanılır "
+"(og:image)."
 
 #: templates/content/post_form.html
 msgid "There is no category yet."
@@ -8879,8 +8922,8 @@ msgstr "Dile göre metinler"
 
 #: templates/core/site_settings.html
 msgid ""
-"Optional. The site name, tagline, description and footer text above are used "
-"for the default language and for every language that is left empty here."
+"Optional. The site name, tagline, description and footer text above are used"
+" for the default language and for every language that is left empty here."
 msgstr ""
 "İsteğe bağlı. Yukarıdaki site adı, slogan, açıklama ve alt bilgi metni "
 "varsayılan dil ve burada boş bırakılan her dil için kullanılır."
@@ -8901,8 +8944,8 @@ msgstr "%(object_label)s sil"
 #: templates/crud/confirm_delete.html
 #, python-format
 msgid ""
-"Are you sure you want to delete %(object_label)s “<strong>%(object)s</"
-"strong>”? This cannot be undone."
+"Are you sure you want to delete %(object_label)s "
+"“<strong>%(object)s</strong>”? This cannot be undone."
 msgstr ""
 "“<strong>%(object)s</strong>” adlı %(object_label)s öğesini silmek "
 "istediğinizden emin misiniz? Bu işlem geri alınamaz."
@@ -8947,7 +8990,8 @@ msgstr "Tamam"
 #: templates/dashboard/home.html
 msgid ""
 "Your site has one sample post and two sample pages (“About us” and “Contact "
-"us”). Edit any of them and it becomes yours; you can delete the rest at once."
+"us”). Edit any of them and it becomes yours; you can delete the rest at "
+"once."
 msgstr ""
 "Sitenizde bir örnek yazı ve iki örnek sayfa (“Hakkımızda” ve “İletişim”) "
 "var. Herhangi birini düzenlerseniz sizin olur; geri kalanları tek seferde "
@@ -9064,8 +9108,8 @@ msgstr "Ravix’i kur"
 
 #: templates/installer/install.html
 msgid ""
-"A few simple details; after submitting, the superadmin is created, this page "
-"is closed for good and you are signed in to the panel."
+"A few simple details; after submitting, the superadmin is created, this page"
+" is closed for good and you are signed in to the panel."
 msgstr ""
 "Birkaç basit bilgi; gönderdikten sonra süper yönetici oluşturulur, bu sayfa "
 "kalıcı olarak kapanır ve panele giriş yaparsınız."
@@ -9076,8 +9120,9 @@ msgid ""
 "The database connection is not available (%(db_error)s). Check "
 "<code>DATABASE_URL</code>; installation is not possible until then."
 msgstr ""
-"Veritabanı bağlantısı kullanılamıyor (%(db_error)s). <code>DATABASE_URL</"
-"code> değerini kontrol edin; o zamana kadar kurulum yapılamaz."
+"Veritabanı bağlantısı kullanılamıyor (%(db_error)s). "
+"<code>DATABASE_URL</code> değerini kontrol edin; o zamana kadar kurulum "
+"yapılamaz."
 
 #: templates/installer/install.html
 #, python-format
@@ -9085,8 +9130,8 @@ msgid ""
 "The database is empty/outdated; migrations will run when you submit this "
 "form (%(pending)s items)."
 msgstr ""
-"Veritabanı boş/güncel değil; bu form gönderildiğinde geçişler çalıştırılacak "
-"(%(pending)s öğe)."
+"Veritabanı boş/güncel değil; bu form gönderildiğinde geçişler çalıştırılacak"
+" (%(pending)s öğe)."
 
 #: templates/installer/install.html
 msgid "The media folder ("
@@ -9228,13 +9273,13 @@ msgstr ""
 
 #: templates/media_library/media_upload.html
 msgid ""
-"Allowed formats: JPG, PNG, GIF, WEBP, PDF, TXT, CSV, DOC/DOCX, XLS/XLSX, PPT/"
-"PPTX, MP3, WAV, OGG, MP4, WEBM. Executable files, scripts, HTML and SVG are "
-"not accepted."
+"Allowed formats: JPG, PNG, GIF, WEBP, PDF, TXT, CSV, DOC/DOCX, XLS/XLSX, "
+"PPT/PPTX, MP3, WAV, OGG, MP4, WEBM. Executable files, scripts, HTML and SVG "
+"are not accepted."
 msgstr ""
-"İzin verilen biçimler: JPG, PNG, GIF, WEBP, PDF, TXT, CSV, DOC/DOCX, XLS/"
-"XLSX, PPT/PPTX, MP3, WAV, OGG, MP4, WEBM. Yürütülebilir dosyalar, betikler, "
-"HTML ve SVG kabul edilmez."
+"İzin verilen biçimler: JPG, PNG, GIF, WEBP, PDF, TXT, CSV, DOC/DOCX, "
+"XLS/XLSX, PPT/PPTX, MP3, WAV, OGG, MP4, WEBM. Yürütülebilir dosyalar, "
+"betikler, HTML ve SVG kabul edilmez."
 
 #: templates/media_library/media_upload.html templates/pluginhub/upload.html
 msgid "Upload"
@@ -9472,8 +9517,8 @@ msgstr "İndir (son uyumlu sürüm:"
 
 #: templates/pluginhub/directory_detail.html
 msgid ""
-"The package is downloaded only over HTTPS with a SHA-256 check and is placed "
-"in the folder"
+"The package is downloaded only over HTTPS with a SHA-256 check and is placed"
+" in the folder"
 msgstr ""
 "Paket yalnızca HTTPS üzerinden SHA-256 denetimiyle indirilir ve şu klasöre "
 "yerleştirilir:"
@@ -9544,8 +9589,8 @@ msgid ""
 "Your account is not an “authorized publisher”. To publish a plugin, ask the "
 "registry superadmin to register you as a publisher."
 msgstr ""
-"Hesabınız “yetkili yayımcı” değil. Bir eklenti yayımlamak için kayıt defteri "
-"süper yöneticisinden sizi yayımcı olarak kaydetmesini isteyin."
+"Hesabınız “yetkili yayımcı” değil. Bir eklenti yayımlamak için kayıt defteri"
+" süper yöneticisinden sizi yayımcı olarak kaydetmesini isteyin."
 
 #: templates/pluginhub/tokens.html
 msgid "Publishing tokens"
@@ -9565,7 +9610,8 @@ msgstr ". Yalnızca belirtecin özeti saklanır."
 
 #: templates/pluginhub/tokens.html
 msgid "<strong>Copy the token now; it will not be shown again:</strong>"
-msgstr "<strong>Belirteci şimdi kopyalayın; bir daha gösterilmeyecek:</strong>"
+msgstr ""
+"<strong>Belirteci şimdi kopyalayın; bir daha gösterilmeyecek:</strong>"
 
 #: templates/pluginhub/tokens.html
 msgid "Create token"
@@ -9722,8 +9768,8 @@ msgid ""
 "Before replacement the current version is backed up and the plugin stays "
 "disabled until the changes are approved."
 msgstr ""
-"Değiştirmeden önce mevcut sürüm yedeklenir ve değişiklikler onaylanana kadar "
-"eklenti devre dışı kalır."
+"Değiştirmeden önce mevcut sürüm yedeklenir ve değişiklikler onaylanana kadar"
+" eklenti devre dışı kalır."
 
 #: templates/plugins/detail.html
 msgid ""
@@ -9792,8 +9838,8 @@ msgstr "Bu bölüm kullanılamıyor"
 
 #: templates/plugins/error.html
 msgid ""
-"The admin panel and other sections work fine. The error details are recorded "
-"in the plugin log."
+"The admin panel and other sections work fine. The error details are recorded"
+" in the plugin log."
 msgstr ""
 "Yönetim paneli ve diğer bölümler sorunsuz çalışıyor. Hata ayrıntıları "
 "eklenti günlüğüne kaydedildi."
@@ -9879,7 +9925,8 @@ msgstr "SHA-256 parmak izi:"
 
 #: templates/plugins/install.html
 msgid "I have reviewed this plugin’s code and allow it to run on the server."
-msgstr "Bu eklentinin kodunu inceledim ve sunucuda çalışmasına izin veriyorum."
+msgstr ""
+"Bu eklentinin kodunu inceledim ve sunucuda çalışmasına izin veriyorum."
 
 #: templates/plugins/install_package.html
 msgid "Install a plugin from a package"
@@ -9887,8 +9934,8 @@ msgstr "Paketten eklenti kur"
 
 #: templates/plugins/install_package.html
 msgid ""
-"Safely fetch and place a package. After that you review the details and code "
-"and explicitly confirm the installation; no plugin is installed or enabled "
+"Safely fetch and place a package. After that you review the details and code"
+" and explicitly confirm the installation; no plugin is installed or enabled "
 "automatically."
 msgstr ""
 "Bir paketi güvenle alın ve yerleştirin. Ardından ayrıntıları ve kodu "
@@ -9903,8 +9950,8 @@ msgid ""
 "at their code in the review step."
 msgstr ""
 "<strong>Dijital imza yalnızca paketin özgünlüğünü doğrular, kodun zararsız "
-"olduğunu değil.</strong> Bir eklenti Python kodudur ve tam sunucu erişimiyle "
-"çalışır. Yalnızca güvenilir bir yayımcının eklentilerini kurun ve inceleme "
+"olduğunu değil.</strong> Bir eklenti Python kodudur ve tam sunucu erişimiyle"
+" çalışır. Yalnızca güvenilir bir yayımcının eklentilerini kurun ve inceleme "
 "adımında kodlarına bakın."
 
 #: templates/plugins/install_package.html
@@ -9924,8 +9971,8 @@ msgid ""
 "No trusted signing key is defined; a signed package is not accepted. The "
 "superadmin can register the publisher’s public key in “Trusted keys”."
 msgstr ""
-"Güvenilir bir imza anahtarı tanımlı değil; imzalı paket kabul edilmez. Süper "
-"yönetici, yayımcının açık anahtarını “Güvenilir anahtarlar” bölümüne "
+"Güvenilir bir imza anahtarı tanımlı değil; imzalı paket kabul edilmez. Süper"
+" yönetici, yayımcının açık anahtarını “Güvenilir anahtarlar” bölümüne "
 "kaydedebilir."
 
 #: templates/plugins/install_package.html
@@ -10063,8 +10110,8 @@ msgid ""
 "only the <strong>public key</strong>, and obtain it from an independent "
 "channel (not from the registry itself)."
 msgstr ""
-"Yalnızca bu anahtarlardan biriyle imzalanmış paketler “doğrulanmış” sayılır. "
-"Yalnızca <strong>açık anahtarı</strong> girin ve bağımsız bir kanaldan "
+"Yalnızca bu anahtarlardan biriyle imzalanmış paketler “doğrulanmış” sayılır."
+" Yalnızca <strong>açık anahtarı</strong> girin ve bağımsız bir kanaldan "
 "edinin (kayıt defterinin kendisinden değil)."
 
 #: templates/plugins/trusted_keys.html
@@ -10101,7 +10148,8 @@ msgstr "Hiçbir anahtar kaydedilmedi."
 msgid "Site: %(name)s"
 msgstr "Site: %(name)s"
 
-#: templates/shop/panel/categories.html templates/shop/panel/category_form.html
+#: templates/shop/panel/categories.html
+#: templates/shop/panel/category_form.html
 msgid "New product category"
 msgstr "Yeni ürün kategorisi"
 
@@ -10149,8 +10197,8 @@ msgstr ""
 
 #: templates/shop/panel/gateways.html
 msgid ""
-"The encryption key <code>RAVIX_SECRETS_KEY</code> is not set; in production, "
-"storing gateway keys is not possible without it."
+"The encryption key <code>RAVIX_SECRETS_KEY</code> is not set; in production,"
+" storing gateway keys is not possible without it."
 msgstr ""
 "<code>RAVIX_SECRETS_KEY</code> şifreleme anahtarı ayarlanmamış; üretimde "
 "onsuz geçit anahtarları saklanamaz."
@@ -10213,8 +10261,8 @@ msgstr "Durum değişikliği notu"
 
 #: templates/shop/panel/order.html
 msgid ""
-"“Refund” only records the status; the money is not returned from the gateway "
-"automatically."
+"“Refund” only records the status; the money is not returned from the gateway"
+" automatically."
 msgstr ""
 "“İade” yalnızca durumu kaydeder; para geçitten otomatik olarak iade edilmez."
 
@@ -10545,15 +10593,16 @@ msgstr "Sipariş geçmişi"
 
 #: templates/shop/public/order.html
 msgid ""
-"Keep this address to track the order; anyone who has the address can see the "
-"order."
+"Keep this address to track the order; anyone who has the address can see the"
+" order."
 msgstr ""
 "Siparişi takip etmek için bu adresi saklayın; adrese sahip herkes siparişi "
 "görebilir."
 
 #: templates/shop/public/sandbox.html
 msgid ""
-"⚠ This is a <strong>test payment gateway</strong> page and no money is moved."
+"⚠ This is a <strong>test payment gateway</strong> page and no money is "
+"moved."
 msgstr ""
 "⚠ Bu bir <strong>test ödeme geçidi</strong> sayfasıdır ve hiç para hareketi "
 "olmaz."
@@ -10637,8 +10686,8 @@ msgid ""
 "The preview shows the latest changes saved to the draft. After saving, "
 "refresh the page."
 msgstr ""
-"Önizleme, taslağa kaydedilen son değişiklikleri gösterir. Kaydettikten sonra "
-"sayfayı yenileyin."
+"Önizleme, taslağa kaydedilen son değişiklikleri gösterir. Kaydettikten sonra"
+" sayfayı yenileyin."
 
 #: templates/themes/_status.html
 msgid "Customization sections"
@@ -10704,8 +10753,8 @@ msgstr "Renkler, yazı tipi ve site işareti"
 
 #: templates/themes/customize_appearance.html
 msgid ""
-"Colors must be readable (contrast at least 4.5 to 1); otherwise they are not "
-"saved."
+"Colors must be readable (contrast at least 4.5 to 1); otherwise they are not"
+" saved."
 msgstr ""
 "Renkler okunabilir olmalıdır (kontrast en az 4,5’e 1); aksi halde "
 "kaydedilmez."
@@ -10773,19 +10822,19 @@ msgstr ""
 
 #: templates/themes/theme_list.html
 msgid ""
-"<strong>The theme was not installed and no change was applied on the server."
-"</strong>"
+"<strong>The theme was not installed and no change was applied on the "
+"server.</strong>"
 msgstr ""
 "<strong>Tema kurulmadı ve sunucuda hiçbir değişiklik uygulanmadı.</strong>"
 
 #: templates/themes/theme_list.html
 #, python-format
 msgid ""
-"<strong>Validation succeeded; theme “%(installed)s” was installed but is not "
-"active yet.</strong>"
+"<strong>Validation succeeded; theme “%(installed)s” was installed but is not"
+" active yet.</strong>"
 msgstr ""
-"<strong>Doğrulama başarılı; “%(installed)s” teması kuruldu ancak henüz etkin "
-"değil.</strong>"
+"<strong>Doğrulama başarılı; “%(installed)s” teması kuruldu ancak henüz etkin"
+" değil.</strong>"
 
 #: templates/themes/theme_list.html
 msgid ""
@@ -10807,8 +10856,8 @@ msgstr ""
 
 #: templates/themes/theme_list.html
 msgid ""
-"<strong>Static files status:</strong> this theme has no static files or they "
-"are already published."
+"<strong>Static files status:</strong> this theme has no static files or they"
+" are already published."
 msgstr ""
 "<strong>Statik dosya durumu:</strong> bu temanın statik dosyası yok veya "
 "zaten yayımlanmış."
@@ -10856,8 +10905,8 @@ msgstr "Yükleniyor ve denetleniyor; lütfen bekleyin…"
 
 #: templates/themes/theme_list.html
 msgid ""
-"Installing themes from the panel is <strong>off</strong> on this server. The "
-"server administrator must deliberately set"
+"Installing themes from the panel is <strong>off</strong> on this server. The"
+" server administrator must deliberately set"
 msgstr ""
 "Panelden tema kurulumu bu sunucuda <strong>kapalı</strong>. Sunucu "
 "yöneticisi bilinçli olarak şunu ayarlamalı:"
@@ -10876,8 +10925,8 @@ msgid ""
 "The active theme (“%(active_theme)s”) was not found or is invalid; the site "
 "is temporarily shown with the default theme. Activate a healthy theme."
 msgstr ""
-"Etkin tema (“%(active_theme)s”) bulunamadı veya geçersiz; site geçici olarak "
-"varsayılan temayla gösteriliyor. Sağlam bir tema etkinleştirin."
+"Etkin tema (“%(active_theme)s”) bulunamadı veya geçersiz; site geçici olarak"
+" varsayılan temayla gösteriliyor. Sağlam bir tema etkinleştirin."
 
 #: templates/themes/theme_list.html
 #, python-format
@@ -10967,8 +11016,8 @@ msgstr "Resmî güncelleme kaynağı yapılandırılmamış ("
 
 #: templates/updater/home.html
 msgid ""
-"). Until you configure it, only installed versions are shown. No new version "
-"is ever “guessed”."
+"). Until you configure it, only installed versions are shown. No new version"
+" is ever “guessed”."
 msgstr ""
 "). Yapılandırana kadar yalnızca kurulu sürümler gösterilir. Yeni bir sürüm "
 "asla “tahmin edilmez”."
@@ -11225,8 +11274,8 @@ msgstr "Gezinti yolu"
 
 #: themes/default/templates/partials/comments.html
 msgid ""
-"Your comment was received and will be shown after the administrator approves "
-"it."
+"Your comment was received and will be shown after the administrator approves"
+" it."
 msgstr "Yorumunuz alındı ve yönetici onayladıktan sonra gösterilecek."
 
 #: themes/default/templates/partials/comments.html
@@ -11303,8 +11352,8 @@ msgstr "“%(query)s” için %(total)s sonuç"
 msgid ""
 "No result was found for “%(query)s”. Try a shorter phrase or another word."
 msgstr ""
-"“%(query)s” için sonuç bulunamadı. Daha kısa bir ifade veya başka bir sözcük "
-"deneyin."
+"“%(query)s” için sonuç bulunamadı. Daha kısa bir ifade veya başka bir sözcük"
+" deneyin."
 
 #: themes/default/templates/search.html
 msgid "Enter at least two characters."

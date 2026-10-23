@@ -485,9 +485,6 @@ msgstr "توکن نصب Ravix (برای صفحهٔ /install/): %s — %s"
 msgid "Ravix installation complete; superadmin: %s"
 msgstr "نصب Ravix کامل شد؛ مدیرکل: %s"
 
-msgid "Ravix test email"
-msgstr "ایمیل آزمایشی Ravix"
-
 msgid "Real email is configured"
 msgstr "ایمیل واقعی پیکربندی شده"
 
@@ -740,10 +737,6 @@ msgstr "پوشهٔ نصب افزونه قابل نوشتن است"
 msgid "The plugin was created in %(target)s."
 msgstr "افزونه در %(target)s ساخته شد."
 
-#, python-format
-msgid "The post “%(post)s” was published on schedule."
-msgstr "نوشته «%(post)s» طبق زمان‌بندی منتشر شد."
-
 msgid "The registry signing key file is readable and has safe permissions"
 msgstr "فایل کلید امضای مخزن خوانا و دارای مجوز امن است"
 
@@ -823,10 +816,6 @@ msgstr "نامک قالب: حروف کوچک انگلیسی، عدد، «-» و 
 
 msgid "There is no trusted key (RAVIX_TRUSTED_PUBLIC_KEYS); no update package is accepted"
 msgstr "هیچ کلید مورد اعتمادی (RAVIX_TRUSTED_PUBLIC_KEYS) نیست؛ هیچ بستهٔ به‌روزرسانی پذیرفته نمی‌شود"
-
-#, python-format
-msgid "This is a test message; it shows that Ravix email is being sent from %(a1)s."
-msgstr "این پیام آزمایشی است و نشان می‌دهد ایمیل Ravix از روی %(a1)s ارسال می‌شود."
 
 msgid "Trusted keys (env) are valid"
 msgstr "کلیدهای مورد اعتماد (env) معتبرند"
@@ -924,3 +913,17 @@ msgstr "✗ %(slug)s نامعتبر است:"
 #, python-format
 msgid "✗ %(slug)s: no theme with this name was found."
 msgstr "✗ %(slug)s: قالبی با این نام پیدا نشد."
+
+msgid "Subject (default: “Ravix test email” in the message language)"
+msgstr "موضوع (پیش‌فرض: «Ravix test email» به زبان پیام)"
+
+msgid "Language of the message (default: the profile language of the account that owns the address, else the site language). The terminal output stays in the CLI language."
+msgstr "زبان پیام (پیش‌فرض: زبان نمایهٔ حسابی که این نشانی را دارد، وگرنه زبان سایت). خروجی ترمینال به زبان CLI می‌ماند."
+
+#, python-format
+msgid "Unsupported language “%(a1)s” (choose one of: %(a2)s)."
+msgstr "زبان «%(a1)s» پشتیبانی نمی‌شود (یکی از این‌ها را انتخاب کنید: %(a2)s)."
+
+#, python-format
+msgid "message language: %(a1)s"
+msgstr "زبان پیام: %(a1)s"

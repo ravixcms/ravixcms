@@ -15,6 +15,8 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.urls import reverse
 
+from apps.core.recipient import current_language, language_for_user, use_language
+
 from . import throttle
 
 logger = logging.getLogger(__name__)
@@ -66,8 +68,10 @@ def send_verification_email(request, user) -> bool:
         return False
     link = absolute_url(request, reverse("accounts:verify_email", args=[make_verify_token(user)]))
     ctx = {"user": user, "link": link, "hours": settings.RAVIX_EMAIL_VERIFY_MAX_AGE // 3600}
-    subject = " ".join(render_to_string("accounts/email/verify_subject.txt", ctx).split())
-    body = render_to_string("accounts/email/verify.txt", ctx)
+    # In the recipient's language: their profile language, else the interface language they are using right now.
+    with use_language(language_for_user(user, fallback=current_language())):
+        subject = " ".join(render_to_string("accounts/email/verify_subject.txt", ctx).split())
+        body = render_to_string("accounts/email/verify.txt", ctx)
     try:
         EmailMessage(subject, body, to=[user.email]).send(fail_silently=False)
     except Exception:  # noqa: BLE001 - SMTP خراب نباید ثبت‌نام/ورود را بشکند یا چیزی فاش کند

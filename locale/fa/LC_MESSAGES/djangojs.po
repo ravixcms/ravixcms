@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-23 19:23+0330\n"
+"POT-Creation-Date: 2026-10-23 22:56+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -321,8 +321,8 @@ msgid ""
 "The current draft replaces the page content on the site. (The page’s own "
 "status — published or draft — is controlled in the “Pages” section.)"
 msgstr ""
-"پیش‌نویس فعلی در سایت جایگزین محتوای صفحه می‌شود. (وضعیت خود صفحه — منتشرشده "
-"یا پیش‌نویس — از بخش «صفحات» کنترل می‌شود.)"
+"پیش‌نویس فعلی در سایت جایگزین محتوای صفحه می‌شود. (وضعیت خود صفحه — منتشرشده"
+" یا پیش‌نویس — از بخش «صفحات» کنترل می‌شود.)"
 
 #: static/builder/builder.js
 msgid "The layout was published."
@@ -333,7 +333,8 @@ msgid ""
 "It will be published on the site after an administrator approves it. Until "
 "then the current page is shown."
 msgstr ""
-"پس از تأیید مدیر در سایت منتشر می‌شود. تا آن زمان صفحه‌ی فعلی نمایش داده می‌شود."
+"پس از تأیید مدیر در سایت منتشر می‌شود. تا آن زمان صفحه‌ی فعلی نمایش داده "
+"می‌شود."
 
 #: static/builder/builder.js
 msgid "Submitted for approval."
@@ -436,7 +437,6 @@ msgid "Choose files"
 msgstr "انتخاب فایل‌ها"
 
 #: static/js/ravix.js
-#| msgid "Choose from library"
 msgid "Choose file"
 msgstr "انتخاب فایل"
 
