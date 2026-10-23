@@ -80,7 +80,7 @@ class Field:
         return data
 
 
-ALIGN = (("start", gettext_lazy("Right")), ("center", gettext_lazy("Center")), ("end", gettext_lazy("Left")))
+ALIGN = (("start", gettext_lazy("Start side")), ("center", gettext_lazy("Center")), ("end", gettext_lazy("End side")))
 ALIGN_TEXT = ALIGN + (("justify", gettext_lazy("Justified")),)
 BORDER_STYLES = (("solid", gettext_lazy("Continuous")), ("dashed", gettext_lazy("Dashed")), ("dotted", gettext_lazy("Dotted")))
 

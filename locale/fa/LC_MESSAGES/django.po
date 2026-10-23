@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-23 17:13+0330\n"
+"POT-Creation-Date: 2026-10-23 17:16+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -374,12 +374,10 @@ msgid "Account %(value)s"
 msgstr "حساب %(value)s"
 
 #: apps/accounts/views.py
-#| msgid "Gateway is enabled"
 msgid "was enabled"
 msgstr "فعال شد"
 
 #: apps/accounts/views.py
-#| msgid "The plugin was disabled."
 msgid "was disabled"
 msgstr "غیرفعال شد"
 
@@ -627,7 +625,8 @@ msgid "Version %(number)s — %(page)s"
 msgstr "نسخه %(number)s — %(page)s"
 
 #: apps/builder/schema.py
-msgid "Right"
+#| msgid "Started"
+msgid "Start side"
 msgstr "راست"
 
 #: apps/builder/schema.py
@@ -635,7 +634,7 @@ msgid "Center"
 msgstr "وسط"
 
 #: apps/builder/schema.py
-msgid "Left"
+msgid "End side"
 msgstr "چپ"
 
 #: apps/builder/schema.py
@@ -1767,7 +1766,6 @@ msgid "The site name cannot be empty."
 msgstr "نام سایت نمی‌تواند خالی باشد."
 
 #: apps/core/manifest_strings.py
-#| msgid "Contact information"
 msgid "Contact form"
 msgstr "فرم تماس"
 
@@ -1780,22 +1778,18 @@ msgstr ""
 " صندوق پیام در پنل دارد."
 
 #: apps/core/manifest_strings.py
-#| msgid "New contact form message: %(value)s"
 msgid "View and manage contact form messages"
 msgstr "مشاهده و مدیریت پیام‌های فرم تماس"
 
 #: apps/core/manifest_strings.py
-#| msgid "Manage site settings"
 msgid "Message after sending"
 msgstr "پیام پس از ارسال"
 
 #: apps/core/manifest_strings.py
-#| msgid "Your message was recorded."
 msgid "Your message was recorded. We will reply soon."
 msgstr "پیام شما ثبت شد. به‌زودی پاسخ می‌دهیم."
 
 #: apps/core/manifest_strings.py
-#| msgid "Note (optional)"
 msgid "Notification email (optional)"
 msgstr "ایمیل اطلاع‌رسانی (اختیاری)"
 
@@ -1832,7 +1826,6 @@ msgstr ""
 "قراردادها را مطابق مستندات رسمی همان ارائه‌دهنده تغییر دهید."
 
 #: apps/core/manifest_strings.py
-#| msgid "SEO title"
 msgid "SEO toolkit"
 msgstr "ابزار سئو"
 
@@ -1845,7 +1838,6 @@ msgstr ""
 " مدیریت می‌کند و الگوی عنوان سراسری دارد."
 
 #: apps/core/manifest_strings.py
-#| msgid "Manage site settings"
 msgid "Manage page SEO settings"
 msgstr "مدیریت تنظیمات سئوی صفحات"
 
@@ -1859,12 +1851,10 @@ msgid "Use {title} and {site}."
 msgstr "از {title} و {site} استفاده کنید."
 
 #: apps/core/manifest_strings.py
-#| msgid "Default site"
 msgid "Default robots"
 msgstr "robots پیش‌فرض"
 
 #: apps/core/manifest_strings.py
-#| msgid "System autosave"
 msgid "System default"
 msgstr "پیش‌فرض سیستم"
 
@@ -1877,12 +1867,10 @@ msgid "Page SEO"
 msgstr "سئوی صفحات"
 
 #: apps/core/manifest_strings.py
-#| msgid "Edit"
 msgid "Edit SEO"
 msgstr "ویرایش سئو"
 
 #: apps/core/manifest_strings.py
-#| msgid "Ravix test email"
 msgid "Ravix default"
 msgstr "پیش‌فرض راویکس"
 
@@ -1935,7 +1923,6 @@ msgid "Site name"
 msgstr "نام سایت"
 
 #: apps/core/models.py
-#| msgid "Ravix core"
 msgid "Ravix"
 msgstr "راویکس"
 
@@ -3458,12 +3445,10 @@ msgid "Plugin “%(slug)s” was %(value)s"
 msgstr "افزونهٔ «%(slug)s» %(value)s شد"
 
 #: apps/pluginhub/views.py
-#| msgid "Unlisted"
 msgid "listed"
 msgstr "در فهرست"
 
 #: apps/pluginhub/views.py
-#| msgid "Remove from listing"
 msgid "removed from the listing"
 msgstr "از فهرست خارج"
 
@@ -4472,7 +4457,6 @@ msgid "Removed%(value)s"
 msgstr "حذف شد%(value)s"
 
 #: apps/plugins/services.py
-#| msgid "The image was deleted."
 msgid " (the data was deleted too)."
 msgstr " (داده‌ها هم پاک شد)."
 
@@ -4746,12 +4730,10 @@ msgid "Package of plugin “%(slug)s” (%(value)s) was placed via the installer
 msgstr "بسته افزونهٔ «%(slug)s» (%(value)s) از طریق نصب‌کننده جایگذاری شد"
 
 #: apps/plugins/views.py
-#| msgid "Installed"
 msgid "installed"
 msgstr "نصب"
 
 #: apps/plugins/views.py
-#| msgid "Upgrade"
 msgid "upgraded"
 msgstr "ارتقا"
 
@@ -4784,7 +4766,6 @@ msgid "was added"
 msgstr "افزوده شد"
 
 #: apps/plugins/views.py
-#| msgid "Already registered?"
 msgid "already existed"
 msgstr "از قبل بود"
 
@@ -5296,7 +5277,6 @@ msgid "yes"
 msgstr "بله"
 
 #: apps/shop/panel.py
-#| msgid "Info"
 msgid "no"
 msgstr "خیر"
 
@@ -5310,12 +5290,10 @@ msgid "Gateway “%(name)s” was %(value)s"
 msgstr "درگاه «%(name)s» %(value)s شد"
 
 #: apps/shop/panel.py
-#| msgid "Enabled."
 msgid "enabled"
 msgstr "فعال"
 
 #: apps/shop/panel.py
-#| msgid "Disabled."
 msgid "disabled"
 msgstr "غیرفعال"
 
@@ -5459,12 +5437,10 @@ msgid "Order placed (%(value)s)."
 msgstr "سفارش ثبت شد (%(value)s)."
 
 #: apps/shop/services.py
-#| msgid "Edit user"
 msgid "user"
 msgstr "کاربر"
 
 #: apps/shop/services.py
-#| msgid "Guest"
 msgid "guest"
 msgstr "مهمان"
 
@@ -7553,7 +7529,6 @@ msgid "Package “%(name)s” is not installed (required: %(value)s)."
 msgstr "بستهٔ «%(name)s» نصب نیست (نیاز: %(value)s)."
 
 #: apps/updater/versions.py
-#| msgid "Layout version"
 msgid "any version"
 msgstr "هر نسخه"
 
@@ -7602,7 +7577,6 @@ msgid "Update completed.%(value)s"
 msgstr "به‌روزرسانی انجام شد.%(value)s"
 
 #: apps/updater/views.py
-#| msgid "). Restart the web service."
 msgid " Restart the service."
 msgstr " سرویس را راه‌اندازی مجدد کنید."
 
@@ -11099,3 +11073,9 @@ msgstr "صفحه‌ها"
 #: themes/default/templates/tag_detail.html
 msgid "No post with this tag was found."
 msgstr "نوشته‌ای با این برچسب پیدا نشد."
+
+#~ msgid "Right"
+#~ msgstr "راست"
+
+#~ msgid "Left"
+#~ msgstr "چپ"
