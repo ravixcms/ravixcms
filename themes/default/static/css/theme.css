@@ -132,7 +132,7 @@ ul,ol{padding-inline-start:1.4em}
 .prose h2{font-size:1.5rem;margin-top:2em}
 .prose h3{font-size:1.25rem;margin-top:1.6em}
 .prose img{border-radius:var(--radius);margin-block:1.25rem}
-.prose blockquote{margin:1.5rem 0;padding:.25rem 1.25rem;border-inline-start:4px solid var(--rv-primary);background:var(--rv-primary-soft);border-radius:0 var(--radius) var(--radius) 0}
+.prose blockquote{margin:1.5rem 0;padding:.25rem 1.25rem;border-inline-start:4px solid var(--rv-primary);background:var(--rv-primary-soft);border-start-start-radius:0;border-end-start-radius:0;border-start-end-radius:var(--radius);border-end-end-radius:var(--radius)}
 .prose pre,.prose code{font-family:ui-monospace,Consolas,monospace;font-size:.9em;direction:ltr;text-align:left}
 .prose pre{background:var(--rv-surface);border:1px solid var(--rv-border);border-radius:var(--radius);padding:1rem;overflow-x:auto}
 .prose :not(pre)>code{background:var(--rv-surface);padding:.1em .35em;border-radius:3px}
