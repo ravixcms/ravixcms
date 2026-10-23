@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with: { python-version: "3.13", cache: pip, cache-dependency-path: requirements.lock }
       - run: pip install -r requirements.lock
@@ -52,7 +52,7 @@ jobs:
     env:
       RAVIX_SHOP_ENABLED: ${{ matrix.shop }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with: { python-version: "${{ matrix.python }}", cache: pip, cache-dependency-path: requirements.lock }
       - run: pip install -r requirements.lock
@@ -78,7 +78,7 @@ jobs:
     env:
       E2E_PG_URL: postgresql://ravix:ci-only-password@localhost:5432
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with: { python-version: "3.13", cache: pip, cache-dependency-path: requirements.lock }
       - name: ابزار کلاینت PostgreSQL (pg_dump/pg_restore باید هم‌نسخهٔ سرور ۱۶ باشند)
@@ -94,7 +94,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with: { python-version: "3.13", cache: pip, cache-dependency-path: requirements.lock }
       - run: pip install -r requirements.lock pip-audit bandit
@@ -118,7 +118,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: دریافت gitleaks با بررسی checksum
@@ -135,7 +135,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: docker/setup-buildx-action@v3
       - uses: docker/build-push-action@v6
         with:
