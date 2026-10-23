@@ -215,3 +215,10 @@ class PreflightCiModeTests(TestCase):
         with tempfile.TemporaryDirectory() as d:
             out, _ = self.run_pf("--ci", RAVIX_PLUGIN_INSTALL_DIR=d, RAVIX_PLUGIN_BACKUP_DIR=d)
         self.assertNotIn("plugin install folder", "\n".join(self.lines(out, "!")))
+
+    def test_preflight_does_not_crash_before_migrate(self):
+        from unittest import mock
+
+        with mock.patch("apps.content.slug_audit.count", side_effect=RuntimeError("no such table")):
+            out, _ = self.run_pf("--ci")
+        self.assertIn("passed", out)

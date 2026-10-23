@@ -61,7 +61,10 @@ class Command(BaseCommand):
         from apps.content import slug_audit
         from apps.content.models import Page, Post
 
-        n_pages, n_posts = slug_audit.count(Page, Post)
+        try:
+            n_pages, n_posts = slug_audit.count(Page, Post)
+        except Exception:  # noqa: BLE001 - before migrate the tables do not exist; the migrations check below reports that
+            n_pages = n_posts = 0
         advise(not (n_pages or n_posts), cli_gettext("No page or post has a language code as its slug"),
                cli_gettext("%(n_pages)s pages and %(n_posts)s posts have a slug equal to a language code (for example /de/ is now the German home page). Run: python manage.py ravix_fix_slugs") % {"n_pages": n_pages, "n_posts": n_posts})
         media = str(settings.MEDIA_ROOT)

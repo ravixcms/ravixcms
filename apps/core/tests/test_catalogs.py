@@ -18,12 +18,13 @@ CORE_MSGID = "Hide password"  # a core string (present in djangojs; also used as
 
 
 def django_msgid():
-    """A msgid that exists in the core django.po for German."""
-    import polib
+    """A msgid that exists in the core German catalog (read with the standard library; the test environment has no extra packages)."""
+    import gettext
 
-    po = polib.pofile(str(settings.BASE_DIR / "locale" / "de" / "LC_MESSAGES" / "django.po"))
-    entry = next(e for e in po if e.msgstr and "%" not in e.msgid and len(e.msgid) > 6 and not e.fuzzy)
-    return entry.msgid, entry.msgstr
+    with open(settings.BASE_DIR / "locale" / "de" / "LC_MESSAGES" / "django.mo", "rb") as fh:
+        catalog = gettext.GNUTranslations(fh)._catalog
+    msgid = next(k for k, v in sorted(catalog.items(), key=lambda kv: str(kv[0])) if isinstance(k, str) and k and v and "%" not in k and len(k) > 6)
+    return msgid, catalog[msgid]
 
 
 class CatalogTestCase(SimpleTestCase):
