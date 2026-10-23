@@ -9,6 +9,7 @@ from django.utils.safestring import mark_safe
 
 register = template.Library()
 
+from apps.core import localefmt
 from apps.core.i18n import tr as _tr
 
 
@@ -85,8 +86,6 @@ ICONS = {
     "chevron_right": '<path d="m9 6 6 6-6 6"/>',
 }
 
-_PERSIAN_DIGITS = str.maketrans("0123456789", "۰۱۲۳۴۵۶۷۸۹")
-
 
 @register.simple_tag
 def icon(name, size=20, css_class=""):
@@ -105,8 +104,11 @@ def icon(name, size=20, css_class=""):
 
 @register.filter
 def fa_digits(value):
-    """تبدیل ارقام لاتین به فارسی."""
-    return str(value).translate(_PERSIAN_DIGITS)
+    """Latin digits → Persian digits, only while the UI language is Persian (other languages keep Latin digits)."""
+    return localefmt.digits(value)
+
+
+register.filter("local_digits", fa_digits)
 
 
 def _to_jalali(value):
@@ -120,19 +122,33 @@ def _to_jalali(value):
 
 
 @register.filter
-def jalali(value, fmt="%Y/%m/%d"):
-    """تاریخ شمسی با ارقام فارسی. مثال: {{ user.date_joined|jalali }}"""
+def jalali(value, fmt=None):
+    """Date in the active language's calendar: Jalali with Persian digits for ``fa``, Gregorian with the locale's
+    format otherwise. Example: ``{{ user.date_joined|jalali }}``."""
     if not value:
         return "—"
-    converted = _to_jalali(value)
-    if converted is None:
+    if not isinstance(value, datetime.date):
         return str(value)
-    return fa_digits(converted.strftime(fmt))
+    if localefmt.is_persian():
+        converted = _to_jalali(value)
+        return localefmt.digits(converted.strftime(fmt or "%Y/%m/%d"))
+    return localefmt.gregorian_date(value, fmt)
 
 
 @register.filter
 def jalali_datetime(value):
-    return jalali(value, "%Y/%m/%d - %H:%M")
+    """Date and time in the active language's calendar (see ``jalali``)."""
+    if not value:
+        return "—"
+    if not isinstance(value, datetime.date):
+        return str(value)
+    if localefmt.is_persian():
+        return jalali(value, "%Y/%m/%d - %H:%M")
+    return localefmt.gregorian_datetime(value)
+
+
+register.filter("local_date", jalali)
+register.filter("local_datetime", jalali_datetime)
 
 
 @register.filter
@@ -142,8 +158,8 @@ def field_type(bound_field):
 
 @register.filter
 def money(value):
-    """عدد صحیح را با جداکننده هزارگان و ارقام فارسی نشان می‌دهد."""
+    """Whole number with thousands separators (Persian separators and digits for ``fa``, the locale's otherwise)."""
     try:
-        return f"{int(value):,}".replace(",", "٬").translate(_PERSIAN_DIGITS)
+        return localefmt.grouped_int(value)
     except (TypeError, ValueError):
         return ""

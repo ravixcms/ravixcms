@@ -10,6 +10,7 @@
 html{font-size:var(--rv-font-size);-webkit-text-size-adjust:100%;scroll-padding-top:5rem}
 body{margin:0;background:var(--rv-bg);color:var(--rv-text);font-family:var(--rv-font);line-height:1.9;
   min-height:100vh;display:flex;flex-direction:column;text-rendering:optimizeLegibility}
+html:not(:lang(fa)):not(:lang(ar)) body{line-height:1.7}
 main{flex:1 0 auto;padding-block:clamp(1.5rem,4vw,3rem)}
 main:focus{outline:none}
 img{max-width:100%;height:auto;display:block}

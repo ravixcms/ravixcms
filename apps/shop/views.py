@@ -30,6 +30,16 @@ from .forms import CheckoutForm
 from .models import Order, Payment, Product, ProductCategory, SandboxTransaction
 
 
+def currency_label() -> str:
+    """Display label of the shop currency. The built-in Persian labels are translated; a custom label is shown as set."""
+    label = settings.SHOP_CURRENCY_LABEL
+    if label == "تومان":
+        return gettext("Toman")
+    if label == "ریال":
+        return gettext("Rial")
+    return label
+
+
 class ShopView(View):
     """پایه: سایت را از دامنه می‌گیرد؛ دامنهٔ ناشناخته یا فروشگاه خاموش ← ۴۰۴."""
 
@@ -43,7 +53,7 @@ class ShopView(View):
         return super().dispatch(request, *args, **kwargs)
 
     def render(self, request, template, ctx, *, title, description="", robots="", status=200, jsonld=None, og_image="", path=None, crumbs=()):
-        ctx = {**ctx, "currency": settings.SHOP_CURRENCY_LABEL, "site_obj": self.site, "cart_count": sum(services.cart_raw(request, self.site).values()) if hasattr(request, "session") else 0}
+        ctx = {**ctx, "currency": currency_label(), "site_obj": self.site, "cart_count": sum(services.cart_raw(request, self.site).values()) if hasattr(request, "session") else 0}
         body = mark_safe('<link rel="stylesheet" href="' + static("shop/shop.css") + '"><div class="container shop">'
                          + render_to_string(f"shop/public/{template}", ctx, request=request) + "</div>")
         item = PageItem(title=title, url=request.path, body_html=body, date_display="", date_iso="", builder=True, show_title=True)
@@ -117,7 +127,7 @@ class ProductDetailView(ShopView):
         gallery = list(p.gallery.all())
         img = absolute_url(request, p.image.url) if p.image else ""
         ld = {"@context": "https://schema.org", "@type": "Product", "name": p.name, "description": clip(p.description, 300),
-              "offers": {"@type": "Offer", "price": str(p.final_price), "priceCurrency": "IRT" if settings.SHOP_CURRENCY_LABEL == "تومان" else "IRR",
+              "offers": {"@type": "Offer", "price": str(p.final_price), "priceCurrency": "IRT" if settings.SHOP_CURRENCY_CODE == "IRT" else "IRR",
                          "availability": "https://schema.org/InStock" if p.in_stock else "https://schema.org/OutOfStock",
                          "url": absolute_url(request, p.get_absolute_url())}}
         if img:

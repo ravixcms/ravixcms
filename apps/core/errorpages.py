@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.utils.translation import get_language, get_language_bidi
 
-_DIGITS = str.maketrans("0123456789", "۰۱۲۳۴۵۶۷۸۹")
+from . import localefmt
 
 _FALLBACK = ('<!doctype html><html lang="{lang}" dir="{direction}"><meta charset="utf-8"><title>{title}</title>'
              '<body style="font-family:Tahoma,sans-serif;text-align:center;padding:4rem"><h1>{title}</h1><p>{message}</p></body></html>')
@@ -15,7 +15,7 @@ _FALLBACK = ('<!doctype html><html lang="{lang}" dir="{direction}"><meta charset
 def standalone_response(request, status: int, title: str, message: str, *, icon: str = "⚠️", refresh: int | None = None,
                         headers: dict | None = None) -> HttpResponse:
     try:
-        html = render_to_string("errors/standalone.html", {"code": str(status).translate(_DIGITS), "title": title, "message": message,
+        html = render_to_string("errors/standalone.html", {"code": localefmt.digits(status), "title": title, "message": message,
                                                            "icon": icon, "refresh": refresh})
     except Exception:  # noqa: BLE001 — حتی خطای قالب هم نباید ۵۰۰ را به صفحهٔ خالی تبدیل کند
         html = _FALLBACK.format(title=title, message=message, lang=get_language() or "en", direction="rtl" if get_language_bidi() else "ltr")
