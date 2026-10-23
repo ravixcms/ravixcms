@@ -1,6 +1,6 @@
 {% load i18n %}
-{% load ravix_theme %}<!doctype html>
-<html lang="fa" dir="rtl" data-theme="{{ theme.slug }}">
+{% load ravix_theme %}{% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}<!doctype html>
+<html lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}" data-theme="{{ theme.slug }}">
 <head>
 {% theme_head %}
 <meta name="theme-color" content="{{ theme_vars.primary }}">

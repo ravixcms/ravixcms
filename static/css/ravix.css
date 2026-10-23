@@ -62,7 +62,8 @@ img { max-width: 100%; }
 
 .icon { flex-shrink: 0; vertical-align: middle; }
 .muted { color: var(--c-muted); }
-.ltr { direction: ltr; unicode-bidi: plaintext; text-align: right; }
+.ltr { direction: ltr; unicode-bidi: plaintext; text-align: left; }
+[dir="rtl"] .ltr { text-align: right; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 :focus-visible { outline: 3px solid rgba(79, 70, 229, .35); outline-offset: 2px; border-radius: 6px; }

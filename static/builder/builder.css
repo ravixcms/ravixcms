@@ -51,7 +51,7 @@
 .bx-hover{outline:2px solid #a5b4fc !important}
 .bx-selected{outline:2px solid #4f46e5 !important}
 .bx-chrome{display:none;position:absolute;z-index:20;top:-26px;inset-inline-start:0;align-items:center;gap:1px;background:#4f46e5;color:#fff;
-  border-radius:6px 6px 0 0;font-size:.72rem;line-height:1;font-weight:700;white-space:nowrap;font-family:var(--font,inherit);direction:rtl;text-align:start}
+  border-radius:6px 6px 0 0;font-size:.72rem;line-height:1;font-weight:700;white-space:nowrap;font-family:var(--font,inherit);text-align:start}
 .bx-hover>.bx-chrome,.bx-selected>.bx-chrome{display:inline-flex}
 .bx-chrome button,.bx-chrome .bx-handle,.bx-chrome .bx-lbl{background:transparent;border:0;color:#fff;padding:5px 6px;display:inline-flex;align-items:center;font:inherit}
 .bx-chrome button{cursor:pointer}.bx-chrome button:hover{background:rgba(255,255,255,.22)}
