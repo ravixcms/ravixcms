@@ -29,7 +29,7 @@ class PluginAPI:
     @property
     def name(self) -> str:
         info = self._info
-        return info.manifest.name if info else self.slug
+        return info.manifest.display_name if info else self.slug
 
     @property
     def version(self) -> str:

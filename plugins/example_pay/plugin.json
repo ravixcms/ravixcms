@@ -1,12 +1,38 @@
 {
   "slug": "example_pay",
-  "name": "Sample gateway (gateway template)",
-  "version": "1.0.0",
-  "description": "A sample payment-gateway plugin for learning and testing. It connects to a hypothetical API (ExamplePay) and to no real service; for a real gateway change the addresses and contracts according to that provider’s official documentation.",
+  "name": {
+    "fa": "نمونه درگاه (الگوی درگاه)",
+    "en": "Sample gateway (gateway template)",
+    "ar": "بوابة نموذجية (قالب بوابة)",
+    "tr": "Örnek ağ geçidi (ağ geçidi şablonu)",
+    "es": "Pasarela de ejemplo (plantilla de pasarela)",
+    "fr": "Passerelle d’exemple (modèle de passerelle)",
+    "de": "Beispiel-Gateway (Gateway-Vorlage)",
+    "ru": "Пример шлюза (шаблон шлюза)",
+    "pt-br": "Gateway de exemplo (modelo de gateway)",
+    "zh-hans": "示例支付网关（网关模板）"
+  },
+  "version": "1.0.1",
+  "description": {
+    "fa": "افزونهٔ نمونهٔ درگاه پرداخت برای یادگیری و آزمایش. به یک API فرضی (ExamplePay) وصل می‌شود نه سرویس واقعی؛ برای درگاه واقعی نشانی‌ها و قراردادها را طبق مستندات رسمی همان ارائه‌دهنده تغییر دهید.",
+    "en": "A sample payment-gateway plugin for learning and testing. It connects to a hypothetical API (ExamplePay) and to no real service; for a real gateway change the addresses and contracts according to that provider’s official documentation.",
+    "ar": "إضافة بوابة دفع نموذجية للتعلّم والاختبار. تتصل بواجهة API افتراضية (ExamplePay) وليس بخدمة حقيقية؛ لبوابة حقيقية غيّر العناوين والعقود وفق الوثائق الرسمية للمزوّد.",
+    "tr": "Öğrenme ve test için örnek bir ödeme ağ geçidi eklentisi. Gerçek bir hizmete değil, varsayımsal bir API’ye (ExamplePay) bağlanır; gerçek bir ağ geçidi için adresleri ve sözleşmeleri sağlayıcının resmi belgelerine göre değiştirin.",
+    "es": "Un complemento de pasarela de pago de ejemplo para aprender y probar. Se conecta a una API hipotética (ExamplePay) y a ningún servicio real; para una pasarela real cambie las direcciones y los contratos según la documentación oficial del proveedor.",
+    "fr": "Un plugin de passerelle de paiement d’exemple pour apprendre et tester. Il se connecte à une API fictive (ExamplePay) et à aucun service réel ; pour une vraie passerelle, adaptez les adresses et les contrats selon la documentation officielle du fournisseur.",
+    "de": "Ein Beispiel-Plugin für ein Zahlungs-Gateway zum Lernen und Testen. Es verbindet sich mit einer fiktiven API (ExamplePay) und mit keinem echten Dienst; für ein echtes Gateway passen Sie Adressen und Verträge anhand der offiziellen Dokumentation des Anbieters an.",
+    "ru": "Пример плагина платёжного шлюза для обучения и тестирования. Он подключается к вымышленному API (ExamplePay), а не к реальному сервису; для настоящего шлюза измените адреса и контракты по официальной документации провайдера.",
+    "pt-br": "Um plugin de gateway de pagamento de exemplo para aprender e testar. Ele se conecta a uma API hipotética (ExamplePay) e a nenhum serviço real; para um gateway real, altere os endereços e contratos conforme a documentação oficial do provedor.",
+    "zh-hans": "用于学习和测试的示例支付网关插件。它连接的是假想的 API（ExamplePay），而非真实服务；用于真实网关时，请按服务商官方文档修改地址和约定。"
+  },
   "author": "Ravix",
   "api_version": 1,
   "ravix": ">=0.9,<2.0",
   "hooks": [
-    {"name": "shop.gateways", "handler": "hooks:register", "priority": 50}
+    {
+      "name": "shop.gateways",
+      "handler": "hooks:register",
+      "priority": 50
+    }
   ]
 }

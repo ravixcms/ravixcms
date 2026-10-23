@@ -26,7 +26,7 @@ python manage.py startheme my-theme --name "قالب من" --author "نام شم
 {
   "api_version": 1,
   "slug": "my-theme",
-  "name": "قالب من",
+  "name": {"fa": "قالب من", "en": "My theme"},   // یا یک رشتهٔ ساده؛ نگاه کنید به docs/translation.md
   "version": "0.1.0",
   "author": "نام شما",
   "description": "توضیح کوتاه (اختیاری)",

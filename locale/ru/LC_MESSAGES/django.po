@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-23 18:55+0330\n"
+"POT-Creation-Date: 2026-10-23 19:10+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -2088,6 +2088,39 @@ msgstr "Внешний вид сайта"
 msgid "System administration"
 msgstr "Управление системой"
 
+#: apps/core/regional.py apps/plugins/manifest.py
+#, python-format
+msgid "%(key)s: required."
+msgstr "%(key)s: обязательно."
+
+#: apps/core/regional.py apps/plugins/manifest.py
+#, python-format
+msgid "%(key)s: at most %(max_len)s characters."
+msgstr "%(key)s: не более %(max_len)s символов."
+
+#: apps/core/regional.py
+#, python-format
+#| msgid "requires: must be an object {slug: range}."
+msgid "%(key)s: must be text or an object {language code: text}."
+msgstr "%(key)s: должен быть текстом или объектом {код языка: текст}."
+
+#: apps/core/regional.py
+#, python-format
+msgid "%(key)s: unsupported language code “%(code)s”."
+msgstr "%(key)s: неподдерживаемый код языка «%(code)s»."
+
+#: apps/core/regional.py
+#, python-format
+#| msgid "%(key)s: must be text."
+msgid "%(key)s.%(code)s: must be non-empty text."
+msgstr "%(key)s.%(code)s: должен быть непустым текстом."
+
+#: apps/core/regional.py
+#, python-format
+#| msgid "%(key)s: at most %(max_len)s characters."
+msgid "%(key)s.%(code)s: at most %(max_len)s characters."
+msgstr "%(key)s.%(code)s: не более %(max_len)s символов."
+
 #: apps/core/sitehealth.py
 msgid "Good"
 msgstr "Хорошо"
@@ -3909,16 +3942,6 @@ msgstr "Плагин превышает предел по количеству/�
 #, python-format
 msgid "%(key)s: must be text."
 msgstr "%(key)s: должно быть текстом."
-
-#: apps/plugins/manifest.py
-#, python-format
-msgid "%(key)s: required."
-msgstr "%(key)s: обязательно."
-
-#: apps/plugins/manifest.py
-#, python-format
-msgid "%(key)s: at most %(max_len)s characters."
-msgstr "%(key)s: не более %(max_len)s символов."
 
 #: apps/plugins/manifest.py
 msgid "plugin.json must be a JSON object."

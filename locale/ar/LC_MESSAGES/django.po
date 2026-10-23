@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-23 18:55+0330\n"
+"POT-Creation-Date: 2026-10-23 19:10+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -2051,6 +2051,39 @@ msgstr "مظهر الموقع"
 msgid "System administration"
 msgstr "إدارة النظام"
 
+#: apps/core/regional.py apps/plugins/manifest.py
+#, python-format
+msgid "%(key)s: required."
+msgstr "%(key)s: مطلوب."
+
+#: apps/core/regional.py apps/plugins/manifest.py
+#, python-format
+msgid "%(key)s: at most %(max_len)s characters."
+msgstr "%(key)s: %(max_len)s حرفًا كحد أقصى."
+
+#: apps/core/regional.py
+#, python-format
+#| msgid "requires: must be an object {slug: range}."
+msgid "%(key)s: must be text or an object {language code: text}."
+msgstr "%(key)s: يجب أن يكون نصًا أو كائنًا {رمز اللغة: النص}."
+
+#: apps/core/regional.py
+#, python-format
+msgid "%(key)s: unsupported language code “%(code)s”."
+msgstr "%(key)s: رمز اللغة «%(code)s» غير مدعوم."
+
+#: apps/core/regional.py
+#, python-format
+#| msgid "%(key)s: must be text."
+msgid "%(key)s.%(code)s: must be non-empty text."
+msgstr "%(key)s.%(code)s: يجب أن يكون نصًا غير فارغ."
+
+#: apps/core/regional.py
+#, python-format
+#| msgid "%(key)s: at most %(max_len)s characters."
+msgid "%(key)s.%(code)s: at most %(max_len)s characters."
+msgstr "%(key)s.%(code)s: %(max_len)s حرفًا كحد أقصى."
+
 #: apps/core/sitehealth.py
 msgid "Good"
 msgstr "جيد"
@@ -3827,16 +3860,6 @@ msgstr "تتجاوز الإضافة حد عدد الملفات/حجمها."
 #, python-format
 msgid "%(key)s: must be text."
 msgstr "%(key)s: يجب أن يكون نصًا."
-
-#: apps/plugins/manifest.py
-#, python-format
-msgid "%(key)s: required."
-msgstr "%(key)s: مطلوب."
-
-#: apps/plugins/manifest.py
-#, python-format
-msgid "%(key)s: at most %(max_len)s characters."
-msgstr "%(key)s: %(max_len)s حرفًا كحد أقصى."
 
 #: apps/plugins/manifest.py
 msgid "plugin.json must be a JSON object."

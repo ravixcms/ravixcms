@@ -62,7 +62,7 @@
         {% if item.is_active %}<span class="badge badge-published">{% trans "Active" %}</span>{% endif %}
         {% if not t.valid %}<span class="badge badge-inactive">{% trans "Invalid" %}</span>{% endif %}</h2>
       <p class="muted theme-meta"><span class="ltr">{{ t.slug }}</span>{% if t.version %} {% trans "· version" %} <span class="ltr">{{ t.version }}</span>{% endif %}{% if t.author %} · {{ t.author }}{% endif %}</p>
-      {% if t.description %}<p>{{ t.description|tr }}</p>{% endif %}
+      {% if t.display_description %}<p>{{ t.display_description|tr }}</p>{% endif %}
       {% if not t.valid %}
         <ul class="theme-errors">{% for e in t.errors|slice:":5" %}<li>{{ e }}</li>{% endfor %}</ul>
       {% else %}

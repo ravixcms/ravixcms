@@ -77,7 +77,7 @@ plugins/my_hello/
 ```json
 {
   "slug": "contact_form",                 // = نام پوشه؛ [a-z][a-z0-9_]{2,30}
-  "name": "فرم تماس", "version": "1.0.0", // نسخه سه‌بخشی
+  "name": {"fa": "فرم تماس", "en": "Contact form"}, "version": "1.0.0", // نام و description رشتهٔ ساده یا {کد زبان: متن}؛ نسخه سه‌بخشی
   "description": "...", "author": "...", "homepage": "https://...",
   "api_version": 1,                       // نسخهٔ قرارداد افزونه‌ها (باید با هسته برابر باشد)
   "ravix": ">=0.5.0,<1.0.0",              // بازهٔ سازگاری با Ravix (الزامی)

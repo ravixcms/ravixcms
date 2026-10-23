@@ -109,8 +109,8 @@ def overview() -> list[Row]:
                 status = "active"
             else:
                 status = "auto_disabled" if rec.auto_disabled else "inactive"
-        rows.append(Row(slug=item.slug, name=(m.name if m else (rec.name if rec else item.slug)), version=(m.version if m else (rec.version if rec else "")),
-                        description=m.description if m else "", status=status, status_label=STATUS_LABELS[status], problems=problems,
+        rows.append(Row(slug=item.slug, name=(m.display_name if m else (rec.name if rec else item.slug)), version=(m.version if m else (rec.version if rec else "")),
+                        description=m.display_description if m else "", status=status, status_label=STATUS_LABELS[status], problems=problems,
                         manifest=m, record=rec, path=item.path))
     for slug, rec in records.items():
         if slug not in seen:

@@ -1,8 +1,30 @@
 {
   "slug": "contact_form",
-  "name": "Contact form",
-  "version": "1.0.0",
-  "description": "A public contact form at /ext/contact_form/ that stores messages in the database and has an inbox in the panel.",
+  "name": {
+    "fa": "فرم تماس",
+    "en": "Contact form",
+    "ar": "نموذج الاتصال",
+    "tr": "İletişim formu",
+    "es": "Formulario de contacto",
+    "fr": "Formulaire de contact",
+    "de": "Kontaktformular",
+    "ru": "Форма обратной связи",
+    "pt-br": "Formulário de contato",
+    "zh-hans": "联系表单"
+  },
+  "version": "1.0.1",
+  "description": {
+    "fa": "فرم تماس عمومی در /ext/contact_form/ که پیام‌ها را در پایگاه داده ذخیره می‌کند و در پنل صندوق ورودی دارد.",
+    "en": "A public contact form at /ext/contact_form/ that stores messages in the database and has an inbox in the panel.",
+    "ar": "نموذج اتصال عام على /ext/contact_form/ يحفظ الرسائل في قاعدة البيانات ويوفّر صندوق وارد في لوحة التحكم.",
+    "tr": "/ext/contact_form/ adresinde, mesajları veritabanında saklayan ve panelde gelen kutusu bulunan herkese açık bir iletişim formu.",
+    "es": "Un formulario de contacto público en /ext/contact_form/ que guarda los mensajes en la base de datos y tiene una bandeja de entrada en el panel.",
+    "fr": "Un formulaire de contact public sur /ext/contact_form/ qui enregistre les messages dans la base de données et dispose d’une boîte de réception dans le panneau.",
+    "de": "Ein öffentliches Kontaktformular unter /ext/contact_form/, das Nachrichten in der Datenbank speichert und im Panel einen Posteingang bietet.",
+    "ru": "Публичная форма обратной связи по адресу /ext/contact_form/: сообщения сохраняются в базе данных, во входящих в панели управления.",
+    "pt-br": "Um formulário de contato público em /ext/contact_form/ que guarda as mensagens no banco de dados e tem uma caixa de entrada no painel.",
+    "zh-hans": "位于 /ext/contact_form/ 的公开联系表单，将留言保存到数据库，并在管理面板中提供收件箱。"
+  },
   "author": "Ravix",
   "api_version": 1,
   "ravix": ">=0.9,<2.0",
@@ -11,15 +33,55 @@
     "contact_form.view": "View and manage contact form messages"
   },
   "settings": [
-    {"key": "success_message", "label": "Message after sending", "type": "text", "default": "Your message was recorded. We will reply soon.", "max_len": 200},
-    {"key": "notify_email", "label": "Notification email (optional)", "type": "email", "default": "", "help": "If set, a notification email is sent for every new message."},
-    {"key": "max_per_hour", "label": "Maximum messages per hour per IP", "type": "int", "default": 5, "min": 1, "max": 100},
-    {"key": "intro", "label": "Text above the form", "type": "textarea", "default": "", "max_len": 500}
+    {
+      "key": "success_message",
+      "label": "Message after sending",
+      "type": "text",
+      "default": "Your message was recorded. We will reply soon.",
+      "max_len": 200
+    },
+    {
+      "key": "notify_email",
+      "label": "Notification email (optional)",
+      "type": "email",
+      "default": "",
+      "help": "If set, a notification email is sent for every new message."
+    },
+    {
+      "key": "max_per_hour",
+      "label": "Maximum messages per hour per IP",
+      "type": "int",
+      "default": 5,
+      "min": 1,
+      "max": 100
+    },
+    {
+      "key": "intro",
+      "label": "Text above the form",
+      "type": "textarea",
+      "default": "",
+      "max_len": 500
+    }
   ],
   "admin_pages": [
-    {"key": "inbox", "title": "Contact messages", "view": "views:inbox", "capability": "contact_form.view", "icon": "mail", "section": "content", "order": 70}
+    {
+      "key": "inbox",
+      "title": "Contact messages",
+      "view": "views:inbox",
+      "capability": "contact_form.view",
+      "icon": "mail",
+      "section": "content",
+      "order": 70
+    }
   ],
   "public_routes": [
-    {"path": "", "view": "views:form", "methods": ["GET", "POST"]}
+    {
+      "path": "",
+      "view": "views:form",
+      "methods": [
+        "GET",
+        "POST"
+      ]
+    }
   ]
 }
