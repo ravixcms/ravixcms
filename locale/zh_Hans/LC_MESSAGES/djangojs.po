@@ -1,0 +1,463 @@
+# Ravix translation catalog (zh_Hans).
+# This file is distributed under the same license as Ravix.
+msgid ""
+msgstr ""
+"Project-Id-Version: Ravix 0.9.0\n"
+"Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
+"POT-Creation-Date: 2026-10-23 17:16+0330\n"
+"PO-Revision-Date: 2026-10-23 00:00+0000\n"
+"Last-Translator: Ravix\n"
+"Language-Team: Ravix Translators\n"
+"Language: zh_Hans\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: static/builder/builder.js
+msgid "Section"
+msgstr "区块"
+
+#: static/builder/builder.js
+msgid "Row"
+msgstr "行"
+
+#: static/builder/builder.js
+msgid "Column"
+msgstr "列"
+
+#: static/builder/builder.js
+msgid "Heading"
+msgstr "标题"
+
+#: static/builder/builder.js
+msgid "Text"
+msgstr "文本"
+
+#: static/builder/builder.js
+msgid "Image"
+msgstr "图片"
+
+#: static/builder/builder.js
+msgid "Button"
+msgstr "按钮"
+
+#: static/builder/builder.js
+msgid "Unsaved changes…"
+msgstr "有未保存的更改…"
+
+#: static/builder/builder.js
+msgid "Invalid response from the server."
+msgstr "服务器响应无效。"
+
+#: static/builder/builder.js
+msgid "Could not connect to the server."
+msgstr "无法连接到服务器。"
+
+#: static/builder/builder.js
+msgid "Saving…"
+msgstr "正在保存…"
+
+#: static/builder/builder.js
+msgid "Saved at %(time)s"
+msgstr "已于 %(time)s 保存"
+
+#: static/builder/builder.js
+msgid "Edit conflict — reload the page"
+msgstr "编辑冲突 — 请重新加载页面"
+
+#: static/builder/builder.js
+msgid "Data error — not saved"
+msgstr "数据错误 — 未保存"
+
+#: static/builder/builder.js
+msgid "Not saved — we will try again"
+msgstr "未保存 — 将再次尝试"
+
+#: static/builder/builder.js
+msgid "You do not have access."
+msgstr "您没有访问权限。"
+
+#: static/builder/builder.js
+msgid "Error"
+msgstr "错误"
+
+#: static/builder/builder.js
+msgid "; "
+msgstr "；"
+
+#: static/builder/builder.js
+msgid "Drag to move"
+msgstr "拖动以移动"
+
+#: static/builder/builder.js
+msgid "Move %(type)s"
+msgstr "移动%(type)s"
+
+#: static/builder/builder.js
+msgid "Previous column"
+msgstr "上一列"
+
+#: static/builder/builder.js
+msgid "Up"
+msgstr "上移"
+
+#: static/builder/builder.js
+msgid "Next column"
+msgstr "下一列"
+
+#: static/builder/builder.js
+msgid "Down"
+msgstr "下移"
+
+#: static/builder/builder.js
+msgid "Duplicate"
+msgstr "复制"
+
+#: static/builder/builder.js
+msgid "Delete"
+msgstr "删除"
+
+#: static/builder/builder.js
+msgid "(empty heading)"
+msgstr "（空标题）"
+
+#: static/builder/builder.js
+msgid "(empty text)"
+msgstr "（空文本）"
+
+#: static/builder/builder.js
+msgid "Image not found"
+msgstr "未找到图片"
+
+#: static/builder/builder.js static/js/ravix.js
+msgid "Loading…"
+msgstr "加载中…"
+
+#: static/builder/builder.js
+msgid "No image selected — select this element and choose an image"
+msgstr "未选择图片 — 请选中此元素并选择一张图片"
+
+#: static/builder/builder.js
+msgid "(button)"
+msgstr "（按钮）"
+
+#: static/builder/builder.js
+msgid "Drag an element from the side panel and drop it here"
+msgstr "从侧边栏拖动一个元素并放到这里"
+
+#: static/builder/builder.js
+msgid "Drag a row from the side panel and drop it here"
+msgstr "从侧边栏拖动一行并放到这里"
+
+#: static/builder/builder.js
+msgid "The page is empty."
+msgstr "页面是空的。"
+
+#: static/builder/builder.js
+msgid "Drag a “Section” from the side panel and drop it here, or click it."
+msgstr "从侧边栏拖动一个“区块”并放到这里，或点击它。"
+
+#: static/builder/builder.js
+msgid "You have reached the limit for the number of %(what)s in this section."
+msgstr "您已达到此区块中%(what)s数量的上限。"
+
+#: static/builder/builder.js
+msgid "element"
+msgstr "元素"
+
+#: static/builder/builder.js
+msgid "The page has become too large."
+msgstr "页面已变得过大。"
+
+#: static/builder/builder.js
+msgid "First select a section."
+msgstr "请先选择一个区块。"
+
+#: static/builder/builder.js
+msgid "First select a column."
+msgstr "请先选择一列。"
+
+#: static/builder/builder.js
+msgid "First select a column (or an element inside a column)."
+msgstr "请先选择一列（或列中的一个元素）。"
+
+#: static/builder/builder.js
+msgid "You have reached the limit."
+msgstr "您已达到上限。"
+
+#: static/builder/builder.js
+msgid "To add a column use the row settings."
+msgstr "要添加列，请使用行设置。"
+
+#: static/builder/builder.js
+msgid "A row must have at least one column; delete the row itself."
+msgstr "一行至少要有一列；请删除该行本身。"
+
+#: static/builder/builder.js
+msgid "1-column row"
+msgstr "单列行"
+
+#: static/builder/builder.js
+msgid "%(n)s-column row"
+msgstr "%(n)s 列的行"
+
+#: static/builder/builder.js
+msgid "Default"
+msgstr "默认"
+
+#: static/builder/builder.js
+msgid "%(label)s (picker)"
+msgstr "%(label)s（选择器）"
+
+#: static/builder/builder.js
+msgid "The hex color is not valid (e.g. #1d4ed8)."
+msgstr "十六进制颜色无效（例如 #1d4ed8）。"
+
+#: static/builder/builder.js
+msgid "Change image"
+msgstr "更换图片"
+
+#: static/builder/builder.js
+msgid "Choose from library"
+msgstr "从媒体库选择"
+
+#: static/builder/builder.js
+msgid "Remove image"
+msgstr "移除图片"
+
+#: static/builder/builder.js
+msgid "/about/  or  https://…"
+msgstr "/about/  或  https://…"
+
+#: static/builder/builder.js
+msgid ""
+"The address is not allowed; use an internal path (/…), http(s), mailto or "
+"tel."
+msgstr "不允许使用该地址；请使用站内路径（/…）、http(s)、mailto 或 tel。"
+
+#: static/builder/builder.js
+msgid "Page settings"
+msgstr "页面设置"
+
+#: static/builder/builder.js
+msgid "To edit, click a section, row, column or element on the canvas."
+msgstr "要编辑，请点击画布上的区块、行、列或元素。"
+
+#: static/builder/builder.js
+msgid "General"
+msgstr "常规"
+
+#: static/builder/builder.js
+msgid "Selection path"
+msgstr "选择路径"
+
+#: static/builder/builder.js
+msgid "%(type)s settings"
+msgstr "%(type)s设置"
+
+#: static/builder/builder.js
+msgid "Content"
+msgstr "内容"
+
+#: static/builder/builder.js
+msgid "Layout and spacing"
+msgstr "布局和间距"
+
+#: static/builder/builder.js
+msgid "Appearance"
+msgstr "外观"
+
+#: static/builder/builder.js
+msgid "+ Add column"
+msgstr "+ 添加列"
+
+#: static/builder/builder.js
+msgid "At most %(n)s columns per row."
+msgstr "每行最多 %(n)s 列。"
+
+#: static/builder/builder.js
+msgid "Split columns equally"
+msgstr "平均分配列宽"
+
+#: static/builder/builder.js
+msgid "Total width of this row’s columns: %(total)s of 12"
+msgstr "此行各列的总宽度：%(total)s / 12"
+
+#: static/builder/builder.js
+msgid "No image found. First upload an image to the media library."
+msgstr "未找到图片。请先向媒体库上传图片。"
+
+#: static/builder/builder.js
+msgid "Saved."
+msgstr "已保存。"
+
+#: static/builder/builder.js
+msgid "Publish"
+msgstr "发布"
+
+#: static/builder/builder.js
+msgid "Submit for approval"
+msgstr "提交审核"
+
+#: static/builder/builder.js
+msgid "Publish this layout on the site"
+msgstr "在站点上发布此布局"
+
+#: static/builder/builder.js
+msgid "The layout is sent to an administrator for approval"
+msgstr "布局将发送给管理员批准"
+
+#: static/builder/builder.js
+msgid "Saving the draft must succeed first."
+msgstr "必须先成功保存草稿。"
+
+#: static/builder/builder.js
+msgid "Publish layout"
+msgstr "发布布局"
+
+#: static/builder/builder.js
+msgid ""
+"The current draft replaces the page content on the site. (The page’s own "
+"status — published or draft — is controlled in the “Pages” section.)"
+msgstr "当前草稿会替换站点上的页面内容。（页面本身的状态 — 已发布或草稿 — 在“页面”部分控制。）"
+
+#: static/builder/builder.js
+msgid "The layout was published."
+msgstr "布局已发布。"
+
+#: static/builder/builder.js
+msgid ""
+"It will be published on the site after an administrator approves it. Until "
+"then the current page is shown."
+msgstr "管理员批准后将在站点上发布。在此之前显示当前页面。"
+
+#: static/builder/builder.js
+msgid "Submitted for approval."
+msgstr "已提交批准。"
+
+#: static/builder/builder.js
+msgid "The version was saved."
+msgstr "版本已保存。"
+
+#: static/builder/builder.js
+msgid "Unpublish the layout? The page goes back to its previous text content."
+msgstr "取消发布布局？页面将回到之前的文字内容。"
+
+#: static/builder/builder.js
+msgid "The layout was unpublished."
+msgstr "布局已取消发布。"
+
+#: static/builder/builder.js
+msgid "No version has been saved yet."
+msgstr "尚未保存任何版本。"
+
+#: static/builder/builder.js
+msgid "Published"
+msgstr "已发布"
+
+#: static/builder/builder.js
+msgid "Automatic"
+msgstr "自动"
+
+#: static/builder/builder.js
+msgid "Version %(n)s"
+msgstr "版本 %(n)s"
+
+#: static/builder/builder.js
+msgid " (reviewer: %(note)s)"
+msgstr "（审核人：%(note)s）"
+
+#: static/builder/builder.js
+msgid "Preview"
+msgstr "预览"
+
+#: static/builder/builder.js
+msgid "Restore"
+msgstr "还原"
+
+#: static/builder/builder.js
+msgid ""
+"Replace the current draft with version %(n)s? An automatic version of the "
+"current state will be saved."
+msgstr "用版本 %(n)s 替换当前草稿？当前状态的自动版本将被保存。"
+
+#: static/builder/builder.js
+msgid "Version %(n)s was restored to the draft."
+msgstr "版本 %(n)s 已还原到草稿。"
+
+#: static/builder/builder.js
+msgid "Approve and publish"
+msgstr "批准并发布"
+
+#: static/builder/builder.js
+msgid "Approved and published."
+msgstr "已批准并发布。"
+
+#: static/builder/builder.js
+msgid "Reject"
+msgstr "拒绝"
+
+#: static/builder/builder.js
+msgid "Reason for rejection (optional):"
+msgstr "拒绝原因（可选）："
+
+#: static/builder/builder.js
+msgid "The version was rejected."
+msgstr "该版本已被拒绝。"
+
+#: static/builder/builder.js
+msgid "Loading failed"
+msgstr "加载失败"
+
+#: static/builder/builder.js
+msgid "Ready"
+msgstr "就绪"
+
+#: static/js/ravix.js
+msgid "Hide password"
+msgstr "隐藏密码"
+
+#: static/js/ravix.js
+msgid "Show password"
+msgstr "显示密码"
+
+#: static/js/ravix.js
+msgid "The file is larger than the allowed limit."
+msgstr "文件大于允许的限制。"
+
+#: static/js/ravix.js
+msgid "bold text"
+msgstr "粗体文本"
+
+#: static/js/ravix.js
+msgid "italic text"
+msgstr "斜体文本"
+
+#: static/js/ravix.js
+msgid "code"
+msgstr "代码"
+
+#: static/js/ravix.js
+msgid "link text"
+msgstr "链接文本"
+
+#: static/js/ravix.js
+msgid "image description"
+msgstr "图片描述"
+
+#: static/js/ravix.js
+msgid "Nothing to preview."
+msgstr "没有可预览的内容。"
+
+#: static/js/ravix.js
+msgid "Preview is not available."
+msgstr "无法预览。"
+
+#: static/js/ravix.js
+msgid "%(n)s of %(max)s characters"
+msgstr "%(n)s / %(max)s 个字符"
+
+#: static/js/ravix.js
+msgid "Copied ✓"
+msgstr "已复制 ✓"
