@@ -113,7 +113,7 @@ jobs:
             echo "## image داکر"
             echo "\`ghcr.io/${GITHUB_REPOSITORY,,}:${{ needs.preflight.outputs.version }}\` — digest: \`${{ needs.docker.outputs.digest }}\`"
           } > notes.md
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v3
         with:
           files: |
             dist/*.zip
