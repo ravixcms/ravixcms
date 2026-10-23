@@ -47,7 +47,7 @@ class UnreachableServerTests(TestCase):
 
     def test_public_site_never_touches_network(self):
         with mock.patch("urllib.request.OpenerDirector.open", side_effect=AssertionError("network used")) as m:
-            for url in ("/", "/blog/", "/healthz", "/nothing/"):
+            for url in ("/fa/", "/fa/blog/", "/healthz", "/fa/nothing/"):
                 self.assertIn(Client().get(url).status_code, (200, 404))
         m.assert_not_called()
 

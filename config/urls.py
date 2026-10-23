@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.conf.urls.i18n import i18n_patterns
 from django.urls import include, path
 from django.views.i18n import JavaScriptCatalog
 
@@ -35,13 +36,20 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+# Language-neutral root files (sitemap index, robots.txt) — never prefixed.
+urlpatterns += [path("", include("apps.public.root_urls"))]
+
 # فروشگاه (اختیاری): فقط وقتی ماژول نصب است. مسیرهای عمومی (/shop/...) باید پیش از سایت عمومی باشند.
 if settings.SHOP_ENABLED:
-    urlpatterns += [path("panel/", include("apps.shop.panel_urls")), path("", include("apps.shop.urls"))]
+    urlpatterns += [path("panel/", include("apps.shop.panel_urls"))]
 
 # سایت عمومی باید آخرین مورد باشد: مسیر «صفحه ثابت» (/<slug>/) هر آدرس تک‌بخشی را می‌پذیرد
 # و فقط به‌خاطر ترتیب، مسیرهای پنل و سیستم را نمی‌پوشاند (نامک‌های رزروشده هم در فرم صفحات رد می‌شوند).
-urlpatterns += [path("", include("apps.public.urls"))]
+# The public site (and the shop) live under a language prefix: /fa/blog/, /en/blog/, /de/blog/ …
+# Old unprefixed URLs are redirected by SiteRegionalMiddleware (apps/core/middleware.py).
+_public = [path("", include("apps.shop.urls"))] if settings.SHOP_ENABLED else []
+_public.append(path("", include("apps.public.urls")))
+urlpatterns += i18n_patterns(*_public, prefix_default_language=True)
 
 handler400 = "apps.core.views.bad_request"
 handler403 = "apps.core.views.permission_denied"

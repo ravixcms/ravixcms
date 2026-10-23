@@ -184,7 +184,7 @@ class SuccessTests(UploadCase):
     def test_installed_theme_serves_through_public_pipeline_after_activation(self):
         upload(self.client, build_zip())
         services.activate(mock.Mock(user=self.sa, META={}), "my-theme")
-        resp = Client().get("/")
+        resp = Client().get("/fa/")
         self.assertEqual(resp.status_code, 200)
 
     def test_two_themes_can_be_installed_one_after_the_other(self):
@@ -738,7 +738,7 @@ class PanelTests(UploadCase):
         self.assertEqual(ThemeConfig.load().active_theme, "my-theme")
         for name in ("themes:customize", "themes:layout", "themes:menus", "themes:home", "themes:list"):
             self.assertEqual(self.client.get(reverse(name)).status_code, 200, name)
-        self.assertEqual(Client().get("/").status_code, 200)
+        self.assertEqual(Client().get("/fa/").status_code, 200)
         self.client.post(reverse("themes:deactivate", args=["my-theme"]))
         self.assertEqual(ThemeConfig.load().active_theme, "default")
 
@@ -754,7 +754,7 @@ class PanelTests(UploadCase):
             themes = registry.get_themes(refresh=True)
             self.assertTrue(all(themes[s].valid for s in ("default", "older", "newer")))
             self.client.post(reverse("themes:activate", args=["older"]))
-            self.assertEqual(Client().get("/").status_code, 200)
+            self.assertEqual(Client().get("/fa/").status_code, 200)
             self.assertTrue(inspect_theme_dir(DEFAULT_SRC).valid)
 
     def test_registry_revision_stamp_refreshes_other_workers(self):

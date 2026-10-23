@@ -4,6 +4,7 @@ TIME_ZONE در settings ثابت است؛ منطقهٔ انتخابی مدیر �
 (ذخیرهٔ تاریخ‌ها همچنان UTC است). ردیف SiteSettings یک‌بار در هر درخواست خوانده و روی ``request.site_settings`` نگه داشته می‌شود؛
 context processor همان را به قالب‌ها می‌دهد، پس برای صفحه‌های HTML کوئری اضافه‌ای نیست و بدون کش (بدون خطر مقدار کهنه) است.
 """
+import re
 from zoneinfo import ZoneInfo, available_timezones
 
 from django.conf import settings
@@ -71,19 +72,55 @@ def normalize_language(code) -> str:
     return code if code in dict(language_choices()) else ""
 
 
+_PREFIX_RE = re.compile(r"^([A-Za-z]{2,3}(?:-[A-Za-z0-9]+)*)(?=/|$)")
+
+
+def split_language_prefix(path: str):
+    """``/de/blog/`` → ("de", "/blog/"); a path without a supported language prefix → ("", path). Works on a path_info
+    (no script prefix)."""
+    m = _PREFIX_RE.match(path.lstrip("/")) if path.startswith("/") else None
+    if m:
+        code = normalize_language(m.group(1))
+        if code:
+            return code, "/" + path.lstrip("/")[m.end():].lstrip("/") if path.lstrip("/")[m.end():] else "/"
+    return "", path
+
+
+def swap_language_prefix(path: str, code: str):
+    """Rewrite a *full* URL path (script prefix included, as produced by ``reverse``) to language ``code``.
+    Returns None when the path carries no language prefix (i.e. is not a localized public URL)."""
+    from django.urls import get_script_prefix
+
+    script = get_script_prefix()
+    if not path.startswith(script):
+        return None
+    current, rest = split_language_prefix("/" + path[len(script):])
+    if not current:
+        return None
+    return f"{script}{code}{rest}"
+
+
 def resolve_language(request, site) -> str:
-    """Language for this request: the visitor's cookie, then the signed-in user's profile, then the site default
-    (SiteSettings.language), then settings.LANGUAGE_CODE. (A public URL prefix, when present, wins over all of these.)"""
+    """Language for this request: a public URL prefix (``/de/...``) wins; otherwise the visitor's cookie, then the
+    signed-in user's profile, then the site default (SiteSettings.language), then settings.LANGUAGE_CODE."""
+    from_path = split_language_prefix(request.path_info)[0]
+    if from_path:
+        return from_path
+    return resolve_preferred_language(request, site)[0]
+
+
+def resolve_preferred_language(request, site):
+    """(language, source) ignoring the URL; source is "cookie", "profile" or "default"."""
     chosen = normalize_language(request.COOKIES.get(settings.LANGUAGE_COOKIE_NAME))
     if chosen:
-        return chosen
+        return chosen, "cookie"
     if request.COOKIES.get(settings.SESSION_COOKIE_NAME):  # only consult the user (a session lookup) when there is a session
         user = getattr(request, "user", None)
         if user is not None and getattr(user, "is_authenticated", False):
             chosen = normalize_language(getattr(user, "language", ""))
             if chosen:
-                return chosen
-    return regional_for(site)[0]
+                return chosen, "profile"
+    return regional_for(site)[0], "default"
 
 
 def set_language_cookie(response, code: str) -> None:

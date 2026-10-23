@@ -30,7 +30,7 @@ class ShopTestCase(TestCase):
         self.product = Product.objects.create(site=self.site, name="کتاب آزمایشی", slug="book", price=150000, stock=5, description="توضیح")
 
     def add_to_cart(self, client, product=None, qty=1):
-        return client.post("/shop/cart/add/", {"product": (product or self.product).pk, "qty": qty})
+        return client.post("/fa/shop/cart/add/", {"product": (product or self.product).pk, "qty": qty})
 
     def checkout_data(self, **over):
         d = {"customer_name": "علی رضایی", "phone": "09123456789", "email": "a@b.com", "address": "تهران، خیابان آزادی، پلاک ۱", "note": ""}
@@ -40,7 +40,7 @@ class ShopTestCase(TestCase):
     def place_order(self, client=None, product=None, qty=1):
         c = client or Client()
         self.add_to_cart(c, product, qty)
-        r = c.post("/shop/checkout/", self.checkout_data())
+        r = c.post("/fa/shop/checkout/", self.checkout_data())
         return c, r
 
     def pay(self, client, response, action="pay"):

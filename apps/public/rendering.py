@@ -23,7 +23,7 @@ from apps.themes.constants import DEFAULT_THEME, FONT_SIZES, FONTS
 from apps.themes.models import ThemeConfig
 
 from apps.core.minimalhtml import unavailable_page
-from .builders import category_url, page_url
+from .builders import category_url, localize_internal_url, page_url
 from .dto import Link
 from .feeds import feed_links
 
@@ -104,8 +104,8 @@ def _build_site(request, doc: dict) -> dict:
 
 
 def _is_active(url: str, path: str) -> bool:
-    if url == "/":
-        return path == "/"
+    if url == reverse("public:home") or url == "/":
+        return path == url
     return path == url or path.startswith(url.rstrip("/") + "/")
 
 
@@ -131,7 +131,7 @@ def _build_menus(doc: dict, path: str) -> dict:
                 target = cats.get(e["target"])
                 url = category_url(target) if target else ""
             else:
-                url = e["url"]
+                url = localize_internal_url(e["url"])
             if not url:
                 continue  # هدف حذف یا منتشرنشده؛ آیتم نمایش داده نمی‌شود (پیکربندی دست‌نخورده می‌ماند)
             internal = url.startswith("/")
@@ -158,7 +158,7 @@ def base_context(request, resolved: Resolved, *, embedded: bool = False, edit_ur
     doc = resolved.doc
     site = _build_site(request, doc)
     header, footer = doc["header"], doc["footer"]
-    cta = Link(label=header["cta_label"], url=header["cta_url"]) if header["cta_url"] else None
+    cta = Link(label=header["cta_label"], url=localize_internal_url(header["cta_url"])) if header["cta_url"] else None
     return {
         "site": site,
         "theme": {"slug": resolved.theme.slug, "name": resolved.theme.display_name, "version": resolved.theme.version},

@@ -81,7 +81,7 @@ class ExamplePayPluginTests(PluginTestCase):
         return order
 
     def start(self, order):
-        return services.start_payment(order, RequestFactory().get("/"))
+        return services.start_payment(order, RequestFactory().get("/fa/"))
 
     def test_gateway_available_only_while_plugin_active(self):
         self.assertNotIn("example_pay", gateways.available_gateways())
@@ -110,11 +110,11 @@ class ExamplePayPluginTests(PluginTestCase):
         self.assertTrue(create[3]["callback_url"].endswith(f"/shop/pay/callback/{Payment.objects.get().reference}/"))
         # مشتری بازمی‌گردد ولی بانک هنوز پرداختی ثبت نکرده → پرداخت نمی‌شود، حتی با پارامتر ساختگی
         ref = Payment.objects.get().reference
-        Client().get(f"/shop/pay/callback/{ref}/?status=paid&id=P999")
+        Client().get(f"/fa/shop/pay/callback/{ref}/?status=paid&id=P999")
         self.assertEqual(Order.objects.get().status, "pending_payment")
         self.assertFalse(any("P999" in r[1] for r in self.provider.requests))  # id مرورگر استفاده نشد
         self.provider.payments["P1"]["status"] = "paid"
-        Client().get(f"/shop/pay/callback/{ref}/")
+        Client().get(f"/fa/shop/pay/callback/{ref}/")
         self.assertEqual((Order.objects.get().status, Payment.objects.get().status), ("paid", "succeeded"))
 
     def test_amount_or_currency_tampering_goes_to_review(self):

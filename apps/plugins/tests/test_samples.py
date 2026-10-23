@@ -133,7 +133,7 @@ class SeoToolkitPluginTests(PluginTestCase):
         self.edit = reverse("plugins:page", args=["seo_toolkit", "edit"])
         self.meta = {"kind": "page", "id": self.page.pk}
 
-    def head(self, path="/about/"):
+    def head(self, path="/fa/about/"):
         return Client().get(path).content.decode()
 
     def test_per_page_settings_applied_to_public_head(self):
@@ -152,7 +152,7 @@ class SeoToolkitPluginTests(PluginTestCase):
     def test_post_supported(self):
         self.login(self.admin)
         self.client.post(self.edit, {"kind": "post", "id": self.post.pk, "title": "سئو پست", "description": ""})
-        self.assertIn("سئو پست", self.head("/blog/p1/"))
+        self.assertIn("سئو پست", self.head("/fa/blog/p1/"))
 
     def test_invalid_urls_rejected(self):
         self.login(self.admin)
@@ -224,7 +224,7 @@ def crash(seo, api, **ctx):
 
     def test_core_sanitizes_plugin_seo_output(self):
         self.make("evilseo", "views:evil")
-        html = Client().get("/about/").content.decode()
+        html = Client().get("/fa/about/").content.decode()
         self.assertNotIn("Evil", html)  # jsonld توسط افزونه قابل‌تزریق نیست
         self.assertNotIn("javascript:", html)
         self.assertNotIn("data:text/html", html)
@@ -244,6 +244,6 @@ def crash(seo, api, **ctx):
 
     def test_hook_crash_does_not_break_public_page(self):
         self.make("crashy", "views:crash")
-        r = Client().get("/about/")
+        r = Client().get("/fa/about/")
         self.assertEqual(r.status_code, 200)
         self.assertTrue(PluginEvent.objects.filter(slug="crashy", kind="error").exists())

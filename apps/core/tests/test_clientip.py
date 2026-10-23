@@ -11,7 +11,7 @@ RF = RequestFactory()
 
 def req(**meta):
     meta.setdefault("REMOTE_ADDR", "")
-    return RF.get("/", **meta)
+    return RF.get("/fa/", **meta)
 
 
 class ResolveTests(SimpleTestCase):

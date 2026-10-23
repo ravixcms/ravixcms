@@ -134,7 +134,7 @@ class ErrorPagesDoNotLeak(TestCase):
                 self.assertNotIn("password", r.content.decode().lower().replace("type=\"password\"", ""))
 
     def test_xss_payload_is_escaped_in_search_echo(self):
-        r = Client().get("/search/", {"q": "<script>alert(1)</script>"})
+        r = Client().get("/fa/search/", {"q": "<script>alert(1)</script>"})
         self.assertNotIn("<script>alert(1)</script>", r.content.decode())
 
 

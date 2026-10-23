@@ -1,4 +1,5 @@
 """تست‌های ماژول فروشگاه: محصول فیزیکی/دیجیتال، قیمت و تخفیف، موجودی، سفارش، تاریخچه، دسترسی، مهمان/کاربر، درگاه و API."""
+import re
 import io
 import threading
 from datetime import timedelta
@@ -37,16 +38,16 @@ class PriceAndDiscountTests(ShopTestCase):
         self.product.discount_percent = 10
         self.product.save()
         c = Client()
-        c.post("/shop/cart/add/", {"product": self.product.pk, "qty": 2, "price": 1, "total": 1, "unit_price": 1})
+        c.post("/fa/shop/cart/add/", {"product": self.product.pk, "qty": 2, "price": 1, "total": 1, "unit_price": 1})
         lines, total = services.cart_lines(self._req(c), self.site)
         self.assertEqual(total, 135000 * 2)
-        resp = c.get("/shop/cart/")
+        resp = c.get("/fa/shop/cart/")
         self.assertContains(resp, "۲۷۰")
 
     def _req(self, client):
         from django.test import RequestFactory
 
-        req = RequestFactory().get("/")
+        req = RequestFactory().get("/fa/")
         req.session = client.session
         return req
 
@@ -68,7 +69,7 @@ class PriceAndDiscountTests(ShopTestCase):
         self.add_to_cart(c)
         self.product.price = 200000
         self.product.save()
-        c.post("/shop/checkout/", self.checkout_data())
+        c.post("/fa/shop/checkout/", self.checkout_data())
         self.assertEqual(Order.objects.get().total, 200000)
 
     def test_invalid_discount_rejected_in_panel(self):
@@ -82,7 +83,7 @@ class StockTests(ShopTestCase):
     def test_cannot_order_more_than_stock(self):
         c = Client()
         self.add_to_cart(c, qty=9)
-        r = c.post("/shop/checkout/", self.checkout_data())
+        r = c.post("/fa/shop/checkout/", self.checkout_data())
         self.assertEqual(r.status_code, 400)
         self.assertFalse(Order.objects.exists())
         self.product.refresh_from_db()
@@ -118,7 +119,7 @@ class StockTests(ShopTestCase):
         self.add_to_cart(c)
         self.product.is_active = False
         self.product.save()
-        self.assertEqual(c.post("/shop/checkout/", self.checkout_data()).status_code, 302)  # سبد خالی ← بازگشت به سبد
+        self.assertEqual(c.post("/fa/shop/checkout/", self.checkout_data()).status_code, 302)  # سبد خالی ← بازگشت به سبد
         self.assertFalse(Order.objects.exists())
 
     def test_untracked_stock_is_unlimited(self):
@@ -126,7 +127,7 @@ class StockTests(ShopTestCase):
         self.assertTrue(p.in_stock)
         c = Client()
         self.add_to_cart(c, p, qty=7)
-        self.assertEqual(c.post("/shop/checkout/", self.checkout_data()).status_code, 302)
+        self.assertEqual(c.post("/fa/shop/checkout/", self.checkout_data()).status_code, 302)
         self.assertEqual(Order.objects.get().items.get().quantity, 7)
         self.assertEqual(Product.objects.get(pk=p.pk).stock, 0)
 
@@ -171,8 +172,8 @@ class SequentialOversellTests(ShopTestCase):
         a, b = Client(), Client()
         self.add_to_cart(a, p)
         self.add_to_cart(b, p)
-        self.assertEqual(a.post("/shop/checkout/", self.checkout_data()).status_code, 302)
-        self.assertEqual(b.post("/shop/checkout/", self.checkout_data()).status_code, 400)
+        self.assertEqual(a.post("/fa/shop/checkout/", self.checkout_data()).status_code, 302)
+        self.assertEqual(b.post("/fa/shop/checkout/", self.checkout_data()).status_code, 400)
         self.assertEqual(Order.objects.count(), 1)
         self.assertEqual(Product.objects.get(pk=p.pk).stock, 0)
 
@@ -257,7 +258,7 @@ class DigitalProductTests(ShopTestCase):
     def _buy(self):
         c = Client()
         self.add_to_cart(c, self.dp, qty=5)
-        r = c.post("/shop/checkout/", self.checkout_data(address=""))
+        r = c.post("/fa/shop/checkout/", self.checkout_data(address=""))
         return c, r
 
     def test_digital_only_needs_no_address_and_qty_forced_to_one(self):
@@ -271,8 +272,8 @@ class DigitalProductTests(ShopTestCase):
         c = Client()
         self.add_to_cart(c, self.dp)
         self.add_to_cart(c)
-        self.assertEqual(c.post("/shop/checkout/", self.checkout_data(address="")).status_code, 400)
-        self.assertEqual(c.post("/shop/checkout/", self.checkout_data()).status_code, 302)
+        self.assertEqual(c.post("/fa/shop/checkout/", self.checkout_data(address="")).status_code, 400)
+        self.assertEqual(c.post("/fa/shop/checkout/", self.checkout_data()).status_code, 302)
         self.assertTrue(Order.objects.get().needs_shipping)
 
     def test_download_only_after_payment(self):
@@ -309,9 +310,9 @@ class DigitalProductTests(ShopTestCase):
         self.assertEqual(Client().get(reverse("shop:download", args=[o.number, o.token, o.items.get().pk])).status_code, 404)
 
     def test_file_never_exposed_via_public_url_or_api(self):
-        self.assertEqual(Client().get("/shop/p/guide/").status_code, 200)
-        body = Client().get("/shop/p/guide/").content.decode()
-        self.assertNotIn("guide", body.replace("/shop/p/guide/", "").replace("راهنمای", ""))
+        self.assertEqual(Client().get("/fa/shop/p/guide/").status_code, 200)
+        body = Client().get("/fa/shop/p/guide/").content.decode()
+        self.assertNotIn("guide", re.sub(r"/[a-z-]+/shop/p/guide/", "", body).replace("راهنمای", ""))  # the URL itself (and its hreflang copies) is fine
         self.assertNotIn("secret", body)
         api = Client().get("/api/v1/shop/products/guide/").content.decode()
         self.assertNotIn("digital_file", api)
@@ -342,13 +343,13 @@ class GuestAndUserTests(ShopTestCase):
         self.place_order(client=c)
         o = Order.objects.get()
         self.assertEqual(o.user, u)
-        self.assertContains(c.get("/shop/my-orders/"), o.number)
+        self.assertContains(c.get("/fa/shop/my-orders/"), o.number)
         other = Client()
         other.force_login(make_user("other", Role.USER))
-        self.assertNotContains(other.get("/shop/my-orders/"), o.number)
+        self.assertNotContains(other.get("/fa/shop/my-orders/"), o.number)
 
     def test_my_orders_requires_login(self):
-        r = Client().get("/shop/my-orders/")
+        r = Client().get("/fa/shop/my-orders/")
         self.assertEqual(r.status_code, 302)
         self.assertIn("login", r["Location"])
 
@@ -356,13 +357,13 @@ class GuestAndUserTests(ShopTestCase):
     def test_guest_checkout_can_be_disabled(self):
         c = Client()
         self.add_to_cart(c)
-        self.assertEqual(c.post("/shop/checkout/", self.checkout_data()).status_code, 400)
+        self.assertEqual(c.post("/fa/shop/checkout/", self.checkout_data()).status_code, 400)
         self.assertFalse(Order.objects.exists())
         with self.assertRaises(services.ShopError):
             services.create_order(self.site, [{"product": self.product, "qty": 1}], self.checkout_data(), None)
         u = make_user("m", Role.USER)
         c.force_login(u)
-        self.assertEqual(c.post("/shop/checkout/", self.checkout_data()).status_code, 302)
+        self.assertEqual(c.post("/fa/shop/checkout/", self.checkout_data()).status_code, 302)
 
 
 class SearchAndCategoryTests(ShopTestCase):
@@ -388,16 +389,16 @@ class SearchAndCategoryTests(ShopTestCase):
         self.assertEqual(len(services.search_products(base, sort="'; drop table", kind="evil")), 3)
 
     def test_public_search_page_and_noindex(self):
-        r = Client().get("/shop/?q=مداد")
+        r = Client().get("/fa/shop/?q=مداد")
         self.assertContains(r, "مداد")
         self.assertNotContains(r, "کتاب آزمایشی")
         self.assertIn("noindex", r.content.decode())
-        self.assertNotIn("noindex", Client().get("/shop/").content.decode().split("<title>")[0] + "")
+        self.assertNotIn("noindex", Client().get("/fa/shop/").content.decode().split("<title>")[0] + "")
 
     def test_search_query_is_safe(self):
         for q in ("%", "_", "<script>", "a" * 500, "' OR 1=1 --"):
-            self.assertEqual(Client().get("/shop/", {"q": q}).status_code, 200)
-        self.assertNotContains(Client().get("/shop/", {"q": "<script>alert(1)</script>"}), "<script>alert(1)</script>")
+            self.assertEqual(Client().get("/fa/shop/", {"q": q}).status_code, 200)
+        self.assertNotContains(Client().get("/fa/shop/", {"q": "<script>alert(1)</script>"}), "<script>alert(1)</script>")
 
     def test_category_isolated_per_site_in_panel_form(self):
         other = Site.objects.create(name="B", slug="b")
@@ -504,7 +505,7 @@ class PermissionTests(ShopTestCase):
         page = Client().get(o.get_public_url())
         self.assertEqual(page.status_code, 200)
         self.assertNotContains(page, "یادداشت محرمانه")
-        self.assertEqual(Client().get(f"/shop/order/{o.number}/{'0' * 40}/").status_code, 404)
+        self.assertEqual(Client().get(f"/fa/shop/order/{o.number}/{'0' * 40}/").status_code, 404)
 
 
 class ApiTests(ShopTestCase):
@@ -539,7 +540,7 @@ class GatewayExtensibilityTests(ShopTestCase):
     def test_register_custom_gateway_full_flow(self):
         class FakePay(gateways.PaymentGateway):
             def create_transaction(self, ctx):
-                return gateways.CreateResult(redirect=gateways.Redirect(url=f"/shop/pay/callback/{ctx.reference}/"), gateway_ref="FP1")
+                return gateways.CreateResult(redirect=gateways.Redirect(url=f"/fa/shop/pay/callback/{ctx.reference}/"), gateway_ref="FP1")
 
             def verify_transaction(self, ctx, params):
                 return gateways.VerifyResult.paid(ctx.amount, gateway_ref="FP1")
@@ -551,7 +552,7 @@ class GatewayExtensibilityTests(ShopTestCase):
         with override_settings(SHOP_PAYMENT_GATEWAY="fakepay"):
             c = Client()
             self.add_to_cart(c)
-            r = c.post("/shop/checkout/", self.checkout_data())
+            r = c.post("/fa/shop/checkout/", self.checkout_data())
             self.assertEqual(r.status_code, 302)
             c.get(r["Location"])
         o = Order.objects.get()
@@ -587,7 +588,7 @@ class GatewayExtensibilityTests(ShopTestCase):
         with override_settings(SHOP_PAYMENT_GATEWAY="nonexistent"):
             c = Client()
             self.add_to_cart(c)
-            self.assertEqual(c.post("/shop/checkout/", self.checkout_data()).status_code, 400)
+            self.assertEqual(c.post("/fa/shop/checkout/", self.checkout_data()).status_code, 400)
         self.assertFalse(Order.objects.exists())
 
     def test_hook_registered(self):
@@ -602,13 +603,13 @@ class ListQueryTests(ShopTestCase):
         for i in range(10):
             Product.objects.create(site=self.site, name=f"م{i}", slug=f"m{i}", price=10, stock=1, category=cat, discount_percent=10)
         c = Client()
-        c.get("/shop/")
+        c.get("/fa/shop/")
         from django.test.utils import CaptureQueriesContext
 
         with CaptureQueriesContext(connection) as a:
-            c.get("/shop/")
+            c.get("/fa/shop/")
         for i in range(10, 20):
             Product.objects.create(site=self.site, name=f"م{i}", slug=f"m{i}", price=10, stock=1, category=cat, discount_percent=10)
         with CaptureQueriesContext(connection) as b:
-            c.get("/shop/")
+            c.get("/fa/shop/")
         self.assertEqual(len(a), len(b))

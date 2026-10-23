@@ -81,14 +81,14 @@ class SiteSettingsViewTests(TestCase):
 class ErrorPageTests(TestCase):
     def test_404_is_persian(self):
         with self.settings(DEBUG=False):
-            response = self.client.get("/no-such-page/")
+            response = self.client.get("/fa/no-such-page/")
         self.assertContains(response, "صفحه پیدا نشد", status_code=404)
 
     def test_root_is_public_site(self):
         # از مرحله ۳، آدرس «/» صفحه اصلی سایت عمومی است (نه تغییر مسیر به ورود/داشبورد)
-        self.assertEqual(self.client.get("/").status_code, 200)
+        self.assertEqual(self.client.get("/fa/").status_code, 200)
         self.client.force_login(make_user("u"))
-        self.assertEqual(self.client.get("/").status_code, 200)
+        self.assertEqual(self.client.get("/fa/").status_code, 200)
 
 
 class TemplateTagTests(TestCase):

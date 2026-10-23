@@ -139,7 +139,15 @@ def set_language(request):
         if not url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
             next_url = "/"
     if code:
-        next_url = translate_url(next_url, code)
+        from django.utils import translation
+        from urllib.parse import urlsplit
+
+        from .regional import split_language_prefix
+
+        # The prefix in ``next`` decides how it resolves, whatever language this request itself runs in.
+        source = split_language_prefix(urlsplit(next_url).path)[0] or code
+        with translation.override(source):
+            next_url = translate_url(next_url, code)
     response = HttpResponseRedirect(next_url)
     if code:
         set_language_cookie(response, code)

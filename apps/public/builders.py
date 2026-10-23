@@ -44,6 +44,21 @@ def page_url(page) -> str:
     return reverse("public:page_detail", args=[page.slug])
 
 
+def localize_internal_url(url: str) -> str:
+    """A site-relative URL typed by the admin (``/about/``) gets the current language prefix when the prefixed form is a
+    real public route, so visitors stay in their language; anything else (panel, files, external) is returned unchanged."""
+    from django.urls import is_valid_path
+    from django.utils import translation
+
+    from apps.core.regional import split_language_prefix
+
+    if not url.startswith("/") or url.startswith("//") or split_language_prefix(url)[0]:
+        return url
+    path, sep, rest = url.partition("?")
+    prefixed = f"/{translation.get_language()}{path}"
+    return f"{prefixed}{sep}{rest}" if is_valid_path(prefixed) else url
+
+
 # ------------------------------------------------------------------ کوئری‌های پایه (فقط منتشرشده)
 def live_posts():
     """نوشته‌های منتشرشده (شامل زمان‌بندی‌شده‌های رسیده)، جدیدترین اول. بدنه کامل بارگذاری نمی‌شود."""
@@ -210,7 +225,7 @@ def build_sections(doc: dict, allowed: tuple, site: dict) -> list[Section]:
             subtitle=raw["subtitle"],
             body_html=_plain_html(raw["body"]),
             button_label=raw["button_label"] if raw["button_url"] else "",
-            button_url=raw["button_url"],
+            button_url=localize_internal_url(raw["button_url"]),
         )
         if kind == "hero":
             base["title"] = raw["title"] or site["name"]

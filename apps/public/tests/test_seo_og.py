@@ -26,7 +26,7 @@ class PostSeoTests(MediaTestCase):
         self.post = Post.objects.create(title="عنوان اصلی", slug="p1", body=BODY, excerpt="خلاصهٔ نوشته", status=PublishStatus.PUBLISHED,
                                         publish_at="2020-01-01T00:00:00Z")
 
-    def head(self, path="/blog/p1/"):
+    def head(self, path="/fa/blog/p1/"):
         return self.client.get(path).content.decode()
 
     def test_defaults_without_seo_fields(self):
@@ -44,18 +44,18 @@ class PostSeoTests(MediaTestCase):
         self.assertEqual(meta(html, "name", "twitter:description"), "توضیح سئوی اختصاصی")
 
     def test_noindex_meta_and_sitemap(self):
-        self.assertIn("/blog/p1/", self.client.get("/sitemap.xml").content.decode().replace("%", "%"))
+        self.assertIn("/fa/blog/p1/", self.client.get("/fa/sitemap.xml").content.decode().replace("%", "%"))
         Post.objects.filter(pk=self.post.pk).update(noindex=True)
         self.assertEqual(meta(self.head(), "name", "robots"), "noindex,follow")
-        self.assertNotIn("p1", self.client.get("/sitemap.xml").content.decode())
+        self.assertNotIn("p1", self.client.get("/fa/sitemap.xml").content.decode())
         # خود نوشته همچنان در دسترس است (noindex ≠ پنهان)
-        self.assertEqual(self.client.get("/blog/p1/").status_code, 200)
+        self.assertEqual(self.client.get("/fa/blog/p1/").status_code, 200)
 
     def test_open_graph_article_and_twitter_tags(self):
         html = self.head()
         self.assertEqual(meta(html, "property", "og:type"), "article")
         self.assertEqual(meta(html, "property", "og:site_name"), "راویکس")
-        self.assertEqual(meta(html, "property", "og:url"), "http://testserver/blog/p1/")
+        self.assertEqual(meta(html, "property", "og:url"), "http://testserver/fa/blog/p1/")
         self.assertRegex(meta(html, "property", "article:published_time"), r"^2020-01-01T")
         self.assertTrue(meta(html, "property", "article:modified_time"))
         self.assertEqual(meta(html, "name", "twitter:title"), "عنوان اصلی | راویکس")
@@ -76,7 +76,7 @@ class PostSeoTests(MediaTestCase):
         s.default_share_image.save("share.png", SimpleUploadedFile("share.png", png_bytes(), "image/png"))
         default = SiteSettings.load().default_share_image.url
         # نوشته بدون تصویر شاخص، صفحه، فهرست و صفحهٔ اصلی همه تصویر پیش‌فرض را می‌گیرند
-        for path in ("/blog/p1/", "/blog/", "/"):
+        for path in ("/fa/blog/p1/", "/fa/blog/", "/fa/"):
             self.assertEqual(meta(self.head(path), "property", "og:image"), "http://testserver" + default, path)
         # تصویر شاخص بر پیش‌فرض اولویت دارد
         self.post.featured_image.save("b.png", SimpleUploadedFile("b.png", png_bytes(), "image/png"))

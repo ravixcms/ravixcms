@@ -37,7 +37,7 @@ class SeoToolkitWithCoreSeoTests(PluginTestCase):
         self.edit = reverse("plugins:page", args=["seo_toolkit", "edit"])
 
     def head(self):
-        return Client().get("/blog/p1/").content.decode()
+        return Client().get("/fa/blog/p1/").content.decode()
 
     def plugin_meta(self, **data):
         self.login(self.admin)
@@ -95,9 +95,9 @@ class SeoToolkitWithCoreSeoTests(PluginTestCase):
         self.post.slug = "p2"
         self.post.save()
         self.assertTrue(Redirect.objects.filter(old_path="/blog/p1/", new_path="/blog/p2/").exists())
-        html = Client().get("/blog/p2/").content.decode()
+        html = Client().get("/fa/blog/p2/").content.decode()
         self.assertIn("<title>افزونه | راویکس</title>", html)  # SeoMeta به شناسه وابسته است نه slug
-        self.assertEqual(Client().get("/blog/p1/").status_code, 301)
+        self.assertEqual(Client().get("/fa/blog/p1/").status_code, 301)
 
     def test_deactivated_plugin_leaves_core_seo_intact(self):
         from apps.plugins import services
