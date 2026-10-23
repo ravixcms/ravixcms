@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-23 18:38+0330\n"
+"POT-Creation-Date: 2026-10-23 18:55+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -1312,7 +1312,7 @@ msgstr "%(n)s comentários foram excluídos permanentemente."
 msgid "The action is invalid."
 msgstr "A ação é inválida."
 
-#: apps/content/apps.py apps/core/navigation.py
+#: apps/content/apps.py apps/core/navigation.py apps/core/sitehealth.py
 msgid "Content"
 msgstr "Conteúdo"
 
@@ -1727,6 +1727,19 @@ msgstr "Alteração automática de slug"
 msgid "Automatic 301 redirect created: %(old_url)s ← %(new_url)s"
 msgstr ""
 "Um redirecionamento 301 foi criado automaticamente: %(old_url)s ← %(new_url)s"
+
+#: apps/content/slug_audit.py
+msgid "Automatic: the address was a language code"
+msgstr "Automático: o endereço era um código de idioma"
+
+#: apps/content/slug_audit.py
+#, python-format
+msgid ""
+"Address changed automatically because “%(slug)s” is a language prefix: "
+"%(old)s → %(new)s"
+msgstr ""
+"Endereço alterado automaticamente porque “%(slug)s” é um prefixo de idioma: "
+"%(old)s → %(new)s"
 
 #: apps/content/views.py
 #, python-format
@@ -2683,6 +2696,31 @@ msgstr "Temas e plugins"
 #: apps/core/sitehealth.py
 msgid "The version of themes and plugins could not be checked."
 msgstr "Não foi possível verificar a versão dos temas e plugins."
+
+#: apps/core/sitehealth.py
+msgid "Page and post addresses"
+msgstr "Endereços de páginas e posts"
+
+#: apps/core/sitehealth.py
+msgid "No page or post uses a language code as its address."
+msgstr "Nenhuma página ou post usa um código de idioma como endereço."
+
+#: apps/core/sitehealth.py
+#, python-format
+msgid ""
+"%(pages)s page(s) and %(posts)s post(s) use a language code (for example "
+"“%(example)s”) as their address."
+msgstr ""
+"%(pages)s página(s) e %(posts)s post(s) usam um código de idioma (por "
+"exemplo, “%(example)s”) como endereço."
+
+#: apps/core/sitehealth.py
+msgid ""
+"Run python manage.py ravix_fix_slugs: it renames the address, adds a 301 "
+"redirect and logs the change."
+msgstr ""
+"Execute python manage.py ravix_fix_slugs: ele altera o endereço, adiciona um "
+"redirecionamento 301 e registra a alteração."
 
 #: apps/core/sitehealth.py
 msgid "System"
@@ -9410,7 +9448,6 @@ msgid "Verify identity"
 msgstr "Verificar identidade"
 
 #: templates/pluginhub/directory.html templates/plugins/list.html
-#| msgid "Plugin registry"
 msgid "Plugin directory"
 msgstr "Diretório de plugins"
 

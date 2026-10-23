@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-23 18:38+0330\n"
+"POT-Creation-Date: 2026-10-23 18:55+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -1289,7 +1289,7 @@ msgstr "已永久删除 %(n)s 条评论。"
 msgid "The action is invalid."
 msgstr "操作无效。"
 
-#: apps/content/apps.py apps/core/navigation.py
+#: apps/content/apps.py apps/core/navigation.py apps/core/sitehealth.py
 msgid "Content"
 msgstr "内容"
 
@@ -1679,6 +1679,17 @@ msgstr "自动修改别名"
 #, python-format
 msgid "Automatic 301 redirect created: %(old_url)s ← %(new_url)s"
 msgstr "已自动创建 301 重定向：%(old_url)s ← %(new_url)s"
+
+#: apps/content/slug_audit.py
+msgid "Automatic: the address was a language code"
+msgstr "自动：地址是语言代码"
+
+#: apps/content/slug_audit.py
+#, python-format
+msgid ""
+"Address changed automatically because “%(slug)s” is a language prefix: "
+"%(old)s → %(new)s"
+msgstr "由于“%(slug)s”是语言前缀，地址已自动更改：%(old)s → %(new)s"
 
 #: apps/content/views.py
 #, python-format
@@ -2594,6 +2605,31 @@ msgstr "主题与插件"
 #: apps/core/sitehealth.py
 msgid "The version of themes and plugins could not be checked."
 msgstr "无法检查主题和插件的版本。"
+
+#: apps/core/sitehealth.py
+msgid "Page and post addresses"
+msgstr "页面和文章地址"
+
+#: apps/core/sitehealth.py
+msgid "No page or post uses a language code as its address."
+msgstr "没有页面或文章使用语言代码作为地址。"
+
+#: apps/core/sitehealth.py
+#, python-format
+msgid ""
+"%(pages)s page(s) and %(posts)s post(s) use a language code (for example "
+"“%(example)s”) as their address."
+msgstr ""
+"%(pages)s 个页面和 %(posts)s 篇文章使用语言代码（例如“%(example)s”）作为地"
+"址。"
+
+#: apps/core/sitehealth.py
+msgid ""
+"Run python manage.py ravix_fix_slugs: it renames the address, adds a 301 "
+"redirect and logs the change."
+msgstr ""
+"运行 python manage.py ravix_fix_slugs：它会修改地址、添加 301 重定向并记录此"
+"次更改。"
 
 #: apps/core/sitehealth.py
 msgid "System"
@@ -8994,7 +9030,6 @@ msgid "Verify identity"
 msgstr "验证身份"
 
 #: templates/pluginhub/directory.html templates/plugins/list.html
-#| msgid "Plugin registry"
 msgid "Plugin directory"
 msgstr "插件目录"
 

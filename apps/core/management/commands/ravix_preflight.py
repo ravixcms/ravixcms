@@ -45,6 +45,12 @@ class Command(BaseCommand):
         advise(bool(settings.CSRF_TRUSTED_ORIGINS), "CSRF_TRUSTED_ORIGINS تنظیم شده", "CSRF_TRUSTED_ORIGINS خالی است (پشت HTTPS با دامنه، معمولاً لازم است)")
         advise(bool(settings.SITE_URL), "SITE_URL تنظیم شده (آدرس‌های مطلق sitemap/canonical)", "SITE_URL خالی است؛ آدرس مطلق از Host درخواست ساخته می‌شود")
         advise("console" not in settings.EMAIL_BACKEND, "ایمیل واقعی پیکربندی شده", "EMAIL_BACKEND کنسولی است؛ ایمیلی ارسال نمی‌شود")
+        from apps.content import slug_audit
+        from apps.content.models import Page, Post
+
+        n_pages, n_posts = slug_audit.count(Page, Post)
+        advise(not (n_pages or n_posts), "نامک هیچ برگه یا نوشته‌ای کد زبان نیست",
+               f"{n_pages} برگه و {n_posts} نوشته نامکی برابر کد زبان دارند (مثلاً /de/ حالا صفحهٔ اصلی آلمانی است). اجرا کنید: python manage.py ravix_fix_slugs")
         media = str(settings.MEDIA_ROOT)
         need(os.path.isdir(media) and os.access(media, os.W_OK), "پوشهٔ media قابل نوشتن است", f"پوشهٔ media ({media}) وجود ندارد یا قابل نوشتن نیست (بسازید: mkdir -p {media} و مالکیت را به کاربر سرویس بدهید)")
         advise(os.path.isdir(settings.STATIC_ROOT) and os.listdir(settings.STATIC_ROOT), "collectstatic اجرا شده", "collectstatic اجرا نشده است")
