@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-23 18:38+0330\n"
+"POT-Creation-Date: 2026-10-23 18:55+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -1307,7 +1307,7 @@ msgstr "%(n)s yorum kalıcı olarak silindi."
 msgid "The action is invalid."
 msgstr "İşlem geçersiz."
 
-#: apps/content/apps.py apps/core/navigation.py
+#: apps/content/apps.py apps/core/navigation.py apps/core/sitehealth.py
 msgid "Content"
 msgstr "İçerik"
 
@@ -1716,6 +1716,19 @@ msgstr "Otomatik kısa ad değişikliği"
 #, python-format
 msgid "Automatic 301 redirect created: %(old_url)s ← %(new_url)s"
 msgstr "Otomatik 301 yönlendirmesi oluşturuldu: %(old_url)s ← %(new_url)s"
+
+#: apps/content/slug_audit.py
+msgid "Automatic: the address was a language code"
+msgstr "Otomatik: adres bir dil koduydu"
+
+#: apps/content/slug_audit.py
+#, python-format
+msgid ""
+"Address changed automatically because “%(slug)s” is a language prefix: "
+"%(old)s → %(new)s"
+msgstr ""
+"“%(slug)s” bir dil öneki olduğu için adres otomatik değiştirildi: %(old)s → "
+"%(new)s"
 
 #: apps/content/views.py
 #, python-format
@@ -2663,6 +2676,31 @@ msgstr "Temalar ve eklentiler"
 #: apps/core/sitehealth.py
 msgid "The version of themes and plugins could not be checked."
 msgstr "Temaların ve eklentilerin sürümü kontrol edilemedi."
+
+#: apps/core/sitehealth.py
+msgid "Page and post addresses"
+msgstr "Sayfa ve yazı adresleri"
+
+#: apps/core/sitehealth.py
+msgid "No page or post uses a language code as its address."
+msgstr "Hiçbir sayfa veya yazı adres olarak bir dil kodu kullanmıyor."
+
+#: apps/core/sitehealth.py
+#, python-format
+msgid ""
+"%(pages)s page(s) and %(posts)s post(s) use a language code (for example "
+"“%(example)s”) as their address."
+msgstr ""
+"%(pages)s sayfa ve %(posts)s yazı adres olarak bir dil kodu kullanıyor "
+"(örneğin “%(example)s”)."
+
+#: apps/core/sitehealth.py
+msgid ""
+"Run python manage.py ravix_fix_slugs: it renames the address, adds a 301 "
+"redirect and logs the change."
+msgstr ""
+"python manage.py ravix_fix_slugs komutunu çalıştırın: adresi değiştirir, 301 "
+"yönlendirmesi ekler ve değişikliği kaydeder."
 
 #: apps/core/sitehealth.py
 msgid "System"
@@ -9307,7 +9345,6 @@ msgid "Verify identity"
 msgstr "Kimliği doğrula"
 
 #: templates/pluginhub/directory.html templates/plugins/list.html
-#| msgid "Plugin registry"
 msgid "Plugin directory"
 msgstr "Eklenti dizini"
 

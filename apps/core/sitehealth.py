@@ -322,12 +322,28 @@ def check_versions() -> list[Check]:
     return out
 
 
-GROUP_ORDER = [gettext_lazy("Security and HTTPS"), gettext_lazy("Email"), gettext_lazy("Cache and storage"), gettext_lazy("Scheduled jobs"), gettext_lazy("Backups"), gettext_lazy("Versions")]
+def check_content() -> list[Check]:
+    """Pages/posts whose address is a language code (``/de/`` is the German home page, so such a page cannot be reached)."""
+    from apps.content import slug_audit
+    from apps.content.models import Page, Post
+
+    g = gettext("Content")
+    title = gettext("Page and post addresses")
+    pages, posts = slug_audit.count(Page, Post)
+    if not pages and not posts:
+        return [_c("language_slugs", g, title, GOOD, gettext("No page or post uses a language code as its address."))]
+    example = (slug_audit.find(Page, Post)[0][1]).slug
+    detail = gettext("%(pages)s page(s) and %(posts)s post(s) use a language code (for example “%(example)s”) as their address.") % {"pages": pages, "posts": posts, "example": example}
+    return [_c("language_slugs", g, title, CRITICAL if pages else RECOMMENDED, detail,
+               gettext("Run python manage.py ravix_fix_slugs: it renames the address, adds a 301 redirect and logs the change."))]
+
+
+GROUP_ORDER = [gettext_lazy("Security and HTTPS"), gettext_lazy("Email"), gettext_lazy("Cache and storage"), gettext_lazy("Scheduled jobs"), gettext_lazy("Backups"), gettext_lazy("Versions"), gettext_lazy("Content")]
 
 
 def run_all(request=None) -> list[Check]:
     checks: list[Check] = []
-    for fn in (lambda: check_https(request), lambda: check_client_ip(request), check_email, check_cache, check_database, check_timers, check_backup, check_versions):
+    for fn in (lambda: check_https(request), lambda: check_client_ip(request), check_email, check_cache, check_database, check_timers, check_backup, check_versions, check_content):
         try:
             checks.extend(fn())
         except Exception as exc:  # noqa: BLE001 — یک بررسی خراب نباید کل صفحه را بیندازد

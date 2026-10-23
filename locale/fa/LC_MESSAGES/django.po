@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-23 18:38+0330\n"
+"POT-Creation-Date: 2026-10-23 18:55+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -1299,7 +1299,7 @@ msgstr "%(n)s دیدگاه برای همیشه حذف شد."
 msgid "The action is invalid."
 msgstr "عملیات نامعتبر است."
 
-#: apps/content/apps.py apps/core/navigation.py
+#: apps/content/apps.py apps/core/navigation.py apps/core/sitehealth.py
 msgid "Content"
 msgstr "محتوا"
 
@@ -1699,6 +1699,17 @@ msgstr "تغییر خودکار نامک"
 #, python-format
 msgid "Automatic 301 redirect created: %(old_url)s ← %(new_url)s"
 msgstr "ریدایرکت ۳۰۱ خودکار ساخته شد: %(old_url)s ← %(new_url)s"
+
+#: apps/content/slug_audit.py
+msgid "Automatic: the address was a language code"
+msgstr "خودکار: نشانی یک کد زبان بود"
+
+#: apps/content/slug_audit.py
+#, python-format
+msgid ""
+"Address changed automatically because “%(slug)s” is a language prefix: "
+"%(old)s → %(new)s"
+msgstr "نشانی خودکار عوض شد چون «%(slug)s» پیشوند زبان است: %(old)s ← %(new)s"
 
 #: apps/content/views.py
 #, python-format
@@ -2636,6 +2647,31 @@ msgstr "قالب‌ها و افزونه‌ها"
 #: apps/core/sitehealth.py
 msgid "The version of themes and plugins could not be checked."
 msgstr "نسخهٔ قالب‌ها و افزونه‌ها قابل بررسی نبود."
+
+#: apps/core/sitehealth.py
+msgid "Page and post addresses"
+msgstr "نشانی برگه‌ها و نوشته‌ها"
+
+#: apps/core/sitehealth.py
+msgid "No page or post uses a language code as its address."
+msgstr "هیچ برگه یا نوشته‌ای کد زبان را به‌عنوان نشانی ندارد."
+
+#: apps/core/sitehealth.py
+#, python-format
+msgid ""
+"%(pages)s page(s) and %(posts)s post(s) use a language code (for example "
+"“%(example)s”) as their address."
+msgstr ""
+"%(pages)s برگه و %(posts)s نوشته کد زبان (مثلاً «%(example)s») را به‌عنوان "
+"نشانی دارند."
+
+#: apps/core/sitehealth.py
+msgid ""
+"Run python manage.py ravix_fix_slugs: it renames the address, adds a 301 "
+"redirect and logs the change."
+msgstr ""
+"دستور python manage.py ravix_fix_slugs را اجرا کنید: نشانی را عوض می‌کند، "
+"ریدایرکت ۳۰۱ می‌سازد و تغییر را ثبت می‌کند."
 
 #: apps/core/sitehealth.py
 msgid "System"
@@ -9154,7 +9190,6 @@ msgid "Verify identity"
 msgstr "تأیید هویت"
 
 #: templates/pluginhub/directory.html templates/plugins/list.html
-#| msgid "Plugin registry"
 msgid "Plugin directory"
 msgstr "فهرست افزونه‌ها"
 
