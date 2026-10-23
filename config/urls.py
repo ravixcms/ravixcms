@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.urls import include, path
 from django.views.i18n import JavaScriptCatalog
 
+from apps.core import views as core_views
 from apps.core.health import healthz
 
 # django-admin فقط برای مدیرکل (is_superuser)؛ نقش «مدیر» پنل Ravix را دارد و نباید وارد admin داخلی جنگو شود.
@@ -12,6 +13,7 @@ admin.site.has_permission = lambda request: bool(request.user.is_active and requ
 urlpatterns = [
     path("healthz", healthz, name="healthz"),
     path("jsi18n/", JavaScriptCatalog.as_view(packages=None), name="javascript-catalog"),
+    path("i18n/setlang/", core_views.set_language, name="set_language"),
     path("install/", include("apps.installer.urls")),  # پیش از سایت عمومی؛ پس از نصب ۴۰۴
     path("panel/", include("apps.dashboard.urls")),
     path("accounts/", include("apps.accounts.urls")),

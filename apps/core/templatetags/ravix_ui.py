@@ -13,6 +13,14 @@ from apps.core import localefmt
 from apps.core.i18n import tr as _tr
 
 
+@register.simple_tag
+def ui_languages():
+    """(code, endonym) pairs of the supported UI languages. Names are deliberately NOT translated (each is in its own language)."""
+    from django.conf import settings
+
+    return list(settings.LANGUAGES)
+
+
 @register.filter(name="tr")
 def tr_filter(value):
     """Translate a dynamic text (plugin/theme manifest strings) with the active language."""

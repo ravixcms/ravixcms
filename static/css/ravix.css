@@ -206,6 +206,13 @@ textarea.input { resize: vertical; }
 .nav-link.active { background: var(--c-primary); color: var(--sidebar-active); box-shadow: 0 4px 12px rgba(79, 70, 229, .4); }
 .sidebar-foot { padding: .85rem; border-top: 1px solid rgba(255, 255, 255, .08); }
 .sidebar-foot form { margin: 0; }
+.lang-switch { margin: 0 0 .5rem; }
+.lang-switch select { width: 100%; padding: .4rem .6rem; font-size: .85rem; }
+.sidebar-foot .lang-switch select { background: rgba(255, 255, 255, .08); color: #e8ebf7; border-color: rgba(255, 255, 255, .18); }
+.sidebar-foot .lang-switch option { color: #1d2433; }
+.auth-lang { margin-top: 1rem; display: flex; justify-content: center; }
+.auth-lang .lang-switch { margin: 0; }
+.auth-lang .lang-switch select { width: auto; min-width: 10rem; }
 .sidebar-foot .nav-link { width: 100%; background: none; border: 0; font: inherit; cursor: pointer; text-align: start; }
 
 .main { margin-inline-start: var(--sidebar-w); min-height: 100vh; display: flex; flex-direction: column; }

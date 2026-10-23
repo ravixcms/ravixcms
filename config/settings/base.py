@@ -224,6 +224,12 @@ LANGUAGES = [
     ("zh-hans", "简体中文"),
 ]
 LOCALE_PATHS = [BASE_DIR / "locale"]
+# The visitor's / user's chosen UI language (see apps.core.regional.resolve_language).
+LANGUAGE_COOKIE_NAME = "ravix_lang"
+LANGUAGE_COOKIE_AGE = 60 * 60 * 24 * 365
+LANGUAGE_COOKIE_PATH = "/"
+LANGUAGE_COOKIE_SAMESITE = "Lax"
+LANGUAGE_COOKIE_HTTPONLY = True
 TIME_ZONE = "Asia/Tehran"
 USE_I18N = True
 USE_TZ = True

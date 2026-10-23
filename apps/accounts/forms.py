@@ -90,10 +90,17 @@ class RegisterForm(StyledFormMixin, UserCreationForm):
         return user
 
 
+def profile_language_choices():
+    return [("", gettext("Site default"))] + list(settings.LANGUAGES)
+
+
 class ProfileForm(StyledFormMixin, forms.ModelForm):
+    language = forms.ChoiceField(label=gettext_lazy("Language"), required=False, choices=profile_language_choices,
+                                 help_text=gettext_lazy("Your preferred interface language. Leave empty to use the site default."))
+
     class Meta:
         model = User
-        fields = ("first_name", "last_name", "email", "phone", "bio", "avatar")
+        fields = ("first_name", "last_name", "email", "phone", "language", "bio", "avatar")
         widgets = {
             "email": forms.EmailInput(attrs={"dir": "ltr"}),
             "phone": forms.TextInput(attrs={"dir": "ltr"}),

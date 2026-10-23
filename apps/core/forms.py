@@ -25,7 +25,8 @@ class StyledFormMixin:
 
 class SiteSettingsForm(StyledFormMixin, forms.ModelForm):
     # اختیاری: فرم‌ها/کلاینت‌های قدیمی که این دو را نمی‌فرستند، مقدار فعلی را نگه می‌دارند (نه خطا).
-    language = forms.ChoiceField(label=gettext_lazy("Language"), choices=language_choices, required=False)
+    language = forms.ChoiceField(label=gettext_lazy("Default language"), choices=language_choices, required=False,
+                                 help_text=gettext_lazy("Used for visitors and users who have not chosen a language themselves."))
     timezone = forms.ChoiceField(label=gettext_lazy("Time zone"), choices=timezone_choices, required=False,
                                  help_text=gettext_lazy("Dates and times in the panel and on the site are shown in this time zone."))
 

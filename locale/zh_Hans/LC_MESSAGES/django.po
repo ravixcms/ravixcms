@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-23 18:03+0330\n"
+"POT-Creation-Date: 2026-10-23 18:06+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -76,6 +76,22 @@ msgstr "已有用户使用此电子邮件注册。"
 #: apps/accounts/forms.py apps/installer/forms.py
 msgid "This username is already taken."
 msgstr "此用户名已被占用。"
+
+#: apps/accounts/forms.py
+#| msgid "System default"
+msgid "Site default"
+msgstr "站点默认"
+
+#: apps/accounts/forms.py apps/accounts/models.py apps/core/models.py
+#: apps/installer/forms.py apps/themes/templatetags/ravix_theme.py
+#: templates/partials/_language_switcher.html
+msgid "Language"
+msgstr "语言"
+
+#: apps/accounts/forms.py apps/accounts/models.py
+msgid ""
+"Your preferred interface language. Leave empty to use the site default."
+msgstr "您偏好的界面语言。留空则使用站点默认。"
 
 #: apps/accounts/forms.py
 msgid "The current password is incorrect."
@@ -1723,9 +1739,14 @@ msgstr "%(object_label)s“%(object)s”的更改已保存。"
 msgid "%(label)s “%(text)s” was deleted."
 msgstr "已删除%(label)s“%(text)s”。"
 
-#: apps/core/forms.py apps/core/models.py apps/installer/forms.py
-msgid "Language"
-msgstr "语言"
+#: apps/core/forms.py
+#| msgid "Default sharing image"
+msgid "Default language"
+msgstr "默认语言"
+
+#: apps/core/forms.py
+msgid "Used for visitors and users who have not chosen a language themselves."
+msgstr "用于尚未自行选择语言的访客和用户。"
 
 #: apps/core/forms.py apps/core/models.py apps/installer/forms.py
 msgid "Time zone"
@@ -6510,6 +6531,11 @@ msgstr "默认主题无法停用；要更改外观，请启用另一个主题。
 msgid "This theme is not active."
 msgstr "此主题未启用。"
 
+#: apps/themes/templatetags/ravix_theme.py templates/layouts/panel.html
+#: templates/partials/_language_switcher.html
+msgid "Change"
+msgstr "切换"
+
 #: apps/themes/templatetags/ravix_theme.py
 msgid "<a href=\"{}\">Edit this item</a>"
 msgstr "<a href=\"{}\">编辑此项</a>"
@@ -8623,10 +8649,6 @@ msgstr "<strong>%(site_name)s</strong><small>管理后台</small>"
 #: templates/layouts/panel.html
 msgid "Active site"
 msgstr "当前站点"
-
-#: templates/layouts/panel.html
-msgid "Change"
-msgstr "切换"
 
 #: templates/layouts/panel.html
 msgid "Sign out of account"

@@ -38,16 +38,26 @@ class SiteRegionalMiddleware:
 
         from django.utils import timezone, translation
 
-        from .regional import load_site_settings, regional_for
+        from django.utils.cache import patch_vary_headers
 
-        language, tz = regional_for(load_site_settings(request))
+        from .regional import load_site_settings, regional_for, resolve_language
+
+        site = load_site_settings(request)
+        tz = regional_for(site)[1]
+        try:
+            language = resolve_language(request, site)
+        except Exception:  # noqa: BLE001 — a broken session/user lookup must not break the request
+            language = regional_for(site)[0]
         try:
             timezone.activate(ZoneInfo(tz))
             translation.activate(language)
+            request.LANGUAGE_CODE = translation.get_language()
         except Exception:  # noqa: BLE001
             timezone.deactivate()
         try:
-            return self.get_response(request)
+            response = self.get_response(request)
+            patch_vary_headers(response, ("Cookie",))  # the language depends on the language cookie / session
+            return response
         finally:
             timezone.deactivate()
             translation.deactivate()

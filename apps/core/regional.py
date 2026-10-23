@@ -60,3 +60,34 @@ def regional_for(site) -> tuple[str, str]:
     if not valid_timezone(tz):
         tz = settings.TIME_ZONE
     return language, tz
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# UI language selection
+# ---------------------------------------------------------------------------------------------------------------------
+def normalize_language(code) -> str:
+    """"pt_BR" / "PT-br" → "pt-br"; unknown or unsupported codes → "" (callers fall back)."""
+    code = str(code or "").strip().replace("_", "-").lower()
+    return code if code in dict(language_choices()) else ""
+
+
+def resolve_language(request, site) -> str:
+    """Language for this request: the visitor's cookie, then the signed-in user's profile, then the site default
+    (SiteSettings.language), then settings.LANGUAGE_CODE. (A public URL prefix, when present, wins over all of these.)"""
+    chosen = normalize_language(request.COOKIES.get(settings.LANGUAGE_COOKIE_NAME))
+    if chosen:
+        return chosen
+    if request.COOKIES.get(settings.SESSION_COOKIE_NAME):  # only consult the user (a session lookup) when there is a session
+        user = getattr(request, "user", None)
+        if user is not None and getattr(user, "is_authenticated", False):
+            chosen = normalize_language(getattr(user, "language", ""))
+            if chosen:
+                return chosen
+    return regional_for(site)[0]
+
+
+def set_language_cookie(response, code: str) -> None:
+    response.set_cookie(
+        settings.LANGUAGE_COOKIE_NAME, code, max_age=settings.LANGUAGE_COOKIE_AGE, path=settings.LANGUAGE_COOKIE_PATH,
+        domain=settings.LANGUAGE_COOKIE_DOMAIN, secure=settings.LANGUAGE_COOKIE_SECURE, httponly=settings.LANGUAGE_COOKIE_HTTPONLY,
+        samesite=settings.LANGUAGE_COOKIE_SAMESITE)

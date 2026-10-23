@@ -33,6 +33,8 @@ class User(AbstractUser):
     )
     email_verified_at = models.DateTimeField(gettext_lazy("Email verification time"), null=True, blank=True)
     bio = models.TextField(gettext_lazy("About me"), blank=True, max_length=500)
+    language = models.CharField(gettext_lazy("Language"), max_length=10, blank=True, default="",
+                                help_text=gettext_lazy("Your preferred interface language. Leave empty to use the site default."))
     avatar = models.ImageField(gettext_lazy("Profile picture"), upload_to=RandomUploadPath("avatars"), blank=True, validators=[validate_image_file])
 
     objects = UserManager()

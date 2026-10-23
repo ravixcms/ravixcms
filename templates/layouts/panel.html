@@ -23,6 +23,7 @@
       {% endfor %}
     </nav>
     <div class="sidebar-foot">
+      {% include "partials/_language_switcher.html" with id="panel" %}
       <form method="post" action="{% url 'accounts:logout' %}">
         {% csrf_token %}
         <button type="submit" class="nav-link">{% icon "logout" 20 %}<span>{% trans "Sign out of account" %}</span></button>
