@@ -6,8 +6,8 @@
 <div class="container">
   {% include "partials/breadcrumbs.html" %}
   <header class="page-head">
-    <h1>{{ category.name }}</h1>
-    {% if category.description %}<p class="page-lead">{{ category.description }}</p>{% endif %}
+    <h1 dir="auto">{{ category.name }}</h1>
+    {% if category.description %}<p class="page-lead" dir="auto">{{ category.description }}</p>{% endif %}
     <p class="muted">{% blocktrans trimmed with post_count=category.post_count|fa_digits %}{{ post_count }} posts{% endblocktrans %}</p>
   </header>
   {% if children %}

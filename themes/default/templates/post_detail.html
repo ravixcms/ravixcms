@@ -7,9 +7,9 @@
   {% include "partials/breadcrumbs.html" %}
   <article class="article" itemscope itemtype="https://schema.org/Article">
     <header class="article-head">
-      {% if post.categories %}<ul class="chips" aria-label="{% trans "Content categories" %}">{% for c in post.categories %}<li><a href="{{ c.url }}">{{ c.name }}</a></li>{% endfor %}</ul>{% endif %}
-      <h1 itemprop="headline">{{ post.title }}</h1>
-      {% if post.excerpt %}<p class="article-lead">{{ post.excerpt }}</p>{% endif %}
+      {% if post.categories %}<ul class="chips" aria-label="{% trans "Content categories" %}">{% for c in post.categories %}<li><a href="{{ c.url }}" dir="auto">{{ c.name }}</a></li>{% endfor %}</ul>{% endif %}
+      <h1 itemprop="headline" dir="auto">{{ post.title }}</h1>
+      {% if post.excerpt %}<p class="article-lead" dir="auto">{{ post.excerpt }}</p>{% endif %}
       <ul class="meta">
         {% if post.author_name %}<li><span itemprop="author">{{ post.author_name }}</span></li>{% endif %}
         <li><time datetime="{{ post.date_iso }}" itemprop="datePublished">{{ post.date_display }}</time></li>
@@ -21,7 +21,7 @@
     {% if post.tags %}
     <footer class="article-foot">
       <p class="footer-head">{% trans "Tags" %}</p>
-      <ul class="chips">{% for t in post.tags %}<li><a href="{{ t.url }}" rel="tag">{{ t.name }}</a></li>{% endfor %}</ul>
+      <ul class="chips">{% for t in post.tags %}<li><a href="{{ t.url }}" rel="tag" dir="auto">{{ t.name }}</a></li>{% endfor %}</ul>
     </footer>
     {% endif %}
   </article>

@@ -5,7 +5,7 @@
       <strong itemprop="author">{{ c.author_name }}</strong>
       <time datetime="{{ c.date_iso }}" itemprop="dateCreated">{{ c.date_display }}</time>
     </header>
-    <div class="comment-text" itemprop="text">{{ c.body_html }}</div>
+    <div class="comment-text" itemprop="text" dir="auto">{{ c.body_html }}</div>
     {% if c.reply_url %}<a class="comment-reply" href="{{ c.reply_url }}" rel="nofollow">{% trans "Reply" %}</a>{% endif %}
   </article>
   {% if c.replies %}

@@ -13,6 +13,9 @@ ALLOWED_ATTRIBUTES = {
     "td": {"align"},
 }
 ALLOWED_SCHEMES = {"http", "https", "mailto"}
+# Every text block gets its own direction from its first strong character (dir="auto"): a Persian paragraph in an English page
+# (or the reverse) reads and aligns correctly, and a mixed post keeps working paragraph by paragraph. Code stays left-to-right (CSS).
+AUTO_DIR_TAGS = ("p", "h2", "h3", "h4", "h5", "h6", "ul", "ol", "blockquote", "table")
 
 
 def render_markdown(text: str) -> str:
@@ -25,4 +28,5 @@ def render_markdown(text: str) -> str:
         attributes=ALLOWED_ATTRIBUTES,
         url_schemes=ALLOWED_SCHEMES,
         link_rel="noopener noreferrer nofollow",
+        set_tag_attribute_values={tag: {"dir": "auto"} for tag in AUTO_DIR_TAGS},
     )

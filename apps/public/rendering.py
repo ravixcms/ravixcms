@@ -20,6 +20,7 @@ from apps.core.models import SiteSettings
 from apps.media_library.models import Media
 from apps.themes import engine, preview, registry, services
 from apps.themes.colors import derived_palette
+from apps.themes.config import localize_default_text
 from apps.themes.constants import DEFAULT_THEME, FONT_SIZES, FONTS
 from apps.themes.models import ThemeConfig
 
@@ -136,7 +137,7 @@ def _build_menus(doc: dict, path: str) -> dict:
             if not url:
                 continue  # هدف حذف یا منتشرنشده؛ آیتم نمایش داده نمی‌شود (پیکربندی دست‌نخورده می‌ماند)
             internal = url.startswith("/")
-            links.append(Link(label=e["label"], url=url, active=internal and _is_active(url, path), new_tab=e["new_tab"]))
+            links.append(Link(label=localize_default_text(e["label"]), url=url, active=internal and _is_active(url, path), new_tab=e["new_tab"]))
         result[location] = tuple(links)
     return result
 
