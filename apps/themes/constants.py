@@ -28,7 +28,7 @@ REQUIRED_BASE_TAGS = ("theme_head", "theme_toolbar")
 ALLOWED_EXTENSIONS = frozenset(
     {"html", "css", "js", "json", "txt", "md", "svg", "png", "jpg", "jpeg", "gif", "webp", "ico", "woff", "woff2"}
 )
-ALLOWED_TOP_LEVEL = frozenset({"theme.json", "templates", "static", "README.md", "LICENSE", "LICENSE.txt"})
+ALLOWED_TOP_LEVEL = frozenset({"theme.json", "templates", "static", "locale", "README.md", "LICENSE", "LICENSE.txt"})
 MAX_MANIFEST_BYTES = 16 * 1024
 MAX_FILE_BYTES = 5 * 1024 * 1024
 MAX_FILES = 400

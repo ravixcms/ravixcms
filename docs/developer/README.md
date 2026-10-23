@@ -6,6 +6,7 @@
 |---|---|---|
 | قالب بسازم | [قالب](theme.md) | [`../themes.md`](../themes.md) |
 | افزونه بسازم | [افزونه](plugin.md) | [`../plugins.md`](../plugins.md)، [`../plugin-installer.md`](../plugin-installer.md) |
+| قالب/افزونهٔ خود را ترجمه‌پذیر کنم | — | [`../translation.md`](../translation.md) |
 | از API استفاده کنم | [API](api.md) | [`../api.md`](../api.md)، [`../registry.md`](../registry.md) |
 | درگاه پرداخت بنویسم | — | [`../payment-gateways.md`](../payment-gateways.md) |
 | بسته منتشر و امضا کنم، سرور به‌روزرسانی/مخزن بالا بیاورم | — | [`../release.md`](../release.md)، [`../registry.md`](../registry.md) |

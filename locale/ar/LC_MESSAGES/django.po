@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-23 18:06+0330\n"
+"POT-Creation-Date: 2026-10-23 18:33+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -80,7 +80,6 @@ msgid "This username is already taken."
 msgstr "اسم المستخدم هذا مستخدم بالفعل."
 
 #: apps/accounts/forms.py
-#| msgid "System default"
 msgid "Site default"
 msgstr "الافتراضي للموقع"
 
@@ -1758,7 +1757,6 @@ msgid "%(label)s “%(text)s” was deleted."
 msgstr "تم حذف %(label)s «%(text)s»."
 
 #: apps/core/forms.py
-#| msgid "Default sharing image"
 msgid "Default language"
 msgstr "اللغة الافتراضية"
 
@@ -6277,6 +6275,24 @@ msgstr ""
 #, python-format
 msgid "The templates folder accepts only html files: “%(rel)s”."
 msgstr "يقبل مجلد القوالب ملفات html فقط: «%(rel)s»."
+
+#: apps/themes/manifest.py
+#, python-format
+msgid ""
+"The locale folder accepts only <language>.json files for the supported "
+"languages (for example fr.json or pt-br.json): “%(rel)s”."
+msgstr ""
+"يقبل مجلد locale ملفات <language>.json فقط للغات المدعومة (مثل fr.json أو "
+"pt-br.json): «%(rel)s»."
+
+#: apps/themes/manifest.py
+#, python-format
+msgid ""
+"The translation file “%(rel)s” must be a JSON object that maps English text "
+"to its translation (text only, within the size limits)."
+msgstr ""
+"يجب أن يكون ملف الترجمة «%(rel)s» كائن JSON يربط النص الإنجليزي بترجمته "
+"(نصوص فقط وضمن حدود الحجم المسموح بها)."
 
 #: apps/themes/manifest.py
 #, python-format
