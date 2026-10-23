@@ -131,7 +131,7 @@ def stage(data: bytes, *, source: str, source_ref: str = "", expected_slug=None,
         raise InstallError(gettext("The package content fingerprint does not match the registry."))
     problems = check_compat(m)
     if problems:
-        raise InstallError((gettext("This package is not compatible with this system: %(problems)s") % {"problems": "؛ ".join(problems)}))
+        raise InstallError((gettext("This package is not compatible with this system: %(problems)s") % {"problems": gettext("; ").join(problems)}))
     ver = signing.verify(m.slug, m.version, info.sha256, info.fingerprint, signature, key_id)
     if ver.state == "invalid":
         raise InstallError((gettext("The digital signature is invalid: %(reason)s") % {"reason": ver.reason}))

@@ -178,7 +178,7 @@ def validate_theme(root: Path, slug: str, expected_version: str) -> Extracted:
     files = _scan_secrets_and_syntax(root, python_ok=False)
     info = inspect_theme_dir(root)
     if not info.valid:
-        raise UpdateError((gettext("Invalid format: %(items)s") % {"items": "؛ ".join(info.errors[:5])}))
+        raise UpdateError((gettext("Invalid format: %(items)s") % {"items": gettext("; ").join(info.errors[:5])}))
     if info.version != expected_version:
         raise UpdateError((gettext("The version inside theme.json (%(version)s) does not match the requested version (%(expected_version)s).") % {"version": info.version, "expected_version": expected_version}))
     return Extracted(root, {"component": "theme", "version": info.version, "requires": {"ravix": getattr(info, "ravix", ""), "ravin": getattr(info, "ravix", "")}}, files)

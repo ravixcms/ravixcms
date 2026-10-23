@@ -228,7 +228,7 @@ class AdminPluginsView(RegistryAdminMixin, View):
             p = get_object_or_404(HubPlugin, pk=request.POST.get("pk"))
             p.is_listed = not p.is_listed
             p.save(update_fields=["is_listed", "updated_at"])
-            _audit(request, p, (gettext("Plugin “%(slug)s” was %(value)s") % {"slug": p.slug, "value": ('در فهرست' if p.is_listed else 'از فهرست خارج')}))
+            _audit(request, p, (gettext("Plugin “%(slug)s” was %(value)s") % {"slug": p.slug, "value": (gettext("listed") if p.is_listed else gettext("removed from the listing"))}))
         elif op == "yank":
             v = get_object_or_404(HubVersion, pk=request.POST.get("pk"))
             services.yank_version(v, None, request.POST.get("reason", gettext("by the registry administrator")), is_admin=True)

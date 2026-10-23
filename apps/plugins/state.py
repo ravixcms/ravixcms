@@ -6,6 +6,7 @@ import threading
 import time
 from dataclasses import dataclass
 
+from django.utils.translation import gettext_lazy
 from django.conf import settings
 from django.db import DatabaseError
 
@@ -99,6 +100,6 @@ def nav_items():
             if not page["menu"]:
                 continue
             url = reverse("plugins:page", args=[slug, page["key"]])
-            items.append(NavItem(key=f"plugin.{slug}.{page['key']}", label=page["title"], url_name="", url=url, icon=page["icon"],
+            items.append(NavItem(key=f"plugin.{slug}.{page['key']}", label=gettext_lazy(page["title"]), url_name="", url=url, icon=page["icon"],
                                  section=page["section"], order=page["order"], capability=page["capability"]))
     return items

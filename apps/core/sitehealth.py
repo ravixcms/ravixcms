@@ -87,7 +87,7 @@ def check_client_ip(request=None) -> list[Check]:
     out = []
     bad = clientip.invalid_trusted_entries()
     if bad:
-        out.append(_c("client_ip_config", g, "RAVIX_TRUSTED_PROXIES", CRITICAL, (gettext("Invalid entry: %(items)s") % {"items": "، ".join(bad[:5])}), gettext("Write only an IP or CIDR.")))
+        out.append(_c("client_ip_config", g, "RAVIX_TRUSTED_PROXIES", CRITICAL, (gettext("Invalid entry: %(items)s") % {"items": gettext(", ").join(bad[:5])}), gettext("Write only an IP or CIDR.")))
     state = None
     if request is not None:
         ip, state = clientip.diagnose(request)
@@ -306,7 +306,7 @@ def check_versions() -> list[Check]:
     try:
         bad_themes = [t["slug"] for t in versions.installed_themes() if not t["valid"]]
         if bad_themes:
-            out.append(_c("themes", g, gettext("Themes"), RECOMMENDED, (gettext("Invalid theme: %(bad_themes)s") % {"bad_themes": "، ".join(bad_themes)}), gettext("Reinstall or remove the theme.")))
+            out.append(_c("themes", g, gettext("Themes"), RECOMMENDED, (gettext("Invalid theme: %(bad_themes)s") % {"bad_themes": gettext(", ").join(bad_themes)}), gettext("Reinstall or remove the theme.")))
         else:
             out.append(_c("themes", g, gettext("Themes"), GOOD, gettext("All installed themes are valid.")))
         from apps.core.version import PLUGIN_API_VERSION
@@ -314,7 +314,7 @@ def check_versions() -> list[Check]:
         bad_plugins = [p["slug"] for p in versions.installed_plugins()
                        if p["active"] and p.get("api_version") and not versions.satisfies(PLUGIN_API_VERSION, f">={p['api_version']}")]
         if bad_plugins:
-            out.append(_c("plugins", g, gettext("Plugins"), RECOMMENDED, (gettext("Plugin requiring a newer API: %(bad_plugins)s") % {"bad_plugins": "، ".join(bad_plugins)}), gettext("Update the core or the plugin.")))
+            out.append(_c("plugins", g, gettext("Plugins"), RECOMMENDED, (gettext("Plugin requiring a newer API: %(bad_plugins)s") % {"bad_plugins": gettext(", ").join(bad_plugins)}), gettext("Update the core or the plugin.")))
         else:
             out.append(_c("plugins", g, gettext("Plugins"), GOOD, gettext("There are no known incompatibilities among the active plugins.")))
     except Exception:  # noqa: BLE001

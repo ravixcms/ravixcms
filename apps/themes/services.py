@@ -42,7 +42,7 @@ def _usable_theme(slug: str):
     if theme is None:
         raise ThemeError(gettext("This theme was not found. Its folder must exist in the themes path."))
     if not theme.valid:
-        raise ThemeError((gettext("This theme is invalid and cannot be used: %(items)s") % {"items": "؛ ".join(theme.errors[:3])}))
+        raise ThemeError((gettext("This theme is invalid and cannot be used: %(items)s") % {"items": gettext("; ").join(theme.errors[:3])}))
     return theme
 
 

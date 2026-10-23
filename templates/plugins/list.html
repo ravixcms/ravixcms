@@ -22,10 +22,10 @@
     <tbody>
     {% for r in rows %}
       <tr>
-        <td><strong>{{ r.name }}</strong><br><span class="muted ltr">{{ r.slug }}</span></td>
+        <td><strong>{{ r.name|tr }}</strong><br><span class="muted ltr">{{ r.slug }}</span></td>
         <td class="ltr">{{ r.version|default:"—" }}{% if r.new_version %}<br><span class="badge badge-warn">{% blocktrans trimmed with new_version=r.new_version %}New version {{ new_version }}{% endblocktrans %}</span>{% endif %}</td>
         <td><span class="badge {% if r.status == 'active' %}badge-published{% elif r.status == 'invalid' or r.status == 'missing' or r.status == 'incompatible' %}badge-inactive{% elif r.status == 'update_pending' or r.status == 'auto_disabled' %}badge-warn{% else %}badge-draft{% endif %}">{{ r.status_label }}</span></td>
-        <td style="white-space:normal;min-width:240px">{{ r.description|default:"—" }}
+        <td style="white-space:normal;min-width:240px">{{ r.description|tr|default:"—" }}
           {% if r.problems %}<ul class="theme-errors">{% for p in r.problems|slice:":3" %}<li>{{ p }}</li>{% endfor %}</ul>{% endif %}</td>
         <td><a class="btn btn-light btn-sm" href="{% url 'plugins:detail' r.slug %}">{% trans "Details" %}</a></td>
       </tr>

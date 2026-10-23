@@ -1,23 +1,23 @@
 {
   "slug": "seo_toolkit",
-  "name": "ابزار سئو",
+  "name": "SEO toolkit",
   "version": "1.0.0",
-  "description": "عنوان، توضیحات متا، noindex، canonical و تصویر اشتراک‌گذاری هر صفحه/نوشته را مدیریت می‌کند و الگوی عنوان سراسری دارد.",
+  "description": "Manages the title, meta description, noindex, canonical and sharing image of each page/post, and has a global title pattern.",
   "author": "Ravix",
   "api_version": 1,
   "ravix": ">=0.9,<2.0",
   "models": true,
   "capabilities": {
-    "seo_toolkit.manage": "مدیریت تنظیمات سئوی صفحات"
+    "seo_toolkit.manage": "Manage page SEO settings"
   },
   "settings": [
-    {"key": "title_pattern", "label": "الگوی عنوان", "type": "text", "default": "{title} | {site}", "max_len": 100, "help": "از {title} و {site} استفاده کنید."},
-    {"key": "default_robots", "label": "robots پیش‌فرض", "type": "choice", "default": "", "choices": [["", "پیش‌فرض سیستم"], ["index,follow", "index,follow"], ["noindex,follow", "noindex,follow"]]},
-    {"key": "fallback_description", "label": "توضیحات پیش‌فرض (در نبود توضیحات صفحه)", "type": "textarea", "default": "", "max_len": 300}
+    {"key": "title_pattern", "label": "Title pattern", "type": "text", "default": "{title} | {site}", "max_len": 100, "help": "Use {title} and {site}."},
+    {"key": "default_robots", "label": "Default robots", "type": "choice", "default": "", "choices": [["", "System default"], ["index,follow", "index,follow"], ["noindex,follow", "noindex,follow"]]},
+    {"key": "fallback_description", "label": "Default description (when a page has none)", "type": "textarea", "default": "", "max_len": 300}
   ],
   "admin_pages": [
-    {"key": "overview", "title": "سئوی صفحات", "view": "views:overview", "capability": "seo_toolkit.manage", "icon": "search", "section": "content", "order": 80},
-    {"key": "edit", "title": "ویرایش سئو", "view": "views:edit", "capability": "seo_toolkit.manage", "menu": false}
+    {"key": "overview", "title": "Page SEO", "view": "views:overview", "capability": "seo_toolkit.manage", "icon": "search", "section": "content", "order": 80},
+    {"key": "edit", "title": "Edit SEO", "view": "views:edit", "capability": "seo_toolkit.manage", "menu": false}
   ],
   "hooks": [
     {"name": "public.seo", "handler": "hooks:apply_seo", "priority": 50}

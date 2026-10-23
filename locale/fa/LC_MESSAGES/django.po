@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-23 17:07+0330\n"
+"POT-Creation-Date: 2026-10-23 17:13+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -374,9 +374,27 @@ msgid "Account %(value)s"
 msgstr "حساب %(value)s"
 
 #: apps/accounts/views.py
+#| msgid "Gateway is enabled"
+msgid "was enabled"
+msgstr "فعال شد"
+
+#: apps/accounts/views.py
+#| msgid "The plugin was disabled."
+msgid "was disabled"
+msgstr "غیرفعال شد"
+
+#: apps/accounts/views.py
 #, python-format
 msgid "User “%(username)s”: %(changes)s."
 msgstr "کاربر «%(username)s»: %(changes)s."
+
+#: apps/accounts/views.py apps/plugins/installer.py apps/plugins/manifest.py
+#: apps/plugins/package.py apps/plugins/services.py apps/plugins/sources.py
+#: apps/sites/views.py apps/themes/installer.py apps/themes/registry.py
+#: apps/themes/services.py apps/updater/package.py apps/updater/pipeline.py
+#: apps/updater/release.py
+msgid "; "
+msgstr "؛ "
 
 #: apps/accounts/views.py
 #, python-format
@@ -1748,6 +1766,134 @@ msgstr "تاریخ و ساعت‌ها در پنل و سایت با این منط
 msgid "The site name cannot be empty."
 msgstr "نام سایت نمی‌تواند خالی باشد."
 
+#: apps/core/manifest_strings.py
+#| msgid "Contact information"
+msgid "Contact form"
+msgstr "فرم تماس"
+
+#: apps/core/manifest_strings.py
+msgid ""
+"A public contact form at /ext/contact_form/ that stores messages in the "
+"database and has an inbox in the panel."
+msgstr ""
+"فرم تماس عمومی در /ext/contact_form/ که پیام‌ها را در دیتابیس ذخیره می‌کند و"
+" صندوق پیام در پنل دارد."
+
+#: apps/core/manifest_strings.py
+#| msgid "New contact form message: %(value)s"
+msgid "View and manage contact form messages"
+msgstr "مشاهده و مدیریت پیام‌های فرم تماس"
+
+#: apps/core/manifest_strings.py
+#| msgid "Manage site settings"
+msgid "Message after sending"
+msgstr "پیام پس از ارسال"
+
+#: apps/core/manifest_strings.py
+#| msgid "Your message was recorded."
+msgid "Your message was recorded. We will reply soon."
+msgstr "پیام شما ثبت شد. به‌زودی پاسخ می‌دهیم."
+
+#: apps/core/manifest_strings.py
+#| msgid "Note (optional)"
+msgid "Notification email (optional)"
+msgstr "ایمیل اطلاع‌رسانی (اختیاری)"
+
+#: apps/core/manifest_strings.py
+msgid "If set, a notification email is sent for every new message."
+msgstr "اگر پر شود، با هر پیام جدید ایمیل اطلاع‌رسانی ارسال می‌شود."
+
+#: apps/core/manifest_strings.py
+msgid "Maximum messages per hour per IP"
+msgstr "حداکثر پیام در ساعت از هر IP"
+
+#: apps/core/manifest_strings.py
+msgid "Text above the form"
+msgstr "متن بالای فرم"
+
+#: apps/core/manifest_strings.py plugins/contact_form/models.py
+#: plugins/contact_form/views.py
+msgid "Contact messages"
+msgstr "پیام‌های تماس"
+
+#: apps/core/manifest_strings.py
+msgid "Sample gateway (gateway template)"
+msgstr "درگاه نمونه (الگوی ساخت درگاه)"
+
+#: apps/core/manifest_strings.py
+msgid ""
+"A sample payment-gateway plugin for learning and testing. It connects to a "
+"hypothetical API (ExamplePay) and to no real service; for a real gateway "
+"change the addresses and contracts according to that provider’s official "
+"documentation."
+msgstr ""
+"افزونهٔ نمونهٔ درگاه پرداخت برای آموزش و تست. به یک API فرضی (ExamplePay) "
+"وصل می‌شود و به هیچ سرویس واقعی متصل نیست؛ برای درگاه واقعی آدرس‌ها و "
+"قراردادها را مطابق مستندات رسمی همان ارائه‌دهنده تغییر دهید."
+
+#: apps/core/manifest_strings.py
+#| msgid "SEO title"
+msgid "SEO toolkit"
+msgstr "ابزار سئو"
+
+#: apps/core/manifest_strings.py
+msgid ""
+"Manages the title, meta description, noindex, canonical and sharing image of"
+" each page/post, and has a global title pattern."
+msgstr ""
+"عنوان، توضیحات متا، noindex، canonical و تصویر اشتراک‌گذاری هر صفحه/نوشته را"
+" مدیریت می‌کند و الگوی عنوان سراسری دارد."
+
+#: apps/core/manifest_strings.py
+#| msgid "Manage site settings"
+msgid "Manage page SEO settings"
+msgstr "مدیریت تنظیمات سئوی صفحات"
+
+#: apps/core/manifest_strings.py
+msgid "Title pattern"
+msgstr "الگوی عنوان"
+
+#: apps/core/manifest_strings.py
+#, python-brace-format
+msgid "Use {title} and {site}."
+msgstr "از {title} و {site} استفاده کنید."
+
+#: apps/core/manifest_strings.py
+#| msgid "Default site"
+msgid "Default robots"
+msgstr "robots پیش‌فرض"
+
+#: apps/core/manifest_strings.py
+#| msgid "System autosave"
+msgid "System default"
+msgstr "پیش‌فرض سیستم"
+
+#: apps/core/manifest_strings.py
+msgid "Default description (when a page has none)"
+msgstr "توضیحات پیش‌فرض (در نبود توضیحات صفحه)"
+
+#: apps/core/manifest_strings.py plugins/seo_toolkit/views.py
+msgid "Page SEO"
+msgstr "سئوی صفحات"
+
+#: apps/core/manifest_strings.py
+#| msgid "Edit"
+msgid "Edit SEO"
+msgstr "ویرایش سئو"
+
+#: apps/core/manifest_strings.py
+#| msgid "Ravix test email"
+msgid "Ravix default"
+msgstr "پیش‌فرض راویکس"
+
+#: apps/core/manifest_strings.py
+msgid ""
+"A readable, fast theme for blogs and content sites; no JavaScript, with a "
+"featured post and a horizontal post list."
+msgstr ""
+"قالب خوانا و سریع برای وبلاگ و سایت‌های محتوایی فارسی؛ بدون جاوااسکریپت، با "
+"نوشتهٔ شاخص و فهرست افقی نوشته‌ها."
+
 #: apps/core/middleware.py apps/core/views.py
 msgid "Invalid request"
 msgstr "درخواست نامعتبر"
@@ -1787,6 +1933,11 @@ msgstr "آخرین ویرایش"
 #: apps/core/models.py apps/installer/forms.py apps/sites/models.py
 msgid "Site name"
 msgstr "نام سایت"
+
+#: apps/core/models.py
+#| msgid "Ravix core"
+msgid "Ravix"
+msgstr "راویکس"
 
 #: apps/core/models.py
 msgid "Site tagline"
@@ -2024,6 +2175,12 @@ msgstr ""
 #, python-format
 msgid "Invalid entry: %(items)s"
 msgstr "ورودی نامعتبر: %(items)s"
+
+#: apps/core/sitehealth.py apps/core/views.py apps/plugins/services.py
+#: apps/shop/panel.py apps/shop/services.py
+#: templates/themes/customize_home.html
+msgid ", "
+msgstr "، "
 
 #: apps/core/sitehealth.py
 msgid "Write only an IP or CIDR."
@@ -2525,10 +2682,6 @@ msgstr "فقط تصاویر JPEG، PNG، GIF و WEBP مجاز هستند."
 #: apps/core/validators.py
 msgid "The file extension does not match the real image type."
 msgstr "پسوند فایل با نوع واقعی تصویر مطابقت ندارد."
-
-#: apps/core/views.py templates/themes/customize_home.html
-msgid ", "
-msgstr "، "
 
 #: apps/core/views.py
 msgid "No changes"
@@ -3305,6 +3458,16 @@ msgid "Plugin “%(slug)s” was %(value)s"
 msgstr "افزونهٔ «%(slug)s» %(value)s شد"
 
 #: apps/pluginhub/views.py
+#| msgid "Unlisted"
+msgid "listed"
+msgstr "در فهرست"
+
+#: apps/pluginhub/views.py
+#| msgid "Remove from listing"
+msgid "removed from the listing"
+msgstr "از فهرست خارج"
+
+#: apps/pluginhub/views.py
 msgid "by the registry administrator"
 msgstr "توسط مدیر مخزن"
 
@@ -3656,11 +3819,6 @@ msgstr "فایل غیرعادی/پیوند نمادین مجاز نیست: %(rel
 #: apps/plugins/integrity.py
 msgid "The plugin exceeds the file count/size limit."
 msgstr "افزونه از سقف تعداد/حجم فایل بزرگ‌تر است."
-
-#: apps/plugins/manifest.py apps/sites/views.py apps/themes/installer.py
-#: apps/updater/pipeline.py
-msgid "; "
-msgstr "؛ "
 
 #: apps/plugins/manifest.py
 #, python-format
@@ -4314,6 +4472,15 @@ msgid "Removed%(value)s"
 msgstr "حذف شد%(value)s"
 
 #: apps/plugins/services.py
+#| msgid "The image was deleted."
+msgid " (the data was deleted too)."
+msgstr " (داده‌ها هم پاک شد)."
+
+#: apps/plugins/services.py
+msgid " (the data was kept)."
+msgstr " (داده‌ها نگه داشته شد)."
+
+#: apps/plugins/services.py
 #, python-format
 msgid "Remove plugin “%(name)s”"
 msgstr "حذف افزونهٔ «%(name)s»"
@@ -4579,6 +4746,16 @@ msgid "Package of plugin “%(slug)s” (%(value)s) was placed via the installer
 msgstr "بسته افزونهٔ «%(slug)s» (%(value)s) از طریق نصب‌کننده جایگذاری شد"
 
 #: apps/plugins/views.py
+#| msgid "Installed"
+msgid "installed"
+msgstr "نصب"
+
+#: apps/plugins/views.py
+#| msgid "Upgrade"
+msgid "upgraded"
+msgstr "ارتقا"
+
+#: apps/plugins/views.py
 #, python-format
 msgid "Upgrade plugin “%(slug)s” from the registry"
 msgstr "ارتقای افزونهٔ «%(slug)s» از مخزن"
@@ -4601,6 +4778,15 @@ msgstr "برچسب الزامی است."
 #, python-format
 msgid "Key %(kid)s (%(label)s) %(value)s."
 msgstr "کلید %(kid)s (%(label)s) %(value)s."
+
+#: apps/plugins/views.py
+msgid "was added"
+msgstr "افزوده شد"
+
+#: apps/plugins/views.py
+#| msgid "Already registered?"
+msgid "already existed"
+msgstr "از قبل بود"
 
 #: apps/plugins/views.py
 #, python-format
@@ -4632,6 +4818,10 @@ msgstr "مشاهده همه"
 #, python-format
 msgid "%(name)s — %(value)s"
 msgstr "%(name)s — %(value)s"
+
+#: apps/public/feeds.py
+msgid "Tag: "
+msgstr "برچسب: "
 
 #: apps/public/feeds.py
 #, python-format
@@ -5102,6 +5292,15 @@ msgid "Settings for gateway “%(name)s” were saved (enabled: %(value)s)"
 msgstr "تنظیمات درگاه «%(name)s» ذخیره شد (فعال: %(value)s)"
 
 #: apps/shop/panel.py
+msgid "yes"
+msgstr "بله"
+
+#: apps/shop/panel.py
+#| msgid "Info"
+msgid "no"
+msgstr "خیر"
+
+#: apps/shop/panel.py
 msgid "Gateway settings saved."
 msgstr "تنظیمات درگاه ذخیره شد."
 
@@ -5109,6 +5308,16 @@ msgstr "تنظیمات درگاه ذخیره شد."
 #, python-format
 msgid "Gateway “%(name)s” was %(value)s"
 msgstr "درگاه «%(name)s» %(value)s شد"
+
+#: apps/shop/panel.py
+#| msgid "Enabled."
+msgid "enabled"
+msgstr "فعال"
+
+#: apps/shop/panel.py
+#| msgid "Disabled."
+msgid "disabled"
+msgstr "غیرفعال"
 
 #: apps/shop/panel.py
 msgid "The gateway was enabled."
@@ -5248,6 +5457,16 @@ msgstr "نشانی برای ارسال کالای فیزیکی الزامی اس
 #, python-format
 msgid "Order placed (%(value)s)."
 msgstr "سفارش ثبت شد (%(value)s)."
+
+#: apps/shop/services.py
+#| msgid "Edit user"
+msgid "user"
+msgstr "کاربر"
+
+#: apps/shop/services.py
+#| msgid "Guest"
+msgid "guest"
+msgstr "مهمان"
 
 #: apps/shop/services.py apps/shop/views.py templates/shop/panel/order.html
 #, python-format
@@ -7334,6 +7553,11 @@ msgid "Package “%(name)s” is not installed (required: %(value)s)."
 msgstr "بستهٔ «%(name)s» نصب نیست (نیاز: %(value)s)."
 
 #: apps/updater/versions.py
+#| msgid "Layout version"
+msgid "any version"
+msgstr "هر نسخه"
+
+#: apps/updater/versions.py
 #, python-format
 msgid "Invalid constraint for “%(name)s”: %(part)s"
 msgstr "قید نامعتبر برای «%(name)s»: %(part)s"
@@ -7378,6 +7602,11 @@ msgid "Update completed.%(value)s"
 msgstr "به‌روزرسانی انجام شد.%(value)s"
 
 #: apps/updater/views.py
+#| msgid "). Restart the web service."
+msgid " Restart the service."
+msgstr " سرویس را راه‌اندازی مجدد کنید."
+
+#: apps/updater/views.py
 #, python-format
 msgid "Rollback to the version before run #%(pk)s"
 msgstr "بازگشت به نسخهٔ قبل از اجرای #%(pk)s"
@@ -7399,10 +7628,6 @@ msgstr "خوانده‌شده"
 #: plugins/contact_form/models.py
 msgid "Contact message"
 msgstr "پیام تماس"
-
-#: plugins/contact_form/models.py plugins/contact_form/views.py
-msgid "Contact messages"
-msgstr "پیام‌های تماس"
 
 #: plugins/contact_form/templates/form.html
 msgid ""
@@ -7584,10 +7809,6 @@ msgstr "ایندکس"
 #: plugins/seo_toolkit/templates/overview.html
 msgid "There is no page or post."
 msgstr "صفحه یا نوشته‌ای وجود ندارد."
-
-#: plugins/seo_toolkit/views.py
-msgid "Page SEO"
-msgstr "سئوی صفحات"
 
 #: plugins/seo_toolkit/views.py
 #, python-format

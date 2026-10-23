@@ -215,7 +215,7 @@ def _cannot_enable_reason(cls, cfg):
         return gettext("The test gateway is not allowed in production.")
     missing = registry.missing_fields(cls, cfg)
     if missing:
-        return (gettext("The settings are incomplete: %(items)s") % {"items": "، ".join(f.label for f in missing)})
+        return (gettext("The settings are incomplete: %(items)s") % {"items": gettext(", ").join(f.label for f in missing)})
     return ""
 
 
@@ -304,7 +304,7 @@ class GatewayEditView(GatewaysAdmin, View):
                     row.public_config, row.secrets_encrypted = public, blob
                     row.enabled, row.test_mode, row.updated_by = want_enabled, form.cleaned_data["test_mode"], request.user
                     row.save()
-                    log_event(request, AuditLog.Action.UPDATE, None, (gettext("Settings for gateway “%(name)s” were saved (enabled: %(value)s)") % {"name": name, "value": ('بله' if want_enabled else 'خیر')}),
+                    log_event(request, AuditLog.Action.UPDATE, None, (gettext("Settings for gateway “%(name)s” were saved (enabled: %(value)s)") % {"name": name, "value": (gettext("yes") if want_enabled else gettext("no"))}),
                               object_type=gettext("Payment gateway"))
                     messages.success(request, gettext("Gateway settings saved."))
                     return redirect("shop_panel:gateways")
@@ -331,7 +331,7 @@ class GatewayToggleView(GatewaysAdmin, View):
         row = row or GatewayConfig(site=self.site, gateway=name)
         row.enabled, row.updated_by = enable, request.user
         row.save()
-        log_event(request, AuditLog.Action.UPDATE, None, (gettext("Gateway “%(name)s” was %(value)s") % {"name": name, "value": ('فعال' if enable else 'غیرفعال')}), object_type=gettext("Payment gateway"))
+        log_event(request, AuditLog.Action.UPDATE, None, (gettext("Gateway “%(name)s” was %(value)s") % {"name": name, "value": (gettext("enabled") if enable else gettext("disabled"))}), object_type=gettext("Payment gateway"))
         messages.success(request, gettext("The gateway was enabled.") if enable else gettext("The gateway was disabled; open transactions are still verified."))
         return redirect("shop_panel:gateways")
 

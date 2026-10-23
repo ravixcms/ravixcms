@@ -73,7 +73,7 @@ def requirement_problem(line: str) -> str | None:
     try:
         installed = metadata.version(name)
     except metadata.PackageNotFoundError:
-        return (gettext("Package “%(name)s” is not installed (required: %(value)s).") % {"name": name, "value": (spec or 'هر نسخه')})
+        return (gettext("Package “%(name)s” is not installed (required: %(value)s).") % {"name": name, "value": (spec or gettext("any version"))})
     have = _loose(installed)
     for part in [p.strip() for p in spec.split(",") if p.strip()]:
         c = _CLAUSE.match(part)
