@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-23 22:56+0330\n"
+"POT-Creation-Date: 2026-10-24 00:56+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -2433,6 +2433,20 @@ msgstr "La caché no responde (%(name)s)."
 #: apps/core/sitehealth.py
 msgid "Check the Redis connection / cache folder."
 msgstr "Comprueba la conexión con Redis / la carpeta de caché."
+
+#: apps/core/sitehealth.py
+msgid "The cache folder is missing or not writable for the service user."
+msgstr ""
+"La carpeta de caché no existe o el usuario del servicio no puede escribir en"
+" ella."
+
+#: apps/core/sitehealth.py
+msgid ""
+"Create the folder and give it to the service user (CacheDirectory=ravix in "
+"the systemd unit, or RAVIX_CACHE_DIR)."
+msgstr ""
+"Cree la carpeta y asígnela al usuario del servicio (CacheDirectory=ravix en "
+"la unidad de systemd, o RAVIX_CACHE_DIR)."
 
 #: apps/core/sitehealth.py
 msgid "Writing to and reading from the cache did not work."

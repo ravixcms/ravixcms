@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-23 22:56+0330\n"
+"POT-Creation-Date: 2026-10-24 00:56+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -2324,6 +2324,16 @@ msgstr "缓存无响应（%(name)s）。"
 #: apps/core/sitehealth.py
 msgid "Check the Redis connection / cache folder."
 msgstr "请检查 Redis 连接 / 缓存文件夹。"
+
+#: apps/core/sitehealth.py
+msgid "The cache folder is missing or not writable for the service user."
+msgstr "缓存文件夹不存在，或服务用户无法写入。"
+
+#: apps/core/sitehealth.py
+msgid ""
+"Create the folder and give it to the service user (CacheDirectory=ravix in "
+"the systemd unit, or RAVIX_CACHE_DIR)."
+msgstr "创建该文件夹并交给服务用户（systemd 单元中的 CacheDirectory=ravix，或设置 RAVIX_CACHE_DIR）。"
 
 #: apps/core/sitehealth.py
 msgid "Writing to and reading from the cache did not work."

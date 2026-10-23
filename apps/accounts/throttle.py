@@ -43,7 +43,13 @@ def _with_cache(fn):
     اگر کش جایگزین هم خراب باشد (یعنی دیتابیس هم خراب است و ورود هرچه باشد ممکن نیست) خطا بالا می‌آید."""
     global _last_warn
     try:
-        return fn(caches["default"])
+        main = caches["default"]  # a plain FileBasedCache raises here when its folder cannot be created
+        if getattr(main, "broken", False):  # SafeFileBasedCache: the cache folder cannot be written (it does not raise by design)
+            raise OSError(cli_gettext("the cache folder is missing or not writable"))
+        result = fn(main)
+        if getattr(main, "broken", False):
+            raise OSError(cli_gettext("the cache folder is missing or not writable"))
+        return result
     except Exception as exc:  # noqa: BLE001 - هر خطای کش
         fb = _fallback_cache()
         if fb is None:

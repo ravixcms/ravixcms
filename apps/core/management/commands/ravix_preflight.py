@@ -83,10 +83,13 @@ class Command(BaseCommand):
             caches["default"].set(probe, "1", 10)
             ok_cache = caches["default"].get(probe) == "1"
             caches["default"].delete(probe)
+            if getattr(caches["default"], "broken", False):  # SafeFileBasedCache swallows folder errors instead of raising
+                ok_cache = False
         except Exception as exc:  # noqa: BLE001 - هر خطای کش
             ok_cache, cache_err = False, f"{type(exc).__name__}: {exc}"
         else:
-            cache_err = cli_gettext("The written value could not be read back")
+            cache_err = (cli_gettext("the cache folder is missing or not writable") if getattr(caches["default"], "broken", False)
+                         else cli_gettext("The written value could not be read back"))
         need(ok_cache, cli_gettext("The main cache works (a test write/read succeeded)"), cli_gettext("The main cache does not work (%(cache_err)s). Panel sign-in falls back to the database cache table without a healthy cache and logs a warning") % {"cache_err": cache_err})
         if "throttle_fallback" in settings.CACHES:
             try:

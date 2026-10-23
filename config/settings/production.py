@@ -53,6 +53,8 @@ STORAGES = {
 }
 WHITENOISE_MAX_AGE = int(env("RAVIX_STATIC_MAX_AGE", "31536000"))  # نام فایل‌ها هش‌دار است
 
+# The folder is never created here (importing settings must not write to disk): systemd provides it (CacheDirectory=ravix),
+# or set RAVIX_CACHE_DIR; ravix_preflight and the site-health page report a missing/read-only folder.
 # --- کش مشترک بین ورکرهای Gunicorn (برای محدودیت نرخ و ...) ---
 # با REDIS_URL از Redis استفاده می‌شود (پکیج redis لازم است)؛ در غیر این صورت کش فایلی که بین پردازه‌ها مشترک است.
 _redis = env("REDIS_URL")
@@ -64,7 +66,7 @@ else:
         # نصب‌های قدیمی (ravin.service با CacheDirectory=ravin) تا 2.0 همان پوشه را به کار می‌برند.
         warn_legacy("/var/cache/ravin", _cache_default)
         _cache_default = "/var/cache/ravin"
-    CACHES["default"] = {"BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+    CACHES["default"] = {"BACKEND": "apps.core.cache.SafeFileBasedCache",
                          "LOCATION": env("RAVIX_CACHE_DIR", _cache_default)}
 # CACHES["throttle_fallback"] (جدول دیتابیس) از base می‌آید و فقط هنگام خرابی کش اصلی به کار می‌رود.
 

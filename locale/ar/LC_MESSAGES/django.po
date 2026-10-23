@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-23 22:56+0330\n"
+"POT-Creation-Date: 2026-10-24 00:56+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -2368,6 +2368,19 @@ msgstr "ذاكرة التخزين المؤقت لا تستجيب (%(name)s)."
 #: apps/core/sitehealth.py
 msgid "Check the Redis connection / cache folder."
 msgstr "تحقق من اتصال Redis / مجلد ذاكرة التخزين المؤقت."
+
+#: apps/core/sitehealth.py
+msgid "The cache folder is missing or not writable for the service user."
+msgstr ""
+"مجلد ذاكرة التخزين المؤقت غير موجود أو غير قابل للكتابة لمستخدم الخدمة."
+
+#: apps/core/sitehealth.py
+msgid ""
+"Create the folder and give it to the service user (CacheDirectory=ravix in "
+"the systemd unit, or RAVIX_CACHE_DIR)."
+msgstr ""
+"أنشئ المجلد وامنحه لمستخدم الخدمة (CacheDirectory=ravix في وحدة systemd، أو "
+"RAVIX_CACHE_DIR)."
 
 #: apps/core/sitehealth.py
 msgid "Writing to and reading from the cache did not work."

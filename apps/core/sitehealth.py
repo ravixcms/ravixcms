@@ -150,6 +150,9 @@ def check_cache() -> list[Check]:
         cache.delete(key)
     except Exception as exc:  # noqa: BLE001
         return [_c("cache", g, gettext("Cache"), CRITICAL, (gettext("The cache is not responding (%(name)s).") % {"name": type(exc).__name__}), gettext("Check the Redis connection / cache folder."))]
+    if getattr(cache, "broken", False):  # SafeFileBasedCache never raises; it records that its folder cannot be written
+        return [_c("cache", g, gettext("Cache"), CRITICAL, gettext("The cache folder is missing or not writable for the service user."),
+                   gettext("Create the folder and give it to the service user (CacheDirectory=ravix in the systemd unit, or RAVIX_CACHE_DIR)."))]
     if not works:
         return [_c("cache", g, gettext("Cache"), RECOMMENDED if backend.endswith(("dummy.DummyCache",)) else CRITICAL,
                    gettext("Writing to and reading from the cache did not work."), gettext("Check the CACHES setting."))]

@@ -933,3 +933,10 @@ msgstr "حالت CI (یا RAVIX_CI=1): بررسی‌هایی که فقط روی 
 
 msgid "CI mode: server-only checks (systemd timers, folders and their permissions) are reported as warnings; never use this mode to approve a real server"
 msgstr "حالت CI: بررسی‌های مخصوص سرور (تایمرهای systemd، پوشه‌ها و دسترسی‌هایشان) هشدار حساب می‌شوند؛ هرگز از این حالت برای تأیید یک سرور واقعی استفاده نکنید"
+
+msgid "the cache folder is missing or not writable"
+msgstr "پوشهٔ کش وجود ندارد یا قابل نوشتن نیست"
+
+#, python-format
+msgid "The cache folder %(a1)s is missing or not writable (%(a2)s: %(a3)s). Provision it with CacheDirectory=ravix in the systemd unit or set RAVIX_CACHE_DIR; until then nothing is cached and login throttling uses the database table."
+msgstr "پوشهٔ کش %(a1)s وجود ندارد یا قابل نوشتن نیست (%(a2)s: %(a3)s). آن را با CacheDirectory=ravix در unit سیستم‌دی فراهم کنید یا RAVIX_CACHE_DIR را تنظیم کنید؛ تا آن زمان چیزی کش نمی‌شود و محدودسازی ورود از جدول دیتابیس استفاده می‌کند."
