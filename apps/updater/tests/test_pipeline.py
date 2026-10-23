@@ -413,16 +413,16 @@ class LockingAndCrash(UpdaterCase):
         self.assertEqual(c.get("/healthz").status_code, 200)
         lock = UpdateLock.objects.create(name="global", holder="h", operation="prepare-core")
         reset_cache()
-        self.assertNotEqual(c.get("/").status_code, 503)  # دریافت/اعتبارسنجی سایت را متوقف نمی‌کند
+        self.assertNotEqual(c.get("/fa/").status_code, 503)  # دریافت/اعتبارسنجی سایت را متوقف نمی‌کند
         UpdateLock.objects.filter(pk=lock.pk).update(operation="apply-core")
         reset_cache()
-        r = c.get("/")
+        r = c.get("/fa/")
         self.assertEqual(r.status_code, 503)
         self.assertEqual(r["Retry-After"], "30")
         self.assertEqual(c.get("/healthz").status_code, 200)
         UpdateLock.objects.all().delete()
         reset_cache()
-        self.assertNotEqual(c.get("/").status_code, 503)
+        self.assertNotEqual(c.get("/fa/").status_code, 503)
 
     def test_plugin_install_blocked_during_core_update(self):
         from apps.plugins import installer

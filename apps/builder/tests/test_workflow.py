@@ -167,7 +167,7 @@ class DraftApiTests(Base):
 
     def test_draft_does_not_affect_public_page(self):
         self.save_draft(simple_doc("فقط پیش‌نویس"))
-        r = self.client.get("/about/")
+        r = self.client.get("/fa/about/")
         self.assertContains(r, "مارک‌داون")
         self.assertNotContains(r, "فقط پیش‌نویس")
 
@@ -179,13 +179,13 @@ class WorkflowTests(Base):
         self.assertEqual(r.status_code, 200)
         v = DesignVersion.objects.get()
         self.assertEqual((v.state, v.created_by), ("pending", self.author))
-        self.assertNotContains(self.client.get("/about/"), "نسخه تأییدی")  # هنوز منتشر نشده
+        self.assertNotContains(self.client.get("/fa/about/"), "نسخه تأییدی")  # هنوز منتشر نشده
         r = self.act("approve", self.admin, "عالی", number=v.number)
         self.assertEqual(r.status_code, 200)
         v.refresh_from_db()
         self.assertEqual((v.state, v.reviewed_by, v.review_note), ("approved", self.admin, "عالی"))
         self.assertEqual(r.json()["live"], v.number)
-        page = self.client.get("/about/")
+        page = self.client.get("/fa/about/")
         self.assertContains(page, "نسخه تأییدی")
         self.assertContains(page, 'class="bx-page"')
         self.assertNotContains(page, "مارک‌داون")  # جایگزین بدنه‌ی Markdown
@@ -199,7 +199,7 @@ class WorkflowTests(Base):
         v.refresh_from_db()
         self.assertEqual((v.state, v.review_note), ("rejected", "ناقص"))
         self.assertIsNone(PageDesign.objects.get().published_version)
-        self.assertNotContains(self.client.get("/about/"), "رد می‌شود")
+        self.assertNotContains(self.client.get("/fa/about/"), "رد می‌شود")
         self.assertEqual(self.act("approve", self.admin, number=v.number).status_code, 409)  # ردشده قابل تأیید نیست
 
     def test_only_one_pending_version(self):
@@ -221,9 +221,9 @@ class WorkflowTests(Base):
         self.save_draft(simple_doc("انتشار مستقیم"), user=self.admin)
         r = self.act("publish", self.admin)
         self.assertEqual(r.status_code, 200)
-        self.assertContains(self.client.get("/about/"), "انتشار مستقیم")
+        self.assertContains(self.client.get("/fa/about/"), "انتشار مستقیم")
         self.assertEqual(self.act("unpublish", self.admin).status_code, 200)
-        page = self.client.get("/about/")
+        page = self.client.get("/fa/about/")
         self.assertContains(page, "مارک‌داون")
         self.assertNotContains(page, "انتشار مستقیم")
         self.assertEqual(self.act("unpublish", self.admin).status_code, 409)
@@ -232,7 +232,7 @@ class WorkflowTests(Base):
         self.save_draft(simple_doc("منتشرشده"), user=self.admin)
         self.act("publish", self.admin)
         self.save_draft(simple_doc("پیش‌نویس جدید"), user=self.admin)
-        page = self.client.get("/about/")
+        page = self.client.get("/fa/about/")
         self.assertContains(page, "منتشرشده")
         self.assertNotContains(page, "پیش‌نویس جدید")
 
@@ -240,7 +240,7 @@ class WorkflowTests(Base):
         self.save_draft(simple_doc("مخفی"), user=self.admin)
         self.act("publish", self.admin)
         Page.objects.filter(pk=self.page.pk).update(status="draft")
-        self.assertEqual(self.client.get("/about/").status_code, 404)
+        self.assertEqual(self.client.get("/fa/about/").status_code, 404)
 
     def test_unknown_action_and_unknown_version(self):
         self.client.force_login(self.admin)
@@ -276,7 +276,7 @@ class RestoreTests(Base):
         self.save_draft(simple_doc("بعدی"), user=self.admin)
         self.act("save", self.admin)
         self.act("restore", self.admin, number=1)
-        self.assertContains(self.client.get("/about/"), "زنده")
+        self.assertContains(self.client.get("/fa/about/"), "زنده")
 
     def test_restored_versions_are_immutable_snapshots(self):
         self.save_draft(simple_doc("ثابت"))
@@ -307,17 +307,17 @@ class PublicIntegrationTests(Base):
 
     def test_builder_page_uses_theme_chrome_and_title_toggle(self):
         self.publish(simple_doc("محتوای ساخته‌شده", show_title=True))
-        r = self.client.get("/about/")
+        r = self.client.get("/fa/about/")
         self.assertContains(r, "site-header")
         self.assertContains(r, "page-built")
         self.assertContains(r, "<h1>درباره ما</h1>", html=False)
         self.publish(simple_doc("محتوای ساخته‌شده", show_title=False))
-        r = self.client.get("/about/")
+        r = self.client.get("/fa/about/")
         self.assertContains(r, '<h1 class="sr-only">درباره ما</h1>')
 
     def test_csp_still_blocks_scripts_and_page_has_no_script_tags(self):
         self.publish(document(section(row(col(el("heading", text="<script>alert(1)</script>"))))))
-        r = self.client.get("/about/")
+        r = self.client.get("/fa/about/")
         self.assertIn("script-src 'self'", r["Content-Security-Policy"])
         html = r.content.decode()
         self.assertNotIn("<script>alert", html)
@@ -326,13 +326,13 @@ class PublicIntegrationTests(Base):
     def test_corrupt_published_document_falls_back_to_markdown(self):
         self.publish(simple_doc("خراب می‌شود"))
         DesignVersion.objects.update(document={"schema_version": 1, "sections": [{"id": "abcd", "rows": [], "boom": True}]})
-        r = self.client.get("/about/")
+        r = self.client.get("/fa/about/")
         self.assertEqual(r.status_code, 200)
         self.assertContains(r, "مارک‌داون")
 
     def test_meta_description_comes_from_builder_text_not_css_or_old_markdown(self):
         self.publish(simple_doc("توضیح صفحه ساخته شده"))
-        r = self.client.get("/about/")
+        r = self.client.get("/fa/about/")
         desc = r.content.decode().split('name="description" content="', 1)[1].split('"', 1)[0]
         self.assertIn("توضیح صفحه ساخته شده", desc)
         self.assertNotIn("bx-", desc)
@@ -340,20 +340,20 @@ class PublicIntegrationTests(Base):
 
     def test_pages_without_design_unchanged(self):
         other = Page.objects.create(title="تماس", slug="contact", body="تماس با **ما**", status="published")
-        r = self.client.get("/contact/")
+        r = self.client.get("/fa/contact/")
         self.assertContains(r, "<strong>ما</strong>", html=False)
         self.assertNotContains(r, "bx-page")
 
     def test_media_images_render_publicly(self):
         m = self.make_image()
         self.publish(document(section(row(col(el("image", media=m.pk))))))
-        self.assertContains(self.client.get("/about/"), m.file.url)
+        self.assertContains(self.client.get("/fa/about/"), m.file.url)
 
     def test_deleted_media_does_not_break_page(self):
         m = self.make_image()
         self.publish(document(section(row(col(el("image", media=m.pk), el("heading", text="سالم"))))))
         m.delete()
-        r = self.client.get("/about/")
+        r = self.client.get("/fa/about/")
         self.assertEqual(r.status_code, 200)
         self.assertContains(r, "سالم")
 

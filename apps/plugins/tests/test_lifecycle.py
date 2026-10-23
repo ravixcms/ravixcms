@@ -339,7 +339,7 @@ def ping(request, api):
         r = Client().get("/ext/bad/ping")
         self.assertEqual(r.status_code, 500)
         self.assertNotIn(b"boom-public", r.content)
-        self.assertEqual(Client().get("/").status_code, 200)
+        self.assertEqual(Client().get("/fa/").status_code, 200)
 
     def test_circuit_breaker_auto_disables(self):
         self.write_plugin("bad", views=self.BAD_VIEWS)

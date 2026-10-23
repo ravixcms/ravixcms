@@ -26,6 +26,10 @@ class SecurityHeadersMiddleware:
         return response
 
 
+NON_LOCALIZED_PREFIXES = ("/panel/", "/accounts/", "/api/", "/django-admin/", "/static/", "/media/", "/ext/", "/registry/", "/install/",
+                          "/healthz", "/jsi18n/", "/i18n/")
+
+
 class SiteRegionalMiddleware:
     """زبان و منطقهٔ زمانی سایت (SiteSettings) را برای این درخواست فعال می‌کند؛ ورودی/نمایش تاریخ‌ها در پنل با همین منطقه است.
     خطا (مثلاً قبل از migrate) هرگز درخواست را نمی‌شکند."""
@@ -56,11 +60,58 @@ class SiteRegionalMiddleware:
             timezone.deactivate()
         try:
             response = self.get_response(request)
-            patch_vary_headers(response, ("Cookie",))  # the language depends on the language cookie / session
+            if getattr(response, "status_code", None) == 404 and request.method in ("GET", "HEAD"):
+                response = self._localize_redirect(request, site, response) or response
+            if response is not None:
+                patch_vary_headers(response, ("Cookie",))  # the language depends on the language cookie / session
             return response
         finally:
             timezone.deactivate()
             translation.deactivate()
+
+
+    @staticmethod
+    def _localize_redirect(request, site, response):
+        """Old unprefixed public URLs (``/blog/x/``) and prefixed ones lacking the trailing slash redirect to the
+        language-prefixed URL (``/fa/blog/x/``). The language comes from the visitor's cookie/profile (302, personal)
+        or, failing that, the site default (301, but short-lived in caches because the default can change)."""
+        from django.conf import settings
+        from django.http import HttpResponseRedirect
+        from django.urls import get_script_prefix, is_valid_path
+        from django.utils.encoding import iri_to_uri
+
+        from .regional import resolve_preferred_language, split_language_prefix
+
+        path = request.path_info
+        if path.startswith(NON_LOCALIZED_PREFIXES) or path.startswith(f"/{settings.RAVIX_ADMIN_PATH}/"):
+            return None  # system URLs are never language-prefixed (a missing one is just a 404)
+        code, rest = split_language_prefix(path)
+        source = "url"
+        if not code:
+            code, source = resolve_preferred_language(request, site)
+            rest = path
+        if source == "url":  # already prefixed and (as the 404 shows) not valid as is: only a missing slash can help
+            fulls = [path + "/"] if settings.APPEND_SLASH and not path.endswith("/") else []
+        else:
+            fulls = [f"/{code}{rest}"]
+            if settings.APPEND_SLASH and not rest.endswith("/"):
+                fulls.append(f"/{code}{rest}/")
+        for full in fulls:
+            if is_valid_path(full):
+                target = get_script_prefix().rstrip("/") + full
+                query = request.META.get("QUERY_STRING", "")
+                if query:
+                    target = f"{target}?{query}"
+                redirect = HttpResponseRedirect(iri_to_uri(target))
+                if source == "default":
+                    redirect.status_code = 301
+                    redirect["Cache-Control"] = "max-age=3600"
+                elif source in ("cookie", "profile"):
+                    redirect["Cache-Control"] = "private, no-store"
+                else:  # a prefixed URL that only needed its trailing slash
+                    redirect.status_code = 301
+                return redirect
+        return None
 
 
 class NumericOverflowMiddleware:

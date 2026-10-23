@@ -79,7 +79,7 @@ class NoFallbackTests(TestCase):
     def test_without_fallback_alias_the_error_is_not_swallowed(self):
         caches, blocker = broken_caches(with_fallback=False)
         self.addCleanup(os.unlink, blocker)
-        req = RequestFactory().post("/")
+        req = RequestFactory().post("/fa/")
         with override_settings(CACHES=caches), self.assertRaises(OSError):
             throttle.is_locked(req, "ali")
 
@@ -87,7 +87,7 @@ class NoFallbackTests(TestCase):
         caches, blocker = broken_caches()
         self.addCleanup(os.unlink, blocker)
         caches["throttle_fallback"] = {"BACKEND": "django.core.cache.backends.filebased.FileBasedCache", "LOCATION": os.path.join(blocker, "x")}
-        req = RequestFactory().post("/")
+        req = RequestFactory().post("/fa/")
         with override_settings(CACHES=caches), self.assertRaises(OSError):
             throttle.is_locked(req, "ali")
 

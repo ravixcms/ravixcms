@@ -43,7 +43,7 @@ class PublicSiteTests(TestCase):
 
     # ----------------------------------------------------------- صفحه‌ها
     def test_home_lists_published_posts_only(self):
-        resp = self.client.get("/")
+        resp = self.client.get("/fa/")
         self.assertEqual(resp.status_code, 200)
         self.assertContains(resp, "نوشتهٔ اول")
         self.assertNotContains(resp, "پیش‌نویس مخفی")
@@ -53,7 +53,7 @@ class PublicSiteTests(TestCase):
 
     def test_home_is_usable_with_no_content(self):
         Post.objects.all().delete()
-        resp = self.client.get("/")
+        resp = self.client.get("/fa/")
         self.assertEqual(resp.status_code, 200)
 
     def test_post_list_and_pagination(self):
@@ -105,7 +105,7 @@ class PublicSiteTests(TestCase):
         self.assertContains(self.client.get(url, {"q": "<script>alert(1)</script>"}), "&lt;script&gt;")
 
     def test_404_page_is_themed_for_public_and_plain_for_system_paths(self):
-        resp = self.client.get("/does-not-exist/")
+        resp = self.client.get("/fa/does-not-exist/")
         self.assertEqual(resp.status_code, 404)
         self.assertContains(resp, "site-header", status_code=404)
         self.assertContains(resp, "noindex", status_code=404)
@@ -128,12 +128,12 @@ class PublicSiteTests(TestCase):
         resp = self.client.get(reverse("public:sitemap"))
         body = resp.content.decode()
         self.assertEqual(resp["Content-Type"].split(";")[0], "application/xml")
-        self.assertIn("/blog/first/", body)
+        self.assertIn("/fa/blog/first/", body)
         self.assertIn("/about/", body)
         self.assertNotIn("hidden-draft", body)
         self.assertNotIn("/future/", body)
         self.assertNotIn("secret", body)
-        robots = self.client.get(reverse("public:robots")).content.decode()
+        robots = self.client.get(reverse("seo:robots")).content.decode()
         self.assertIn("Disallow: /panel/", robots)
         self.assertIn("Sitemap:", robots)
 
@@ -149,7 +149,7 @@ class PublicSiteTests(TestCase):
         s = SiteSettings.load()
         s.site_name, s.tagline, s.footer_text, s.admin_email = "سایت آزمایشی", "شعار من", "حقوق محفوظ است", "hi@example.com"
         s.save()
-        html = self.client.get("/").content.decode()
+        html = self.client.get("/fa/").content.decode()
         self.assertIn("سایت آزمایشی", html)
         self.assertIn("شعار من", html)
         self.assertIn("حقوق محفوظ است", html)
@@ -157,16 +157,16 @@ class PublicSiteTests(TestCase):
 
     # ----------------------------------------------------------- امنیت و کارایی
     def test_security_and_cache_headers(self):
-        resp = self.client.get("/")
+        resp = self.client.get("/fa/")
         self.assertIn("default-src 'self'", resp["Content-Security-Policy"])
         self.assertIn("script-src 'self'", resp["Content-Security-Policy"])
         self.assertEqual(resp["X-Content-Type-Options"], "nosniff")
         self.assertTrue(resp.has_header("ETag"))
         self.assertNotIn("Vary: Cookie", str(resp.headers))
-        self.assertEqual(self.client.get("/", HTTP_IF_NONE_MATCH=resp["ETag"]).status_code, 304)
+        self.assertEqual(self.client.get("/fa/", HTTP_IF_NONE_MATCH=resp["ETag"]).status_code, 304)
 
     def test_theme_assets_have_version_and_font_preload(self):
-        html = self.client.get("/").content.decode()
+        html = self.client.get("/fa/").content.decode()
         self.assertRegex(html, r'themes/default/css/theme\.css\?v=\d+\.\d+\.\d+')
         self.assertIn('rel="preload"', html)
         scripts = re.findall(r"<script[^>]*>", html)
@@ -184,14 +184,14 @@ class PublicSiteTests(TestCase):
     def _check_constant_query_count_on_lists(self):
         for i in range(8):
             make_post(f"نوشته {i}", f"q{i}", days=i + 3, cats=[self.cat], tags=[self.tag])
-        self.client.get("/")  # گرم‌کردن کش‌های ساده
-        self.client.get("/blog/")  # گرم‌کردن کش خود مسیر؛ بدون آن، گاهی (۱ از ~۶ اجرا) شمارش اول یک کوئری بیشتر داشت
-        with self.assertNumQueries(self._count("/blog/")):
-            self.client.get("/blog/")
+        self.client.get("/fa/")  # گرم‌کردن کش‌های ساده
+        self.client.get("/fa/blog/")  # گرم‌کردن کش خود مسیر؛ بدون آن، گاهی (۱ از ~۶ اجرا) شمارش اول یک کوئری بیشتر داشت
+        with self.assertNumQueries(self._count("/fa/blog/")):
+            self.client.get("/fa/blog/")
         for i in range(8, 16):
             make_post(f"نوشته {i}", f"q{i}", days=i + 3, cats=[self.cat], tags=[self.tag])
-        with self.assertNumQueries(self._count("/blog/")):
-            self.client.get("/blog/")
+        with self.assertNumQueries(self._count("/fa/blog/")):
+            self.client.get("/fa/blog/")
 
     def _count(self, path):
         from django.db import connection
@@ -212,10 +212,10 @@ class PublicSiteTests(TestCase):
         doc["header"] = {**doc["header"], "sticky": False, "show_search": False, "cta_label": "شروع", "cta_url": "/about/"}
         cfg.published = doc
         cfg.save()
-        html = self.client.get("/").content.decode()
+        html = self.client.get("/fa/").content.decode()
         self.assertIn("--rv-primary:#0f766e", html)
         self.assertIn("system-ui", html)
-        self.assertIn('href="/about/"', html)
+        self.assertIn('href="/fa/about/"', html)  # an internal custom URL gets the visitor's language prefix
         self.assertIn('target="_blank" rel="noopener noreferrer"', html)
         self.assertNotIn("is-sticky", html)
         self.assertNotIn('role="search"', html.split("<main")[0])
@@ -227,7 +227,7 @@ class PublicSiteTests(TestCase):
         doc["menus"] = {"header": [{"label": "مخفی‌منو", "kind": "page", "target": self.hidden_page.pk, "url": "", "new_tab": False}], "footer": []}
         cfg.published = doc
         cfg.save()
-        self.assertNotContains(self.client.get("/"), "مخفی‌منو")
+        self.assertNotContains(self.client.get("/fa/"), "مخفی‌منو")
 
     def test_home_sections_follow_config(self):
         cfg = ThemeConfig.load()
@@ -244,7 +244,7 @@ class PublicSiteTests(TestCase):
         ]}
         cfg.published = doc
         cfg.save()
-        html = self.client.get("/").content.decode()
+        html = self.client.get("/fa/").content.decode()
         for needle in ("عنوان قهرمان", "زیرعنوان", "نوشتهٔ اول", "دسته‌بندی‌ها", "متن صفحه", "متن آزاد"):
             self.assertIn(needle, html)
         self.assertNotIn("پنهان", html)
@@ -267,7 +267,7 @@ class PublicSiteTests(TestCase):
                 doc["appearance"] = {**doc["appearance"], "logo_media": media.pk, "favicon_media": media.pk}
                 cfg.published = doc
                 cfg.save()
-                html = self.client.get("/").content.decode()
+                html = self.client.get("/fa/").content.decode()
                 self.assertIn('class="brand-logo"', html)
                 self.assertIn('rel="icon" href="/media/', html)
         finally:
@@ -286,23 +286,23 @@ class PreviewVisibilityTests(TestCase):
 
     def test_preview_requires_flag_and_permission(self):
         self.client.force_login(self.admin)
-        self.assertNotContains(self.client.get("/"), "--rv-primary:#b91c1c")  # بدون شروع پیش‌نمایش
+        self.assertNotContains(self.client.get("/fa/"), "--rv-primary:#b91c1c")  # بدون شروع پیش‌نمایش
         self.client.post(reverse("themes:preview_start"))
-        resp = self.client.get("/")
+        resp = self.client.get("/fa/")
         self.assertContains(resp, "--rv-primary:#b91c1c")
         self.assertContains(resp, "حالت پیش‌نمایش")
         self.assertEqual(resp["Cache-Control"], "private, no-store")
         self.client.post(reverse("themes:preview_stop"))
-        self.assertNotContains(self.client.get("/"), "--rv-primary:#b91c1c")
+        self.assertNotContains(self.client.get("/fa/"), "--rv-primary:#b91c1c")
 
     def test_visitors_and_non_admins_never_see_draft(self):
-        self.assertNotContains(self.client.get("/"), "#b91c1c")
+        self.assertNotContains(self.client.get("/fa/"), "#b91c1c")
         author = make_user("auth", role=Role.AUTHOR)
         self.client.force_login(author)
         session = self.client.session
         session["ravix_preview"] = True  # حتی با دست‌کاری نشست
         session.save()
-        resp = self.client.get("/")
+        resp = self.client.get("/fa/")
         self.assertNotContains(resp, "#b91c1c")
         self.assertNotContains(resp, "حالت پیش‌نمایش")
         self.assertNotIn('class="rv-preview"', resp.content.decode())
@@ -320,8 +320,8 @@ class PreviewVisibilityTests(TestCase):
 
     def test_toolbar_for_logged_in_staff_in_normal_mode(self):
         self.client.force_login(self.admin)
-        self.client.get("/")  # نشست ایجاد شود
-        resp = self.client.get("/")
+        self.client.get("/fa/")  # نشست ایجاد شود
+        resp = self.client.get("/fa/")
         self.assertContains(resp, "پنل مدیریت")
         self.assertEqual(resp["Cache-Control"], "private, no-store")
 
@@ -335,14 +335,14 @@ class ThemeFallbackAndIsolationTests(ThemeDirMixin, TestCase):
 
     def test_missing_active_theme_falls_back_to_default(self):
         self.activate("ghost")
-        resp = self.client.get("/")
+        resp = self.client.get("/fa/")
         self.assertEqual(resp.status_code, 200)
         self.assertContains(resp, 'data-theme="default"')
 
     def test_broken_theme_falls_back(self):
         self.install_theme("broken", edit=lambda p: (p / "templates" / "home.html").write_text("{% if %}", encoding="utf-8"))
         self.activate("broken")
-        self.assertContains(self.client.get("/"), 'data-theme="default"')
+        self.assertContains(self.client.get("/fa/"), 'data-theme="default"')
 
     def test_custom_theme_renders_and_cannot_leak_server_data(self):
         def edit(path):
@@ -350,7 +350,7 @@ class ThemeFallbackAndIsolationTests(ThemeDirMixin, TestCase):
             home.write_text('{% extends "base.html" %}{% block content %}<p>[{{ request.path }}{{ settings.SECRET_KEY }}{{ user.email }}]</p>MARK{% endblock %}', encoding="utf-8")
         self.install_theme("custom", edit=edit)
         self.activate("custom")
-        resp = self.client.get("/")
+        resp = self.client.get("/fa/")
         self.assertContains(resp, 'data-theme="custom"')
         self.assertContains(resp, "<p>[]</p>MARK")
 
@@ -359,7 +359,7 @@ class ThemeFallbackAndIsolationTests(ThemeDirMixin, TestCase):
             (path / "templates" / "404.html").write_text('{% extends "base.html" %}{% block content %}CUSTOM-404{% endblock %}', encoding="utf-8")
         self.install_theme("custom", edit=edit)
         self.activate("custom")
-        self.assertContains(self.client.get("/nothing-here/"), "CUSTOM-404", status_code=404)
+        self.assertContains(self.client.get("/fa/nothing-here/"), "CUSTOM-404", status_code=404)
 
     def test_theme_static_files_are_served_with_version(self):
         from django.contrib.staticfiles import finders

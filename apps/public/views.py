@@ -108,7 +108,7 @@ class PostListView(PublicView):
                 prev=prev, next_=nxt,
             )
 
-        ctx = {"posts": posts, "pagination": pagination, "categories": categories, "breadcrumbs": _crumbs((gettext("Home"), "/"), (gettext("Posts"), ""))}
+        ctx = {"posts": posts, "pagination": pagination, "categories": categories, "breadcrumbs": _crumbs((gettext("Home"), reverse("public:home")), (gettext("Posts"), ""))}
         return self.respond(request, ctx, seo=seo)
 
 
@@ -129,7 +129,7 @@ class PostDetailView(PublicView):
         if category_ids:
             qs = b.live_posts().filter(categories__in=category_ids).exclude(pk=post.pk).distinct()[:3]
             related = tuple(b.post_item(p) for p in qs)
-        crumbs = [(gettext("Home"), "/"), (gettext("Posts"), reverse("public:post_list"))]
+        crumbs = [(gettext("Home"), reverse("public:home")), (gettext("Posts"), reverse("public:post_list"))]
         first = next(iter(post.categories.all()), None)
         if first:
             crumbs.append((first.name, b.category_url(first)))
@@ -200,7 +200,7 @@ class CategoryDetailView(PublicView):
         posts = tuple(b.post_item(p) for p in page_obj.object_list)
         children = tuple(b.category_item(c) for c in b.categories_with_counts().filter(parent=category, live_count__gt=0))
         prev, nxt = _paging_seo(pagination)
-        crumbs = _crumbs((gettext("Home"), "/"), (gettext("Posts"), reverse("public:post_list")), (category.name, ""))
+        crumbs = _crumbs((gettext("Home"), reverse("public:home")), (gettext("Posts"), reverse("public:post_list")), (category.name, ""))
 
         def seo(site):
             return make_seo(
@@ -222,7 +222,7 @@ class TagDetailView(PublicView):
         page_obj, pagination = b.paginate(request, b.live_posts().filter(tags=tag), base_url=url)
         posts = tuple(b.post_item(p) for p in page_obj.object_list)
         prev, nxt = _paging_seo(pagination)
-        crumbs = _crumbs((gettext("Home"), "/"), (gettext("Posts"), reverse("public:post_list")), ((gettext("Tag: %(name)s") % {"name": tag.name}), ""))
+        crumbs = _crumbs((gettext("Home"), reverse("public:home")), (gettext("Posts"), reverse("public:post_list")), ((gettext("Tag: %(name)s") % {"name": tag.name}), ""))
 
         def seo(site):
             return make_seo(
@@ -249,7 +249,7 @@ class PageDetailView(PublicView):
             data = make_seo(request, site, title=page.effective_title_tag, description=page.seo_description or item.excerpt, path=item.url)
             return finish_seo(request, apply_filter("public.seo", data, kind="page", obj_id=page.pk, site=site, request=request))
 
-        ctx = {"page": item, "breadcrumbs": _crumbs((gettext("Home"), "/"), (page.title, ""))}
+        ctx = {"page": item, "breadcrumbs": _crumbs((gettext("Home"), reverse("public:home")), (page.title, ""))}
         return self.respond(request, ctx, seo=seo, edit_url=reverse("content:page_update", args=[page.pk]))
 
 
@@ -274,16 +274,22 @@ class SearchView(PublicView):
             return make_seo(request, site, title=(gettext("Search: %(query)s") % {"query": query}) if query else gettext("Search"), path=reverse("public:search"), robots="noindex,follow")
 
         ctx = {"query": query, "searched": searched, "posts": posts, "pages": pages, "pagination": pagination,
-               "total": (pagination.total if pagination else 0) + len(pages), "breadcrumbs": _crumbs((gettext("Home"), "/"), (gettext("Search"), ""))}
+               "total": (pagination.total if pagination else 0) + len(pages), "breadcrumbs": _crumbs((gettext("Home"), reverse("public:home")), (gettext("Search"), ""))}
         return self.respond(request, ctx, seo=seo)
 
 
 # ------------------------------------------------------------------ sitemap و robots
 class SitemapView(View):
+    """``/<lang>/sitemap.xml``: every public URL in this language, each with ``xhtml:link`` hreflang alternates."""
+
     http_method_names = ["get", "head"]
     LIMIT = 50000
 
     def get(self, request):
+        from apps.core.regional import language_choices, load_site_settings, regional_for, swap_language_prefix
+
+        from .seo import hreflang
+
         entries = [(reverse("public:home"), None), (reverse("public:post_list"), None)]
         for c in b.categories_with_counts().filter(live_count__gt=0):
             entries.append((b.category_url(c), c.updated_at))
@@ -300,11 +306,41 @@ class SitemapView(View):
                 entries.append((reverse("shop:list"), None))
                 for pr in Product.objects.filter(site=site, is_active=True).only("slug", "updated_at"):
                     entries.append((pr.get_absolute_url(), pr.updated_at))
-        lines = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+        languages = [code for code, _name in language_choices()]
+        default = regional_for(load_site_settings(request))[0]
+        lines = ['<?xml version="1.0" encoding="UTF-8"?>',
+                 '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">']
         for path, modified in entries[: self.LIMIT]:
             lastmod = f"<lastmod>{modified.date().isoformat()}</lastmod>" if modified else ""
-            lines.append(f"<url><loc>{escape(absolute_url(request, path))}</loc>{lastmod}</url>")
+            alternates = ""
+            if swap_language_prefix(path, "fa") is not None:
+                links = [(hreflang(code), swap_language_prefix(path, code)) for code in languages]
+                links.append(("x-default", swap_language_prefix(path, default)))
+                alternates = "".join(
+                    f'<xhtml:link rel="alternate" hreflang="{lang}" href="{escape(absolute_url(request, href))}"/>' for lang, href in links)
+            lines.append(f"<url><loc>{escape(absolute_url(request, path))}</loc>{lastmod}{alternates}</url>")
         lines.append("</urlset>")
+        response = HttpResponse("\n".join(lines), content_type="application/xml; charset=utf-8")
+        response["Cache-Control"] = "public, max-age=0, must-revalidate"
+        return response
+
+
+class SitemapIndexView(View):
+    """``/sitemap.xml``: a sitemap index pointing at one sitemap per UI language (language-neutral, never redirected)."""
+
+    http_method_names = ["get", "head"]
+
+    def get(self, request):
+        from apps.core.regional import language_choices
+
+        from django.utils import translation
+
+        lines = ['<?xml version="1.0" encoding="UTF-8"?>', '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+        for code, _name in language_choices():
+            with translation.override(code):
+                loc = reverse("public:sitemap")
+            lines.append(f"<sitemap><loc>{escape(absolute_url(request, loc))}</loc></sitemap>")
+        lines.append("</sitemapindex>")
         response = HttpResponse("\n".join(lines), content_type="application/xml; charset=utf-8")
         response["Cache-Control"] = "public, max-age=0, must-revalidate"
         return response
@@ -314,22 +350,16 @@ class RobotsView(View):
     http_method_names = ["get", "head"]
 
     def get(self, request):
+        from apps.core.regional import language_choices
+
+        blocked = ["/panel/", "/accounts/", "/api/", "/django-admin/"]
+        per_language = ["search/", "shop/cart/", "shop/checkout/", "shop/order/", "shop/pay/"]
+        for code, _name in language_choices():
+            blocked += [f"/{code}/{tail}" for tail in per_language]
+        blocked += ["/search/", "/shop/cart/", "/shop/checkout/", "/shop/order/", "/shop/pay/"]  # legacy unprefixed URLs
         text = "\n".join(
-            [
-                "User-agent: *",
-                "Disallow: /panel/",
-                "Disallow: /accounts/",
-                "Disallow: /api/",
-                "Disallow: /django-admin/",
-                "Disallow: /search/",
-                "Disallow: /shop/cart/",
-                "Disallow: /shop/checkout/",
-                "Disallow: /shop/order/",
-                "Disallow: /shop/pay/",
-                "",
-                f"Sitemap: {absolute_url(request, reverse('public:sitemap'))}",
-                "",
-            ]
+            ["User-agent: *", *[f"Disallow: {path}" for path in blocked], "",
+             f"Sitemap: {absolute_url(request, reverse('seo:index'))}", ""]
         )
         response = HttpResponse(text, content_type="text/plain; charset=utf-8")
         response["Cache-Control"] = "public, max-age=3600"

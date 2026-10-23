@@ -99,7 +99,7 @@ class ThemeManagementTests(ThemeDirMixin, TestCase):
 
         registry.clear_cache()
         self.assertEqual(ThemeConfig.load().active_theme, "custom")  # انتخاب مدیر حفظ می‌شود
-        self.assertEqual(self.client.get("/").status_code, 200)  # ولی سایت با قالب پیش‌فرض بالا می‌ماند
+        self.assertEqual(self.client.get("/fa/").status_code, 200)  # ولی سایت با قالب پیش‌فرض بالا می‌ماند
         self.assertContains(self.client.get(reverse("themes:list")), "پیدا نشد")
 
 
@@ -118,7 +118,7 @@ class DraftWorkflowTests(ThemeDirMixin, TestCase):
         self.assertTrue(cfg.has_draft)
         self.assertEqual(cfg.draft["appearance"]["primary"], "#b91c1c")
         self.assertEqual(cfg.published["appearance"]["primary"], "#4f46e5")
-        self.assertNotContains(self.client.get("/"), "--rv-primary:#b91c1c")  # بدون پیش‌نمایش
+        self.assertNotContains(self.client.get("/fa/"), "--rv-primary:#b91c1c")  # بدون پیش‌نمایش
 
     def test_unreadable_colors_are_rejected(self):
         resp = self.save_appearance(text="#cccccc")
@@ -139,7 +139,7 @@ class DraftWorkflowTests(ThemeDirMixin, TestCase):
         self.assertEqual(cfg.published["appearance"]["primary"], "#b91c1c")
         self.assertIsNotNone(cfg.published_at)
         anon = self.client_class()
-        self.assertContains(anon.get("/"), "--rv-primary:#b91c1c")
+        self.assertContains(anon.get("/fa/"), "--rv-primary:#b91c1c")
 
     def test_discard_restores_published(self):
         self.save_appearance()
@@ -201,7 +201,7 @@ class DraftWorkflowTests(ThemeDirMixin, TestCase):
         cfg = ThemeConfig.load()
         self.assertEqual(cfg.active_theme, "default")
         self.assertEqual(cfg.draft["theme"], "custom")
-        self.assertIn('data-theme="custom"', self.client.get("/").content.decode())
-        self.assertIn('data-theme="default"', self.client_class().get("/").content.decode())
+        self.assertIn('data-theme="custom"', self.client.get("/fa/").content.decode())
+        self.assertIn('data-theme="default"', self.client_class().get("/fa/").content.decode())
         services_doc = services.published_doc(cfg)
         self.assertEqual(services_doc["theme"], "default")

@@ -27,9 +27,9 @@ class SampleContentTests(TestCase):
         self.assertEqual(Post.objects.filter(is_sample=True).count(), 1)
         self.assertEqual(Page.objects.filter(is_sample=True).count(), 2)
         c = Client()
-        self.assertEqual(c.get("/about/").status_code, 200)
-        self.assertEqual(c.get("/contact/").status_code, 200)
-        self.assertContains(c.get("/"), "درباره ما")  # در منوی سربرگ
+        self.assertEqual(c.get("/fa/about/").status_code, 200)
+        self.assertEqual(c.get("/fa/contact/").status_code, 200)
+        self.assertContains(c.get("/fa/"), "درباره ما")  # در منوی سربرگ
 
     def test_edit_clears_sample_flag_and_delete_keeps_edited(self):
         admin = make_user("boss", Role.SUPER_ADMIN)
@@ -47,7 +47,7 @@ class SampleContentTests(TestCase):
         self.assertTrue(Page.objects.filter(slug="about").exists())
         self.assertFalse(Page.objects.filter(slug="contact").exists())
         self.assertFalse(Post.objects.exists())
-        self.assertEqual(Client().get("/contact/").status_code, 404)
+        self.assertEqual(Client().get("/fa/contact/").status_code, 404)
 
     def test_delete_requires_permission_and_post(self):
         make_user("boss", Role.SUPER_ADMIN)
@@ -120,7 +120,7 @@ class ErrorPageTests(TestCase):
         from apps.core import views
 
         with mock.patch("django.db.backends.utils.CursorWrapper.execute", side_effect=RuntimeError("db down")):
-            r = views.server_error(RequestFactory().get("/"))
+            r = views.server_error(RequestFactory().get("/fa/"))
         self.assertEqual(r.status_code, 500)
         body = r.content.decode()
         self.assertIn("مشکلی پیش آمد", body)
@@ -134,7 +134,7 @@ class ErrorPageTests(TestCase):
         from apps.core import errorpages
 
         with mock.patch.object(errorpages, "render_to_string", side_effect=RuntimeError):
-            r = errorpages.standalone_response(RequestFactory().get("/"), 500, "عنوان", "پیام")
+            r = errorpages.standalone_response(RequestFactory().get("/fa/"), 500, "عنوان", "پیام")
         self.assertEqual(r.status_code, 500)
         self.assertIn("عنوان", r.content.decode())
 
@@ -145,13 +145,13 @@ class ErrorPageTests(TestCase):
         UpdateLock.objects.create(name="global", holder="h", operation="apply-core")
         reset_cache()
         self.addCleanup(reset_cache)
-        r = Client().get("/")
+        r = Client().get("/fa/")
         self.assertEqual(r.status_code, 503)
         self.assertEqual(r["Retry-After"], "30")
         self.assertIn("text/html", r["Content-Type"])
         self.assertContains(r, "سایت در حال تعمیر است", status_code=503)
         self.assertContains(r, 'http-equiv="refresh"', status_code=503)
-        r = Client().get("/", HTTP_ACCEPT="application/json")
+        r = Client().get("/fa/", HTTP_ACCEPT="application/json")
         self.assertEqual(r.status_code, 503)
         self.assertIn("text/plain", r["Content-Type"])
 

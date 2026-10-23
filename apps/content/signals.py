@@ -18,7 +18,11 @@ def _urls(instance):
     from django.urls import reverse
 
     name = "public:post_detail" if isinstance(instance, Post) else "public:page_detail"
-    return unquote(reverse(name, args=[instance.slug]))
+    from apps.core.regional import split_language_prefix
+
+    # Stored language-neutral («/blog/x/», not «/fa/blog/x/»): the redirect middleware matches every language prefix and
+    # sends the visitor to the target in their own language.
+    return split_language_prefix(unquote(reverse(name, args=[instance.slug])))[1]
 
 
 def _remember_old_state(sender, instance, **kwargs):

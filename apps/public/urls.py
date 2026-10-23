@@ -25,7 +25,6 @@ urlpatterns = [
     re_path(rf"^tag/{SLUG}/feed/$", feeds.tag_rss, name="tag_feed"),
     re_path(rf"^tag/{SLUG}/feed/atom/$", feeds.tag_atom, name="tag_feed_atom"),
     path("search/", views.SearchView.as_view(), name="search"),
-    path("sitemap.xml", views.SitemapView.as_view(), name="sitemap"),
-    path("robots.txt", views.RobotsView.as_view(), name="robots"),
+    path("sitemap.xml", views.SitemapView.as_view(), name="sitemap"),  # /<lang>/sitemap.xml (فهرست آن در /sitemap.xml ریشه)
     re_path(rf"^{SLUG}/$", views.PageDetailView.as_view(), name="page_detail"),
 ]

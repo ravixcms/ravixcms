@@ -78,12 +78,12 @@ class PayCase(ShopTestCase):
     def order_and_payment(self, qty=1):
         c = Client()
         self.add_to_cart(c, qty=qty)
-        r = c.post("/shop/checkout/", self.checkout_data())
+        r = c.post("/fa/shop/checkout/", self.checkout_data())
         self.assertEqual(r.status_code, 302, r.content[:200])
         return c, r, Order.objects.latest("id"), Payment.objects.latest("id")
 
     def callback(self, payment, c=None, qs=""):
-        return (c or Client()).get(f"/shop/pay/callback/{payment.reference}/{qs}")
+        return (c or Client()).get(f"/fa/shop/pay/callback/{payment.reference}/{qs}")
 
 
 class InterfaceTests(PayCase):
@@ -145,7 +145,7 @@ class FailureTests(PayCase):
         Script.create = GatewayNetworkError("timeout")
         c = Client()
         self.add_to_cart(c, qty=2)
-        r = c.post("/shop/checkout/", self.checkout_data())
+        r = c.post("/fa/shop/checkout/", self.checkout_data())
         self.assertEqual(r.status_code, 400)
         self.assertEqual(Order.objects.get().status, "cancelled")
         self.assertEqual(self.product.__class__.objects.get(pk=self.product.pk).stock, 5)
@@ -159,7 +159,7 @@ class FailureTests(PayCase):
         self.add_to_cart(c)
         lines, _ = services.cart_lines(type("R", (), {"session": c.session})(), self.site)
         order = services.create_order(self.site, lines, {k: v for k, v in self.checkout_data().items()})
-        req = RequestFactory().get("/")
+        req = RequestFactory().get("/fa/")
         Script.create = GatewayNetworkError("timeout")
         with self.assertRaises(services.ShopError):
             services.start_payment(order, req)
@@ -174,7 +174,7 @@ class FailureTests(PayCase):
         Script.create = GatewayRejected("bad key")
         c = Client()
         self.add_to_cart(c)
-        self.assertEqual(c.post("/shop/checkout/", self.checkout_data()).status_code, 400)
+        self.assertEqual(c.post("/fa/shop/checkout/", self.checkout_data()).status_code, 400)
         self.assertEqual(Payment.objects.get().status, "failed")
         self.assertEqual(Order.objects.get().status, "cancelled")
 
@@ -244,7 +244,7 @@ class ValidationTests(PayCase):
         c = Client()
         self.add_to_cart(c)
         with mock.patch.object(ScriptedGateway, "supported_currencies", ("USD",)):
-            self.assertEqual(c.post("/shop/checkout/", self.checkout_data()).status_code, 400)
+            self.assertEqual(c.post("/fa/shop/checkout/", self.checkout_data()).status_code, 400)
         self.assertEqual([x for x in Script.calls if x[0] == "create"], [])
 
     def test_redirect_to_unlisted_host_is_refused(self):
@@ -254,14 +254,14 @@ class ValidationTests(PayCase):
             Script.create = CreateResult(redirect=Redirect(url=url), gateway_ref="G" + str(abs(hash(url)))[:8])
             c = Client()
             self.add_to_cart(c)
-            self.assertEqual(c.post("/shop/checkout/", self.checkout_data()).status_code, 400, url)
+            self.assertEqual(c.post("/fa/shop/checkout/", self.checkout_data()).status_code, 400, url)
             self.assertEqual(Payment.objects.get().status, "failed", url)
 
     def test_post_redirect_renders_form_and_opens_csp_only_for_gateway_host(self):
         Script.create = CreateResult(redirect=Redirect(url="https://pay.example.test/go", method="POST", fields={"token": "T1", "x": '"><script>'}), gateway_ref="GPOST1")
         c = Client()
         self.add_to_cart(c)
-        r = c.post("/shop/checkout/", self.checkout_data())
+        r = c.post("/fa/shop/checkout/", self.checkout_data())
         self.assertEqual(r.status_code, 200)
         html = r.content.decode()
         self.assertIn('action="https://pay.example.test/go"', html)
@@ -285,7 +285,7 @@ class IdempotencyTests(PayCase):
     def test_double_click_pay_creates_single_transaction(self):
         c = Client()
         self.add_to_cart(c)
-        c.post("/shop/checkout/", self.checkout_data())
+        c.post("/fa/shop/checkout/", self.checkout_data())
         order = Order.objects.get()
         url = reverse("shop:order_pay", args=[order.number, order.token])
         for _ in range(3):
@@ -372,14 +372,14 @@ class LoggingAndSecretsTests(PayCase):
         with override_settings(RAVIX_SECRETS_KEYS=[Fernet.generate_key().decode()]):
             c = Client()
             self.add_to_cart(c)
-            r = c.post("/shop/checkout/", self.checkout_data())
+            r = c.post("/fa/shop/checkout/", self.checkout_data())
             self.assertEqual(r.status_code, 400)
             self.assertNotIn(SECRET, r.content.decode())
 
     def test_secrets_not_in_pages_or_api(self):
         c, r, order, payment = self.order_and_payment()
         self.callback(payment, c)
-        pages = [c.get("/shop/checkout/").content, c.get(order.get_public_url()).content, c.get("/api/v1/shop/gateways/").content, c.get("/api/v1/shop/products/").content]
+        pages = [c.get("/fa/shop/checkout/").content, c.get(order.get_public_url()).content, c.get("/api/v1/shop/gateways/").content, c.get("/api/v1/shop/products/").content]
         admin = Client()
         admin.force_login(self.admin)
         pages += [admin.get(reverse("shop_panel:gateways")).content, admin.get(reverse("shop_panel:gateway_edit", args=["scripted"])).content,
@@ -423,10 +423,10 @@ class PanelTests(PayCase):
         self.assertFalse(GatewayConfig.objects.get().enabled)
         cl = Client()
         self.add_to_cart(cl)
-        self.assertEqual(cl.post("/shop/checkout/", self.checkout_data()).status_code, 400)
+        self.assertEqual(cl.post("/fa/shop/checkout/", self.checkout_data()).status_code, 400)
         self.assertFalse(Order.objects.exists())
         self.c.post(reverse("shop_panel:gateway_toggle", args=["scripted"]), {"enable": "1"})
-        self.assertEqual(cl.post("/shop/checkout/", self.checkout_data()).status_code, 302)
+        self.assertEqual(cl.post("/fa/shop/checkout/", self.checkout_data()).status_code, 302)
 
     def test_disabling_gateway_still_verifies_open_payments(self):
         cl, r, order, payment = self.order_and_payment()
@@ -508,10 +508,10 @@ class PanelTests(PayCase):
         GatewayConfig.objects.create(site=self.site, gateway="scripted2", enabled=True, public_config={}, secrets_encrypted=vault.encrypt_json({"api_key": "k2k2k2"}))
         cl = Client()
         self.add_to_cart(cl)
-        html = cl.get("/shop/checkout/").content.decode()
+        html = cl.get("/fa/shop/checkout/").content.decode()
         self.assertIn('name="gateway"', html)
-        self.assertEqual(cl.post("/shop/checkout/", self.checkout_data(gateway="evil_gateway")).status_code, 400)  # مقدار آزاد پذیرفته نمی‌شود
-        r = cl.post("/shop/checkout/", self.checkout_data(gateway="scripted2"))
+        self.assertEqual(cl.post("/fa/shop/checkout/", self.checkout_data(gateway="evil_gateway")).status_code, 400)  # مقدار آزاد پذیرفته نمی‌شود
+        r = cl.post("/fa/shop/checkout/", self.checkout_data(gateway="scripted2"))
         self.assertEqual(r.status_code, 302)
         self.assertEqual(Payment.objects.get().gateway, "scripted2")
         names = [g["name"] for g in Client().get("/api/v1/shop/gateways/").json()]
@@ -618,7 +618,7 @@ class SandboxGatewayTests(ShopTestCase):
         GatewayConfig.objects.create(site=self.site, gateway="sandbox", enabled=False)
         c = Client()
         self.add_to_cart(c)
-        self.assertEqual(c.post("/shop/checkout/", self.checkout_data()).status_code, 400)
+        self.assertEqual(c.post("/fa/shop/checkout/", self.checkout_data()).status_code, 400)
 
 
 class PreflightTests(PayCase):

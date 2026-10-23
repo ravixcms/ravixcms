@@ -80,7 +80,7 @@ class InstallFlowTests(InstallerBase):
         self.assertEqual(Client().get("/install/").status_code, 404)
         self.assertEqual(Client().post("/install/", {**GOOD, "install_token": "tok-123", "username": "evil", "email": "e@e.com"}).status_code, 404)
         self.assertFalse(User.objects.filter(username="evil").exists())
-        self.assertNotEqual(Client().get("/").get("Location"), "/install/")  # گیت باز شد
+        self.assertNotEqual(Client().get("/fa/").get("Location"), "/install/")  # گیت باز شد
 
     def test_service_refuses_second_install(self):
         self.post()

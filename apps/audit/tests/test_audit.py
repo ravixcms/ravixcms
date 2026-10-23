@@ -41,7 +41,7 @@ class AuthEventsTests(TestCase):
 class ServiceTests(TestCase):
     def test_actor_name_survives_user_deletion(self):
         user = make_user("temp")
-        request = RequestFactory().get("/")
+        request = RequestFactory().get("/fa/")
         request.user = user
         event = log_event(request, "update", user, "تست")
         name = user.display_name
@@ -51,13 +51,13 @@ class ServiceTests(TestCase):
         self.assertEqual(event.actor_name, name)
 
     def test_message_truncated_and_ip_recorded(self):
-        request = RequestFactory().get("/", REMOTE_ADDR="10.1.2.3")
+        request = RequestFactory().get("/fa/", REMOTE_ADDR="10.1.2.3")
         event = log_event(request, "update", message="x" * 1000)
         self.assertEqual(len(event.message), 400)
         self.assertEqual(event.ip_address, "10.1.2.3")
 
     def test_forwarded_header_is_not_trusted(self):
-        request = RequestFactory().get("/", REMOTE_ADDR="10.1.2.3", HTTP_X_FORWARDED_FOR="6.6.6.6")
+        request = RequestFactory().get("/fa/", REMOTE_ADDR="10.1.2.3", HTTP_X_FORWARDED_FOR="6.6.6.6")
         self.assertEqual(log_event(request, "update", message="m").ip_address, "10.1.2.3")
 
 
@@ -103,7 +103,7 @@ class AuditViewTests(TestCase):
         from django.contrib import admin
 
         model_admin = admin.site._registry[AuditLog]
-        request = RequestFactory().get("/")
+        request = RequestFactory().get("/fa/")
         request.user = make_user("root", Role.SUPER_ADMIN)
         self.assertFalse(model_admin.has_add_permission(request))
         self.assertFalse(model_admin.has_change_permission(request))

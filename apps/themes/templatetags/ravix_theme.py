@@ -120,6 +120,8 @@ def theme_head(context):
         parts.append(format_html('<meta name="robots" content="{}">', seo["robots"]))
     if seo.get("canonical"):
         parts.append(format_html('<link rel="canonical" href="{}">', seo["canonical"]))
+    for lang, href in seo.get("alternates") or ():  # hreflang: the same page in every UI language
+        parts.append(format_html('<link rel="alternate" hreflang="{}" href="{}">', lang, href))
     for feed in context.get("feeds") or ():  # autodiscovery فید RSS/Atom
         parts.append(format_html('<link rel="alternate" type="{}" title="{}" href="{}">', feed.type, feed.title, feed.url))
     for rel in ("prev", "next"):

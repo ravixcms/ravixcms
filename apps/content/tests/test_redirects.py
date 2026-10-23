@@ -54,7 +54,7 @@ class RedirectMiddlewareTests(TestCase):
     def test_redirects_404_with_status_and_query(self):
         make("/gone/", "/blog/", 301)
         r = self.client.get("/gone/?utm=1")
-        self.assertEqual((r.status_code, r["Location"]), (301, "/blog/?utm=1"))
+        self.assertEqual((r.status_code, r["Location"]), (301, "/fa/blog/?utm=1"))
         make("/tmp-old/", "/blog/", 302)
         self.assertEqual(self.client.get("/tmp-old/").status_code, 302)
 
@@ -72,17 +72,17 @@ class RedirectMiddlewareTests(TestCase):
     def test_existing_page_not_hijacked(self):
         Page.objects.create(title="هست", slug="exists", body="x", status="published")
         make("/exists/", "/blog/")
-        r = self.client.get("/exists/")
+        r = self.client.get("/fa/exists/")
         self.assertEqual(r.status_code, 200)
 
     def test_unknown_path_still_404(self):
-        self.assertEqual(self.client.get("/nothing-here/").status_code, 404)
+        self.assertEqual(self.client.get("/fa/nothing-here/").status_code, 404)
 
     def test_persian_old_path_and_encoded_location(self):
         make("/درباره-قدیمی/", "/درباره/")
-        r = self.client.get("/" + "درباره-قدیمی".encode().decode() + "/")
+        r = self.client.get("/fa/" + "درباره-قدیمی".encode().decode() + "/")
         self.assertEqual(r.status_code, 301)
-        self.assertEqual(r["Location"], "/%D8%AF%D8%B1%D8%A8%D8%A7%D8%B1%D9%87/")
+        self.assertEqual(r["Location"], "/fa/%D8%AF%D8%B1%D8%A8%D8%A7%D8%B1%D9%87/")
 
     def test_external_target(self):
         make("/go/", "https://example.com/x")
@@ -91,7 +91,7 @@ class RedirectMiddlewareTests(TestCase):
 
     def test_self_target_does_not_loop(self):
         Redirect.objects.bulk_create([Redirect(old_path="/loop/", new_path="/loop/")])
-        self.assertEqual(self.client.get("/loop/").status_code, 404)
+        self.assertEqual(self.client.get("/fa/loop/").status_code, 404)
 
     def test_panel_paths_never_redirected(self):
         Redirect.objects.bulk_create([Redirect(old_path="/panel/zzz/", new_path="/blog/")])
@@ -165,16 +165,16 @@ class AutoRedirectOnSlugChangeTests(TestCase):
         p.save()
         r = Redirect.objects.get()
         self.assertEqual((r.old_path, r.new_path, r.status_code, r.is_auto), ("/blog/old/", "/blog/new/", 301, True))
-        resp = self.client.get("/blog/old/")
-        self.assertEqual((resp.status_code, resp["Location"]), (301, "/blog/new/"))
-        self.assertEqual(self.client.get("/blog/new/").status_code, 200)
+        resp = self.client.get("/fa/blog/old/")
+        self.assertEqual((resp.status_code, resp["Location"]), (301, "/fa/blog/new/"))
+        self.assertEqual(self.client.get("/fa/blog/new/").status_code, 200)
         self.assertTrue(AuditLog.objects.filter(action="create", object_type="ریدایرکت", message__contains="خودکار").exists())
 
     def test_page_slug_change_creates_301(self):
         pg = Page.objects.create(title="درباره", slug="about", body="x", status="published")
         pg.slug = "about-us"
         pg.save()
-        self.assertEqual(self.client.get("/about/")["Location"], "/about-us/")
+        self.assertEqual(self.client.get("/about/")["Location"], "/fa/about-us/")
 
     def test_persian_slug_change(self):
         p = self.post(slug="قدیم")
@@ -182,7 +182,7 @@ class AutoRedirectOnSlugChangeTests(TestCase):
         p.save()
         r = Redirect.objects.get()
         self.assertEqual((r.old_path, r.new_path), ("/blog/قدیم/", "/blog/جدید/"))
-        self.assertEqual(self.client.get("/blog/قدیم/").status_code, 301)
+        self.assertEqual(self.client.get("/fa/blog/قدیم/").status_code, 301)
 
     def test_no_redirect_when_slug_unchanged_or_on_create(self):
         p = self.post()
@@ -209,7 +209,7 @@ class AutoRedirectOnSlugChangeTests(TestCase):
         p.slug = "c"
         p.save()
         self.assertEqual(set(Redirect.objects.values_list("old_path", "new_path")), {("/blog/old/", "/blog/c/"), ("/blog/b/", "/blog/c/")})
-        self.assertEqual(self.client.get("/blog/old/")["Location"], "/blog/c/")
+        self.assertEqual(self.client.get("/fa/blog/old/")["Location"], "/fa/blog/c/")
 
     def test_reverting_slug_removes_conflicting_redirect(self):
         p = self.post()
@@ -218,8 +218,8 @@ class AutoRedirectOnSlugChangeTests(TestCase):
         p.slug = "old"
         p.save()
         self.assertFalse(Redirect.objects.filter(old_path="/blog/old/").exists())
-        self.assertEqual(self.client.get("/blog/old/").status_code, 200)
-        self.assertEqual(self.client.get("/blog/b/")["Location"], "/blog/old/")
+        self.assertEqual(self.client.get("/fa/blog/old/").status_code, 200)
+        self.assertEqual(self.client.get("/fa/blog/b/")["Location"], "/fa/blog/old/")
 
     def test_manual_redirect_for_same_old_path_is_updated(self):
         make("/blog/old/", "/somewhere/", 302)

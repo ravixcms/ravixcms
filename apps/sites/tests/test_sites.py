@@ -34,35 +34,35 @@ class IsolationTests(ShopTestCase):
 
     def order_on(self, host, product, client=None):
         c = client or Client()
-        c.post("/shop/cart/add/", {"product": product.pk, "qty": 1}, HTTP_HOST=host)
-        r = c.post("/shop/checkout/", self.checkout_data(), HTTP_HOST=host)
+        c.post("/fa/shop/cart/add/", {"product": product.pk, "qty": 1}, HTTP_HOST=host)
+        r = c.post("/fa/shop/checkout/", self.checkout_data(), HTTP_HOST=host)
         return c, r
 
     # --- عمومی
     def test_public_catalog_is_per_domain(self):
-        ra, rb = self.get("a.test", "/shop/"), self.get("b.test", "/shop/")
+        ra, rb = self.get("a.test", "/fa/shop/"), self.get("b.test", "/fa/shop/")
         self.assertContains(ra, "محصول الف")
         self.assertNotContains(ra, "محصول ب")
         self.assertContains(rb, "محصول ب")
         self.assertNotContains(rb, "محصول الف")
-        self.assertEqual(self.get("b.test", "/shop/p/pa/").status_code, 404)
-        self.assertEqual(self.get("a.test", "/shop/p/pa/").status_code, 200)
+        self.assertEqual(self.get("b.test", "/fa/shop/p/pa/").status_code, 404)
+        self.assertEqual(self.get("a.test", "/fa/shop/p/pa/").status_code, 200)
 
     def test_unknown_or_inactive_domain_has_no_shop(self):
-        self.assertEqual(self.get("c.test", "/shop/").status_code, 404)
+        self.assertEqual(self.get("c.test", "/fa/shop/").status_code, 404)
         Site.objects.filter(pk=self.site_a.pk).update(is_active=False)
-        self.assertEqual(self.get("a.test", "/shop/").status_code, 404)
+        self.assertEqual(self.get("a.test", "/fa/shop/").status_code, 404)
 
     def test_cart_cannot_add_other_sites_product(self):
         c = Client()
-        r = c.post("/shop/cart/add/", {"product": self.pa.pk, "qty": 1}, HTTP_HOST="b.test")
+        r = c.post("/fa/shop/cart/add/", {"product": self.pa.pk, "qty": 1}, HTTP_HOST="b.test")
         self.assertEqual(r.status_code, 404)
 
     def test_cart_is_per_site(self):
         c = Client()
-        c.post("/shop/cart/add/", {"product": self.pa.pk, "qty": 1}, HTTP_HOST="a.test")
-        self.assertContains(c.get("/shop/cart/", HTTP_HOST="a.test"), "محصول الف")
-        self.assertNotContains(c.get("/shop/cart/", HTTP_HOST="b.test"), "محصول الف")
+        c.post("/fa/shop/cart/add/", {"product": self.pa.pk, "qty": 1}, HTTP_HOST="a.test")
+        self.assertContains(c.get("/fa/shop/cart/", HTTP_HOST="a.test"), "محصول الف")
+        self.assertNotContains(c.get("/fa/shop/cart/", HTTP_HOST="b.test"), "محصول الف")
 
     def test_order_and_payment_not_reachable_from_other_domain(self):
         c, r = self.order_on("a.test", self.pa)
@@ -71,13 +71,13 @@ class IsolationTests(ShopTestCase):
         self.assertEqual(self.get("a.test", order.get_public_url()).status_code, 200)
         self.assertEqual(self.get("b.test", order.get_public_url()).status_code, 404)  # توکن درست ولی سایت دیگر
         ref = order.payments.get().reference
-        self.assertEqual(self.get("b.test", f"/shop/pay/callback/{ref}/").status_code, 404)
-        self.assertEqual(self.get("b.test", f"/shop/pay/sandbox/{ref}/").status_code, 404)
+        self.assertEqual(self.get("b.test", f"/fa/shop/pay/callback/{ref}/").status_code, 404)
+        self.assertEqual(self.get("b.test", f"/fa/shop/pay/sandbox/{ref}/").status_code, 404)
 
     def test_sitemap_and_api_per_domain(self):
-        sa = self.get("a.test", "/sitemap.xml").content.decode()
-        self.assertIn("/shop/p/pa/", sa)
-        self.assertNotIn("/shop/p/pb/", sa)
+        sa = self.get("a.test", "/fa/sitemap.xml").content.decode()
+        self.assertIn("/fa/shop/p/pa/", sa)
+        self.assertNotIn("/fa/shop/p/pb/", sa)
         self.assertEqual([p["slug"] for p in self.get("b.test", "/api/v1/shop/products/").json()["results"]], ["pb"])
 
     # --- پنل
@@ -163,8 +163,8 @@ class IsolationTests(ShopTestCase):
 
     def test_slug_unique_per_site_not_global(self):
         Product.objects.create(site=self.site_b, name="هم‌نام", slug="pa", price=1, stock=1)  # slug تکراری در سایت دیگر مجاز
-        self.assertContains(self.get("b.test", "/shop/p/pa/"), "هم‌نام")
-        self.assertContains(self.get("a.test", "/shop/p/pa/"), "محصول الف")
+        self.assertContains(self.get("b.test", "/fa/shop/p/pa/"), "هم‌نام")
+        self.assertContains(self.get("a.test", "/fa/shop/p/pa/"), "محصول الف")
 
 
 class SingleSiteModeTests(ShopTestCase):
@@ -172,7 +172,7 @@ class SingleSiteModeTests(ShopTestCase):
         extra = Site.objects.create(name="X", slug="x")
         SiteDomain.objects.create(site=extra, domain="x.test")
         with override_settings(ALLOWED_HOSTS=["x.test", "testserver"]):
-            self.assertContains(Client().get("/shop/", HTTP_HOST="x.test"), "کتاب آزمایشی")
+            self.assertContains(Client().get("/fa/shop/", HTTP_HOST="x.test"), "کتاب آزمایشی")
 
     def test_default_site_exists_and_unique(self):
         self.assertEqual(Site.objects.filter(is_default=True).count(), 1)

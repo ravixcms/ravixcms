@@ -19,14 +19,14 @@ class ShopDisabledTests(TestCase):
         for name in ("shop:list", "shop_panel:orders", "shop_panel:products"):
             with self.assertRaises(NoReverseMatch):
                 reverse(name)
-        self.assertEqual(Client().get("/shop/").status_code, 404)
+        self.assertEqual(Client().get("/fa/shop/").status_code, 404)
         self.assertEqual(Client().get("/api/v1/shop/products/").status_code, 404)
 
     def test_core_still_works(self):
         c = Client()
         self.assertEqual(c.get("/healthz").status_code, 200)
-        self.assertEqual(c.get("/sitemap.xml").status_code, 200)
-        self.assertNotIn("/shop/", c.get("/sitemap.xml").content.decode())
+        self.assertEqual(c.get("/fa/sitemap.xml").status_code, 200)
+        self.assertNotIn("/fa/shop/", c.get("/fa/sitemap.xml").content.decode())
         admin = make_user("boss", Role.ADMIN)
         c.force_login(admin)
         self.assertEqual(c.get(reverse("dashboard:home")).status_code, 200)
@@ -45,4 +45,4 @@ class ShopDisabledTests(TestCase):
 class ShopEnabledTests(TestCase):
     def test_routes_present(self):
         self.assertTrue(apps.is_installed("apps.shop"))
-        self.assertEqual(reverse("shop:list"), "/shop/")
+        self.assertEqual(reverse("shop:list"), "/fa/shop/")

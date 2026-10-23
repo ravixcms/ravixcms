@@ -16,54 +16,54 @@ from apps.sites.models import Site
 class PublicShopTests(ShopTestCase):
     def test_list_and_detail(self):
         Product.objects.create(site=self.site, name="مخفی", slug="hidden", price=1, stock=1, is_active=False)
-        r = Client().get("/shop/")
+        r = Client().get("/fa/shop/")
         self.assertContains(r, "کتاب آزمایشی")
         self.assertNotContains(r, "مخفی")
-        r = Client().get("/shop/p/book/")
+        r = Client().get("/fa/shop/p/book/")
         self.assertContains(r, "۱۵۰٬۰۰۰")
         html = r.content.decode()
         self.assertIn("application/ld+json", html)
         self.assertIn('"@type": "Product"', html.replace('"@type":"Product"', '"@type": "Product"'))
-        self.assertEqual(Client().get("/shop/p/hidden/").status_code, 404)
+        self.assertEqual(Client().get("/fa/shop/p/hidden/").status_code, 404)
         self.assertIn("no-store", r["Cache-Control"])
 
     def test_pagination(self):
         for i in range(15):
             Product.objects.create(site=self.site, name=f"م{i}", slug=f"m{i}", price=10, stock=1)
         with override_settings(SHOP_PAGE_SIZE=5):
-            r = Client().get("/shop/?page=2")
+            r = Client().get("/fa/shop/?page=2")
             self.assertContains(r, "صفحه ۲")
             self.assertContains(r, 'rel="prev"')
 
     def test_cart_flow_and_server_side_prices(self):
         c = Client()
         self.add_to_cart(c, qty=2)
-        self.assertContains(c.get("/shop/cart/"), "۳۰۰٬۰۰۰")
+        self.assertContains(c.get("/fa/shop/cart/"), "۳۰۰٬۰۰۰")
         self.product.price = 200000
         self.product.save()
-        self.assertContains(c.get("/shop/cart/"), "۴۰۰٬۰۰۰")  # قیمت همیشه از دیتابیس
-        c.post("/shop/cart/update/", {f"qty_{self.product.pk}": "0"})
-        self.assertContains(c.get("/shop/cart/"), "خالی")
+        self.assertContains(c.get("/fa/shop/cart/"), "۴۰۰٬۰۰۰")  # قیمت همیشه از دیتابیس
+        c.post("/fa/shop/cart/update/", {f"qty_{self.product.pk}": "0"})
+        self.assertContains(c.get("/fa/shop/cart/"), "خالی")
 
     def test_cart_quantity_clamped_and_garbage_rejected(self):
         c = Client()
-        c.post("/shop/cart/add/", {"product": self.product.pk, "qty": 99999})
+        c.post("/fa/shop/cart/add/", {"product": self.product.pk, "qty": 99999})
         self.assertEqual(list(c.session["shop_cart_%d" % self.site.pk].values()), [20])
-        self.assertEqual(c.post("/shop/cart/add/", {"product": "abc", "qty": 1}).status_code, 404)
-        self.assertEqual(c.post("/shop/cart/add/", {"product": 99999, "qty": 1}).status_code, 404)
+        self.assertEqual(c.post("/fa/shop/cart/add/", {"product": "abc", "qty": 1}).status_code, 404)
+        self.assertEqual(c.post("/fa/shop/cart/add/", {"product": 99999, "qty": 1}).status_code, 404)
 
     def test_add_to_cart_requires_csrf(self):
         c = Client(enforce_csrf_checks=True)
-        self.assertEqual(c.post("/shop/cart/add/", {"product": self.product.pk, "qty": 1}).status_code, 403)
+        self.assertEqual(c.post("/fa/shop/cart/add/", {"product": self.product.pk, "qty": 1}).status_code, 403)
 
     def test_empty_cart_checkout_redirects(self):
-        self.assertEqual(Client().get("/shop/checkout/").status_code, 302)
+        self.assertEqual(Client().get("/fa/shop/checkout/").status_code, 302)
 
     def test_checkout_validation(self):
         c = Client()
         self.add_to_cart(c)
         for bad in ({"phone": "123"}, {"customer_name": "ab"}, {"address": "کوتاه"}, {"email": "bad"}):
-            r = c.post("/shop/checkout/", self.checkout_data(**bad))
+            r = c.post("/fa/shop/checkout/", self.checkout_data(**bad))
             self.assertEqual(r.status_code, 400, bad)
         self.assertFalse(Order.objects.exists())
         self.assertEqual(Product.objects.get(pk=self.product.pk).stock, 5)
@@ -71,7 +71,7 @@ class PublicShopTests(ShopTestCase):
     def test_persian_digits_phone_accepted(self):
         c = Client()
         self.add_to_cart(c)
-        r = c.post("/shop/checkout/", self.checkout_data(phone="۰۹۱۲۳۴۵۶۷۸۹"))
+        r = c.post("/fa/shop/checkout/", self.checkout_data(phone="۰۹۱۲۳۴۵۶۷۸۹"))
         self.assertEqual(r.status_code, 302)
         self.assertEqual(Order.objects.get().phone, "09123456789")
 
@@ -94,7 +94,7 @@ class PaymentSecurityTests(ShopTestCase):
         c, r = self.place_order()
         ref = re.search(r"/shop/pay/sandbox/([0-9a-f]+)/", r["Location"]).group(1)
         for extra in ("", "?status=OK", "?Status=OK&Authority=x", "?paid=1"):
-            c.get(f"/shop/pay/callback/{ref}/{extra}")
+            c.get(f"/fa/shop/pay/callback/{ref}/{extra}")
         order = Order.objects.get()
         self.assertEqual(order.status, Order.Status.PENDING)
         self.assertEqual(Payment.objects.get().status, Payment.Status.INITIATED)  # بانک هنوز پرداختی نگزارش کرده؛ مشتری ممکن است در صفحهٔ بانک باشد
@@ -115,7 +115,7 @@ class PaymentSecurityTests(ShopTestCase):
         c, r = self.place_order()
         ref = re.search(r"/shop/pay/sandbox/([0-9a-f]+)/", r["Location"]).group(1)
         SandboxTransaction.objects.filter(reference=ref).update(state="paid", amount=1)  # بانک مبلغ دیگری گرفته
-        c.get(f"/shop/pay/callback/{ref}/")
+        c.get(f"/fa/shop/pay/callback/{ref}/")
         self.assertEqual(Order.objects.get().status, Order.Status.PENDING)
         self.assertEqual(Payment.objects.get().status, Payment.Status.REVIEW)  # پولی با مبلغ دیگر گرفته شده ← بررسی دستی، نه «ناموفق»
 
@@ -135,7 +135,7 @@ class PaymentSecurityTests(ShopTestCase):
         self.assertEqual(services.expire_pending(), 1)
         self.assertEqual(Product.objects.get(pk=self.product.pk).stock, 5)  # موجودی برگشت
         SandboxTransaction.objects.filter(reference=ref).update(state="paid")
-        c.get(f"/shop/pay/callback/{ref}/")
+        c.get(f"/fa/shop/pay/callback/{ref}/")
         self.assertEqual(Order.objects.get().status, Order.Status.CANCELLED)
         self.assertEqual(Payment.objects.get().status, Payment.Status.REVIEW)
 
@@ -143,9 +143,9 @@ class PaymentSecurityTests(ShopTestCase):
         c = Client()
         self.add_to_cart(c)
         with override_settings(DEBUG=False, SHOP_ALLOW_SANDBOX_IN_PRODUCTION=False):
-            self.assertEqual(c.get("/shop/checkout/").status_code, 200)
-            self.assertContains(c.get("/shop/checkout/"), "درگاه آزمایشی در محیط تولید مجاز نیست")
-            r = c.post("/shop/checkout/", self.checkout_data())
+            self.assertEqual(c.get("/fa/shop/checkout/").status_code, 200)
+            self.assertContains(c.get("/fa/shop/checkout/"), "درگاه آزمایشی در محیط تولید مجاز نیست")
+            r = c.post("/fa/shop/checkout/", self.checkout_data())
             self.assertEqual(r.status_code, 400)
         self.assertFalse(Order.objects.exists())
         self.assertEqual(Product.objects.get(pk=self.product.pk).stock, 5)
@@ -158,7 +158,7 @@ class PaymentSecurityTests(ShopTestCase):
         c, r = self.place_order()
         ref = re.search(r"/shop/pay/sandbox/([0-9a-f]+)/", r["Location"]).group(1)
         with mock.patch.object(gateways.SandboxGateway, "verify_transaction", side_effect=gateways.GatewayNetworkError("down")):
-            c.get(f"/shop/pay/callback/{ref}/")
+            c.get(f"/fa/shop/pay/callback/{ref}/")
         self.assertEqual(Payment.objects.get().status, Payment.Status.INITIATED)
         self.assertEqual(Order.objects.get().status, Order.Status.PENDING)
 
@@ -171,8 +171,8 @@ class PaymentSecurityTests(ShopTestCase):
         c, r = self.place_order()
         o = Order.objects.get()
         self.assertEqual(Client().get(o.get_public_url()).status_code, 200)
-        self.assertEqual(Client().get(f"/shop/order/{o.number}/{'0' * 40}/").status_code, 404)
-        self.assertEqual(Client().get(f"/shop/order/{o.number}/x/").status_code, 404)
+        self.assertEqual(Client().get(f"/fa/shop/order/{o.number}/{'0' * 40}/").status_code, 404)
+        self.assertEqual(Client().get(f"/fa/shop/order/{o.number}/x/").status_code, 404)
 
 
 class StockTests(ShopTestCase):
@@ -182,8 +182,8 @@ class StockTests(ShopTestCase):
         self.add_to_cart(c2, qty=5)
         self.product.stock = 5
         self.product.save()
-        self.assertEqual(c1.post("/shop/checkout/", self.checkout_data()).status_code, 302)
-        r = c2.post("/shop/checkout/", self.checkout_data())  # موجودی تمام شده
+        self.assertEqual(c1.post("/fa/shop/checkout/", self.checkout_data()).status_code, 302)
+        r = c2.post("/fa/shop/checkout/", self.checkout_data())  # موجودی تمام شده
         self.assertEqual(r.status_code, 400)
         self.assertContains(r, "موجودی", status_code=400)
         self.assertEqual(Order.objects.count(), 1)
@@ -322,20 +322,20 @@ class PanelTests(ShopTestCase):
 
 class SeoTests(ShopTestCase):
     def test_sitemap_and_robots(self):
-        sm = Client().get("/sitemap.xml").content.decode()
-        self.assertIn("/shop/p/book/", sm)
-        self.assertIn("/shop/</loc>", sm)
+        sm = Client().get("/fa/sitemap.xml").content.decode()
+        self.assertIn("/fa/shop/p/book/", sm)
+        self.assertIn("/fa/shop/</loc>", sm)
         Product.objects.update(is_active=False)
-        self.assertNotIn("/shop/p/book/", Client().get("/sitemap.xml").content.decode())
+        self.assertNotIn("/fa/shop/p/book/", Client().get("/fa/sitemap.xml").content.decode())
         rb = Client().get("/robots.txt").content.decode()
-        for path in ("/shop/cart/", "/shop/checkout/", "/shop/pay/"):
+        for path in ("/fa/shop/cart/", "/fa/shop/checkout/", "/fa/shop/pay/"):
             self.assertIn(f"Disallow: {path}", rb)
 
     def test_meta_and_noindex(self):
-        html = Client().get("/shop/p/book/").content.decode()
+        html = Client().get("/fa/shop/p/book/").content.decode()
         self.assertIn('<link rel="canonical"', html)
         self.assertIn('name="description"', html)
-        self.assertIn("noindex", Client().get("/shop/cart/").content.decode())
+        self.assertIn("noindex", Client().get("/fa/shop/cart/").content.decode())
 
     def test_queries_constant_on_list(self):
         # MaintenanceMiddleware حداکثر هر ۱ ثانیه یک پرس‌وجو (UpdateLock) می‌زند؛ با کندی اجرا (مثلاً زیر coverage) ناپایدار می‌شد.
@@ -350,15 +350,15 @@ class SeoTests(ShopTestCase):
         for i in range(10):
             Product.objects.create(site=self.site, name=f"م{i}", slug=f"m{i}", price=10, stock=1)
         c = Client()
-        c.get("/shop/")
+        c.get("/fa/shop/")
         from django.test.utils import CaptureQueriesContext
 
         with CaptureQueriesContext(connection) as a:
-            c.get("/shop/")
+            c.get("/fa/shop/")
         for i in range(10, 20):
             Product.objects.create(site=self.site, name=f"م{i}", slug=f"m{i}", price=10, stock=1)
         with CaptureQueriesContext(connection) as b:
-            c.get("/shop/")
+            c.get("/fa/shop/")
         self.assertEqual(len(a), len(b))
 
     def test_healthz(self):
