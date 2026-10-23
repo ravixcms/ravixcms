@@ -6,7 +6,7 @@
 {% block content %}
 <div class="page-head"><div><h1>{% trans "Plugins" %}</h1><p>{% trans "Add new features without changing the core. Plugins run server-side code; install only plugins you trust." %}</p></div>
   <div style="display:flex;gap:.5rem;flex-wrap:wrap"><a class="btn" href="{% url 'plugins:install_package' %}">{% icon "plus" 18 %} {% trans "Install from package" %}</a>
-    <a class="btn btn-light" href="{% url 'pluginhub:directory' %}">Plugin Directory</a>
+    <a class="btn btn-light" href="{% url 'pluginhub:directory' %}">{% trans "Plugin directory" %}</a>
     {% if request.user.role == "super_admin" %}<a class="btn btn-light" href="{% url 'plugins:trusted_keys' %}">{% trans "Trusted keys" %}</a>{% endif %}
     <a class="btn btn-light" href="{% url 'plugins:events' %}">{% icon "list" 18 %} {% trans "Plugin log" %}</a></div></div>
 {% if not plugins_enabled %}<div class="form-errors" role="alert"><p>{% trans "The plugin system is disabled by the setting" %} <span class="ltr">RAVIX_PLUGINS_ENABLED=false</span> {% trans "." %}</p></div>{% endif %}

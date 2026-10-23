@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-23 18:33+0330\n"
+"POT-Creation-Date: 2026-10-23 18:38+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -88,8 +88,7 @@ msgid "Language"
 msgstr "语言"
 
 #: apps/accounts/forms.py apps/accounts/models.py
-msgid ""
-"Your preferred interface language. Leave empty to use the site default."
+msgid "Your preferred interface language. Leave empty to use the site default."
 msgstr "您偏好的界面语言。留空则使用站点默认。"
 
 #: apps/accounts/forms.py
@@ -431,10 +430,10 @@ msgstr "编辑"
 #: templates/content/post_detail.html templates/content/post_list.html
 #: templates/media_library/media_detail.html
 #: templates/media_library/media_list.html
-#: templates/pluginhub/admin_categories.html
-#: templates/pluginhub/my_plugin.html templates/plugins/trusted_keys.html
-#: templates/shop/panel/categories.html templates/shop/panel/product_form.html
-#: templates/shop/panel/products.html templates/sites/detail.html
+#: templates/pluginhub/admin_categories.html templates/pluginhub/my_plugin.html
+#: templates/plugins/trusted_keys.html templates/shop/panel/categories.html
+#: templates/shop/panel/product_form.html templates/shop/panel/products.html
+#: templates/sites/detail.html
 msgid "Delete"
 msgstr "删除"
 
@@ -587,12 +586,11 @@ msgstr "文档"
 #: templates/accounts/user_list.html templates/comments/list.html
 #: templates/content/page_list.html templates/content/post_list.html
 #: templates/pluginhub/admin_publishers.html
-#: templates/pluginhub/directory_detail.html
-#: templates/pluginhub/my_plugin.html templates/plugins/list.html
-#: templates/plugins/trusted_keys.html templates/shop/panel/gateways.html
-#: templates/shop/panel/orders.html templates/shop/panel/products.html
-#: templates/shop/public/my_orders.html templates/sites/list.html
-#: templates/updater/home.html
+#: templates/pluginhub/directory_detail.html templates/pluginhub/my_plugin.html
+#: templates/plugins/list.html templates/plugins/trusted_keys.html
+#: templates/shop/panel/gateways.html templates/shop/panel/orders.html
+#: templates/shop/panel/products.html templates/shop/public/my_orders.html
+#: templates/sites/list.html templates/updater/home.html
 msgid "Status"
 msgstr "状态"
 
@@ -1135,8 +1133,7 @@ msgid "Comments"
 msgstr "评论"
 
 #: apps/comments/models.py apps/pluginhub/models.py
-#: templates/pluginhub/admin_publishers.html
-#: templates/pluginhub/directory.html
+#: templates/pluginhub/admin_publishers.html templates/pluginhub/directory.html
 msgid "Verified"
 msgstr "已验证"
 
@@ -1303,8 +1300,7 @@ msgstr "内容"
 msgid "Posts"
 msgstr "文章"
 
-#: apps/content/apps.py apps/content/models.py
-#: templates/content/page_list.html
+#: apps/content/apps.py apps/content/models.py templates/content/page_list.html
 msgid "Pages"
 msgstr "页面"
 
@@ -1317,9 +1313,8 @@ msgstr "页面"
 msgid "Content categories"
 msgstr "内容分类"
 
-#: apps/content/apps.py apps/content/models.py
-#: templates/content/post_form.html templates/content/tag_list.html
-#: themes/default/templates/post_detail.html
+#: apps/content/apps.py apps/content/models.py templates/content/post_form.html
+#: templates/content/tag_list.html themes/default/templates/post_detail.html
 msgid "Tags"
 msgstr "标签"
 
@@ -1490,8 +1485,8 @@ msgstr "示例内容"
 
 #: apps/content/models.py
 msgid ""
-"A sample post created during installation; after its first edit it no longer"
-" counts as a sample."
+"A sample post created during installation; after its first edit it no longer "
+"counts as a sample."
 msgstr "安装时创建的示例文章；首次编辑后不再视为示例。"
 
 #: apps/content/models.py
@@ -1512,8 +1507,8 @@ msgstr "建议 120 到 160 个字符。"
 
 #: apps/content/models.py
 msgid ""
-"A sample page created during installation; after its first edit it no longer"
-" counts as a sample."
+"A sample page created during installation; after its first edit it no longer "
+"counts as a sample."
 msgstr "安装时创建的示例页面；首次编辑后即不再视为示例。"
 
 #: apps/content/models.py
@@ -1530,8 +1525,8 @@ msgstr "旧路径"
 
 #: apps/content/models.py
 msgid ""
-"An internal site path, e.g. /blog/old-slug/ (without domain and without "
-"?query)."
+"An internal site path, e.g. /blog/old-slug/ (without domain and without ?"
+"query)."
 msgstr "站点内部路径，例如 /blog/old-slug/（不含域名和 ?查询参数）。"
 
 #: apps/content/models.py templates/content/redirect_list.html
@@ -1598,7 +1593,8 @@ msgstr "欢迎使用 Ravix"
 msgid ""
 "Hello and welcome! 👋\n"
 "\n"
-"This is a **sample post** so you can see what a post looks like on your site. You can edit it from the panel or delete it.\n"
+"This is a **sample post** so you can see what a post looks like on your "
+"site. You can edit it from the panel or delete it.\n"
 "\n"
 "## What’s next?\n"
 "\n"
@@ -1610,7 +1606,8 @@ msgid ""
 msgstr ""
 "你好，欢迎！👋\n"
 "\n"
-"这是一篇**示例文章**，让你看看文章在你的站点上是什么样子。你可以在后台编辑或删除它。\n"
+"这是一篇**示例文章**，让你看看文章在你的站点上是什么样子。你可以在后台编辑或"
+"删除它。\n"
 "\n"
 "## 接下来做什么？\n"
 "\n"
@@ -1622,7 +1619,8 @@ msgstr ""
 
 #: apps/content/samples.py
 msgid ""
-"This is a sample page. Write about yourself, your business or the purpose of your site here.\n"
+"This is a sample page. Write about yourself, your business or the purpose of "
+"your site here.\n"
 "\n"
 "## Who are we?\n"
 "\n"
@@ -1650,7 +1648,8 @@ msgid ""
 "- Phone: 555-0100\n"
 "- Address: city, street, number\n"
 "\n"
-"Also write your response hours here so visitors know when to expect an answer.\n"
+"Also write your response hours here so visitors know when to expect an "
+"answer.\n"
 msgstr ""
 "这是一个示例页面。在这里写明大家如何联系你。\n"
 "\n"
@@ -1767,7 +1766,9 @@ msgstr "联系表单"
 msgid ""
 "A public contact form at /ext/contact_form/ that stores messages in the "
 "database and has an inbox in the panel."
-msgstr "位于 /ext/contact_form/ 的公开联系表单，将留言保存到数据库，并在后台提供收件箱。"
+msgstr ""
+"位于 /ext/contact_form/ 的公开联系表单，将留言保存到数据库，并在后台提供收件"
+"箱。"
 
 #: apps/core/manifest_strings.py
 msgid "View and manage contact form messages"
@@ -1813,8 +1814,8 @@ msgid ""
 "change the addresses and contracts according to that provider’s official "
 "documentation."
 msgstr ""
-"用于学习和测试的示例支付网关插件。它连接的是虚构的 "
-"API（ExamplePay），而非真实服务；若要接入真实网关，请按该服务商的官方文档修改地址和契约。"
+"用于学习和测试的示例支付网关插件。它连接的是虚构的 API（ExamplePay），而非真"
+"实服务；若要接入真实网关，请按该服务商的官方文档修改地址和契约。"
 
 #: apps/core/manifest_strings.py
 msgid "SEO toolkit"
@@ -1822,9 +1823,11 @@ msgstr "SEO 工具包"
 
 #: apps/core/manifest_strings.py
 msgid ""
-"Manages the title, meta description, noindex, canonical and sharing image of"
-" each page/post, and has a global title pattern."
-msgstr "管理每个页面/文章的标题、元描述、noindex、canonical 和分享图片，并提供全局标题模式。"
+"Manages the title, meta description, noindex, canonical and sharing image of "
+"each page/post, and has a global title pattern."
+msgstr ""
+"管理每个页面/文章的标题、元描述、noindex、canonical 和分享图片，并提供全局标"
+"题模式。"
 
 #: apps/core/manifest_strings.py
 msgid "Manage page SEO settings"
@@ -1867,7 +1870,8 @@ msgstr "Ravix 默认"
 msgid ""
 "A readable, fast theme for blogs and content sites; no JavaScript, with a "
 "featured post and a horizontal post list."
-msgstr "适合博客和内容站点的易读、快速主题；无 JavaScript，带精选文章和横向文章列表。"
+msgstr ""
+"适合博客和内容站点的易读、快速主题；无 JavaScript，带精选文章和横向文章列表。"
 
 #: apps/core/middleware.py apps/core/views.py
 msgid "Invalid request"
@@ -1875,8 +1879,8 @@ msgstr "无效请求"
 
 #: apps/core/middleware.py
 msgid ""
-"One of the numeric values in the request is too large. Open the page without"
-" that value."
+"One of the numeric values in the request is too large. Open the page without "
+"that value."
 msgstr "请求中的某个数值过大。请去掉该值后再打开页面。"
 
 #: apps/core/minimalhtml.py
@@ -1936,7 +1940,9 @@ msgstr "默认分享图片"
 msgid ""
 "When a post or page has no featured image, this image is shown in social "
 "media previews (og:image). Preferably 1200×630."
-msgstr "当文章或页面没有特色图片时，社交媒体预览（og:image）会显示此图片。建议尺寸 1200×630。"
+msgstr ""
+"当文章或页面没有特色图片时，社交媒体预览（og:image）会显示此图片。建议尺寸 "
+"1200×630。"
 
 #: apps/core/models.py
 msgid "Admin / support email"
@@ -1995,7 +2001,9 @@ msgstr "评论中的屏蔽词"
 msgid ""
 "One word or phrase per line. A comment that contains one of them (in the "
 "name, email or text) is recorded as “spam”."
-msgstr "每行一个词或短语。包含其中任何一个的评论（在姓名、邮箱或正文中）会被记为“垃圾评论”。"
+msgstr ""
+"每行一个词或短语。包含其中任何一个的评论（在姓名、邮箱或正文中）会被记为“垃圾"
+"评论”。"
 
 #: apps/core/models.py
 msgid "Fallback cache entry"
@@ -2060,8 +2068,8 @@ msgid ""
 "Get a Let’s Encrypt certificate (install.sh or docker-compose.tls.yml) and "
 "set RAVIX_SITE_URL to an https address."
 msgstr ""
-"获取 Let’s Encrypt 证书（install.sh 或 docker-compose.tls.yml），并将 RAVIX_SITE_URL "
-"设为 https 地址。"
+"获取 Let’s Encrypt 证书（install.sh 或 docker-compose.tls.yml），并将 "
+"RAVIX_SITE_URL 设为 https 地址。"
 
 #: apps/core/sitehealth.py
 msgid "HTTPS redirect and secure cookie"
@@ -2130,12 +2138,12 @@ msgstr "访客 IP 检测"
 #: apps/core/sitehealth.py
 msgid ""
 "Behind Nginx on a unix socket no setting is needed. If Nginx/a proxy "
-"connects over TCP, put its address in RAVIX_TRUSTED_PROXIES (e.g. 127.0.0.1)"
-" and make sure the proxy sends X-Forwarded-For (deploy/ravix-proxy.conf)."
+"connects over TCP, put its address in RAVIX_TRUSTED_PROXIES (e.g. 127.0.0.1) "
+"and make sure the proxy sends X-Forwarded-For (deploy/ravix-proxy.conf)."
 msgstr ""
-"通过 Unix 套接字置于 Nginx 之后时无需任何设置。如果 Nginx/代理通过 TCP 连接，请把其地址填入 "
-"RAVIX_TRUSTED_PROXIES（例如 127.0.0.1），并确保代理发送 X-Forwarded-For（deploy/ravix-"
-"proxy.conf）。"
+"通过 Unix 套接字置于 Nginx 之后时无需任何设置。如果 Nginx/代理通过 TCP 连接，"
+"请把其地址填入 RAVIX_TRUSTED_PROXIES（例如 127.0.0.1），并确保代理发送 X-"
+"Forwarded-For（deploy/ravix-proxy.conf）。"
 
 #: apps/core/sitehealth.py
 #, python-format
@@ -2164,8 +2172,8 @@ msgstr "Unix 套接字"
 #: apps/core/sitehealth.py
 #, python-format
 msgid ""
-"Requests arrive from proxy %(value)s but it is not trusted; all visitors are"
-" counted as one IP."
+"Requests arrive from proxy %(value)s but it is not trusted; all visitors are "
+"counted as one IP."
 msgstr "请求来自代理 %(value)s，但它不受信任；所有访客都被算作同一个 IP。"
 
 #: apps/core/sitehealth.py
@@ -2173,13 +2181,16 @@ msgid ""
 "Requests arrive from a trusted proxy but have no IP header (X-Forwarded-For "
 "or X-Real-IP); the IP cannot be determined and only the per-username limit "
 "is applied."
-msgstr "请求来自受信任的代理，但没有 IP 头（X-Forwarded-For 或 X-Real-IP）；无法确定 IP，限制仅按用户名生效。"
+msgstr ""
+"请求来自受信任的代理，但没有 IP 头（X-Forwarded-For 或 X-Real-IP）；无法确定 "
+"IP，限制仅按用户名生效。"
 
 #: apps/core/sitehealth.py
 msgid ""
 "Add proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; to the "
 "proxy."
-msgstr "请在代理中添加 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;。"
+msgstr ""
+"请在代理中添加 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;。"
 
 #: apps/core/sitehealth.py
 msgid ""
@@ -2199,17 +2210,18 @@ msgstr "邮件不会到达真实邮箱（测试后端）。密码重置和评论
 
 #: apps/core/sitehealth.py
 msgid ""
-"Fill in DJANGO_EMAIL_BACKEND and the "
-"EMAIL_HOST/EMAIL_HOST_USER/EMAIL_HOST_PASSWORD settings for a real SMTP."
+"Fill in DJANGO_EMAIL_BACKEND and the EMAIL_HOST/EMAIL_HOST_USER/"
+"EMAIL_HOST_PASSWORD settings for a real SMTP."
 msgstr ""
-"请为真实 SMTP 填写 DJANGO_EMAIL_BACKEND 以及 "
-"EMAIL_HOST/EMAIL_HOST_USER/EMAIL_HOST_PASSWORD 设置。"
+"请为真实 SMTP 填写 DJANGO_EMAIL_BACKEND 以及 EMAIL_HOST/EMAIL_HOST_USER/"
+"EMAIL_HOST_PASSWORD 设置。"
 
 #: apps/core/sitehealth.py
 msgid ""
 "SMTP is configured on this same server without authentication; most emails "
 "land in spam or are rejected."
-msgstr "SMTP 配置在本服务器上且未启用身份验证；大多数邮件会进入垃圾箱或被拒收。"
+msgstr ""
+"SMTP 配置在本服务器上且未启用身份验证；大多数邮件会进入垃圾箱或被拒收。"
 
 #: apps/core/sitehealth.py
 msgid ""
@@ -2279,7 +2291,8 @@ msgstr "请检查 CACHES 设置。"
 msgid ""
 "The cache is per-process memory and is not shared between workers (precise "
 "login rate limiting does not work)."
-msgstr "缓存是各进程独立的内存，不会在 worker 之间共享（登录精确限流无法工作）。"
+msgstr ""
+"缓存是各进程独立的内存，不会在 worker 之间共享（登录精确限流无法工作）。"
 
 #: apps/core/sitehealth.py
 msgid "Set RAVIX_REDIS_URL / REDIS_URL."
@@ -2327,8 +2340,8 @@ msgstr "上传文件夹可写。"
 #: apps/core/sitehealth.py
 #, python-format
 msgid ""
-"The media folder (%(media)s) does not exist or is not writable; image upload"
-" does not work."
+"The media folder (%(media)s) does not exist or is not writable; image upload "
+"does not work."
 msgstr "媒体文件夹（%(media)s）不存在或不可写；图片上传无法使用。"
 
 #: apps/core/sitehealth.py
@@ -2392,7 +2405,9 @@ msgstr "systemd 不可用（容器或开发环境）；无法从这里查看此�
 msgid ""
 "In Docker, check the backup service and the publish_scheduled command; on a "
 "server: systemctl list-timers."
-msgstr "在 Docker 中，请检查备份服务和 publish_scheduled 命令；在服务器上：systemctl list-timers。"
+msgstr ""
+"在 Docker 中，请检查备份服务和 publish_scheduled 命令；在服务器上：systemctl "
+"list-timers。"
 
 #: apps/core/sitehealth.py
 #, python-format
@@ -2411,14 +2426,17 @@ msgstr "已逾期的定时文章"
 #: apps/core/sitehealth.py
 #, python-format
 msgid ""
-"%(overdue)s posts are past their publish time but are still “scheduled” "
-"(they are shown to visitors but the timer has not run)."
-msgstr "%(overdue)s 篇文章已过发布时间，但仍为“定时”状态（访客可见，但定时器未运行）。"
+"%(overdue)s posts are past their publish time but are still "
+"“scheduled” (they are shown to visitors but the timer has not run)."
+msgstr ""
+"%(overdue)s 篇文章已过发布时间，但仍为“定时”状态（访客可见，但定时器未运"
+"行）。"
 
 #: apps/core/sitehealth.py
 msgid ""
 "Check the ravix-publish-scheduled timer or run manage.py publish_scheduled."
-msgstr "请检查 ravix-publish-scheduled 定时器，或运行 manage.py publish_scheduled。"
+msgstr ""
+"请检查 ravix-publish-scheduled 定时器，或运行 manage.py publish_scheduled。"
 
 #: apps/core/sitehealth.py
 msgid "Backups"
@@ -2438,7 +2456,8 @@ msgstr "应用无法读取备份文件夹（或未配置备份）。"
 msgid ""
 "Make sure ravix-backup.timer is active and BACKUP_DIR points to a readable "
 "folder."
-msgstr "请确保 ravix-backup.timer 处于活动状态，且 BACKUP_DIR 指向可读取的文件夹。"
+msgstr ""
+"请确保 ravix-backup.timer 处于活动状态，且 BACKUP_DIR 指向可读取的文件夹。"
 
 #: apps/core/sitehealth.py
 msgid "No complete backup was found."
@@ -2491,8 +2510,7 @@ msgstr "重启"
 
 #: apps/core/sitehealth.py
 #, python-format
-msgid ""
-"Version %(disk_version)s is on disk but version %(running)s is running."
+msgid "Version %(disk_version)s is on disk but version %(running)s is running."
 msgstr "磁盘上是版本 %(disk_version)s，但运行的是版本 %(running)s。"
 
 #: apps/core/sitehealth.py
@@ -2828,8 +2846,8 @@ msgstr "无法保存（文件夹不可写）；请在环境中设置 RAVIX_INSTA
 
 #: apps/installer/views.py
 msgid ""
-"The installation ran into an error; details are in the server log. Check the"
-" database and migrations."
+"The installation ran into an error; details are in the server log. Check the "
+"database and migrations."
 msgstr "安装出错；详情见服务器日志。请检查数据库和迁移。"
 
 #: apps/installer/views.py
@@ -2933,7 +2951,9 @@ msgid ""
 "documents (PDF, TXT, CSV, DOC/DOCX, XLS/XLSX, PPT/PPTX), audio (MP3, WAV, "
 "OGG) and video (MP4, WEBM)."
 msgstr ""
-"不允许的文件类型。允许的格式：图片（JPG、PNG、GIF、WEBP）、文档（PDF、TXT、CSV、DOC/DOCX、XLS/XLSX、PPT/PPTX）、音频（MP3、WAV、OGG）和视频（MP4、WEBM）。"
+"不允许的文件类型。允许的格式：图片（JPG、PNG、GIF、WEBP）、文档（PDF、TXT、"
+"CSV、DOC/DOCX、XLS/XLSX、PPT/PPTX）、音频（MP3、WAV、OGG）和视频（MP4、"
+"WEBM）。"
 
 #: apps/media_library/validators.py
 msgid "The file is empty."
@@ -3020,7 +3040,8 @@ msgstr "注册表已禁用。"
 msgid ""
 "Get the public key through an independent channel and add it to the trusted "
 "keys manually; do not rely on this response for trust."
-msgstr "请通过独立渠道获取公钥并手动添加到受信任密钥中；不要依赖此响应来建立信任。"
+msgstr ""
+"请通过独立渠道获取公钥并手动添加到受信任密钥中；不要依赖此响应来建立信任。"
 
 #: apps/pluginhub/api.py
 msgid "The pagination parameter is invalid."
@@ -3126,8 +3147,7 @@ msgid "No active user with this name was found."
 msgstr "未找到使用此名称的活跃用户。"
 
 #: apps/pluginhub/models.py templates/pluginhub/admin_plugins.html
-#: templates/pluginhub/admin_publishers.html
-#: templates/pluginhub/directory.html
+#: templates/pluginhub/admin_publishers.html templates/pluginhub/directory.html
 msgid "Publisher"
 msgstr "发布者"
 
@@ -3180,10 +3200,9 @@ msgid "Withdrawn"
 msgstr "已撤回"
 
 #: apps/pluginhub/models.py apps/plugins/models.py
-#: templates/pluginhub/directory_detail.html
-#: templates/pluginhub/my_plugin.html templates/plugins/_manifest_summary.html
-#: templates/plugins/detail.html templates/plugins/list.html
-#: templates/updater/home.html
+#: templates/pluginhub/directory_detail.html templates/pluginhub/my_plugin.html
+#: templates/plugins/_manifest_summary.html templates/plugins/detail.html
+#: templates/plugins/list.html templates/updater/home.html
 msgid "Version"
 msgstr "版本"
 
@@ -3432,10 +3451,11 @@ msgstr "只有管理员才能执行此操作。"
 #: apps/plugins/installer.py
 msgid ""
 "Web installation is off. To enable it, set RAVIX_PLUGIN_WEB_INSTALL=true in "
-"the server settings (only when you have made the install folder writable for"
-" the service)."
+"the server settings (only when you have made the install folder writable for "
+"the service)."
 msgstr ""
-"网页安装已关闭。要启用它，请在服务器设置中设置 RAVIX_PLUGIN_WEB_INSTALL=true（仅在你已使安装文件夹对服务可写之后）。"
+"网页安装已关闭。要启用它，请在服务器设置中设置 RAVIX_PLUGIN_WEB_INSTALL=true"
+"（仅在你已使安装文件夹对服务可写之后）。"
 
 #: apps/plugins/installer.py
 msgid "The plugin system is off."
@@ -3461,8 +3481,8 @@ msgstr "发生了意外错误，未应用任何更改；技术详情已记录在
 
 #: apps/plugins/installer.py
 msgid ""
-"The file’s SHA-256 does not match the declared value; the file is corrupt or"
-" tampered with and was discarded."
+"The file’s SHA-256 does not match the declared value; the file is corrupt or "
+"tampered with and was discarded."
 msgstr "文件的 SHA-256 与声明的值不符；文件已损坏或被篡改，已被丢弃。"
 
 #: apps/plugins/installer.py
@@ -3482,7 +3502,8 @@ msgstr "软件包内的标识符（“%(slug)s”）与请求（“%(expected_sl
 msgid ""
 "The version inside the package (%(version)s) does not match the requested "
 "version (%(expected_version)s)."
-msgstr "软件包内的版本（%(version)s）与请求的版本（%(expected_version)s）不符。"
+msgstr ""
+"软件包内的版本（%(version)s）与请求的版本（%(expected_version)s）不符。"
 
 #: apps/plugins/installer.py
 msgid "The package content fingerprint does not match the registry."
@@ -3502,7 +3523,9 @@ msgstr "数字签名无效：%(reason)s"
 msgid ""
 "The package has no valid digital signature and this site’s policy does not "
 "accept unsigned packages (registry packages must always be signed)."
-msgstr "软件包没有有效的数字签名，而此站点的策略不接受未签名的软件包（注册表软件包必须始终签名）。"
+msgstr ""
+"软件包没有有效的数字签名，而此站点的策略不接受未签名的软件包（注册表软件包必"
+"须始终签名）。"
 
 #: apps/plugins/installer.py
 #, python-format
@@ -3531,7 +3554,8 @@ msgstr "服务器上已存在名为“%(slug)s”的文件夹；我们不会覆�
 msgid ""
 "The install folder is not writable (%(strerror)s). Check the permissions of "
 "RAVIX_PLUGIN_INSTALL_DIR."
-msgstr "安装文件夹不可写（%(strerror)s）。请检查 RAVIX_PLUGIN_INSTALL_DIR 的权限。"
+msgstr ""
+"安装文件夹不可写（%(strerror)s）。请检查 RAVIX_PLUGIN_INSTALL_DIR 的权限。"
 
 #: apps/plugins/installer.py
 #, python-format
@@ -3560,8 +3584,7 @@ msgstr "%(source)s，%(sig)s"
 
 #: apps/plugins/installer.py
 #, python-format
-msgid ""
-"Creating the backup failed and the operation was not performed: %(exc)s"
+msgid "Creating the backup failed and the operation was not performed: %(exc)s"
 msgstr "创建备份失败，操作未执行：%(exc)s"
 
 #: apps/plugins/installer.py
@@ -3586,7 +3609,8 @@ msgstr "未找到插件文件夹。"
 msgid ""
 "This plugin was placed manually (outside the automatic install folder); "
 "automatic upgrade and rollback are not possible for it."
-msgstr "此插件是手动放置的（在自动安装文件夹之外）；无法对其进行自动升级和回滚。"
+msgstr ""
+"此插件是手动放置的（在自动安装文件夹之外）；无法对其进行自动升级和回滚。"
 
 #: apps/plugins/installer.py
 #, python-format
@@ -3607,7 +3631,9 @@ msgstr "此插件尚未安装。"
 msgid ""
 "The package version (%(version)s) is not newer than the installed version "
 "(%(version2)s); use “Rollback” for an earlier version."
-msgstr "软件包版本（%(version)s）不比已安装版本（%(version2)s）新；如需较早的版本，请使用“回滚”。"
+msgstr ""
+"软件包版本（%(version)s）不比已安装版本（%(version2)s）新；如需较早的版本，请"
+"使用“回滚”。"
 
 #: apps/plugins/installer.py
 msgid ""
@@ -3620,7 +3646,9 @@ msgstr "当前插件代码与已批准的版本不符；请先批准或还原这
 msgid ""
 "Code replaced %(version)s → %(version2)s (backup #%(pk)s). To continue, you "
 "must approve the changes and enable the plugin again."
-msgstr "代码已替换 %(version)s → %(version2)s（备份 #%(pk)s）。要继续，你必须批准这些更改并再次启用插件。"
+msgstr ""
+"代码已替换 %(version)s → %(version2)s（备份 #%(pk)s）。要继续，你必须批准这些"
+"更改并再次启用插件。"
 
 #: apps/plugins/installer.py
 msgid "The backup was not found."
@@ -3632,8 +3660,8 @@ msgstr "此备份已被使用。"
 
 #: apps/plugins/installer.py
 msgid ""
-"The backup content does not match the recorded fingerprint; the rollback was"
-" stopped."
+"The backup content does not match the recorded fingerprint; the rollback was "
+"stopped."
 msgstr "备份内容与记录的指纹不符；回滚已停止。"
 
 #: apps/plugins/installer.py
@@ -3657,7 +3685,9 @@ msgid ""
 "Rolling back must reverse the database migrations of the newer version and "
 "the data they added will be deleted. After taking a database backup, tick "
 "the confirmation option."
-msgstr "回滚必须撤销较新版本的数据库迁移，它们添加的数据将被删除。备份数据库之后，请勾选确认选项。"
+msgstr ""
+"回滚必须撤销较新版本的数据库迁移，它们添加的数据将被删除。备份数据库之后，请"
+"勾选确认选项。"
 
 #: apps/plugins/installer.py
 #, python-format
@@ -3757,7 +3787,8 @@ msgstr "api_version：需要整数。"
 msgid ""
 "api_version: this CMS supports contract version %(PLUGIN_API_VERSION)s "
 "(plugin: %(api)s)."
-msgstr "api_version：此 CMS 支持契约版本 %(PLUGIN_API_VERSION)s（插件：%(api)s）。"
+msgstr ""
+"api_version：此 CMS 支持契约版本 %(PLUGIN_API_VERSION)s（插件：%(api)s）。"
 
 #: apps/plugins/manifest.py
 msgid "ravix: invalid version range (e.g. >=0.5.0,<1.0.0)."
@@ -3785,7 +3816,9 @@ msgstr "capabilities：必须是对象 {name: label}。"
 msgid ""
 "capabilities.%(cap)s: must start with “%(slug)s.” (the plugin namespace); "
 "core permissions cannot be redefined."
-msgstr "capabilities.%(cap)s：必须以“%(slug)s.”开头（插件命名空间）；不能重新定义核心权限。"
+msgstr ""
+"capabilities.%(cap)s：必须以“%(slug)s.”开头（插件命名空间）；不能重新定义核心"
+"权限。"
 
 #: apps/plugins/manifest.py
 #, python-format
@@ -4112,7 +4145,8 @@ msgstr "模型 %(name)s 的表名必须以“%(label)s_”开头（db_table 被�
 msgid ""
 "Model %(name)s depends on a core model (%(label)s); only its own models and "
 "the user model are allowed."
-msgstr "模型 %(name)s 依赖核心模型（%(label)s）；只允许使用其自身的模型和用户模型。"
+msgstr ""
+"模型 %(name)s 依赖核心模型（%(label)s）；只允许使用其自身的模型和用户模型。"
 
 #: apps/plugins/registry.py
 #, python-format
@@ -4185,13 +4219,13 @@ msgstr "已自动停用"
 msgid ""
 "The plugin contract is version %(api_version)s; this CMS supports version "
 "%(PLUGIN_API_VERSION)s."
-msgstr "插件契约为版本 %(api_version)s；此 CMS 支持版本 %(PLUGIN_API_VERSION)s。"
+msgstr ""
+"插件契约为版本 %(api_version)s；此 CMS 支持版本 %(PLUGIN_API_VERSION)s。"
 
 #: apps/plugins/services.py
 #, python-format
 msgid ""
-"Requires Ravix version “%(ravix)s”; the current version is "
-"%(RAVIX_VERSION)s."
+"Requires Ravix version “%(ravix)s”; the current version is %(RAVIX_VERSION)s."
 msgstr "需要 Ravix 版本“%(ravix)s”；当前版本为 %(RAVIX_VERSION)s。"
 
 #: apps/plugins/services.py
@@ -4217,8 +4251,8 @@ msgstr "迁移 %(name)s：不允许依赖“%(dep_app)s”。"
 #: apps/plugins/services.py
 #, python-format
 msgid ""
-"Migration %(name)s: the operation %(op_name)s is not allowed "
-"(RunPython/RunSQL are forbidden)."
+"Migration %(name)s: the operation %(op_name)s is not allowed (RunPython/"
+"RunSQL are forbidden)."
 msgstr "迁移 %(name)s：不允许操作 %(op_name)s（禁止 RunPython/RunSQL）。"
 
 #: apps/plugins/services.py
@@ -4357,7 +4391,8 @@ msgstr "没有需要批准的更改。"
 msgid ""
 "Version %(old_version)s → %(version)s approved (fingerprint %(fp)s). Enable "
 "it again to use it."
-msgstr "版本 %(old_version)s → %(version)s 已批准（指纹 %(fp)s）。请再次启用后使用。"
+msgstr ""
+"版本 %(old_version)s → %(version)s 已批准（指纹 %(fp)s）。请再次启用后使用。"
 
 #: apps/plugins/services.py
 #, python-format
@@ -4460,8 +4495,7 @@ msgstr "签名格式无效。"
 
 #: apps/plugins/signing.py apps/updater/signing.py
 msgid ""
-"The signing key is not in the list of trusted keys (or it has been "
-"disabled)."
+"The signing key is not in the list of trusted keys (or it has been disabled)."
 msgstr "签名密钥不在受信任密钥列表中（或已被禁用）。"
 
 #: apps/plugins/signing.py apps/updater/signing.py
@@ -4825,8 +4859,8 @@ msgstr "删除“%(label)s”的值"
 #: apps/shop/forms.py
 #, python-format
 msgid ""
-"%(help_text)s (It comes from an environment variable, which takes precedence"
-" over this value.)"
+"%(help_text)s (It comes from an environment variable, which takes precedence "
+"over this value.)"
 msgstr "%(help_text)s（它来自环境变量，优先于此值。）"
 
 #: apps/shop/forms.py
@@ -5665,15 +5699,19 @@ msgid ""
 "The contrast of “text color” and “background color” is not sufficient "
 "(%(contrast)s of the minimum %(MIN_CONTRAST)s). Make the text color darker "
 "or the background lighter."
-msgstr "“文字颜色”与“背景颜色”的对比度不足（%(contrast)s，最低要求 %(MIN_CONTRAST)s）。请加深文字颜色或调亮背景。"
+msgstr ""
+"“文字颜色”与“背景颜色”的对比度不足（%(contrast)s，最低要求 "
+"%(MIN_CONTRAST)s）。请加深文字颜色或调亮背景。"
 
 #: apps/themes/colors.py
 #, python-format
 msgid ""
 "The contrast of “primary color” with the background is not sufficient "
-"(%(worst)s of the minimum %(MIN_CONTRAST)s). Links in this color will not be"
-" readable; make the primary color stronger."
-msgstr "“主色”与背景的对比度不足（%(worst)s，最低要求 %(MIN_CONTRAST)s）。此颜色的链接将难以阅读；请加强主色。"
+"(%(worst)s of the minimum %(MIN_CONTRAST)s). Links in this color will not be "
+"readable; make the primary color stronger."
+msgstr ""
+"“主色”与背景的对比度不足（%(worst)s，最低要求 %(MIN_CONTRAST)s）。此颜色的链"
+"接将难以阅读；请加强主色。"
 
 #: apps/themes/config.py
 msgid "View posts"
@@ -5855,8 +5893,8 @@ msgid ""
 "One link per line, in the form: Title | URL  (at most %(MAX_SOCIAL_LINKS)s "
 "items). Example: Instagram | https://instagram.com/example"
 msgstr ""
-"每行一个链接，格式：标题 | URL（最多 %(MAX_SOCIAL_LINKS)s 项）。示例：Instagram | "
-"https://instagram.com/example"
+"每行一个链接，格式：标题 | URL（最多 %(MAX_SOCIAL_LINKS)s 项）。示例："
+"Instagram | https://instagram.com/example"
 
 #: apps/themes/forms.py
 #, python-format
@@ -5963,7 +6001,8 @@ msgstr "只有超级管理员才能安装主题。"
 msgid ""
 "The theme install folder could not be created or is not writable; check "
 "RAVIX_THEME_INSTALL_DIR and its permissions."
-msgstr "无法创建主题安装文件夹，或其不可写；请检查 RAVIX_THEME_INSTALL_DIR 及其权限。"
+msgstr ""
+"无法创建主题安装文件夹，或其不可写；请检查 RAVIX_THEME_INSTALL_DIR 及其权限。"
 
 #: apps/themes/installer.py
 msgid ""
@@ -5977,7 +6016,9 @@ msgid ""
 "The install folder’s file system (%(fstype)s) has no reliable locking; the "
 "install was not performed to avoid conflicts. Put the install folder on a "
 "local disk."
-msgstr "安装文件夹所在的文件系统（%(fstype)s）没有可靠的锁定机制；为避免冲突未执行安装。请将安装文件夹放在本地磁盘上。"
+msgstr ""
+"安装文件夹所在的文件系统（%(fstype)s）没有可靠的锁定机制；为避免冲突未执行安"
+"装。请将安装文件夹放在本地磁盘上。"
 
 #: apps/themes/installer.py
 msgid ""
@@ -5993,7 +6034,9 @@ msgstr "目前正在进行另一项安装；请稍后重试。"
 msgid ""
 "File-system locking is not supported on the install folder; the install was "
 "not performed for safety. Put the install folder on a local disk."
-msgstr "安装文件夹不支持文件系统锁定；出于安全考虑未执行安装。请将安装文件夹放在本地磁盘上。"
+msgstr ""
+"安装文件夹不支持文件系统锁定；出于安全考虑未执行安装。请将安装文件夹放在本地"
+"磁盘上。"
 
 #: apps/themes/installer.py
 msgid ""
@@ -6005,7 +6048,9 @@ msgstr "不能以这种方式替换或覆盖默认主题（“default”）。"
 msgid ""
 "A theme with the ID “%(slug)s” already exists and will not be overwritten. "
 "Change the theme ID in theme.json and the folder name."
-msgstr "已存在 ID 为“%(slug)s”的主题，不会被覆盖。请修改 theme.json 中的主题 ID 以及文件夹名称。"
+msgstr ""
+"已存在 ID 为“%(slug)s”的主题，不会被覆盖。请修改 theme.json 中的主题 ID 以及"
+"文件夹名称。"
 
 #: apps/themes/installer.py
 msgid ""
@@ -6076,7 +6121,8 @@ msgstr "发生了意外错误，未应用任何更改；服务器管理员可在
 msgid ""
 "Theme “%(slug)s” version %(value)s was installed (%(file_count)s files); it "
 "was not activated."
-msgstr "主题“%(slug)s”版本 %(value)s 已安装（%(file_count)s 个文件）；尚未启用。"
+msgstr ""
+"主题“%(slug)s”版本 %(value)s 已安装（%(file_count)s 个文件）；尚未启用。"
 
 #: apps/themes/manifest.py
 #, python-format
@@ -6085,8 +6131,7 @@ msgstr "theme.json 中必须有字段“%(key)s”。"
 
 #: apps/themes/manifest.py
 #, python-format
-msgid ""
-"The field “%(key)s” must be a string of at most %(max_len)s characters."
+msgid "The field “%(key)s” must be a string of at most %(max_len)s characters."
 msgstr "字段“%(key)s”必须是最多 %(max_len)s 个字符的字符串。"
 
 #: apps/themes/manifest.py
@@ -6107,9 +6152,10 @@ msgstr "不允许使用符号链接：“%(rel)s”。"
 #: apps/themes/manifest.py
 #, python-format
 msgid ""
-"The file type of “%(rel)s” is not allowed in a theme (only files that cannot"
-" run on the server)."
-msgstr "主题中不允许使用“%(rel)s”的文件类型（仅允许无法在服务器上运行的文件）。"
+"The file type of “%(rel)s” is not allowed in a theme (only files that cannot "
+"run on the server)."
+msgstr ""
+"主题中不允许使用“%(rel)s”的文件类型（仅允许无法在服务器上运行的文件）。"
 
 #: apps/themes/manifest.py
 #, python-format
@@ -6122,21 +6168,26 @@ msgid ""
 "The locale folder accepts only <language>.json files for the supported "
 "languages (for example fr.json or pt-br.json): “%(rel)s”."
 msgstr ""
-"locale 文件夹仅接受受支持语言的 <language>.json 文件（例如 fr.json 或 pt-br.json）：“%(rel)s”。"
+"locale 文件夹仅接受受支持语言的 <language>.json 文件（例如 fr.json 或 pt-br."
+"json）：“%(rel)s”。"
 
 #: apps/themes/manifest.py
 #, python-format
 msgid ""
 "The translation file “%(rel)s” must be a JSON object that maps English text "
 "to its translation (text only, within the size limits)."
-msgstr "翻译文件“%(rel)s”必须是将英文文本映射到其译文的 JSON 对象（仅限文本，且不超过大小限制）。"
+msgstr ""
+"翻译文件“%(rel)s”必须是将英文文本映射到其译文的 JSON 对象（仅限文本，且不超过"
+"大小限制）。"
 
 #: apps/themes/manifest.py
 #, python-format
 msgid ""
 "html files are not allowed in the static folder: “%(rel)s” (html templates "
 "must be in templates)."
-msgstr "static 文件夹中不允许 html 文件：“%(rel)s”（html 模板必须放在 templates 中）。"
+msgstr ""
+"static 文件夹中不允许 html 文件：“%(rel)s”（html 模板必须放在 templates "
+"中）。"
 
 #: apps/themes/manifest.py
 #, python-format
@@ -6214,9 +6265,10 @@ msgstr "theme.json 无效：%(exc)s"
 #: apps/themes/manifest.py
 #, python-format
 msgid ""
-"api_version must be %(API_VERSION)s (the theme was built for another version"
-" of the contract)."
-msgstr "api_version 必须为 %(API_VERSION)s（该主题是为契约的另一个版本构建的）。"
+"api_version must be %(API_VERSION)s (the theme was built for another version "
+"of the contract)."
+msgstr ""
+"api_version 必须为 %(API_VERSION)s（该主题是为契约的另一个版本构建的）。"
 
 #: apps/themes/manifest.py
 msgid ""
@@ -6314,10 +6366,11 @@ msgstr "路径“%(show)s”过长或过深。"
 #, python-format
 msgid ""
 "The name “%(show)s” is not allowed; file and folder names may only contain "
-"English letters, digits, “.”, “-” and “_” (no spaces, no Persian characters,"
-" no leading dot)."
+"English letters, digits, “.”, “-” and “_” (no spaces, no Persian characters, "
+"no leading dot)."
 msgstr ""
-"名称“%(show)s”不被允许；文件和文件夹名称只能包含英文字母、数字、“.”、“-”和“_”（不能有空格、波斯文字符，也不能以点开头）。"
+"名称“%(show)s”不被允许；文件和文件夹名称只能包含英文字母、数"
+"字、“.”、“-”和“_”（不能有空格、波斯文字符，也不能以点开头）。"
 
 #: apps/themes/package.py
 #, python-format
@@ -6369,8 +6422,7 @@ msgstr "不允许使用加密的 ZIP 文件。"
 
 #: apps/themes/package.py
 msgid ""
-"The ZIP compression method is not supported (only Deflate or no "
-"compression)."
+"The ZIP compression method is not supported (only Deflate or no compression)."
 msgstr "不支持该 ZIP 压缩方式（仅支持 Deflate 或不压缩）。"
 
 #: apps/themes/package.py
@@ -6389,7 +6441,8 @@ msgid ""
 "The file “%(show)s” is outside the theme folder. All files must be inside "
 "one folder named after the theme ID (e.g. my-theme/theme.json)."
 msgstr ""
-"文件“%(show)s”位于主题文件夹之外。所有文件必须位于一个以主题 ID 命名的文件夹内（例如 my-theme/theme.json）。"
+"文件“%(show)s”位于主题文件夹之外。所有文件必须位于一个以主题 ID 命名的文件夹"
+"内（例如 my-theme/theme.json）。"
 
 #: apps/themes/package.py
 #, python-format
@@ -6416,15 +6469,17 @@ msgid ""
 "made the ZIP on macOS, do not include the __MACOSX folder; put the files "
 "inside one folder and zip again."
 msgstr ""
-"ZIP 只能有一个根文件夹（以主题 ID 命名）。如果你在 macOS 上制作了 ZIP，请不要包含 __MACOSX "
-"文件夹；把文件放进一个文件夹后重新压缩。"
+"ZIP 只能有一个根文件夹（以主题 ID 命名）。如果你在 macOS 上制作了 ZIP，请不要"
+"包含 __MACOSX 文件夹；把文件放进一个文件夹后重新压缩。"
 
 #: apps/themes/package.py
 #, python-format
 msgid ""
 "The root folder name (“%(show)s”) is not a valid theme ID; only lowercase "
 "English letters, digits, “-” and “_” (at most 49 characters)."
-msgstr "根文件夹名称（“%(show)s”）不是有效的主题 ID；只能是小写英文字母、数字、“-”和“_”（最多 49 个字符）。"
+msgstr ""
+"根文件夹名称（“%(show)s”）不是有效的主题 ID；只能是小写英文字母、数"
+"字、“-”和“_”（最多 49 个字符）。"
 
 #: apps/themes/package.py
 msgid "Conflicting paths in ZIP (one name is both a file and a folder)."
@@ -6694,8 +6749,8 @@ msgstr "未创建数据库备份文件。"
 #: apps/updater/backup.py
 #, python-format
 msgid ""
-"The backup is corrupted or incomplete (%(info)s); automatic restore will not"
-" be performed."
+"The backup is corrupted or incomplete (%(info)s); automatic restore will not "
+"be performed."
 msgstr "备份已损坏或不完整（%(info)s）；不会执行自动恢复。"
 
 #: apps/updater/logs.py
@@ -6855,7 +6910,9 @@ msgstr "核心软件包只能包含“default”主题。"
 msgid ""
 "RAVIX_VERSION inside the package (%(inner)s) does not match the declared "
 "version (%(expected_version)s)."
-msgstr "软件包内的 RAVIX_VERSION（%(inner)s）与声明的版本（%(expected_version)s）不符。"
+msgstr ""
+"软件包内的 RAVIX_VERSION（%(inner)s）与声明的版本（%(expected_version)s）不"
+"符。"
 
 #: apps/updater/package.py
 #, python-format
@@ -6874,13 +6931,14 @@ msgstr "格式无效：%(items)s"
 msgid ""
 "The version inside theme.json (%(version)s) does not match the requested "
 "version (%(expected_version)s)."
-msgstr "theme.json 内的版本（%(version)s）与请求的版本（%(expected_version)s）不符。"
+msgstr ""
+"theme.json 内的版本（%(version)s）与请求的版本（%(expected_version)s）不符。"
 
 #: apps/updater/pipeline.py
 #, python-format
 msgid ""
-"%(value)sThe run was left unfinished (process/server interrupted); check the"
-" state of the files and the database."
+"%(value)sThe run was left unfinished (process/server interrupted); check the "
+"state of the files and the database."
 msgstr "%(value)s运行未完成（进程/服务器被中断）；请检查文件和数据库的状态。"
 
 #: apps/updater/pipeline.py
@@ -6904,8 +6962,8 @@ msgid ""
 "2) Files: tar -xzf %(value)s -C %(RAVIX_UPDATE_APP_ROOT)s  (first set aside "
 "the apps, config, static, templates, etc. folders)"
 msgstr ""
-"2) 文件：tar -xzf %(value)s -C %(RAVIX_UPDATE_APP_ROOT)s  （请先把 "
-"apps、config、static、templates 等文件夹移到一边）"
+"2) 文件：tar -xzf %(value)s -C %(RAVIX_UPDATE_APP_ROOT)s  （请先把 apps、"
+"config、static、templates 等文件夹移到一边）"
 
 #: apps/updater/pipeline.py
 #, python-format
@@ -6918,7 +6976,9 @@ msgstr "3) 数据库：pg_restore --clean --if-exists -d <database_name> %(value
 msgid ""
 "3) Database: put the file %(value)s in place of the site’s database file "
 "(and delete the -wal/-shm files next to it)."
-msgstr "3) 数据库：把文件 %(value)s 放到站点数据库文件的位置（并删除其旁边的 -wal/-shm 文件）。"
+msgstr ""
+"3) 数据库：把文件 %(value)s 放到站点数据库文件的位置（并删除其旁边的 -wal/-"
+"shm 文件）。"
 
 #: apps/updater/pipeline.py
 msgid ""
@@ -6930,8 +6990,8 @@ msgid ""
 "4) Restart the service and run `python manage.py ravix_update status` and "
 "`python manage.py ravix_preflight`."
 msgstr ""
-"4) 重启服务，并运行 `python manage.py ravix_update status` 和 `python manage.py "
-"ravix_preflight`。"
+"4) 重启服务，并运行 `python manage.py ravix_update status` 和 `python manage."
+"py ravix_preflight`。"
 
 #: apps/updater/pipeline.py
 msgid "Full guide: docs/upgrade.md"
@@ -6947,9 +7007,11 @@ msgstr "版本 %(new_version)s 不比当前版本（%(cur)s）新（降级请使
 #: apps/updater/pipeline.py
 #, python-format
 msgid ""
-"To reach %(new_version)s you must first upgrade to %(requires)s (or higher);"
-" the current version is %(cur)s."
-msgstr "要升级到 %(new_version)s，必须先升级到 %(requires)s（或更高）；当前版本为 %(cur)s。"
+"To reach %(new_version)s you must first upgrade to %(requires)s (or higher); "
+"the current version is %(cur)s."
+msgstr ""
+"要升级到 %(new_version)s，必须先升级到 %(requires)s（或更高）；当前版本为 "
+"%(cur)s。"
 
 #: apps/updater/pipeline.py
 #, python-format
@@ -6996,8 +7058,7 @@ msgid "Version %(version)s is not in the update source."
 msgstr "更新源中没有版本 %(version)s。"
 
 #: apps/updater/pipeline.py
-msgid ""
-"There is no newer version in the update source; the site is up to date."
+msgid "There is no newer version in the update source; the site is up to date."
 msgstr "更新源中没有更新的版本；站点已是最新。"
 
 #: apps/updater/pipeline.py
@@ -7011,8 +7072,8 @@ msgstr "软件包大于大小限制。"
 
 #: apps/updater/pipeline.py
 msgid ""
-"The SHA-256 of the downloaded package does not match the index (corrupted or"
-" tampered download); rejected."
+"The SHA-256 of the downloaded package does not match the index (corrupted or "
+"tampered download); rejected."
 msgstr "所下载软件包的 SHA-256 与索引不符（下载已损坏或被篡改）；已拒绝。"
 
 #: apps/updater/pipeline.py
@@ -7105,8 +7166,8 @@ msgid ""
 "The upgrade succeeded. Restart the web service to load the new code. If "
 "there is a problem: `python manage.py ravix_update rollback --run %d`."
 msgstr ""
-"升级成功。请重启 Web 服务以加载新代码。如有问题：`python manage.py ravix_update rollback --run "
-"%d`。"
+"升级成功。请重启 Web 服务以加载新代码。如有问题：`python manage.py "
+"ravix_update rollback --run %d`。"
 
 #: apps/updater/pipeline.py
 msgid "The database was restored from backup"
@@ -7146,8 +7207,7 @@ msgid "The core upgrade run was not found."
 msgstr "未找到核心升级运行记录。"
 
 #: apps/updater/pipeline.py
-msgid ""
-"Only a successful upgrade (or one needing recovery) can be rolled back."
+msgid "Only a successful upgrade (or one needing recovery) can be rolled back."
 msgstr "只能回滚成功的升级（或需要恢复的升级）。"
 
 #: apps/updater/pipeline.py
@@ -7163,9 +7223,10 @@ msgstr "回滚会将数据库恢复到升级前的状态，并销毁之后创建
 #: apps/updater/pipeline.py
 #, python-format
 msgid ""
-"The code on disk (%(disk)s) is not the upgraded version (%(to_version)s); an"
-" automatic rollback is not safe."
-msgstr "磁盘上的代码（%(disk)s）不是升级后的版本（%(to_version)s）；自动回滚不安全。"
+"The code on disk (%(disk)s) is not the upgraded version (%(to_version)s); an "
+"automatic rollback is not safe."
+msgstr ""
+"磁盘上的代码（%(disk)s）不是升级后的版本（%(to_version)s）；自动回滚不安全。"
 
 #: apps/updater/pipeline.py
 msgid "After the rollback, the version on disk could not be verified."
@@ -7251,8 +7312,7 @@ msgid "Unexpected error: %(exc)s"
 msgstr "意外错误：%(exc)s"
 
 #: apps/updater/pipeline.py
-msgid ""
-"An unexpected error occurred; the details were recorded in the history."
+msgid "An unexpected error occurred; the details were recorded in the history."
 msgstr "发生意外错误；详细信息已记录到日志。"
 
 #: apps/updater/pipeline.py
@@ -7261,8 +7321,8 @@ msgstr "核心/主题升级正在进行；请在完成后重试。"
 
 #: apps/updater/pipeline.py
 msgid ""
-"The previous version of the plugin is untouched; see the “Plugin report” for"
-" details."
+"The previous version of the plugin is untouched; see the “Plugin report” for "
+"details."
 msgstr "插件的上一版本未被改动；详情请查看“插件报告”。"
 
 #: apps/updater/pipeline.py
@@ -7270,7 +7330,9 @@ msgid ""
 "The new code was put in place; the plugin is disabled. After reviewing the "
 "changes, enable it on the plugin page (rolling back from that page is "
 "possible)."
-msgstr "新代码已放置；插件处于停用状态。检查更改后，请在插件页面启用（可从该页面回滚）。"
+msgstr ""
+"新代码已放置；插件处于停用状态。检查更改后，请在插件页面启用（可从该页面回"
+"滚）。"
 
 #: apps/updater/release.py
 msgid "RAVIX_VERSION was not found in apps/core/version.py."
@@ -7360,12 +7422,12 @@ msgstr "需要 Python“%(spec)s”；当前版本为 %(cur)s。"
 
 #: apps/updater/views.py
 msgid ""
-"Applying updates from the web is turned off. Run it with the command “python"
-" manage.py ravix_update apply ...” or set RAVIX_UPDATE_WEB_APPLY=true in the"
-" server settings."
+"Applying updates from the web is turned off. Run it with the command “python "
+"manage.py ravix_update apply ...” or set RAVIX_UPDATE_WEB_APPLY=true in the "
+"server settings."
 msgstr ""
-"已禁用通过网页应用更新。请使用命令“python manage.py ravix_update apply ...”运行，或在服务器设置中设置 "
-"RAVIX_UPDATE_WEB_APPLY=true。"
+"已禁用通过网页应用更新。请使用命令“python manage.py ravix_update apply ...”运"
+"行，或在服务器设置中设置 RAVIX_UPDATE_WEB_APPLY=true。"
 
 #: apps/updater/views.py
 msgid "The version list was fetched from the official source and validated."
@@ -7571,11 +7633,11 @@ msgid "Save"
 msgstr "保存"
 
 #: plugins/seo_toolkit/templates/edit.html templates/content/page_detail.html
-#: templates/content/post_detail.html
-#: templates/pluginhub/directory_detail.html templates/plugins/install.html
-#: templates/plugins/install_package.html templates/plugins/settings.html
-#: templates/plugins/trusted_keys.html templates/shop/panel/order.html
-#: templates/sites/detail.html templates/updater/run.html
+#: templates/content/post_detail.html templates/pluginhub/directory_detail.html
+#: templates/plugins/install.html templates/plugins/install_package.html
+#: templates/plugins/settings.html templates/plugins/trusted_keys.html
+#: templates/shop/panel/order.html templates/sites/detail.html
+#: templates/updater/run.html
 msgid "Back"
 msgstr "返回"
 
@@ -7646,8 +7708,8 @@ msgstr "重置您账户的密码"
 
 #: templates/accounts/email/verify.txt
 msgid ""
-"To verify your account email, open the link below and press the verification"
-" button:"
+"To verify your account email, open the link below and press the verification "
+"button:"
 msgstr "要验证您账户的电子邮箱，请打开下面的链接并点击验证按钮："
 
 #: templates/accounts/email/verify.txt
@@ -7730,9 +7792,10 @@ msgstr "已收到请求"
 
 #: templates/accounts/email_verify_resend_done.html
 msgid ""
-"If an account exists with this email and is not yet verified, a verification"
-" link will reach your inbox in a few minutes."
-msgstr "如果存在使用此邮箱且尚未验证的账户，几分钟内验证链接就会发送到您的收件箱。"
+"If an account exists with this email and is not yet verified, a verification "
+"link will reach your inbox in a few minutes."
+msgstr ""
+"如果存在使用此邮箱且尚未验证的账户，几分钟内验证链接就会发送到您的收件箱。"
 
 #: templates/accounts/login.html
 #: templates/accounts/password_reset_complete.html
@@ -7799,7 +7862,9 @@ msgstr "邮件已发送"
 msgid ""
 "If an account exists with this email, a password recovery link will reach "
 "your inbox in a few minutes. Check your spam folder too."
-msgstr "如果存在使用此邮箱的账户，几分钟内密码找回链接就会发送到您的收件箱。请同时检查垃圾邮件文件夹。"
+msgstr ""
+"如果存在使用此邮箱的账户，几分钟内密码找回链接就会发送到您的收件箱。请同时检"
+"查垃圾邮件文件夹。"
 
 #: templates/accounts/password_reset_done.html
 msgid "The link is valid for one hour and can be used only once."
@@ -7813,7 +7878,8 @@ msgstr "找回密码"
 msgid ""
 "Enter your account email. If an account exists with this email, a recovery "
 "link will be sent to you."
-msgstr "请输入您账户的电子邮箱。如果存在使用此邮箱的账户，我们会向您发送找回链接。"
+msgstr ""
+"请输入您账户的电子邮箱。如果存在使用此邮箱的账户，我们会向您发送找回链接。"
 
 #: templates/accounts/password_reset_form.html
 msgid "Send recovery link"
@@ -8065,7 +8131,9 @@ msgid ""
 "Each version is a fixed snapshot of the page. “Restore” puts the version in "
 "the draft (the current state is versioned automatically); the public site "
 "does not change until you publish."
-msgstr "每个版本都是页面的固定快照。“还原”会把该版本放入草稿（当前状态会自动保存为版本）；在您发布之前，公开站点不会改变。"
+msgstr ""
+"每个版本都是页面的固定快照。“还原”会把该版本放入草稿（当前状态会自动保存为版"
+"本）；在您发布之前，公开站点不会改变。"
 
 #: templates/builder/editor.html
 msgid "Save new version"
@@ -8272,8 +8340,8 @@ msgstr "SEO 与分享"
 
 #: templates/content/post_form.html
 msgid ""
-"The featured image is used as the preview image on social networks "
-"(og:image)."
+"The featured image is used as the preview image on social networks (og:"
+"image)."
 msgstr "特色图片会用作社交网络上的预览图（og:image）。"
 
 #: templates/content/post_form.html
@@ -8330,7 +8398,9 @@ msgid ""
 "Old addresses that are moved to a new address after becoming 404. When the "
 "slug of a published post or page changes, a 301 redirect is created "
 "automatically."
-msgstr "变成 404 后会转到新地址的旧地址。当已发布文章或页面的别名更改时，会自动创建 301 重定向。"
+msgstr ""
+"变成 404 后会转到新地址的旧地址。当已发布文章或页面的别名更改时，会自动创建 "
+"301 重定向。"
 
 #: templates/content/redirect_list.html
 msgid "New redirect"
@@ -8392,7 +8462,8 @@ msgid ""
 "%(critical)s critical · %(recommended)s recommended · %(unknown)s unknown · "
 "%(good)s good"
 msgstr ""
-"%(critical)s 项严重 · %(recommended)s 项建议 · %(unknown)s 项未知 · %(good)s 项良好"
+"%(critical)s 项严重 · %(recommended)s 项建议 · %(unknown)s 项未知 · %(good)s "
+"项良好"
 
 #: templates/core/site_health.html
 msgid "Send test email"
@@ -8458,9 +8529,10 @@ msgstr "删除%(object_label)s"
 #: templates/crud/confirm_delete.html
 #, python-format
 msgid ""
-"Are you sure you want to delete %(object_label)s "
-"“<strong>%(object)s</strong>”? This cannot be undone."
-msgstr "确定要删除%(object_label)s“<strong>%(object)s</strong>”吗？此操作无法撤销。"
+"Are you sure you want to delete %(object_label)s “<strong>%(object)s</"
+"strong>”? This cannot be undone."
+msgstr ""
+"确定要删除%(object_label)s“<strong>%(object)s</strong>”吗？此操作无法撤销。"
 
 #: templates/crud/confirm_delete.html
 msgid "Yes, delete"
@@ -8502,9 +8574,10 @@ msgstr "完成"
 #: templates/dashboard/home.html
 msgid ""
 "Your site has one sample post and two sample pages (“About us” and “Contact "
-"us”). Edit any of them and it becomes yours; you can delete the rest at "
-"once."
-msgstr "您的站点有一篇示例文章和两个示例页面（“关于我们”和“联系我们”）。编辑其中任何一个，它就归您所有；其余的可以一次性删除。"
+"us”). Edit any of them and it becomes yours; you can delete the rest at once."
+msgstr ""
+"您的站点有一篇示例文章和两个示例页面（“关于我们”和“联系我们”）。编辑其中任何"
+"一个，它就归您所有；其余的可以一次性删除。"
 
 #: templates/dashboard/home.html
 msgid "Delete the unedited samples?"
@@ -8617,16 +8690,20 @@ msgstr "安装 Ravix"
 
 #: templates/installer/install.html
 msgid ""
-"A few simple details; after submitting, the superadmin is created, this page"
-" is closed for good and you are signed in to the panel."
-msgstr "只需填写几项简单信息；提交后将创建超级管理员，此页面将永久关闭，并且您会登录到后台。"
+"A few simple details; after submitting, the superadmin is created, this page "
+"is closed for good and you are signed in to the panel."
+msgstr ""
+"只需填写几项简单信息；提交后将创建超级管理员，此页面将永久关闭，并且您会登录"
+"到后台。"
 
 #: templates/installer/install.html
 #, python-format
 msgid ""
 "The database connection is not available (%(db_error)s). Check "
 "<code>DATABASE_URL</code>; installation is not possible until then."
-msgstr "无法连接数据库（%(db_error)s）。请检查 <code>DATABASE_URL</code>；在此之前无法安装。"
+msgstr ""
+"无法连接数据库（%(db_error)s）。请检查 <code>DATABASE_URL</code>；在此之前无"
+"法安装。"
 
 #: templates/installer/install.html
 #, python-format
@@ -8766,16 +8843,17 @@ msgstr "您可以一次选择多个文件。"
 msgid ""
 "%(help_text)s Images up to 5 MB, documents up to 15, audio up to 25 and "
 "video up to 50 MB."
-msgstr "%(help_text)s 图片最大 5 MB，文档最大 15 MB，音频最大 25 MB，视频最大 50 MB。"
+msgstr ""
+"%(help_text)s 图片最大 5 MB，文档最大 15 MB，音频最大 25 MB，视频最大 50 MB。"
 
 #: templates/media_library/media_upload.html
 msgid ""
-"Allowed formats: JPG, PNG, GIF, WEBP, PDF, TXT, CSV, DOC/DOCX, XLS/XLSX, "
-"PPT/PPTX, MP3, WAV, OGG, MP4, WEBM. Executable files, scripts, HTML and SVG "
-"are not accepted."
+"Allowed formats: JPG, PNG, GIF, WEBP, PDF, TXT, CSV, DOC/DOCX, XLS/XLSX, PPT/"
+"PPTX, MP3, WAV, OGG, MP4, WEBM. Executable files, scripts, HTML and SVG are "
+"not accepted."
 msgstr ""
-"允许的格式：JPG、PNG、GIF、WEBP、PDF、TXT、CSV、DOC/DOCX、XLS/XLSX、PPT/PPTX、MP3、WAV、OGG、MP4、WEBM。不接受可执行文件、脚本、HTML"
-" 和 SVG。"
+"允许的格式：JPG、PNG、GIF、WEBP、PDF、TXT、CSV、DOC/DOCX、XLS/XLSX、PPT/"
+"PPTX、MP3、WAV、OGG、MP4、WEBM。不接受可执行文件、脚本、HTML 和 SVG。"
 
 #: templates/media_library/media_upload.html templates/pluginhub/upload.html
 msgid "Upload"
@@ -8915,12 +8993,19 @@ msgstr "撤销验证"
 msgid "Verify identity"
 msgstr "验证身份"
 
+#: templates/pluginhub/directory.html templates/plugins/list.html
+#| msgid "Plugin registry"
+msgid "Plugin directory"
+msgstr "插件目录"
+
 #: templates/pluginhub/directory.html
 msgid ""
 "Plugins published in the registry. Nothing is downloaded or installed "
 "automatically: after download, each plugin is reviewed in “Plugins” and "
 "installed only with your explicit approval."
-msgstr "在注册表中发布的插件。不会自动下载或安装任何内容：下载后，每个插件都在“插件”中审核，只有在您明确批准后才会安装。"
+msgstr ""
+"在注册表中发布的插件。不会自动下载或安装任何内容：下载后，每个插件都在“插"
+"件”中审核，只有在您明确批准后才会安装。"
 
 #: templates/pluginhub/directory.html
 msgid "Installed plugins"
@@ -9004,15 +9089,16 @@ msgstr "下载（最新兼容版本："
 
 #: templates/pluginhub/directory_detail.html
 msgid ""
-"The package is downloaded only over HTTPS with a SHA-256 check and is placed"
-" in the folder"
+"The package is downloaded only over HTTPS with a SHA-256 check and is placed "
+"in the folder"
 msgstr "软件包仅通过 HTTPS 下载并进行 SHA-256 校验，存放在文件夹"
 
 #: templates/pluginhub/directory_detail.html
 msgid ""
 "; <strong>it is not installed or enabled automatically</strong> and must be "
 "done in “Plugins” with your explicit trust."
-msgstr "；<strong>不会自动安装或启用</strong>，必须在“插件”中明确表示信任后才能进行。"
+msgstr ""
+"；<strong>不会自动安装或启用</strong>，必须在“插件”中明确表示信任后才能进行。"
 
 #: templates/pluginhub/directory_detail.html
 msgid "Install from the registry (with signature check)"
@@ -9071,7 +9157,8 @@ msgstr "发布者权限"
 msgid ""
 "Your account is not an “authorized publisher”. To publish a plugin, ask the "
 "registry superadmin to register you as a publisher."
-msgstr "您的账户不是“授权发布者”。要发布插件，请让注册表超级管理员将您登记为发布者。"
+msgstr ""
+"您的账户不是“授权发布者”。要发布插件，请让注册表超级管理员将您登记为发布者。"
 
 #: templates/pluginhub/tokens.html
 msgid "Publishing tokens"
@@ -9190,7 +9277,9 @@ msgstr "插件：%(name)s"
 msgid ""
 "The code of this plugin differs from the approved version, so it is not "
 "running. If you expected this change, review and approve it."
-msgstr "此插件的代码与已批准的版本不同，因此未运行。如果您预期会有此更改，请审核并批准。"
+msgstr ""
+"此插件的代码与已批准的版本不同，因此未运行。如果您预期会有此更改，请审核并批"
+"准。"
 
 #: templates/plugins/detail.html
 msgid "Review and approve changes"
@@ -9309,8 +9398,8 @@ msgstr "此部分不可用"
 
 #: templates/plugins/error.html
 msgid ""
-"The admin panel and other sections work fine. The error details are recorded"
-" in the plugin log."
+"The admin panel and other sections work fine. The error details are recorded "
+"in the plugin log."
 msgstr "管理后台和其他部分运行正常。错误详情已记录在插件日志中。"
 
 #: templates/plugins/error.html
@@ -9365,8 +9454,9 @@ msgid ""
 "only this exact code (the fingerprint below) is allowed to run; any later "
 "change to the files stops the plugin immediately."
 msgstr ""
-"<strong>安全警告：</strong>插件是 Python "
-"代码，以完整的服务器访问权限运行；没有沙箱。只批准您已审查过代码或来自可信来源的插件。批准后，仅允许运行这份确切的代码（见下方指纹）；之后对文件的任何更改都会立即停止该插件。"
+"<strong>安全警告：</strong>插件是 Python 代码，以完整的服务器访问权限运行；没"
+"有沙箱。只批准您已审查过代码或来自可信来源的插件。批准后，仅允许运行这份确切"
+"的代码（见下方指纹）；之后对文件的任何更改都会立即停止该插件。"
 
 #: templates/plugins/install.html
 msgid "<strong>Cannot continue:</strong>"
@@ -9399,10 +9489,12 @@ msgstr "从软件包安装插件"
 
 #: templates/plugins/install_package.html
 msgid ""
-"Safely fetch and place a package. After that you review the details and code"
-" and explicitly confirm the installation; no plugin is installed or enabled "
+"Safely fetch and place a package. After that you review the details and code "
+"and explicitly confirm the installation; no plugin is installed or enabled "
 "automatically."
-msgstr "安全地获取并放置软件包。之后您审核详情和代码并明确确认安装；任何插件都不会自动安装或启用。"
+msgstr ""
+"安全地获取并放置软件包。之后您审核详情和代码并明确确认安装；任何插件都不会自"
+"动安装或启用。"
 
 #: templates/plugins/install_package.html
 msgid ""
@@ -9411,8 +9503,9 @@ msgid ""
 "full server access. Install only plugins from a trusted publisher and look "
 "at their code in the review step."
 msgstr ""
-"<strong>数字签名只能确认软件包的真实性，不能证明代码无害。</strong>插件是 Python "
-"代码，以完整的服务器访问权限运行。只安装可信发布者的插件，并在审核步骤中查看其代码。"
+"<strong>数字签名只能确认软件包的真实性，不能证明代码无害。</strong>插件是 "
+"Python 代码，以完整的服务器访问权限运行。只安装可信发布者的插件，并在审核步骤"
+"中查看其代码。"
 
 #: templates/plugins/install_package.html
 msgid "Web installation is off. The server administrator must set"
@@ -9430,7 +9523,9 @@ msgstr "对该服务可写。"
 msgid ""
 "No trusted signing key is defined; a signed package is not accepted. The "
 "superadmin can register the publisher’s public key in “Trusted keys”."
-msgstr "未定义可信签名密钥；不接受已签名的软件包。超级管理员可以在“可信密钥”中登记发布者的公钥。"
+msgstr ""
+"未定义可信签名密钥；不接受已签名的软件包。超级管理员可以在“可信密钥”中登记发"
+"布者的公钥。"
 
 #: templates/plugins/install_package.html
 msgid "From the official registry"
@@ -9488,7 +9583,8 @@ msgstr "上传并审核"
 msgid ""
 "Add new features without changing the core. Plugins run server-side code; "
 "install only plugins you trust."
-msgstr "无需更改核心即可添加新功能。插件会运行服务器端代码；请只安装您信任的插件。"
+msgstr ""
+"无需更改核心即可添加新功能。插件会运行服务器端代码；请只安装您信任的插件。"
 
 #: templates/plugins/list.html
 msgid "Install from package"
@@ -9561,7 +9657,9 @@ msgid ""
 "Only packages signed with one of these keys count as “authenticated”. Enter "
 "only the <strong>public key</strong>, and obtain it from an independent "
 "channel (not from the registry itself)."
-msgstr "只有用这些密钥之一签名的软件包才算“已认证”。仅输入<strong>公钥</strong>，并通过独立渠道获取（不要从注册表本身获取）。"
+msgstr ""
+"只有用这些密钥之一签名的软件包才算“已认证”。仅输入<strong>公钥</strong>，并通"
+"过独立渠道获取（不要从注册表本身获取）。"
 
 #: templates/plugins/trusted_keys.html
 msgid "Public key (base64, 32 bytes)"
@@ -9597,8 +9695,7 @@ msgstr "尚未登记任何密钥。"
 msgid "Site: %(name)s"
 msgstr "站点：%(name)s"
 
-#: templates/shop/panel/categories.html
-#: templates/shop/panel/category_form.html
+#: templates/shop/panel/categories.html templates/shop/panel/category_form.html
 msgid "New product category"
 msgstr "新建商品分类"
 
@@ -9625,7 +9722,9 @@ msgid ""
 "Keys are stored encrypted and are never shown again. Leave the secret field "
 "empty to keep the current value. To keep keys outside the database you can "
 "use the environment variable"
-msgstr "密钥以加密形式存储，不会再次显示。将密钥字段留空即可保留当前值。若要将密钥保存在数据库之外，可以使用环境变量"
+msgstr ""
+"密钥以加密形式存储，不会再次显示。将密钥字段留空即可保留当前值。若要将密钥保"
+"存在数据库之外，可以使用环境变量"
 
 #: templates/shop/panel/gateway_form.html
 #, python-format
@@ -9641,9 +9740,11 @@ msgstr "站点：%(name)s。每个网关都是独立的插件；默认不连接�
 
 #: templates/shop/panel/gateways.html
 msgid ""
-"The encryption key <code>RAVIX_SECRETS_KEY</code> is not set; in production,"
-" storing gateway keys is not possible without it."
-msgstr "未设置加密密钥 <code>RAVIX_SECRETS_KEY</code>；在生产环境中，没有它就无法存储网关密钥。"
+"The encryption key <code>RAVIX_SECRETS_KEY</code> is not set; in production, "
+"storing gateway keys is not possible without it."
+msgstr ""
+"未设置加密密钥 <code>RAVIX_SECRETS_KEY</code>；在生产环境中，没有它就无法存储"
+"网关密钥。"
 
 #: templates/shop/panel/gateways.html
 msgid "Gateway"
@@ -9703,8 +9804,8 @@ msgstr "状态变更备注"
 
 #: templates/shop/panel/order.html
 msgid ""
-"“Refund” only records the status; the money is not returned from the gateway"
-" automatically."
+"“Refund” only records the status; the money is not returned from the gateway "
+"automatically."
 msgstr "“退款”只记录状态；款项不会自动从网关退回。"
 
 #: templates/shop/panel/order.html
@@ -9747,7 +9848,9 @@ msgid ""
 "This payment needs manual review (amount/identifier mismatch, or a payment "
 "for an order that cannot accept it). Reconcile with the gateway’s support "
 "before any action."
-msgstr "此付款需要人工审核（金额/标识符不一致，或为无法接受付款的订单付款）。在采取任何操作之前，请先与网关客服核对。"
+msgstr ""
+"此付款需要人工审核（金额/标识符不一致，或为无法接受付款的订单付款）。在采取任"
+"何操作之前，请先与网关客服核对。"
 
 #: templates/shop/panel/order.html
 msgid "Change history"
@@ -10027,14 +10130,13 @@ msgstr "订单历史"
 
 #: templates/shop/public/order.html
 msgid ""
-"Keep this address to track the order; anyone who has the address can see the"
-" order."
+"Keep this address to track the order; anyone who has the address can see the "
+"order."
 msgstr "请保存此地址以追踪订单；任何拥有该地址的人都可以查看订单。"
 
 #: templates/shop/public/sandbox.html
 msgid ""
-"⚠ This is a <strong>test payment gateway</strong> page and no money is "
-"moved."
+"⚠ This is a <strong>test payment gateway</strong> page and no money is moved."
 msgstr "⚠ 这是<strong>测试支付网关</strong>页面，不会转移任何资金。"
 
 #: templates/shop/public/sandbox.html
@@ -10179,8 +10281,8 @@ msgstr "颜色、字体和站点标志"
 
 #: templates/themes/customize_appearance.html
 msgid ""
-"Colors must be readable (contrast at least 4.5 to 1); otherwise they are not"
-" saved."
+"Colors must be readable (contrast at least 4.5 to 1); otherwise they are not "
+"saved."
 msgstr "颜色必须清晰可读（对比度至少为 4.5 比 1）；否则不会保存。"
 
 #: templates/themes/customize_appearance.html
@@ -10206,7 +10308,8 @@ msgid ""
 "Other sections are saved but not displayed. The order is set by the “Row” "
 "number."
 msgstr ""
-"“%(display_name)s”主题支持的部分：%(supported_sections)s。其他部分会被保存，但不会显示。顺序由“行”编号决定。"
+"“%(display_name)s”主题支持的部分：%(supported_sections)s。其他部分会被保存，"
+"但不会显示。顺序由“行”编号决定。"
 
 #: templates/themes/customize_home.html
 msgid "Home page sections"
@@ -10222,7 +10325,9 @@ msgid ""
 "Set the order with the “Row” number (a smaller number goes higher). Rows "
 "without a link type are ignored. Only the fields for the selected link type "
 "are used."
-msgstr "用“行”编号设置顺序（编号越小越靠前）。没有链接类型的行会被忽略。仅使用所选链接类型对应的字段。"
+msgstr ""
+"用“行”编号设置顺序（编号越小越靠前）。没有链接类型的行会被忽略。仅使用所选链"
+"接类型对应的字段。"
 
 #: templates/themes/customize_menus.html
 #, python-format
@@ -10233,19 +10338,20 @@ msgstr "%(title)s 的第 %(counter)s 项"
 msgid ""
 "The active theme determines the look of the public site; changing the theme "
 "does not change any post, page or media."
-msgstr "当前启用的主题决定公开站点的外观；更换主题不会改变任何文章、页面或媒体。"
+msgstr ""
+"当前启用的主题决定公开站点的外观；更换主题不会改变任何文章、页面或媒体。"
 
 #: templates/themes/theme_list.html
 msgid ""
-"<strong>The theme was not installed and no change was applied on the "
-"server.</strong>"
+"<strong>The theme was not installed and no change was applied on the server."
+"</strong>"
 msgstr "<strong>主题未安装，服务器上也没有应用任何更改。</strong>"
 
 #: templates/themes/theme_list.html
 #, python-format
 msgid ""
-"<strong>Validation succeeded; theme “%(installed)s” was installed but is not"
-" active yet.</strong>"
+"<strong>Validation succeeded; theme “%(installed)s” was installed but is not "
+"active yet.</strong>"
 msgstr "<strong>验证成功；主题“%(installed)s”已安装，但尚未启用。</strong>"
 
 #: templates/themes/theme_list.html
@@ -10254,7 +10360,8 @@ msgid ""
 "not been published yet, and until then theme pages look incomplete. The "
 "server administrator must run the command"
 msgstr ""
-"<strong>静态文件状态：</strong>此主题的 CSS/JS/图片文件尚未发布，在此之前主题页面看起来不完整。服务器管理员必须运行一次命令"
+"<strong>静态文件状态：</strong>此主题的 CSS/JS/图片文件尚未发布，在此之前主题"
+"页面看起来不完整。服务器管理员必须运行一次命令"
 
 #: templates/themes/theme_list.html
 msgid ""
@@ -10264,8 +10371,8 @@ msgstr "（从后台安装不会运行它）。然后启用主题。详情："
 
 #: templates/themes/theme_list.html
 msgid ""
-"<strong>Static files status:</strong> this theme has no static files or they"
-" are already published."
+"<strong>Static files status:</strong> this theme has no static files or they "
+"are already published."
 msgstr "<strong>静态文件状态：</strong>此主题没有静态文件，或已经发布。"
 
 #: templates/themes/theme_list.html
@@ -10279,8 +10386,9 @@ msgid ""
 "%(extracted_mb)s MB · at most %(files)s files. Structure: a folder named "
 "after the theme identifier (for example"
 msgstr ""
-"最大文件大小：<strong>%(zip_mb)s MB</strong> · 解压后总大小：%(extracted_mb)s MB · 最多 "
-"%(files)s 个文件。结构：一个以主题标识符命名的文件夹（例如"
+"最大文件大小：<strong>%(zip_mb)s MB</strong> · 解压后总大小："
+"%(extracted_mb)s MB · 最多 %(files)s 个文件。结构：一个以主题标识符命名的文件"
+"夹（例如"
 
 #: templates/themes/theme_list.html
 msgid ") containing"
@@ -10295,7 +10403,9 @@ msgid ""
 ". SVG, py and php files are not accepted. The theme is not activated "
 "automatically after installation, and an existing theme (including "
 "“default”) is never overwritten."
-msgstr "。不接受 SVG、py 和 php 文件。安装后主题不会自动启用，并且永远不会覆盖已有主题（包括“default”）。"
+msgstr ""
+"。不接受 SVG、py 和 php 文件。安装后主题不会自动启用，并且永远不会覆盖已有主"
+"题（包括“default”）。"
 
 #: templates/themes/theme_list.html
 msgid "Upload and install"
@@ -10307,9 +10417,11 @@ msgstr "正在上传并检查；请稍候…"
 
 #: templates/themes/theme_list.html
 msgid ""
-"Installing themes from the panel is <strong>off</strong> on this server. The"
-" server administrator must deliberately set"
-msgstr "此服务器上从后台安装主题的功能已<strong>关闭</strong>。服务器管理员必须有意设置"
+"Installing themes from the panel is <strong>off</strong> on this server. The "
+"server administrator must deliberately set"
+msgstr ""
+"此服务器上从后台安装主题的功能已<strong>关闭</strong>。服务器管理员必须有意设"
+"置"
 
 #: templates/themes/theme_list.html
 msgid "and make the folder"
@@ -10324,7 +10436,9 @@ msgstr "对该服务可写。指南："
 msgid ""
 "The active theme (“%(active_theme)s”) was not found or is invalid; the site "
 "is temporarily shown with the default theme. Activate a healthy theme."
-msgstr "未找到当前启用的主题（“%(active_theme)s”）或其无效；站点暂时使用默认主题显示。请启用一个完好的主题。"
+msgstr ""
+"未找到当前启用的主题（“%(active_theme)s”）或其无效；站点暂时使用默认主题显"
+"示。请启用一个完好的主题。"
 
 #: templates/themes/theme_list.html
 #, python-format
@@ -10365,7 +10479,9 @@ msgid ""
 "Core, theme and plugin versions, checking for a new version from the "
 "official source, and the upgrade history. No file is replaced without a "
 "SHA-256 check and a digital signature."
-msgstr "核心、主题和插件的版本，从官方源检查新版本，以及升级历史。没有 SHA-256 校验和数字签名，任何文件都不会被替换。"
+msgstr ""
+"核心、主题和插件的版本，从官方源检查新版本，以及升级历史。没有 SHA-256 校验和"
+"数字签名，任何文件都不会被替换。"
 
 #: templates/updater/home.html
 msgid "Check for a new version"
@@ -10407,8 +10523,8 @@ msgstr "未配置官方更新源（"
 
 #: templates/updater/home.html
 msgid ""
-"). Until you configure it, only installed versions are shown. No new version"
-" is ever “guessed”."
+"). Until you configure it, only installed versions are shown. No new version "
+"is ever “guessed”."
 msgstr "）。在您配置之前，只显示已安装的版本。绝不会“猜测”新版本。"
 
 #: templates/updater/home.html
@@ -10571,7 +10687,9 @@ msgid ""
 "Files and database return to the moment before this upgrade; <strong>data "
 "recorded after the upgrade will be lost</strong>. A backup of the current "
 "state is taken before rolling back."
-msgstr "文件和数据库将回到此次升级之前的状态；<strong>升级后记录的数据将丢失</strong>。回滚之前会备份当前状态。"
+msgstr ""
+"文件和数据库将回到此次升级之前的状态；<strong>升级后记录的数据将丢失</"
+"strong>。回滚之前会备份当前状态。"
 
 #: templates/updater/run.html
 msgid "I understand and confirm"
@@ -10652,8 +10770,8 @@ msgstr "面包屑导航"
 
 #: themes/default/templates/partials/comments.html
 msgid ""
-"Your comment was received and will be shown after the administrator approves"
-" it."
+"Your comment was received and will be shown after the administrator approves "
+"it."
 msgstr "您的评论已收到，待管理员批准后显示。"
 
 #: themes/default/templates/partials/comments.html
@@ -10742,9 +10860,3 @@ msgstr "页面结果"
 #: themes/default/templates/tag_detail.html
 msgid "No post with this tag was found."
 msgstr "未找到带有此标签的文章。"
-
-#~ msgid "Right"
-#~ msgstr "راست"
-
-#~ msgid "Left"
-#~ msgstr "چپ"
