@@ -1,4 +1,5 @@
 {% extends "layouts/panel.html" %}
+{% load i18n %}
 {% load ravix_ui %}
 {% block title %}{{ heading }}{% endblock %}
 {% block page_title %}{{ heading }}{% endblock %}
@@ -14,12 +15,12 @@
       {% include "partials/_md_editor.html" with field=form.body %}
     </div></div>
     <aside class="editor-side">
-      <div class="card"><div class="card-header"><h2>انتشار</h2></div><div class="card-body">
+      <div class="card"><div class="card-header"><h2>{% trans "Publish" %}</h2></div><div class="card-body">
         {% include "partials/_field.html" with field=form.status %}
-        {% if object.pk %}<p class="help">آخرین ویرایش: {{ object.updated_at|jalali_datetime }}</p>{% endif %}
-        <div class="form-actions"><button type="submit" class="btn">{% icon "check" 18 %} ذخیره</button><a href="{{ cancel_url }}" class="btn btn-light">انصراف</a></div>
+        {% if object.pk %}<p class="help">{% blocktrans trimmed with updated_at=object.updated_at|jalali_datetime %}Last edited: {{ updated_at }}{% endblocktrans %}</p>{% endif %}
+        <div class="form-actions"><button type="submit" class="btn">{% icon "check" 18 %} {% trans "Save" %}</button><a href="{{ cancel_url }}" class="btn btn-light">{% trans "Cancel" %}</a></div>
       </div></div>
-      <div class="card"><div class="card-header"><h2>سئو (SEO)</h2></div><div class="card-body">
+      <div class="card"><div class="card-header"><h2>{% trans "SEO" %}</h2></div><div class="card-body">
         {% include "partials/_field.html" with field=form.seo_title %}
         {% include "partials/_field.html" with field=form.seo_description %}
       </div></div>

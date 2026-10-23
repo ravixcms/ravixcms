@@ -1,4 +1,5 @@
 """پنل مدیریت فروشگاه. هر View: ورود + قابلیت نقش + دسترسی به «سایت فعال»؛ و همهٔ کوئری‌ها با site فیلتر می‌شوند."""
+from django.utils.translation import gettext
 from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
@@ -70,8 +71,8 @@ class ProductEditView(ProductsAdmin, View):
         form = ProductForm(request.POST, request.FILES, instance=obj, site=self.site)
         if form.is_valid():
             saved = form.save()
-            log_event(request, AuditLog.Action.UPDATE if obj else AuditLog.Action.CREATE, saved, f"محصول «{saved.name}» ذخیره شد")
-            messages.success(request, "محصول ذخیره شد.")
+            log_event(request, AuditLog.Action.UPDATE if obj else AuditLog.Action.CREATE, saved, (gettext("Product “%(name)s” was saved") % {"name": saved.name}))
+            messages.success(request, gettext("Product saved."))
             return redirect("shop_panel:products")
         return render(request, "shop/panel/product_form.html", {"form": form, "obj": obj, "image_form": ProductImageForm(), "gallery": obj.gallery.all() if obj else []}, status=400)
 
@@ -83,8 +84,8 @@ class ProductDeleteView(ProductsAdmin, View):
         obj = get_object_or_404(Product, pk=pk, site=self.site)
         name = obj.name
         obj.delete()  # آیتم‌های سفارش با نام و قیمت لحظهٔ خرید حفظ می‌شوند
-        log_event(request, AuditLog.Action.DELETE, None, f"محصول «{name}» حذف شد", object_type="محصول")
-        messages.success(request, "محصول حذف شد.")
+        log_event(request, AuditLog.Action.DELETE, None, (gettext("Product “%(name)s” was deleted") % {"name": name}), object_type=gettext("Product"))
+        messages.success(request, gettext("Product deleted."))
         return redirect("shop_panel:products")
 
 
@@ -126,15 +127,15 @@ class OrderDetailView(OrdersAdmin, View):
         if request.POST.get("action") == "note":
             if note:
                 services.record_event(order, OrderEvent.Kind.NOTE, message=note, actor=request.user)
-                messages.success(request, "یادداشت ثبت شد.")
+                messages.success(request, gettext("Note recorded."))
             return redirect("shop_panel:order", pk=pk)
         try:
             services.change_status(order, request.POST.get("status", ""), actor=request.user, note=note)
         except services.ShopError as exc:
             messages.error(request, str(exc))
         else:
-            log_event(request, AuditLog.Action.UPDATE, order, f"وضعیت سفارش {order.number} تغییر کرد: {request.POST.get('status')}")
-            messages.success(request, "وضعیت سفارش به‌روز شد.")
+            log_event(request, AuditLog.Action.UPDATE, order, (gettext("The status of order %(number)s changed: %(POST)s") % {"number": order.number, "POST": request.POST.get('status')}))
+            messages.success(request, gettext("The order status was updated."))
         return redirect("shop_panel:order", pk=pk)
 
 
@@ -156,8 +157,8 @@ class CategoryEditView(ProductsAdmin, View):
         form = CategoryForm(request.POST, instance=obj, site=self.site)
         if form.is_valid():
             saved = form.save()
-            log_event(request, AuditLog.Action.UPDATE if obj else AuditLog.Action.CREATE, saved, f"دستهٔ «{saved.name}» ذخیره شد")
-            messages.success(request, "دسته ذخیره شد.")
+            log_event(request, AuditLog.Action.UPDATE if obj else AuditLog.Action.CREATE, saved, (gettext("Category “%(name)s” was saved") % {"name": saved.name}))
+            messages.success(request, gettext("Category saved."))
             return redirect("shop_panel:categories")
         return render(request, "shop/panel/category_form.html", {"form": form, "obj": obj}, status=400)
 
@@ -169,8 +170,8 @@ class CategoryDeleteView(ProductsAdmin, View):
         obj = get_object_or_404(ProductCategory, pk=pk, site=self.site)
         name = obj.name
         obj.delete()  # محصولات بدون دسته می‌مانند (SET_NULL)
-        log_event(request, AuditLog.Action.DELETE, None, f"دستهٔ «{name}» حذف شد", object_type="دستهٔ محصول")
-        messages.success(request, "دسته حذف شد.")
+        log_event(request, AuditLog.Action.DELETE, None, (gettext("Category “%(name)s” was deleted") % {"name": name}), object_type=gettext("Product category"))
+        messages.success(request, gettext("Category deleted."))
         return redirect("shop_panel:categories")
 
 
@@ -184,9 +185,9 @@ class GalleryAddView(ProductsAdmin, View):
             img = form.save(commit=False)
             img.product = product
             img.save()
-            messages.success(request, "تصویر به گالری افزوده شد.")
+            messages.success(request, gettext("The image was added to the gallery."))
         else:
-            messages.error(request, "تصویر معتبر نیست.")
+            messages.error(request, gettext("The image is not valid."))
         return redirect("shop_panel:product_edit", pk=pk)
 
 
@@ -196,7 +197,7 @@ class GalleryDeleteView(ProductsAdmin, View):
     def post(self, request, pk, image_id):
         product = get_object_or_404(Product, pk=pk, site=self.site)
         get_object_or_404(ProductImage, pk=image_id, product=product).delete()
-        messages.success(request, "تصویر حذف شد.")
+        messages.success(request, gettext("The image was deleted."))
         return redirect("shop_panel:product_edit", pk=pk)
 
 
@@ -211,10 +212,10 @@ def _gateway_cls_or_404(name):
 def _cannot_enable_reason(cls, cfg):
     """دلیل ممنوعیت فعال‌سازی یا ''. فعال‌کردن درگاه ناقص/آزمایشیِ تولید مجاز نیست."""
     if cls.is_test and not registry.sandbox_allowed():
-        return "درگاه آزمایشی در محیط تولید مجاز نیست."
+        return gettext("The test gateway is not allowed in production.")
     missing = registry.missing_fields(cls, cfg)
     if missing:
-        return "تنظیمات ناقص است: " + "، ".join(f.label for f in missing)
+        return (gettext("The settings are incomplete: %(items)s") % {"items": "، ".join(f.label for f in missing)})
     return ""
 
 
@@ -289,7 +290,7 @@ class GatewayEditView(GatewaysAdmin, View):
                 if reason:
                     problems.append(reason)
                 if secret and not vault.key_configured() and not (settings.DEBUG or settings.RAVIX_SECRETS_ALLOW_DERIVED_KEY):
-                    problems.append("کلید رمزنگاری RAVIX_SECRETS_KEY تنظیم نشده است.")
+                    problems.append(gettext("The encryption key RAVIX_SECRETS_KEY is not set."))
             if problems:
                 for m in problems:
                     form.add_error(None, m)
@@ -303,9 +304,9 @@ class GatewayEditView(GatewaysAdmin, View):
                     row.public_config, row.secrets_encrypted = public, blob
                     row.enabled, row.test_mode, row.updated_by = want_enabled, form.cleaned_data["test_mode"], request.user
                     row.save()
-                    log_event(request, AuditLog.Action.UPDATE, None, f"تنظیمات درگاه «{name}» ذخیره شد (فعال: {'بله' if want_enabled else 'خیر'})",
-                              object_type="درگاه پرداخت")
-                    messages.success(request, "تنظیمات درگاه ذخیره شد.")
+                    log_event(request, AuditLog.Action.UPDATE, None, (gettext("Settings for gateway “%(name)s” were saved (enabled: %(value)s)") % {"name": name, "value": ('بله' if want_enabled else 'خیر')}),
+                              object_type=gettext("Payment gateway"))
+                    messages.success(request, gettext("Gateway settings saved."))
                     return redirect("shop_panel:gateways")
         return render(request, "shop/panel/gateway_form.html", {"form": form, "cls": cls, "row": row, "vault_error": self.vault_error}, status=400)
 
@@ -330,8 +331,8 @@ class GatewayToggleView(GatewaysAdmin, View):
         row = row or GatewayConfig(site=self.site, gateway=name)
         row.enabled, row.updated_by = enable, request.user
         row.save()
-        log_event(request, AuditLog.Action.UPDATE, None, f"درگاه «{name}» {'فعال' if enable else 'غیرفعال'} شد", object_type="درگاه پرداخت")
-        messages.success(request, "درگاه فعال شد." if enable else "درگاه غیرفعال شد؛ تراکنش‌های باز همچنان تأیید می‌شوند.")
+        log_event(request, AuditLog.Action.UPDATE, None, (gettext("Gateway “%(name)s” was %(value)s") % {"name": name, "value": ('فعال' if enable else 'غیرفعال')}), object_type=gettext("Payment gateway"))
+        messages.success(request, gettext("The gateway was enabled.") if enable else gettext("The gateway was disabled; open transactions are still verified."))
         return redirect("shop_panel:gateways")
 
 
@@ -342,8 +343,8 @@ class PaymentInquireView(OrdersAdmin, View):
         order = get_object_or_404(Order, pk=pk, site=self.site)
         payment = get_object_or_404(Payment, pk=payment_id, order=order)
         _p, _o, outcome = services.inquire_payment(payment)
-        text = {"applied": "وضعیت از درگاه دریافت و ثبت شد.", "pending": "درگاه می‌گوید تراکنش هنوز نهایی نشده است.", "duplicate": "این تراکنش قبلاً نهایی شده است.",
-                "unknown": "استعلام انجام نشد (خطای ارتباط با درگاه)؛ بعداً دوباره تلاش کنید."}[outcome]
+        text = {"applied": gettext("The status was fetched from the gateway and recorded."), "pending": gettext("The gateway says the transaction is not finalized yet."), "duplicate": gettext("This transaction has already been finalized."),
+                "unknown": gettext("The inquiry failed (gateway connection error); try again later.")}[outcome]
         (messages.warning if outcome == "unknown" else messages.success)(request, text)
-        log_event(request, AuditLog.Action.UPDATE, order, f"استعلام وضعیت پرداخت {payment.reference[:8]} سفارش {order.number}: {outcome}")
+        log_event(request, AuditLog.Action.UPDATE, order, (gettext("Payment status inquiry %(reference)s for order %(number)s: %(outcome)s") % {"reference": payment.reference[:8], "number": order.number, "outcome": outcome}))
         return redirect("shop_panel:order", pk=pk)

@@ -1,3 +1,4 @@
+{% load i18n %}
 <li class="comment" id="comment-{{ c.id }}">
   <article class="comment-body" itemscope itemtype="https://schema.org/Comment">
     <header class="comment-head">
@@ -5,7 +6,7 @@
       <time datetime="{{ c.date_iso }}" itemprop="dateCreated">{{ c.date_display }}</time>
     </header>
     <div class="comment-text" itemprop="text">{{ c.body_html }}</div>
-    {% if c.reply_url %}<a class="comment-reply" href="{{ c.reply_url }}" rel="nofollow">پاسخ</a>{% endif %}
+    {% if c.reply_url %}<a class="comment-reply" href="{{ c.reply_url }}" rel="nofollow">{% trans "Reply" %}</a>{% endif %}
   </article>
   {% if c.replies %}
   <ol class="comment-replies">

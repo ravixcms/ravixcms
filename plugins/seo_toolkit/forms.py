@@ -1,3 +1,4 @@
+from django.utils.translation import gettext, gettext_lazy
 from django import forms
 
 from apps.builder.schema import is_safe_url
@@ -13,14 +14,14 @@ class SeoMetaForm(forms.ModelForm):
             "title": forms.TextInput(attrs={"class": "input", "maxlength": 120}),
             "description": forms.Textarea(attrs={"class": "input", "rows": 3, "maxlength": 320}),
             "noindex": forms.CheckboxInput(attrs={"class": "check"}),
-            "canonical": forms.TextInput(attrs={"class": "input ltr", "placeholder": "https://… یا /مسیر/"}),
-            "og_image": forms.TextInput(attrs={"class": "input ltr", "placeholder": "https://… یا /media/…"}),
+            "canonical": forms.TextInput(attrs={"class": "input ltr", "placeholder": gettext_lazy("https://… or /path/")}),
+            "og_image": forms.TextInput(attrs={"class": "input ltr", "placeholder": gettext_lazy("https://… or /media/…")}),
         }
 
     def _url(self, name):
         value = " ".join(self.cleaned_data.get(name, "").split())
         if value and not is_safe_url(value):
-            raise forms.ValidationError("نشانی باید مسیر داخلی یا http/https باشد.")
+            raise forms.ValidationError(gettext("The address must be an internal path or http/https."))
         return value
 
     def clean_canonical(self):

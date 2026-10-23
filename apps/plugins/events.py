@@ -1,4 +1,5 @@
 """ثبت رویداد/خطای افزونه‌ها و قطع‌کنندهٔ مدار (غیرفعال‌سازی خودکار). این توابع هرگز استثنا به بیرون نمی‌دهند."""
+from django.utils.translation import gettext
 import logging
 import traceback
 from datetime import timedelta
@@ -47,7 +48,7 @@ def record_error(slug, where, exc):
         since = timezone.now() - timedelta(seconds=window)
         recent = PluginEvent.objects.filter(slug=slug, kind="error", created_at__gte=since).count()
         if limit > 0 and recent >= limit:
-            disable(slug, kind="auto_disable", message=f"افزونه به‌دلیل {recent} خطا در {window} ثانیه به‌طور خودکار غیرفعال شد.")
+            disable(slug, kind="auto_disable", message=(gettext("The plugin was automatically disabled because of %(recent)s errors within %(window)s seconds.") % {"recent": recent, "window": window}))
             return True
     except Exception:  # noqa: BLE001
         logger.exception("بررسی قطع‌کنندهٔ مدار افزونه %s ناموفق بود", slug)

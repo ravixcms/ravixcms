@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% load ravix_theme %}
 {% block body_class %}page-static{% if page.builder %} page-built{% endif %}{% endblock %}
 {% block content %}
@@ -17,7 +18,7 @@
   <article class="article">
     <header class="article-head"><h1>{{ page.title }}</h1></header>
     <div class="prose">{{ page.body_html }}</div>
-    <p class="muted updated">آخرین به‌روزرسانی: <time datetime="{{ page.date_iso }}">{{ page.date_display }}</time></p>
+    <p class="muted updated">{% trans "Last updated:" %} <time datetime="{{ page.date_iso }}">{{ page.date_display }}</time></p>
   </article>
 </div>
 {% endif %}

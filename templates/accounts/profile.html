@@ -1,10 +1,11 @@
 {% extends "layouts/panel.html" %}
+{% load i18n %}
 {% load ravix_ui %}
-{% block title %}پروفایل من{% endblock %}
-{% block page_title %}پروفایل من{% endblock %}
+{% block title %}{% trans "My profile" %}{% endblock %}
+{% block page_title %}{% trans "My profile" %}{% endblock %}
 {% block content_class %}content-narrow{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>پروفایل من</h1><p>اطلاعات حساب کاربری خود را ویرایش کنید.</p></div></div>
+<div class="page-head"><div><h1>{% trans "My profile" %}</h1><p>{% trans "Edit your account information." %}</p></div></div>
 {% include "accounts/_profile_tabs.html" with tab="profile" %}
 <div class="card"><div class="card-body">
   <div class="profile-head">
@@ -13,8 +14,8 @@
       <h2 style="margin:0">{{ user.display_name }}</h2>
       <span class="badge badge-{{ user.role }}">{{ user.get_role_display }}</span>
       <div class="muted ltr" style="margin-top:.25rem">@{{ user.username }}</div>
-      <div class="muted" style="font-size:.85rem">عضویت از {{ user.date_joined|jalali }}</div>
-      <div class="muted" style="font-size:.85rem">{% if user.email_verified_at %}ایمیل تأیید شده است{% else %}ایمیل تأیید نشده است — <a href="{% url 'accounts:verify_resend' %}">ارسال دوبارهٔ پیوند تأیید</a>{% endif %}</div>
+      <div class="muted" style="font-size:.85rem">{% blocktrans trimmed with date_joined=user.date_joined|jalali %}Member since {{ date_joined }}{% endblocktrans %}</div>
+      <div class="muted" style="font-size:.85rem">{% if user.email_verified_at %}{% trans "Email is verified" %}{% else %}{% trans "Email is not verified —" %} <a href="{% url 'accounts:verify_resend' %}">{% trans "Resend verification link" %}</a>{% endif %}</div>
     </div>
   </div>
   <form method="post" enctype="multipart/form-data" novalidate data-once>
@@ -25,7 +26,7 @@
         <div class="{% if field.name == 'bio' or field.name == 'avatar' or field.name == 'email' %}span-2{% endif %}">{% include "partials/_field.html" %}</div>
       {% endfor %}
     </div>
-    <div class="form-actions"><button type="submit" class="btn">{% icon "check" 18 %} ذخیره تغییرات</button></div>
+    <div class="form-actions"><button type="submit" class="btn">{% icon "check" 18 %} {% trans "Save changes" %}</button></div>
   </form>
 </div></div>
 {% endblock %}

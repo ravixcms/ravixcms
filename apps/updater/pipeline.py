@@ -7,6 +7,7 @@
 * قفل سراسری (یکتایی در دیتابیس): دو ارتقای هم‌زمان ممکن نیست؛ قفل مانده پس از مدتی آزاد می‌شود و اجرای نیمه‌کاره «نیازمند بازیابی» علامت می‌خورد.
 * هیچ کلید/رمزی ثبت نمی‌شود: همهٔ متن‌های ذخیره‌شده از logs.sanitize می‌گذرند.
 """
+from django.utils.translation import gettext
 import logging
 import os
 import shutil
@@ -79,7 +80,7 @@ def mark_interrupted():
     grace = timezone.now() - timedelta(seconds=120)  # اجرایی که همین حالا ساخته شده و هنوز قفل نگرفته، «نیمه‌کاره» نیست
     for run in UpdateRun.objects.filter(status=UpdateRun.Status.RUNNING, started_at__lt=grace).exclude(pk__in=live):
         run.status = UpdateRun.Status.NEEDS_RECOVERY
-        run.error = (run.error + "\n" if run.error else "") + "اجرا نیمه‌کاره ماند (قطع پروسه/سرور)؛ وضعیت فایل‌ها و دیتابیس را بررسی کنید."
+        run.error = (gettext("%(value)sThe run was left unfinished (process/server interrupted); check the state of the files and the database.") % {"value": (run.error + "\n" if run.error else "")})
         run.recovery = run.recovery or recovery_text(run)
         run.finished_at = timezone.now()
         safe_save(run)
@@ -95,7 +96,7 @@ def update_lock(operation: str, run: UpdateRun | None = None):
             UpdateLock.objects.create(name="global", holder=holder, operation=operation, run=run)
     except IntegrityError:
         cur = UpdateLock.objects.filter(name="global").first()
-        raise UpdateBusy(f"ارتقای دیگری در جریان است ({cur.operation if cur else '?'}); پس از پایان آن دوباره تلاش کنید.")
+        raise UpdateBusy((gettext("Another upgrade is in progress (%(value)s); try again after it finishes.") % {"value": (cur.operation if cur else '?')}))
     try:
         yield holder
     finally:
@@ -147,20 +148,20 @@ def migration_state() -> list[str]:
 
 def recovery_text(run: UpdateRun) -> str:
     b = run.backup or {}
-    lines = ["بازیابی دستی (سرویس وب را متوقف کنید):"]
+    lines = [gettext("Manual recovery (stop the web service):")]
     if b.get("dir"):
         d = Path(settings.RAVIX_UPDATE_BACKUP_DIR) / b["dir"]
-        lines += [f"۱) پشتیبان: {d}",
-                  f"۲) فایل‌ها: tar -xzf {d / b.get('files_archive', 'files.tar.gz')} -C {settings.RAVIX_UPDATE_APP_ROOT}  (پیش‌تر پوشه‌های apps، config، static، templates و ... را کنار بگذارید)"]
+        lines += [(gettext("1) Backup: %(d)s") % {"d": d}),
+                  (gettext("2) Files: tar -xzf %(value)s -C %(RAVIX_UPDATE_APP_ROOT)s  (first set aside the apps, config, static, templates, etc. folders)") % {"value": (d / b.get('files_archive', 'files.tar.gz')), "RAVIX_UPDATE_APP_ROOT": settings.RAVIX_UPDATE_APP_ROOT})]
         if b.get("db_file"):
             if b.get("backend") == "postgres":
-                lines.append(f"۳) دیتابیس: pg_restore --clean --if-exists -d <نام_دیتابیس> {d / b['db_file']}")
+                lines.append((gettext("3) Database: pg_restore --clean --if-exists -d <database_name> %(value)s") % {"value": (d / b['db_file'])}))
             else:
-                lines.append(f"۳) دیتابیس: فایل {d / b['db_file']} را جای فایل دیتابیس سایت بگذارید (و فایل‌های -wal/-shm کنارش را حذف کنید).")
+                lines.append((gettext("3) Database: put the file %(value)s in place of the site’s database file (and delete the -wal/-shm files next to it).") % {"value": (d / b['db_file'])}))
     else:
-        lines.append("پشتیبانی ثبت نشده است؛ از آخرین پشتیبان دستی (deploy/backup.sh) استفاده کنید.")
-    lines += ["۴) سرویس را راه‌اندازی مجدد کنید و `python manage.py ravix_update status` و `python manage.py ravix_preflight` را اجرا کنید.",
-              "راهنمای کامل: docs/upgrade.md"]
+        lines.append(gettext("No backup was recorded; use the latest manual backup (deploy/backup.sh)."))
+    lines += [gettext("4) Restart the service and run `python manage.py ravix_update status` and `python manage.py ravix_preflight`."),
+              gettext("Full guide: docs/upgrade.md")]
     return "\n".join(lines)
 
 
@@ -171,13 +172,13 @@ def compat(new_version: str, requires: dict, *, component="core") -> tuple[list[
     cur = versions.running_version()
     if component == "core":
         if not versions.newer(new_version, cur):
-            problems.append(f"نسخهٔ {new_version} از نسخهٔ فعلی ({cur}) جدیدتر نیست (کاهش نسخه با «بازگشت» انجام می‌شود).")
+            problems.append((gettext("Version %(new_version)s is not newer than the current version (%(cur)s) (downgrading is done with “Roll back”).") % {"new_version": new_version, "cur": cur}))
         if requires.get("min_from") and versions.newer(requires["min_from"], cur):
-            problems.append(f"برای رسیدن به {new_version} ابتدا باید به {requires['min_from']} (یا بالاتر) ارتقا دهید؛ نسخهٔ فعلی {cur} است.")
+            problems.append((gettext("To reach %(new_version)s you must first upgrade to %(requires)s (or higher); the current version is %(cur)s.") % {"new_version": new_version, "requires": requires['min_from'], "cur": cur}))
     else:
         need = read_legacy_key(requires, default="")  # بسته‌های قدیمی کلید «ravin» دارند
         if need and not versions.satisfies(cur, need):
-            problems.append(f"این نسخه Ravix «{need}» می‌خواهد؛ نسخهٔ فعلی {cur} است.")
+            problems.append((gettext("This version needs Ravix “%(need)s”; the current version is %(cur)s.") % {"need": need, "cur": cur}))
     if requires.get("python"):
         p = versions.python_problem(requires["python"])
         if p:
@@ -188,22 +189,22 @@ def compat(new_version: str, requires: dict, *, component="core") -> tuple[list[
         for pl in versions.installed_plugins():
             bad = []
             if pa is not None and pl.get("api_version") != pa:
-                bad.append(f"قرارداد افزونه {pl.get('api_version')}≠{pa}")
+                bad.append((gettext("Plugin contract %(pl)s≠%(pa)s") % {"pl": pl.get('api_version'), "pa": pa}))
             if pl["ravix"] and not versions.satisfies(new_version, pl["ravix"]):
-                bad.append(f"نیازمند Ravix «{pl['ravix']}»")
+                bad.append((gettext("Requires Ravix “%(pl)s”") % {"pl": pl['ravix']}))
             if bad:
-                msg = f"افزونهٔ «{pl['slug']}» با نسخهٔ جدید سازگار نیست ({'؛ '.join(bad)})."
-                (problems if pl["active"] else warnings).append(msg + ("" if pl["active"] else " (غیرفعال است؛ پس از ارتقا فعال نخواهد شد.)"))
+                msg = (gettext("Plugin “%(pl)s” is not compatible with the new version (%(bad)s).") % {"pl": pl['slug'], "bad": '؛ '.join(bad)})
+                (problems if pl["active"] else warnings).append(msg + ("" if pl["active"] else gettext(" (it is disabled; it will not be enabled after the upgrade.)")))
         for th in versions.installed_themes():
             if th["slug"] == "default":
                 continue
             bad = []
             if ta is not None and ta != THEME_API_VERSION:
-                bad.append(f"قرارداد قالب {THEME_API_VERSION}≠{ta}")
+                bad.append((gettext("Theme contract %(THEME_API_VERSION)s≠%(ta)s") % {"THEME_API_VERSION": THEME_API_VERSION, "ta": ta}))
             if th["ravix"] and not versions.satisfies(new_version, th["ravix"]):
-                bad.append(f"نیازمند Ravix «{th['ravix']}»")
+                bad.append((gettext("Requires Ravix “%(th)s”") % {"th": th['ravix']}))
             if bad:
-                warnings.append(f"قالب «{th['slug']}» ممکن است با نسخهٔ جدید سازگار نباشد ({'؛ '.join(bad)}).")
+                warnings.append((gettext("Theme “%(th)s” may not be compatible with the new version (%(bad)s).") % {"th": th['slug'], "bad": '؛ '.join(bad)}))
     return problems, warnings
 
 
@@ -211,11 +212,11 @@ def pick_entry(entries: list[dict], version: str | None) -> dict:
     if version:
         e = next((x for x in entries if x["version"] == version), None)
         if e is None:
-            raise UpdateBlocked(f"نسخهٔ {version} در منبع به‌روزرسانی نیست.")
+            raise UpdateBlocked((gettext("Version %(version)s is not in the update source.") % {"version": version}))
         return e
     cand = [x for x in entries if versions.newer(x["version"], versions.running_version())]
     if not cand:
-        raise UpdateBlocked("نسخهٔ جدیدتری در منبع به‌روزرسانی نیست؛ سایت به‌روز است.")
+        raise UpdateBlocked(gettext("There is no newer version in the update source; the site is up to date."))
     ok = [x for x in cand if not x["requires"].get("min_from") or not versions.newer(x["requires"]["min_from"], versions.running_version())]
     return max(ok or cand, key=lambda x: versions.parse(x["version"]) or (0, 0, 0))
 
@@ -245,20 +246,20 @@ def _work_dir() -> Path:
 
 def fetch_verified(src, kind: str, slug: str, entry: dict, run: UpdateRun) -> bytes:
     data = src.download(entry)
-    step(run, "download", True, f"{len(data)} بایت")
+    step(run, "download", True, (gettext("%(data_count)s bytes") % {"data_count": len(data)}))
     if len(data) > settings.RAVIX_UPDATE_MAX_PACKAGE_BYTES:
-        raise UpdateBlocked("بسته از سقف حجم بزرگ‌تر است.")
+        raise UpdateBlocked(gettext("The package is larger than the size limit."))
     digest = sources.sha256_hex(data)
     run.sha256 = digest
     if digest != entry["sha256"]:
-        raise UpdateBlocked("SHA-256 بستهٔ دریافتی با فهرست یکی نیست (دانلود خراب یا دست‌کاری‌شده)؛ رد شد.")
+        raise UpdateBlocked(gettext("The SHA-256 of the downloaded package does not match the index (corrupted or tampered download); rejected."))
     step(run, "checksum", True, digest[:16])
     ver = signing.verify(kind, slug, entry["version"], digest, entry.get("signature", ""), entry.get("signature_key_id", ""))
     if not ver.ok:
         step(run, "signature", False, ver.reason)
-        raise UpdateBlocked(f"امضای دیجیتال بسته تأیید نشد: {ver.reason}")
+        raise UpdateBlocked((gettext("The package’s digital signature could not be verified: %(reason)s") % {"reason": ver.reason}))
     run.signer_key_id, run.signer_label = ver.key_id, ver.label
-    step(run, "signature", True, f"کلید {ver.key_id} ({ver.label})")
+    step(run, "signature", True, (gettext("Key %(key_id)s (%(label)s)") % {"key_id": ver.key_id, "label": ver.label}))
     return data
 
 
@@ -266,7 +267,7 @@ def _check_disk(root: Path, size: int):
     free = shutil.disk_usage(root).free
     need = size * 4 + 64 * 1024 * 1024
     if free < need:
-        raise UpdateBlocked("فضای دیسک برای ارتقا (دریافت، استخراج و پشتیبان) کافی نیست.")
+        raise UpdateBlocked(gettext("Not enough disk space for the upgrade (download, extraction and backup)."))
 
 
 def _new_run(component, slug, kind, to_version, user, source_ref, parent=None) -> UpdateRun:
@@ -373,29 +374,29 @@ def apply_core(version: str | None = None, user=None, *, source=None, runner=Non
         with update_lock("prepare-core", run) as holder:
             UpdateLock.objects.filter(holder=holder).update(run=run)
             run.migrations_before = migration_state()
-            step(run, "index", True, f"نسخهٔ هدف {entry['version']}")
+            step(run, "index", True, (gettext("Target version %(entry)s") % {"entry": entry['version']}))
             problems, _w = compat(entry["version"], entry["requires"])
             if problems:
-                raise UpdateBlocked("ناسازگار: " + "؛ ".join(problems))
+                raise UpdateBlocked((gettext("Incompatible: %(problems)s") % {"problems": "؛ ".join(problems)}))
             step(run, "compat_index", True)
             if core_blocked_by_plugins():
-                raise UpdateBlocked("نصب/ارتقای افزونه در جریان است؛ پس از پایان آن دوباره تلاش کنید.")
+                raise UpdateBlocked(gettext("A plugin install/upgrade is in progress; try again after it finishes."))
             _check_disk(root, entry["size"] or 0)
             data = fetch_verified(src, "core", "", entry, run)
             work = _work_dir()
             tree = package.extract(data, work / "pkg")
             ex = package.validate_core(tree, entry["version"])
-            step(run, "validate", True, f"{ex.files} فایل")
+            step(run, "validate", True, (gettext("%(files)s files") % {"files": ex.files}))
             req = dict(ex.release.get("requires") or {})
             req_lines = (tree / "requirements.txt").read_text(encoding="utf-8").splitlines()
             req["packages"] = [*(req.get("packages") or []), *req_lines]
             problems, warnings = compat(entry["version"], req)
             if problems:
-                raise UpdateBlocked("ناسازگار با بستهٔ جدید: " + "؛ ".join(problems))
-            step(run, "compat", True, "؛ ".join(warnings))
+                raise UpdateBlocked((gettext("Incompatible with the new package: %(problems)s") % {"problems": "؛ ".join(problems)}))
+            step(run, "compat", True, gettext("; ").join(warnings))
             if dry_run:
-                step(run, "dry_run", True, "اجرای آزمایشی؛ هیچ فایلی تغییر نکرد")
-                run.recovery = "اجرای آزمایشی: بسته دریافت و کاملاً اعتبارسنجی شد ولی هیچ فایلی تغییر نکرد."
+                step(run, "dry_run", True, gettext("Dry run; no files were changed"))
+                run.recovery = gettext("Dry run: the package was downloaded and fully validated but no files were changed.")
                 finish(run, UpdateRun.Status.SUCCEEDED)
                 return run
             _apply_core_files(run, holder, root, tree, work, runner, db_backend)
@@ -407,8 +408,8 @@ def apply_core(version: str | None = None, user=None, *, source=None, runner=Non
     except Exception as exc:  # noqa: BLE001
         logger.exception("ارتقای هسته با خطای غیرمنتظره شکست خورد")
         if run.status == UpdateRun.Status.RUNNING:
-            finish(run, UpdateRun.Status.FAILED, f"خطای غیرمنتظره: {exc}\n{traceback.format_exc()}")
-        raise UpdateError("خطای غیرمنتظره رخ داد؛ جزئیات در تاریخچهٔ به‌روزرسانی ثبت شد.") from exc
+            finish(run, UpdateRun.Status.FAILED, (gettext("Unexpected error: %(exc)s\n%(format_exc)s") % {"exc": exc, "format_exc": traceback.format_exc()}))
+        raise UpdateError(gettext("An unexpected error occurred; the details were recorded in the update history.")) from exc
     finally:
         if work:
             shutil.rmtree(work, ignore_errors=True)
@@ -432,13 +433,13 @@ def _apply_core_files(run, holder, root: Path, tree: Path, work: Path, runner, d
     swapped = False
     db_touched = False
     try:
-        step(run, "swap", True, "شروع جایگزینی فایل‌ها")
+        step(run, "swap", True, gettext("Started replacing files"))
         swap_entries(root, tree, package.CORE_ENTRIES, old_dir)
         swapped = True
         disk = versions.disk_version(root)
         if disk != run.to_version:
-            raise UpdateError(f"پس از جایگزینی، نسخهٔ روی دیسک ({disk}) با نسخهٔ هدف یکی نیست.")
-        step(run, "swap", True, "فایل‌ها جایگزین شد")
+            raise UpdateError((gettext("After replacement, the version on disk (%(disk)s) does not match the target version.") % {"disk": disk}))
+        step(run, "swap", True, gettext("Files replaced"))
         runner.check()
         step(run, "code_check", True)
         db_touched = True
@@ -446,7 +447,7 @@ def _apply_core_files(run, holder, root: Path, tree: Path, work: Path, runner, d
         run.migration_output = sanitize(out, 6000)
         after = migration_state()
         run.migrations_applied = sorted(set(after) - set(run.migrations_before))
-        step(run, "migrate", True, f"{len(run.migrations_applied)} مهاجرت جدید")
+        step(run, "migrate", True, (gettext("%(migrations_applied_count)s new migrations") % {"migrations_applied_count": len(run.migrations_applied)}))
         runner.check()
         step(run, "verify", True)
     except BaseException as exc:  # noqa: BLE001 - حتی KeyboardInterrupt باید بازگردانده شود
@@ -455,10 +456,10 @@ def _apply_core_files(run, holder, root: Path, tree: Path, work: Path, runner, d
         _auto_rollback(run, holder, root, old_dir, work, backend, swapped, db_touched, err)
         if isinstance(exc, (KeyboardInterrupt, SystemExit)):
             raise
-        raise UpdateError(f"ارتقا ناموفق بود ({run.get_status_display()}): {err}") from None
+        raise UpdateError((gettext("The upgrade failed (%(status)s): %(err)s") % {"status": run.get_status_display(), "err": err})) from None
     shutil.rmtree(old_dir, ignore_errors=True)
     run.restart_required = True
-    run.recovery = "ارتقا موفق بود. سرویس وب را راه‌اندازی مجدد کنید تا کد جدید بارگذاری شود. در صورت مشکل: `python manage.py ravix_update rollback --run %d`." % run.pk
+    run.recovery = gettext("The upgrade succeeded. Restart the web service to load the new code. If there is a problem: `python manage.py ravix_update rollback --run %d`.") % run.pk
     finish(run, UpdateRun.Status.SUCCEEDED)
     try:
         backups.prune(settings.RAVIX_UPDATE_BACKUPS_KEEP)
@@ -481,9 +482,9 @@ def _auto_rollback(run, holder, root, old_dir, work, backend, swapped, db_touche
     if db_touched:
         try:
             _db_restore(backend, run.backup, holder, run)
-            step(run, "rollback_db", True, "دیتابیس از پشتیبان بازگردانده شد")
+            step(run, "rollback_db", True, gettext("The database was restored from backup"))
         except Exception as exc:  # noqa: BLE001
-            problems.append(f"بازگردانی دیتابیس: {sanitize(exc)}")
+            problems.append((gettext("Database restore: %(sanitize)s") % {"sanitize": sanitize(exc)}))
             step(run, "rollback_db", False, str(exc))
     done_files = False
     if swapped or old_dir.exists():
@@ -500,7 +501,7 @@ def _auto_rollback(run, holder, root, old_dir, work, backend, swapped, db_touche
                     os.replace(old_dir / e, cur)
             done_files = True
         except Exception as exc:  # noqa: BLE001
-            problems.append(f"بازگردانی فایل‌ها از نسخهٔ کنار گذاشته‌شده: {sanitize(exc)}")
+            problems.append((gettext("Restoring files from the set-aside version: %(sanitize)s") % {"sanitize": sanitize(exc)}))
     if swapped and not done_files:
         try:  # راه دوم: آرشیو پشتیبان
             d = backups.verify_backup(run.backup)
@@ -508,11 +509,11 @@ def _auto_rollback(run, holder, root, old_dir, work, backend, swapped, db_touche
             swap_entries(root, tmp, package.CORE_ENTRIES, work / "old2", remove_missing=True)
             done_files = True
         except Exception as exc:  # noqa: BLE001
-            problems.append(f"بازگردانی فایل‌ها از آرشیو پشتیبان: {sanitize(exc)}")
+            problems.append((gettext("Restoring files from the backup archive: %(sanitize)s") % {"sanitize": sanitize(exc)}))
     ok = not problems and (versions.disk_version(root) == run.from_version)
-    step(run, "rollback_files", ok, "نسخهٔ قبلی روی دیسک است" if ok else "؛ ".join(problems) or "نسخهٔ روی دیسک تأیید نشد")
+    step(run, "rollback_files", ok, gettext("The previous version is on disk") if ok else gettext("; ").join(problems) or gettext("The version on disk could not be verified"))
     if ok:
-        run.recovery = "ارتقا ناموفق بود و سایت به نسخهٔ قبلی برگردانده شد (فایل‌ها و دیتابیس). علت در بخش خطا آمده است."
+        run.recovery = gettext("The upgrade failed and the site was rolled back to the previous version (files and database). The cause is given in the error section.")
         finish(run, UpdateRun.Status.ROLLED_BACK, err)
     else:
         run.recovery = recovery_text(run)
@@ -526,13 +527,13 @@ def rollback_run(run_id: int, user=None, *, confirm_data_loss: bool = False, run
     root = Path(root or versions.app_root())
     parent = UpdateRun.objects.filter(pk=run_id, component="core", kind="upgrade").first()
     if parent is None:
-        raise UpdateBlocked("اجرای ارتقای هسته پیدا نشد.")
+        raise UpdateBlocked(gettext("The core upgrade run was not found."))
     if parent.status not in (UpdateRun.Status.SUCCEEDED, UpdateRun.Status.NEEDS_RECOVERY):
-        raise UpdateBlocked("فقط ارتقای موفق (یا نیازمند بازیابی) قابل بازگشت است.")
+        raise UpdateBlocked(gettext("Only a successful upgrade (or one needing recovery) can be rolled back."))
     if not parent.backup.get("dir"):
-        raise UpdateBlocked("برای این ارتقا پشتیبانی ثبت نشده است.")
+        raise UpdateBlocked(gettext("No backup was recorded for this upgrade."))
     if not confirm_data_loss:
-        raise UpdateBlocked("بازگشت، دیتابیس را به لحظهٔ پیش از ارتقا برمی‌گرداند و داده‌های بعد از آن را از بین می‌برد؛ تأیید صریح لازم است.")
+        raise UpdateBlocked(gettext("Rolling back restores the database to the moment before the upgrade and destroys data created after it; explicit confirmation is required."))
     backend = db_backend or backups.default_db_backend()
     run = _new_run("core", "", UpdateRun.Kind.ROLLBACK, parent.from_version, user, f"run#{parent.pk}", parent=parent)
     run.from_version = versions.disk_version(root) or parent.to_version
@@ -546,7 +547,7 @@ def rollback_run(run_id: int, user=None, *, confirm_data_loss: bool = False, run
             step(run, "backup_verify", True, info["dir"])
             disk = versions.disk_version(root)
             if disk != parent.to_version:
-                raise UpdateBlocked(f"کد روی دیسک ({disk}) همان نسخهٔ ارتقایافته ({parent.to_version}) نیست؛ بازگشت خودکار ایمن نیست.")
+                raise UpdateBlocked((gettext("The code on disk (%(disk)s) is not the upgraded version (%(to_version)s); an automatic rollback is not safe.") % {"disk": disk, "to_version": parent.to_version}))
             run.backup = backups.create_backup(f"pre-rollback-{parent.pk}", root, backend)  # خودِ بازگشت هم قابل‌بازیابی بماند
             run.recovery = recovery_text(run)
             step(run, "backup", True, run.backup["dir"])
@@ -560,17 +561,17 @@ def rollback_run(run_id: int, user=None, *, confirm_data_loss: bool = False, run
                 _db_restore(backend, info, holder, run)
                 step(run, "restore_db", True)
                 if versions.disk_version(root) != parent.from_version:
-                    raise UpdateError("پس از بازگشت، نسخهٔ روی دیسک تأیید نشد.")
+                    raise UpdateError(gettext("After the rollback, the version on disk could not be verified."))
             except Exception as exc:  # noqa: BLE001
                 err = sanitize(exc)
                 step(run, "failed", False, err)
                 run.recovery = recovery_text(run)
                 finish(run, UpdateRun.Status.NEEDS_RECOVERY, err)
-                raise UpdateError(f"بازگشت ناموفق بود؛ نیازمند بازیابی دستی: {err}") from None
+                raise UpdateError((gettext("The rollback failed; manual recovery required: %(err)s") % {"err": err})) from None
             Parent = UpdateRun.objects.filter(pk=parent.pk)
             Parent.update(status=UpdateRun.Status.REVERTED)
             run.restart_required = True
-            run.recovery = "بازگشت انجام شد. سرویس وب را راه‌اندازی مجدد کنید."
+            run.recovery = gettext("Rollback completed. Restart the web service.")
             finish(run, UpdateRun.Status.SUCCEEDED)
             _clear_caches()
         return run
@@ -586,7 +587,7 @@ def rollback_run(run_id: int, user=None, *, confirm_data_loss: bool = False, run
 # ------------------------------------------------------------------ قالب
 def apply_theme(slug: str, version: str | None = None, user=None, *, source=None, root_dirs=None, dry_run=False) -> UpdateRun:
     if slug == "default":
-        raise UpdateBlocked("قالب پیش‌فرض همراه بستهٔ هسته به‌روز می‌شود.")
+        raise UpdateBlocked(gettext("The default theme is updated together with the core package."))
     from apps.themes import registry
     from apps.themes.manifest import inspect_theme_dir
 
@@ -594,19 +595,19 @@ def apply_theme(slug: str, version: str | None = None, user=None, *, source=None
     index = src.index()
     entries = index["themes"].get(slug)
     if not entries:
-        raise UpdateBlocked(f"قالب «{slug}» در منبع به‌روزرسانی نیست.")
+        raise UpdateBlocked((gettext("Theme “%(slug)s” is not in the update source.") % {"slug": slug}))
     installed = registry.get_themes(refresh=True).get(slug)
     if installed is None:
-        raise UpdateBlocked(f"قالب «{slug}» نصب نیست (نصب قالب جدید از این مسیر انجام نمی‌شود).")
+        raise UpdateBlocked((gettext("Theme “%(slug)s” is not installed (new themes are not installed this way).") % {"slug": slug}))
     if version:
         entry = next((x for x in entries if x["version"] == version), None)
         if entry is None:
-            raise UpdateBlocked(f"نسخهٔ {version} برای قالب «{slug}» در منبع نیست.")
+            raise UpdateBlocked((gettext("Version %(version)s of theme “%(slug)s” is not in the source.") % {"version": version, "slug": slug}))
     else:
         cand = [x for x in entries if versions.newer(x["version"], installed.version)
                 and (not read_legacy_key(x["requires"]) or versions.satisfies(versions.running_version(), read_legacy_key(x["requires"])))]
         if not cand:
-            raise UpdateBlocked("نسخهٔ جدید سازگاری برای این قالب نیست.")
+            raise UpdateBlocked(gettext("There is no compatible new version for this theme."))
         entry = max(cand, key=lambda x: versions.parse(x["version"]) or (0, 0, 0))
     run = _new_run("theme", slug, UpdateRun.Kind.UPGRADE, entry["version"], user, src.ref)
     run.from_version = installed.version
@@ -616,21 +617,21 @@ def apply_theme(slug: str, version: str | None = None, user=None, *, source=None
         with update_lock(f"prepare-theme:{slug}", run) as holder:
             UpdateLock.objects.filter(holder=holder).update(run=run)
             if not versions.newer(entry["version"], installed.version):
-                raise UpdateBlocked(f"نسخهٔ {entry['version']} از نسخهٔ نصب‌شده ({installed.version}) جدیدتر نیست.")
+                raise UpdateBlocked((gettext("Version %(entry)s is not newer than the installed version (%(version)s).") % {"entry": entry['version'], "version": installed.version}))
             problems, _w = compat(entry["version"], entry["requires"], component="theme")
             if problems:
-                raise UpdateBlocked("ناسازگار: " + "؛ ".join(problems))
+                raise UpdateBlocked((gettext("Incompatible: %(problems)s") % {"problems": "؛ ".join(problems)}))
             data = fetch_verified(src, "theme", slug, entry, run)
             work = _work_dir()
             tree = package.extract(data, work / "pkg")
             ex = package.validate_theme(tree, slug, entry["version"])
             ravin_spec = getattr(inspect_theme_dir(tree), "ravix", "")
             if ravin_spec and not versions.satisfies(versions.running_version(), ravin_spec):
-                raise UpdateBlocked(f"قالب جدید Ravix «{ravin_spec}» می‌خواهد؛ نسخهٔ فعلی {versions.running_version()} است.")
-            step(run, "validate", True, f"{ex.files} فایل")
+                raise UpdateBlocked((gettext("The new theme needs Ravix “%(ravin_spec)s”; the current version is %(running_version)s.") % {"ravin_spec": ravin_spec, "running_version": versions.running_version()}))
+            step(run, "validate", True, (gettext("%(files)s files") % {"files": ex.files}))
             if dry_run:
-                step(run, "dry_run", True, "اجرای آزمایشی؛ هیچ فایلی تغییر نکرد")
-                run.recovery = "اجرای آزمایشی: بسته دریافت و کاملاً اعتبارسنجی شد ولی هیچ فایلی تغییر نکرد."
+                step(run, "dry_run", True, gettext("Dry run; no files were changed"))
+                run.recovery = gettext("Dry run: the package was downloaded and fully validated but no files were changed.")
                 finish(run, UpdateRun.Status.SUCCEEDED)
                 return run
             target = Path(installed.path)
@@ -652,7 +653,7 @@ def apply_theme(slug: str, version: str | None = None, user=None, *, source=None
                 registry.clear_cache()
                 info = inspect_theme_dir(target)
                 if not info.valid or info.version != entry["version"]:
-                    raise UpdateError("قالب پس از جایگزینی تأیید نشد: " + "؛ ".join(info.errors[:3]))
+                    raise UpdateError((gettext("The theme could not be verified after replacement: %(items)s") % {"items": "؛ ".join(info.errors[:3])}))
                 step(run, "verify", True)
             except BaseException as exc:  # noqa: BLE001
                 err = sanitize(exc)
@@ -665,15 +666,15 @@ def apply_theme(slug: str, version: str | None = None, user=None, *, source=None
                     registry.clear_cache()
                     ok = inspect_theme_dir(target).version == run.from_version
                 except Exception as e2:  # noqa: BLE001
-                    err += f"\nبازگردانی: {sanitize(e2)}"
+                    err += (gettext("\nRestore: %(sanitize)s") % {"sanitize": sanitize(e2)})
                 step(run, "rollback_files", ok, "")
-                run.recovery = "قالب به نسخهٔ قبلی برگردانده شد." if ok else recovery_text(run)
+                run.recovery = gettext("The theme was rolled back to the previous version.") if ok else recovery_text(run)
                 finish(run, UpdateRun.Status.ROLLED_BACK if ok else UpdateRun.Status.NEEDS_RECOVERY, err)
                 if isinstance(exc, (KeyboardInterrupt, SystemExit)):
                     raise
-                raise UpdateError(f"ارتقای قالب ناموفق بود ({run.get_status_display()}): {err}") from None
+                raise UpdateError((gettext("The theme upgrade failed (%(status)s): %(err)s") % {"status": run.get_status_display(), "err": err})) from None
             run.restart_required = True
-            run.recovery = "قالب به‌روز شد. برای اعمال در همهٔ پروسه‌ها سرویس را راه‌اندازی مجدد کنید."
+            run.recovery = gettext("The theme was updated. Restart the service to apply it in all processes.")
             finish(run, UpdateRun.Status.SUCCEEDED)
             backups.prune(settings.RAVIX_UPDATE_BACKUPS_KEEP)
         return run
@@ -684,8 +685,8 @@ def apply_theme(slug: str, version: str | None = None, user=None, *, source=None
     except Exception as exc:  # noqa: BLE001
         logger.exception("ارتقای قالب با خطای غیرمنتظره شکست خورد")
         if run.status == UpdateRun.Status.RUNNING:
-            finish(run, UpdateRun.Status.FAILED, f"خطای غیرمنتظره: {exc}")
-        raise UpdateError("خطای غیرمنتظره رخ داد؛ جزئیات در تاریخچه ثبت شد.") from exc
+            finish(run, UpdateRun.Status.FAILED, (gettext("Unexpected error: %(exc)s") % {"exc": exc}))
+        raise UpdateError(gettext("An unexpected error occurred; the details were recorded in the history.")) from exc
     finally:
         if work:
             shutil.rmtree(work, ignore_errors=True)
@@ -698,18 +699,18 @@ def apply_plugin(slug: str, version: str | None, user) -> UpdateRun:
     from apps.plugins.services import PluginError
 
     if core_update_active():
-        raise UpdateBusy("ارتقای هسته/قالب در جریان است؛ پس از پایان آن دوباره تلاش کنید.")
+        raise UpdateBusy(gettext("A core/theme upgrade is in progress; try again after it finishes."))
     run = _new_run("plugin", slug, UpdateRun.Kind.UPGRADE, version or "", user, "plugin-registry")
     try:
         result = installer.install_from_registry(slug, version, user, upgrade_existing=True)
     except (PluginError, UpdateError) as exc:
         step(run, "installer", False, str(exc))
-        run.recovery = "نسخهٔ قبلی افزونه دست‌نخورده است؛ جزئیات در «گزارش افزونه‌ها»."
+        run.recovery = gettext("The previous version of the plugin is untouched; see the “Plugin report” for details.")
         finish(run, UpdateRun.Status.FAILED, str(exc))
         raise UpdateError(str(exc)) from None
     new_v = next((p["version"] for p in versions.installed_plugins() if p["slug"] == slug), version or "")
     run.to_version = new_v
     step(run, "installer", True, f"{result[0]}")
-    run.recovery = "کد جدید جایگزین شد؛ افزونه غیرفعال است. پس از تأیید تغییرات در صفحهٔ افزونه آن را فعال کنید (بازگشت از همان صفحه ممکن است)."
+    run.recovery = gettext("The new code was put in place; the plugin is disabled. After reviewing the changes, enable it on the plugin page (rolling back from that page is possible).")
     finish(run, UpdateRun.Status.SUCCEEDED)
     return run

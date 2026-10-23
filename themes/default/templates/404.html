@@ -1,16 +1,17 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% load ravix_theme %}
 {% block body_class %}page-error{% endblock %}
 {% block content %}
 <div class="container">
   <div class="error-box" role="alert">
     <p class="error-code" aria-hidden="true">{{ 404|fa_digits }}</p>
-    <h1>این صفحه پیدا نشد</h1>
-    <p>نشانی را بررسی کنید؛ ممکن است صفحه حذف یا جابه‌جا شده باشد. می‌توانید چیزی را که دنبالش بودید جستجو کنید.</p>
+    <h1>{% trans "This page was not found" %}</h1>
+    <p>{% trans "Check the address; the page may have been removed or moved. You can search for what you were looking for." %}</p>
     {% include "partials/search_form.html" with input_id="error-q" query="" %}
     <div class="error-actions">
-      <a class="btn" href="{{ site.home_url }}">بازگشت به صفحهٔ اصلی</a>
-      <a class="btn btn-quiet" href="{{ site.search_url }}">جستجو در سایت</a>
+      <a class="btn" href="{{ site.home_url }}">{% trans "Back to the home page" %}</a>
+      <a class="btn btn-quiet" href="{{ site.search_url }}">{% trans "Search the site" %}</a>
     </div>
   </div>
 </div>

@@ -1,3 +1,4 @@
+from django.utils.translation import gettext_lazy
 from django.conf import settings
 from django.db import models
 
@@ -6,21 +7,21 @@ class UpdateRun(models.Model):
     """یک اجرای ارتقا/بازگردانی (هسته، قالب یا افزونه) با مراحل، نتیجهٔ مهاجرت و مسیر بازیابی. هیچ کلید یا رمزی اینجا ذخیره نمی‌شود."""
 
     class Component(models.TextChoices):
-        CORE = "core", "هسته"
-        THEME = "theme", "قالب"
-        PLUGIN = "plugin", "افزونه"
+        CORE = "core", gettext_lazy("Core")
+        THEME = "theme", gettext_lazy("Theme")
+        PLUGIN = "plugin", gettext_lazy("Plugin")
 
     class Status(models.TextChoices):
-        RUNNING = "running", "در حال اجرا"
-        SUCCEEDED = "succeeded", "موفق"
-        FAILED = "failed", "ناموفق (بدون تغییر)"
-        ROLLED_BACK = "rolled_back", "ناموفق و برگردانده شد"
-        NEEDS_RECOVERY = "needs_recovery", "ناموفق؛ نیازمند بازیابی دستی"
-        REVERTED = "reverted", "بازگردانی دستی انجام شد"
+        RUNNING = "running", gettext_lazy("Running")
+        SUCCEEDED = "succeeded", gettext_lazy("Succeeded")
+        FAILED = "failed", gettext_lazy("Failed (no changes)")
+        ROLLED_BACK = "rolled_back", gettext_lazy("Failed and rolled back")
+        NEEDS_RECOVERY = "needs_recovery", gettext_lazy("Failed; manual recovery required")
+        REVERTED = "reverted", gettext_lazy("Manually rolled back")
 
     class Kind(models.TextChoices):
-        UPGRADE = "upgrade", "ارتقا"
-        ROLLBACK = "rollback", "بازگشت به نسخهٔ قبل"
+        UPGRADE = "upgrade", gettext_lazy("Upgrade")
+        ROLLBACK = "rollback", gettext_lazy("Roll back to previous version")
 
     component = models.CharField(max_length=10, choices=Component.choices)
     slug = models.CharField(max_length=60, blank=True)  # قالب/افزونه؛ برای هسته خالی

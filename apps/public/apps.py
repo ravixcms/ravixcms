@@ -1,7 +1,8 @@
+from django.utils.translation import gettext_lazy
 from django.apps import AppConfig
 
 
 class PublicConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "apps.public"
-    verbose_name = "سایت عمومی"
+    verbose_name = gettext_lazy("Public site")

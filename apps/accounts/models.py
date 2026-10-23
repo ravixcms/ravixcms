@@ -1,3 +1,4 @@
+from django.utils.translation import gettext_lazy
 from django.contrib.auth.models import AbstractUser, UserManager as DjangoUserManager
 from django.core.validators import RegexValidator
 from django.db import models
@@ -19,26 +20,26 @@ class User(AbstractUser):
     """کاربر سفارشی Ravix با نقش، پروفایل و ایمیل یکتا."""
 
     email = models.EmailField(
-        "ایمیل",
+        gettext_lazy("Email"),
         unique=True,
-        error_messages={"unique": "کاربری با این ایمیل قبلاً ثبت‌نام کرده است."},
+        error_messages={"unique": gettext_lazy("A user with this email has already registered.")},
     )
-    role = models.CharField("نقش", max_length=20, choices=Role.choices, default=Role.USER, db_index=True)
+    role = models.CharField(gettext_lazy("Role"), max_length=20, choices=Role.choices, default=Role.USER, db_index=True)
     phone = models.CharField(
-        "شماره تلفن",
+        gettext_lazy("Phone number"),
         max_length=20,
         blank=True,
-        validators=[RegexValidator(r"^[0-9+\-\s()]{7,20}$", "شماره تلفن معتبر نیست.")],
+        validators=[RegexValidator(r"^[0-9+\-\s()]{7,20}$", gettext_lazy("The phone number is invalid."))],
     )
-    email_verified_at = models.DateTimeField("زمان تأیید ایمیل", null=True, blank=True)
-    bio = models.TextField("درباره من", blank=True, max_length=500)
-    avatar = models.ImageField("تصویر پروفایل", upload_to=RandomUploadPath("avatars"), blank=True, validators=[validate_image_file])
+    email_verified_at = models.DateTimeField(gettext_lazy("Email verification time"), null=True, blank=True)
+    bio = models.TextField(gettext_lazy("About me"), blank=True, max_length=500)
+    avatar = models.ImageField(gettext_lazy("Profile picture"), upload_to=RandomUploadPath("avatars"), blank=True, validators=[validate_image_file])
 
     objects = UserManager()
 
     class Meta:
-        verbose_name = "کاربر"
-        verbose_name_plural = "کاربران"
+        verbose_name = gettext_lazy("User")
+        verbose_name_plural = gettext_lazy("Users")
         ordering = ["-date_joined"]
 
     def __str__(self):

@@ -2,6 +2,7 @@
 
 وضعیت هر گام از روی داده‌های واقعی تشخیص داده می‌شود؛ پس هر کاری که مدیر از هر راهی انجام دهد، گام تیک می‌خورد.
 """
+from django.utils.translation import gettext
 from dataclasses import dataclass
 
 from django.urls import reverse
@@ -26,12 +27,12 @@ def steps(site: SiteSettings) -> list[Step]:
     cfg = ThemeConfig.load()
     theme_done = cfg.published_at is not None
     return [
-        Step("logo", "لوگوی سایت را بگذارید", "لوگو در سربرگ سایت و صفحهٔ ورود نمایش داده می‌شود.",
-             reverse("core:site_settings"), "بارگذاری لوگو", bool(site.logo)),
-        Step("post", "اولین نوشتهٔ خودتان را منتشر کنید", "نوشتهٔ نمونه را می‌توانید پاک کنید یا جایش بنویسید.",
-             reverse("content:post_create"), "نوشتن نوشته", first_post),
-        Step("theme", "قالب و رنگ سایت را انتخاب کنید", "قالب را عوض کنید یا رنگ‌ها و منوها را شخصی‌سازی کنید.",
-             reverse("themes:list"), "انتخاب قالب", theme_done),
+        Step("logo", gettext("Add your site logo"), gettext("The logo is shown in the site header and on the sign-in page."),
+             reverse("core:site_settings"), gettext("Upload logo"), bool(site.logo)),
+        Step("post", gettext("Publish your first post"), gettext("You can delete the sample post or write over it."),
+             reverse("content:post_create"), gettext("Write a post"), first_post),
+        Step("theme", gettext("Choose the site theme and colors"), gettext("Change the theme or customize colors and menus."),
+             reverse("themes:list"), gettext("Choose a theme"), theme_done),
     ]
 
 

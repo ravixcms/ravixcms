@@ -10,6 +10,7 @@
 - ``collectstatic`` هرگز از داخل درخواست وب اجرا نمی‌شود.
 - اگر قفل فایل‌سیستمی قابل‌اعتماد نباشد یا ``rename`` اتمی ممکن نشود، نصب انجام **نمی‌شود** (جایگزین ناامن نداریم).
 """
+from django.utils.translation import gettext, gettext_lazy
 import fcntl
 import logging
 import os
@@ -34,7 +35,7 @@ from .manifest import inspect_theme_dir
 
 logger = logging.getLogger(__name__)
 
-AUDIT_TYPE = "ظاهر سایت"
+AUDIT_TYPE = gettext_lazy("Site appearance")
 CAPABILITY = "themes.install"
 STAGING_PREFIX = ".staging-"
 LOCK_FILE = ".install.lock"
@@ -79,21 +80,20 @@ def _audit(request, kind: str, text: str, *, ok: bool = False) -> None:
     متنی صریح تا هرگز شکست یا رد امنیتی به‌عنوان موفقیت دیده نشود. هیچ مقدار محرمانه‌ای ثبت نمی‌شود.
     """
     action = AuditLog.Action.CREATE if ok else AuditLog.Action.UPDATE
-    log_event(request, action, None, f"نصب قالب ZIP — {kind}: {text}"[:400], object_type=AUDIT_TYPE)
+    log_event(request, action, None, (gettext("Theme ZIP install — %(kind)s: %(text)s") % {"kind": kind, "text": text})[:400], object_type=AUDIT_TYPE)
 
 
 # ------------------------------------------------------------------ پیش‌نیازها
 def _require_enabled() -> None:
     if not getattr(settings, "RAVIX_THEME_WEB_INSTALL", False):
         raise ThemeInstallError(
-            "نصب قالب از طریق وب در این سرور خاموش است. مدیر سرور باید آگاهانه RAVIX_THEME_WEB_INSTALL=true را تنظیم کند "
-            "(راهنما: docs/themes.md)."
+            gettext("Installing themes from the web is turned off on this server. The server administrator must deliberately set RAVIX_THEME_WEB_INSTALL=true (guide: docs/themes.md).")
         )
 
 
 def _require_capability(user) -> None:
     if user is None or not getattr(user, "is_authenticated", False) or not user.has_cap(CAPABILITY):
-        raise ThemeInstallError("فقط مدیرکل مجاز به نصب قالب است.")
+        raise ThemeInstallError(gettext("Only the superadmin may install themes."))
 
 
 def _mount_fstype(path: Path) -> str:
@@ -119,14 +119,13 @@ def _prepare_root() -> Path:
     try:
         root.mkdir(parents=True, exist_ok=True, mode=0o750)
     except OSError:
-        raise ThemeInstallError("پوشهٔ نصب قالب ساخته نشد یا قابل‌نوشتن نیست؛ RAVIX_THEME_INSTALL_DIR و مجوزهای آن را بررسی کنید.") from None
+        raise ThemeInstallError(gettext("The theme install folder could not be created or is not writable; check RAVIX_THEME_INSTALL_DIR and its permissions.")) from None
     if not root.is_dir() or not os.access(root, os.W_OK | os.X_OK):
-        raise ThemeInstallError("پوشهٔ نصب قالب قابل‌نوشتن نیست؛ RAVIX_THEME_INSTALL_DIR و مجوزهای آن را بررسی کنید.")
+        raise ThemeInstallError(gettext("The theme install folder is not writable; check RAVIX_THEME_INSTALL_DIR and its permissions."))
     fstype = _mount_fstype(root)
     if fstype in UNRELIABLE_LOCK_FS:
         raise ThemeInstallError(
-            f"فایل‌سیستم پوشهٔ نصب ({fstype}) قفل قابل‌اعتماد ندارد؛ نصب برای جلوگیری از تداخل انجام نشد. "
-            "پوشهٔ نصب را روی دیسک محلی بگذارید."
+            (gettext("The install folder’s file system (%(fstype)s) has no reliable locking; the install was not performed to avoid conflicts. Put the install folder on a local disk.") % {"fstype": fstype})
         )
     return root
 
@@ -138,20 +137,20 @@ def _install_lock(root: Path):
         from apps.updater.pipeline import core_update_active
 
         if core_update_active():
-            raise ThemeInstallError("ارتقای هسته یا قالب در جریان است؛ پس از پایان آن دوباره تلاش کنید.")
+            raise ThemeInstallError(gettext("A core or theme upgrade is in progress; try again after it finishes."))
     flags = os.O_RDWR | os.O_CREAT | getattr(os, "O_NOFOLLOW", 0)
     try:
         fd = os.open(root / LOCK_FILE, flags, 0o600)
     except OSError:
-        raise ThemeInstallError("فایل قفل نصب ساخته نشد؛ مجوزهای پوشهٔ نصب را بررسی کنید.") from None
+        raise ThemeInstallError(gettext("The install lock file could not be created; check the install folder permissions.")) from None
     try:
         try:
             fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError:
-            raise ThemeInstallError("نصب دیگری هم‌اکنون در جریان است؛ کمی بعد دوباره تلاش کنید.") from None
+            raise ThemeInstallError(gettext("Another install is in progress right now; try again shortly.")) from None
         except OSError:
             raise ThemeInstallError(
-                "قفل فایل‌سیستمی روی پوشهٔ نصب پشتیبانی نمی‌شود؛ برای ایمنی نصب انجام نشد. پوشهٔ نصب را روی دیسک محلی بگذارید."
+                gettext("File-system locking is not supported on the install folder; the install was not performed for safety. Put the install folder on a local disk.")
             ) from None
         yield
     finally:
@@ -185,10 +184,10 @@ def _tighten_permissions(tree: Path) -> None:
 
 def _conflict(slug: str) -> str | None:
     if slug == DEFAULT_THEME:
-        return "قالب پیش‌فرض («default») با این روش جایگزین یا بازنویسی نمی‌شود."
+        return gettext("The default theme (“default”) cannot be replaced or overwritten this way.")
     for base in getattr(settings, "RAVIX_THEME_DIRS", []):
         if os.path.lexists(Path(base) / slug):
-            return f"قالبی با شناسهٔ «{slug}» از قبل وجود دارد و بازنویسی نمی‌شود. شناسهٔ قالب را در theme.json و نام پوشه تغییر دهید."
+            return (gettext("A theme with the ID “%(slug)s” already exists and will not be overwritten. Change the theme ID in theme.json and the folder name.") % {"slug": slug})
     return None
 
 
@@ -215,29 +214,29 @@ def _install(data: bytes) -> InstallResult:
             staging = Path(tempfile.mkdtemp(prefix=STAGING_PREFIX, dir=root))  # 0700 و نام تصادفی
             try:
                 if staging.parent != root:
-                    raise ThemeInstallError("پوشهٔ موقت در جای نامعتبر ساخته شد؛ نصب لغو شد.")
+                    raise ThemeInstallError(gettext("The temporary folder was created in an invalid place; the install was cancelled."))
                 extracted = package.extract(zf, pkg, staging)
                 theme_dir = staging / slug
                 _tighten_permissions(theme_dir)
                 info = inspect_theme_dir(theme_dir)
                 if not info.valid:
-                    raise ThemeInstallError("قالب با قرارداد قالب‌های Ravix سازگار نیست.", details=info.errors[:10])
+                    raise ThemeInstallError(gettext("The theme is not compatible with the Ravix theme contract."), details=info.errors[:10])
                 # بررسی دوباره زیر قفل؛ از این لحظه تا rename فقط همین فرایند در پوشهٔ نصب می‌نویسد.
                 message = _conflict(slug)
                 if message:
                     raise ThemeInstallError(message)
                 target = root / slug
                 if target.parent.resolve() != root:
-                    raise ThemeInstallError("مسیر مقصد نامعتبر است؛ نصب لغو شد.", security=True)
+                    raise ThemeInstallError(gettext("The destination path is invalid; the install was cancelled."), security=True)
                 try:
                     os.rename(theme_dir, target)  # هم‌دیسک ⇒ اتمی؛ هیچ حالت نیمه‌نصبی دیده نمی‌شود
                 except OSError:
-                    raise ThemeInstallError("جایگذاری نهایی قالب ناموفق بود و هیچ تغییری اعمال نشد.") from None
+                    raise ThemeInstallError(gettext("The final placement of the theme failed and no changes were applied.")) from None
                 final = inspect_theme_dir(target)
                 if not final.valid:
                     if not target.is_symlink():
                         shutil.rmtree(target, ignore_errors=True)  # فقط پوشه‌ای که همین فرایند و زیر همین قفل ساخت
-                    raise ThemeInstallError("اعتبارسنجی نهایی پس از نصب ناموفق بود؛ نصب لغو شد.")
+                    raise ThemeInstallError(gettext("The final validation after install failed; the install was cancelled."))
                 _touch_revision(root)
                 registry.get_themes(refresh=True)
                 return InstallResult(
@@ -260,23 +259,23 @@ def install_theme_zip(request, uploaded) -> InstallResult:
     try:
         _require_enabled()
         _require_capability(user)
-        _audit(request, "آغاز", f"درخواست دریافت شد (حجم {int(size or 0) // 1024} کیلوبایت).")
+        _audit(request, gettext("Start"), (gettext("Request received (size %(value)s KB).") % {"value": (int(size or 0) // 1024)}))
         if size is None or size <= 0:
-            raise ThemeInstallError("فایلی ارسال نشد یا فایل خالی است.")
+            raise ThemeInstallError(gettext("No file was sent or the file is empty."))
         if size > MAX_ZIP_BYTES:
-            raise ThemeInstallError(f"حجم فایل بیشتر از {MAX_ZIP_BYTES // (1024 * 1024)} مگابایت است.")
+            raise ThemeInstallError((gettext("The file is larger than %(value)s MB.") % {"value": (MAX_ZIP_BYTES // (1024 * 1024))}))
         data = uploaded.read(MAX_ZIP_BYTES + 1)
         try:
             result = _install(data)
         except package.ThemePackageError as exc:
             raise ThemeInstallError(exc.message, security=exc.security) from None
     except ThemeInstallError as exc:
-        extra = (" — " + "؛ ".join(exc.details[:3])) if exc.details else ""
-        _audit(request, "رد امنیتی" if exc.security else "رد شد", exc.message + extra)
+        extra = (" — " + gettext("; ").join(exc.details[:3])) if exc.details else ""
+        _audit(request, gettext("Security rejection") if exc.security else gettext("Was rejected"), exc.message + extra)
         raise
     except Exception:  # noqa: BLE001
         logger.exception("خطای غیرمنتظره در نصب قالب ZIP")
-        _audit(request, "خطای داخلی", "نصب با خطای غیرمنتظره متوقف شد؛ جزئیات فقط در لاگ سرور است و هیچ تغییری اعمال نشد.")
-        raise ThemeInstallError("خطای غیرمنتظره رخ داد و هیچ تغییری اعمال نشد؛ مدیر سرور جزئیات را در لاگ‌ها می‌بیند.") from None
-    _audit(request, "موفق", f"قالب «{result.slug}» نسخه {result.version or '—'} نصب شد ({result.file_count} فایل)؛ فعال نشد.", ok=True)
+        _audit(request, gettext("Internal error"), gettext("The install stopped with an unexpected error; the details are only in the server log and no changes were applied."))
+        raise ThemeInstallError(gettext("An unexpected error occurred and no changes were applied; the server administrator can see the details in the logs.")) from None
+    _audit(request, gettext("Succeeded"), (gettext("Theme “%(slug)s” version %(value)s was installed (%(file_count)s files); it was not activated.") % {"slug": result.slug, "value": (result.version or '—'), "file_count": result.file_count}), ok=True)
     return result

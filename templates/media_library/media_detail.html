@@ -1,10 +1,11 @@
 {% extends "layouts/panel.html" %}
+{% load i18n %}
 {% load ravix_ui %}
 {% block title %}{{ object.display_title }}{% endblock %}
-{% block page_title %}جزئیات رسانه{% endblock %}
+{% block page_title %}{% trans "Media details" %}{% endblock %}
 {% block content_class %}content-narrow{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>{{ object.display_title }}</h1></div><a href="{% url 'media_library:media_list' %}" class="btn btn-light">بازگشت به کتابخانه</a></div>
+<div class="page-head"><div><h1>{{ object.display_title }}</h1></div><a href="{% url 'media_library:media_list' %}" class="btn btn-light">{% trans "Back to the library" %}</a></div>
 <div class="card"><div class="card-body media-detail">
   <div class="media-preview">
     {% if object.is_image %}<img src="{{ object.file.url }}" alt="{{ object.alt_text }}">
@@ -14,15 +15,15 @@
   </div>
   <div>
     <div class="meta-list" style="padding:0;border:0;margin-bottom:1rem">
-      <div><span class="muted">نام اصلی:</span> <span class="ltr">{{ object.original_name }}</span></div>
-      <div><span class="muted">نوع:</span> {{ object.get_kind_display }} ({{ object.mime_type }})</div>
-      <div><span class="muted">حجم:</span> {{ object.size|filesizeformat }}</div>
-      {% if object.width %}<div><span class="muted">ابعاد:</span> <span class="ltr">{{ object.width }} × {{ object.height }}</span></div>{% endif %}
-      <div><span class="muted">بارگذاری‌کننده:</span> {{ object.uploaded_by.display_name|default:"—" }}</div>
-      <div><span class="muted">تاریخ بارگذاری:</span> {{ object.created_at|jalali_datetime }}</div>
+      <div><span class="muted">{% trans "Original name:" %}</span> <span class="ltr">{{ object.original_name }}</span></div>
+      <div><span class="muted">{% trans "Type:" %}</span> {{ object.get_kind_display }} ({{ object.mime_type }})</div>
+      <div><span class="muted">{% trans "Size:" %}</span> {{ object.size|filesizeformat }}</div>
+      {% if object.width %}<div><span class="muted">{% trans "Dimensions:" %}</span> <span class="ltr">{{ object.width }} × {{ object.height }}</span></div>{% endif %}
+      <div><span class="muted">{% trans "Uploaded by:" %}</span> {{ object.uploaded_by.display_name|default:"—" }}</div>
+      <div><span class="muted">{% trans "Upload date:" %}</span> {{ object.created_at|jalali_datetime }}</div>
     </div>
-    <div class="field"><span class="field-label">نشانی فایل</span>
-      <div style="display:flex;gap:.5rem"><input class="input ltr" readonly value="{{ absolute_url }}" id="media-url"><button type="button" class="btn btn-light" data-copy="{{ absolute_url }}">{% icon "copy" 16 %} کپی</button></div></div>
+    <div class="field"><span class="field-label">{% trans "File address" %}</span>
+      <div style="display:flex;gap:.5rem"><input class="input ltr" readonly value="{{ absolute_url }}" id="media-url"><button type="button" class="btn btn-light" data-copy="{{ absolute_url }}">{% icon "copy" 16 %} {% trans "Copy" %}</button></div></div>
     {% if can_manage %}
     <form method="post" novalidate data-once>
       {% csrf_token %}
@@ -30,13 +31,13 @@
       {% include "partials/_field.html" with field=form.title %}
       {% if object.is_image %}{% include "partials/_field.html" with field=form.alt_text %}{% endif %}
       <div class="form-actions">
-        <button type="submit" class="btn">{% icon "check" 18 %} ذخیره</button>
-        <a class="btn btn-light" href="{% url 'media_library:media_delete' object.pk %}">{% icon "trash" 18 %} حذف</a>
+        <button type="submit" class="btn">{% icon "check" 18 %} {% trans "Save" %}</button>
+        <a class="btn btn-light" href="{% url 'media_library:media_delete' object.pk %}">{% icon "trash" 18 %} {% trans "Delete" %}</a>
       </div>
     </form>
     {% else %}
-      <p class="muted">{% if object.alt_text %}متن جایگزین: {{ object.alt_text }}{% endif %}</p>
-      <p class="muted">فقط بارگذاری‌کننده یا مدیر می‌تواند این فایل را ویرایش یا حذف کند.</p>
+      <p class="muted">{% if object.alt_text %}{% blocktrans trimmed with alt_text=object.alt_text %}Alt text: {{ alt_text }}{% endblocktrans %}{% endif %}</p>
+      <p class="muted">{% trans "Only the uploader or an administrator can edit or delete this file." %}</p>
     {% endif %}
   </div>
 </div></div>

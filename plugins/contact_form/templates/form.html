@@ -1,14 +1,15 @@
+{% load i18n %}
 {% load ravix_ui %}
-{% if limited %}<p role="alert">تعداد ارسال‌های شما از حد مجاز گذشته است؛ لطفاً بعداً دوباره تلاش کنید.</p>{% endif %}
-{% if sent %}<p role="status"><strong>{{ success|default:"پیام شما ثبت شد." }}</strong></p>{% endif %}
+{% if limited %}<p role="alert">{% trans "Your number of submissions has exceeded the limit; please try again later." %}</p>{% endif %}
+{% trans "Your message was recorded." as msg_sent %}{% if sent %}<p role="status"><strong>{{ success|default:msg_sent }}</strong></p>{% endif %}
 {% if intro %}<p>{{ intro|linebreaksbr }}</p>{% endif %}
 <form method="post" action="" novalidate>
   {% csrf_token %}
   {% if form.errors %}<div role="alert"><ul>{% for field in form %}{% for e in field.errors %}<li>{{ field.label }}: {{ e }}</li>{% endfor %}{% endfor %}</ul></div>{% endif %}
-  <p><label for="id_name">نام</label><br>{{ form.name }}</p>
-  <p><label for="id_email">ایمیل</label><br>{{ form.email }}</p>
-  <p><label for="id_subject">موضوع</label><br>{{ form.subject }}</p>
-  <p><label for="id_message">پیام</label><br>{{ form.message }}</p>
-  <div style="position:absolute;inset-inline-start:-9999px" aria-hidden="true"><label for="id_website">وب‌سایت (خالی بگذارید)</label>{{ form.website }}</div>
-  <p><button type="submit">ارسال پیام</button></p>
+  <p><label for="id_name">{% trans "Name" %}</label><br>{{ form.name }}</p>
+  <p><label for="id_email">{% trans "Email" %}</label><br>{{ form.email }}</p>
+  <p><label for="id_subject">{% trans "Subject" %}</label><br>{{ form.subject }}</p>
+  <p><label for="id_message">{% trans "Message" %}</label><br>{{ form.message }}</p>
+  <div style="position:absolute;inset-inline-start:-9999px" aria-hidden="true"><label for="id_website">{% trans "Website (leave empty)" %}</label>{{ form.website }}</div>
+  <p><button type="submit">{% trans "Send message" %}</button></p>
 </form>

@@ -8,6 +8,7 @@
 - تغییر کد پس از تأیید (دستکاری) ← افزونه فوراً غیرفعال و رویداد «tamper» ثبت می‌شود؛
 - هر خطای بارگذاری یا اجرا در همین‌جا مهار و ثبت می‌شود و به پنل نمی‌رسد.
 """
+from django.utils.translation import gettext
 import importlib
 import importlib.abc
 import importlib.machinery
@@ -71,12 +72,12 @@ class _PluginFinder(importlib.abc.MetaPathFinder):
         slug = parts[1]
         entry = _roots.get(slug)
         if entry is None:
-            raise ImportError(f"افزونهٔ «{slug}» تأیید/بارگذاری نشده است.")
+            raise ImportError((gettext("Plugin “%(slug)s” has not been approved/loaded.") % {"slug": slug}))
         root, approved = entry
         if slug not in _dev_slugs:
             try:
                 if fingerprint(root) != approved:
-                    raise ImportError(f"کد افزونهٔ «{slug}» با نسخهٔ تأییدشده تفاوت دارد.")
+                    raise ImportError((gettext("The code of plugin “%(slug)s” differs from the approved version.") % {"slug": slug}))
             except IntegrityError as exc:
                 raise ImportError(str(exc))
         rel = Path(*parts[2:]) if len(parts) > 2 else Path()
@@ -143,11 +144,11 @@ def _check_models(cfg):
     allowed_apps = {cfg.label, "accounts"}
     for model in cfg.get_models():
         if not model._meta.db_table.startswith(cfg.label + "_"):
-            raise PluginLoadError(f"جدول مدل {model.__name__} باید با «{cfg.label}_» شروع شود (db_table دستکاری شده است).")
+            raise PluginLoadError((gettext("The table of model %(name)s must start with “%(label)s_” (db_table was tampered with).") % {"name": model.__name__, "label": cfg.label}))
         for f in model._meta.get_fields():
             rel = getattr(f, "related_model", None)
             if f.is_relation and rel is not None and rel._meta.app_label not in allowed_apps:
-                raise PluginLoadError(f"مدل {model.__name__} به مدل هسته ({rel._meta.label}) وابسته است؛ فقط به مدل‌های خود و کاربر مجاز است.")
+                raise PluginLoadError((gettext("Model %(name)s depends on a core model (%(label)s); only its own models and the user model are allowed.") % {"name": model.__name__, "label": rel._meta.label}))
 
 
 # ------------------------------------------------------------------ بارگذاری
@@ -166,7 +167,7 @@ def _resolve(pkg_name, ref):
     module = importlib.import_module(f"{pkg_name}.{module_name}")
     fn = getattr(module, attr, None)
     if not callable(fn):
-        raise PluginLoadError(f"«{ref}» تابع قابل‌فراخوانی نیست.")
+        raise PluginLoadError((gettext("“%(ref)s” is not callable.") % {"ref": ref}))
     return fn
 
 
@@ -208,17 +209,17 @@ def get(slug) -> Loaded | None:
         try:
             root = locate(slug)
             if root is None:
-                events.disable(slug, kind="missing", message="پوشهٔ افزونه پیدا نشد؛ غیرفعال شد.")
+                events.disable(slug, kind="missing", message=gettext("The plugin folder was not found; it was disabled."))
                 _loaded.pop(slug, None)
                 return None
             try:
                 fp = fingerprint(root)
             except IntegrityError as exc:
                 fp = ""
-                events.disable(slug, kind="tamper", message=f"ساختار افزونه نامعتبر شد: {exc}")
+                events.disable(slug, kind="tamper", message=(gettext("The plugin structure became invalid: %(exc)s") % {"exc": exc}))
             if fp != info.fingerprint:
                 if fp:
-                    events.disable(slug, kind="tamper", message="کد افزونه پس از تأیید مدیر تغییر کرده است؛ تا تأیید دوباره غیرفعال شد.")
+                    events.disable(slug, kind="tamper", message=gettext("The plugin code changed after the administrator’s approval; it was disabled until re-approved."))
                 _loaded.pop(slug, None)
                 _roots.pop(slug, None)
                 return None
@@ -232,7 +233,7 @@ def get(slug) -> Loaded | None:
                 if app_config(slug) is not None:  # مدل‌ها را نمی‌توان با خیال راحت دوباره ثبت کرد
                     if slug not in _warned:
                         _warned.add(slug)
-                        events.log_event(slug, "restart_required", "نسخهٔ تأییدشدهٔ جدید مدل دارد؛ برای اعمال، سرور را راه‌اندازی مجدد کنید.", level="warning")
+                        events.log_event(slug, "restart_required", gettext("The new approved version has models; restart the server to apply them."), level="warning")
                     _loaded.pop(slug, None)
                     return None
                 _purge_modules(slug)
@@ -246,7 +247,7 @@ def get(slug) -> Loaded | None:
             _roots.pop(slug, None)
             _loaded.pop(slug, None)
             events.record_error(slug, "load", exc)
-            events.disable(slug, kind="load_failed", message=f"بارگذاری افزونه ناموفق بود و غیرفعال شد: {exc}"[:400])
+            events.disable(slug, kind="load_failed", message=(gettext("Loading the plugin failed and it was disabled: %(exc)s") % {"exc": exc})[:400])
             return None
 
 
@@ -267,10 +268,10 @@ def load_for_install(slug, root, fp):
 def load_for_development(slug):
     """فقط برای توسعه‌دهنده (DEBUG): بارگذاری بدون تأیید، برای makemigrations. در محیط تولید رد می‌شود."""
     if not settings.DEBUG:
-        raise PluginLoadError("این دستور فقط در حالت DEBUG مجاز است.")
+        raise PluginLoadError(gettext("This command is only allowed in DEBUG mode."))
     root = locate(slug)
     if root is None:
-        raise PluginLoadError("پوشهٔ افزونه پیدا نشد.")
+        raise PluginLoadError(gettext("The plugin folder was not found."))
     _dev_slugs.add(slug)
     return load_for_install(slug, root, "dev")
 

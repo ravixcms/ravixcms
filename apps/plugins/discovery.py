@@ -2,6 +2,7 @@
 شناسایی افزونه‌های معتبر. فقط پوشه‌های فهرست‌شده در ``RAVIX_PLUGIN_DIRS`` (تنظیم سرور، نه ورودی کاربر) بررسی می‌شوند و فقط
 ``plugin.json`` خوانده می‌شود؛ هیچ کدی import نمی‌شود. افزونهٔ نامعتبر در فهرست با دلیل خطا نمایش داده می‌شود.
 """
+from django.utils.translation import gettext
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -33,10 +34,10 @@ def plugin_dirs() -> list[Path]:
 def _inspect(path: Path) -> Discovered:
     d = Discovered(slug=path.name, path=path)
     if path.is_symlink():
-        d.errors.append("پوشهٔ افزونه نباید symlink باشد.")
+        d.errors.append(gettext("The plugin folder must not be a symlink."))
         return d
     if not (path / "__init__.py").is_file():
-        d.errors.append("فایل __init__.py وجود ندارد.")
+        d.errors.append(gettext("The __init__.py file is missing."))
     try:
         d.manifest = read_manifest(path, expected_slug=path.name)
     except ManifestError as exc:
@@ -60,7 +61,7 @@ def discover() -> list[Discovered]:
                 continue
             item = _inspect(child)
             if child.name in found:
-                item.errors.append(f"نامک تکراری؛ نسخهٔ پوشهٔ {found[child.name].path} اولویت دارد.")
+                item.errors.append((gettext("Duplicate slug; the version in folder %(path)s takes priority.") % {"path": found[child.name].path}))
                 item.slug = f"{child.name}@dup"
                 found[item.slug] = item
                 continue

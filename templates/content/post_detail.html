@@ -1,7 +1,8 @@
 {% extends "layouts/panel.html" %}
+{% load i18n %}
 {% load ravix_ui %}
 {% block title %}{{ post.title }}{% endblock %}
-{% block page_title %}مشاهده نوشته{% endblock %}
+{% block page_title %}{% trans "View post" %}{% endblock %}
 {% block content_class %}content-narrow{% endblock %}
 {% block content %}
 <div class="page-head">
@@ -9,9 +10,9 @@
     <p><span class="badge badge-{{ post.effective_status }}">{{ post.effective_status_label }}</span>
       {% if post.publish_at %} · {{ post.publish_at|jalali_datetime }}{% endif %}</p></div>
   <div class="form-actions" style="margin:0">
-    {% if can_edit %}<a href="{% url 'content:post_update' post.pk %}" class="btn">{% icon "edit" 18 %} ویرایش</a>
-    <a href="{% url 'content:post_delete' post.pk %}" class="btn btn-light">{% icon "trash" 18 %} حذف</a>{% endif %}
-    <a href="{% url 'content:post_list' %}" class="btn btn-light">بازگشت</a>
+    {% if can_edit %}<a href="{% url 'content:post_update' post.pk %}" class="btn">{% icon "edit" 18 %} {% trans "Edit" %}</a>
+    <a href="{% url 'content:post_delete' post.pk %}" class="btn btn-light">{% icon "trash" 18 %} {% trans "Delete" %}</a>{% endif %}
+    <a href="{% url 'content:post_list' %}" class="btn btn-light">{% trans "Back" %}</a>
   </div>
 </div>
 <article class="card"><div class="card-body">
@@ -20,11 +21,11 @@
   <div class="prose">{{ post.body_html|safe }}</div>
 </div>
 <div class="card-body meta-list">
-  <div><span class="muted">نویسنده:</span> {{ post.author.display_name|default:"—" }}</div>
-  <div><span class="muted">نامک:</span> <span class="ltr">{{ post.slug }}</span></div>
-  <div><span class="muted">ایجاد:</span> {{ post.created_at|jalali_datetime }}</div>
-  <div><span class="muted">آخرین ویرایش:</span> {{ post.updated_at|jalali_datetime }}</div>
-  <div><span class="muted">دسته‌بندی‌ها:</span> {% for c in post.categories.all %}<span class="badge">{{ c.name }}</span> {% empty %}—{% endfor %}</div>
-  <div><span class="muted">برچسب‌ها:</span> {% for t in post.tags.all %}<span class="badge">{{ t.name }}</span> {% empty %}—{% endfor %}</div>
+  <div><span class="muted">{% trans "Author:" %}</span> {{ post.author.display_name|default:"—" }}</div>
+  <div><span class="muted">{% trans "Slug:" %}</span> <span class="ltr">{{ post.slug }}</span></div>
+  <div><span class="muted">{% trans "Created:" %}</span> {{ post.created_at|jalali_datetime }}</div>
+  <div><span class="muted">{% trans "Last edited:" %}</span> {{ post.updated_at|jalali_datetime }}</div>
+  <div><span class="muted">{% trans "Categories:" %}</span> {% for c in post.categories.all %}<span class="badge">{{ c.name }}</span> {% empty %}—{% endfor %}</div>
+  <div><span class="muted">{% trans "Tags:" %}</span> {% for t in post.tags.all %}<span class="badge">{{ t.name }}</span> {% empty %}—{% endfor %}</div>
 </div></article>
 {% endblock %}

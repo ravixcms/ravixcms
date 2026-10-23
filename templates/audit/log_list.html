@@ -1,25 +1,26 @@
 {% extends "layouts/panel.html" %}
+{% load i18n %}
 {% load ravix_ui %}
-{% block title %}گزارش رویدادها{% endblock %}
-{% block page_title %}گزارش رویدادها{% endblock %}
+{% block title %}{% trans "Event log" %}{% endblock %}
+{% block page_title %}{% trans "Event log" %}{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>گزارش رویدادهای مدیریتی</h1><p>ثبت ورود و خروج و تغییرات مهم محتوا، رسانه، کاربران و تنظیمات</p></div></div>
+<div class="page-head"><div><h1>{% trans "Administrative event log" %}</h1><p>{% trans "Records sign-ins, sign-outs and important changes to content, media, users and settings" %}</p></div></div>
 <div class="card">
   <form method="get" class="toolbar" role="search">
-    <input type="search" name="q" value="{{ q }}" class="input grow" placeholder="جستجو در شرح، کاربر یا عنوان" aria-label="جستجو">
-    <select name="action" class="input" aria-label="عملیات">
-      <option value="">همه عملیات</option>
+    <input type="search" name="q" value="{{ q }}" class="input grow" placeholder="{% trans "Search by description, user or title" %}" aria-label="{% trans "Search" %}">
+    <select name="action" class="input" aria-label="{% trans "Action" %}">
+      <option value="">{% trans "All actions" %}</option>
       {% for value, label in actions %}<option value="{{ value }}" {% if value == selected_action %}selected{% endif %}>{{ label }}</option>{% endfor %}
     </select>
-    <select name="type" class="input" aria-label="نوع مورد">
-      <option value="">همه موارد</option>
+    <select name="type" class="input" aria-label="{% trans "Object type" %}">
+      <option value="">{% trans "All items" %}</option>
       {% for t in types %}<option value="{{ t }}" {% if t == selected_type %}selected{% endif %}>{{ t }}</option>{% endfor %}
     </select>
-    <button type="submit" class="btn">{% icon "search" 18 %} اعمال</button>
+    <button type="submit" class="btn">{% icon "search" 18 %} {% trans "Actions" %}</button>
   </form>
   {% if events %}
   <div class="table-wrap"><table class="table">
-    <thead><tr><th>زمان</th><th>کاربر</th><th>عملیات</th><th>شرح</th><th>IP</th></tr></thead>
+    <thead><tr><th>{% trans "Time" %}</th><th>{% trans "User" %}</th><th>{% trans "Action" %}</th><th>{% trans "Event description" %}</th><th>IP</th></tr></thead>
     <tbody>
     {% for e in events %}
       <tr>
@@ -32,6 +33,6 @@
     {% endfor %}
     </tbody></table></div>
   {% include "partials/_pagination.html" %}
-  {% else %}<div class="empty">رویدادی ثبت نشده است.</div>{% endif %}
+  {% else %}<div class="empty">{% trans "No event has been recorded." %}</div>{% endif %}
 </div>
 {% endblock %}

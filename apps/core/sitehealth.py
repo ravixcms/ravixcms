@@ -4,6 +4,7 @@
 """
 from __future__ import annotations
 
+from django.utils.translation import gettext, gettext_lazy
 import os
 import shutil
 import sys
@@ -16,7 +17,7 @@ from django.conf import settings
 from django.utils import timezone
 
 GOOD, RECOMMENDED, CRITICAL, UNKNOWN = "good", "recommended", "critical", "unknown"
-LABELS = {GOOD: "خوب", RECOMMENDED: "پیشنهادی", CRITICAL: "بحرانی", UNKNOWN: "نامشخص"}
+LABELS = {GOOD: gettext_lazy("Good"), RECOMMENDED: gettext_lazy("Recommended"), CRITICAL: gettext_lazy("Critical"), UNKNOWN: gettext_lazy("Unknown")}
 
 BACKUP_WARN_HOURS = 36
 BACKUP_CRIT_HOURS = 24 * 7
@@ -42,37 +43,37 @@ def _c(key, group, title, status, detail, fix=""):
 
 # ------------------------------------------------------------------ امنیت و HTTPS
 def check_https(request=None) -> list[Check]:
-    g = "امنیت و HTTPS"
+    g = gettext("Security and HTTPS")
     out = []
     site_url = settings.SITE_URL
     secure_request = bool(request is not None and request.is_secure())
     if secure_request or site_url.startswith("https://"):
-        out.append(_c("https", g, "اتصال HTTPS", GOOD, "سایت از طریق HTTPS ارائه می‌شود."))
+        out.append(_c("https", g, gettext("HTTPS connection"), GOOD, gettext("The site is served over HTTPS.")))
     elif settings.DEBUG:
-        out.append(_c("https", g, "اتصال HTTPS", RECOMMENDED, "در حالت توسعه HTTPS فعال نیست.", "در سرور واقعی حتماً HTTPS را فعال کنید."))
+        out.append(_c("https", g, gettext("HTTPS connection"), RECOMMENDED, gettext("HTTPS is not enabled in development mode."), gettext("Be sure to enable HTTPS on a real server.")))
     else:
-        out.append(_c("https", g, "اتصال HTTPS", CRITICAL, "این صفحه با HTTPS باز نشده است؛ رمزها و نشست‌ها بدون رمزنگاری رد و بدل می‌شوند.",
-                      "گواهی Let's Encrypt بگیرید (install.sh یا docker-compose.tls.yml) و RAVIX_SITE_URL را روی نشانی https تنظیم کنید."))
+        out.append(_c("https", g, gettext("HTTPS connection"), CRITICAL, gettext("This page was not opened over HTTPS; passwords and sessions are exchanged without encryption."),
+                      gettext("Get a Let’s Encrypt certificate (install.sh or docker-compose.tls.yml) and set RAVIX_SITE_URL to an https address.")))
     if not settings.DEBUG:
         if getattr(settings, "SECURE_SSL_REDIRECT", False) and getattr(settings, "SESSION_COOKIE_SECURE", False):
-            out.append(_c("https_cookies", g, "هدایت به HTTPS و کوکی امن", GOOD, "هدایت خودکار و کوکی «Secure» فعال است."))
+            out.append(_c("https_cookies", g, gettext("HTTPS redirect and secure cookie"), GOOD, gettext("Automatic redirect and the “Secure” cookie are enabled.")))
         else:
-            out.append(_c("https_cookies", g, "هدایت به HTTPS و کوکی امن", RECOMMENDED, "هدایت خودکار به HTTPS یا کوکی «Secure» غیرفعال است.",
-                          "DJANGO_SECURE_SSL_REDIRECT را روشن کنید."))
+            out.append(_c("https_cookies", g, gettext("HTTPS redirect and secure cookie"), RECOMMENDED, gettext("Automatic redirect to HTTPS or the “Secure” cookie is disabled."),
+                          gettext("Turn on DJANGO_SECURE_SSL_REDIRECT.")))
         if getattr(settings, "SECURE_HSTS_SECONDS", 0) > 0:
-            out.append(_c("hsts", g, "HSTS", GOOD, "مرورگرها فقط با HTTPS به سایت وصل می‌شوند."))
+            out.append(_c("hsts", g, "HSTS", GOOD, gettext("Browsers connect to the site over HTTPS only.")))
         else:
-            out.append(_c("hsts", g, "HSTS", RECOMMENDED, "هدر HSTS غیرفعال است.", "DJANGO_HSTS_SECONDS را بزرگ‌تر از صفر کنید."))
+            out.append(_c("hsts", g, "HSTS", RECOMMENDED, gettext("The HSTS header is disabled."), gettext("Set DJANGO_HSTS_SECONDS to a value greater than zero.")))
     if settings.DEBUG:
-        out.append(_c("debug", g, "حالت اشکال‌زدایی (DEBUG)", CRITICAL, "DEBUG روشن است و جزئیات داخلی به بازدیدکننده نشان داده می‌شود.",
-                      "در سرور واقعی از تنظیمات production استفاده کنید."))
+        out.append(_c("debug", g, gettext("Debug mode (DEBUG)"), CRITICAL, gettext("DEBUG is on and internal details are shown to visitors."),
+                      gettext("On a real server use the production settings.")))
     else:
-        out.append(_c("debug", g, "حالت اشکال‌زدایی (DEBUG)", GOOD, "DEBUG خاموش است."))
+        out.append(_c("debug", g, gettext("Debug mode (DEBUG)"), GOOD, gettext("DEBUG is off.")))
     hosts = list(settings.ALLOWED_HOSTS)
     if "*" in hosts:
-        out.append(_c("hosts", g, "میزبان‌های مجاز", RECOMMENDED, "ALLOWED_HOSTS شامل «*» است.", "فقط دامنهٔ خودتان را بنویسید."))
+        out.append(_c("hosts", g, gettext("Allowed hosts"), RECOMMENDED, gettext("ALLOWED_HOSTS contains “*”."), gettext("Write only your own domain.")))
     else:
-        out.append(_c("hosts", g, "میزبان‌های مجاز", GOOD, "ALLOWED_HOSTS محدود شده است."))
+        out.append(_c("hosts", g, gettext("Allowed hosts"), GOOD, gettext("ALLOWED_HOSTS is restricted.")))
     return out
 
 
@@ -80,60 +81,59 @@ def check_client_ip(request=None) -> list[Check]:
     """آیا Ravix IP واقعی بازدیدکننده را می‌بیند؟ بدون آن محدودیت ورود/دیدگاه/ایمیل یا اثری ندارد یا همه را یکی می‌شمارد."""
     from apps.core import clientip
 
-    g = "امنیت و HTTPS"
-    title = "تشخیص IP بازدیدکننده"
-    fix_proxy = ("پشت Nginx روی سوکت یونیکس تنظیمی لازم نیست. اگر Nginx/پراکسی روی TCP وصل می‌شود، نشانی آن را در RAVIX_TRUSTED_PROXIES بنویسید "
-                 "(مثلاً 127.0.0.1) و مطمئن شوید پراکسی X-Forwarded-For را می‌فرستد (deploy/ravix-proxy.conf).")
+    g = gettext("Security and HTTPS")
+    title = gettext("Visitor IP detection")
+    fix_proxy = (gettext("Behind Nginx on a unix socket no setting is needed. If Nginx/a proxy connects over TCP, put its address in RAVIX_TRUSTED_PROXIES (e.g. 127.0.0.1) and make sure the proxy sends X-Forwarded-For (deploy/ravix-proxy.conf)."))
     out = []
     bad = clientip.invalid_trusted_entries()
     if bad:
-        out.append(_c("client_ip_config", g, "RAVIX_TRUSTED_PROXIES", CRITICAL, "ورودی نامعتبر: " + "، ".join(bad[:5]), "فقط IP یا CIDR بنویسید."))
+        out.append(_c("client_ip_config", g, "RAVIX_TRUSTED_PROXIES", CRITICAL, (gettext("Invalid entry: %(items)s") % {"items": "، ".join(bad[:5])}), gettext("Write only an IP or CIDR.")))
     state = None
     if request is not None:
         ip, state = clientip.diagnose(request)
     if state in (None, "direct", "proxied") and request is not None:
-        out.append(_c("client_ip", g, title, GOOD, f"IP این درخواست درست خوانده شد ({ip})."))
+        out.append(_c("client_ip", g, title, GOOD, (gettext("The IP of this request was read correctly (%(ip)s).") % {"ip": ip})))
         obs = {} if state == "proxied" else clientip.observations()
     else:
         obs = clientip.observations()
         if request is not None:
-            obs = {**obs, state: {"remote": request.META.get("REMOTE_ADDR") or "سوکت یونیکس"}}
+            obs = {**obs, state: {"remote": request.META.get("REMOTE_ADDR") or gettext("unix socket")}}
     if "untrusted_proxy" in obs:
         out.append(_c("client_ip", g, title, CRITICAL,
-                      f"درخواست‌ها از پراکسی {obs['untrusted_proxy'].get('remote')} می‌رسند ولی مورداعتماد نیست؛ همهٔ بازدیدکننده‌ها با یک IP شمرده می‌شوند.", fix_proxy))
+                      (gettext("Requests arrive from proxy %(value)s but it is not trusted; all visitors are counted as one IP.") % {"value": obs['untrusted_proxy'].get('remote')}), fix_proxy))
     elif "no_headers" in obs:
         out.append(_c("client_ip", g, title, RECOMMENDED,
-                      "از پراکسی مورداعتماد درخواست می‌رسد ولی هدر IP (X-Forwarded-For یا X-Real-IP) ندارد؛ IP قابل‌تشخیص نیست و فقط محدودیت به‌ازای نام‌کاربری اعمال می‌شود.",
-                      "در پراکسی proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; را اضافه کنید."))
+                      gettext("Requests arrive from a trusted proxy but have no IP header (X-Forwarded-For or X-Real-IP); the IP cannot be determined and only the per-username limit is applied."),
+                      gettext("Add proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; to the proxy.")))
     elif request is None:
-        out.append(_c("client_ip", g, title, UNKNOWN, "تا به حال درخواست مشکوکی دیده نشده؛ این صفحه را از طریق دامنهٔ اصلی باز کنید تا بررسی زنده انجام شود."))
+        out.append(_c("client_ip", g, title, UNKNOWN, gettext("No suspicious request has been seen so far; open this page through the main domain so a live check can be done.")))
     return out
 
 
 # ------------------------------------------------------------------ ایمیل
 def check_email() -> list[Check]:
-    g = "ایمیل"
+    g = gettext("Email")
     backend = settings.EMAIL_BACKEND
     host = getattr(settings, "EMAIL_HOST", "")
     if backend.endswith(("console.EmailBackend", "locmem.EmailBackend", "dummy.EmailBackend", "filebased.EmailBackend")):
-        return [_c("email", g, "ارسال ایمیل", CRITICAL if not settings.DEBUG else RECOMMENDED,
-                   "ایمیل‌ها به صندوق واقعی نمی‌رسند (backend آزمایشی). بازیابی رمز و اطلاع‌رسانی دیدگاه‌ها کار نمی‌کند.",
-                   "DJANGO_EMAIL_BACKEND و تنظیمات EMAIL_HOST/EMAIL_HOST_USER/EMAIL_HOST_PASSWORD را برای SMTP واقعی پر کنید.")]
+        return [_c("email", g, gettext("Email sending"), CRITICAL if not settings.DEBUG else RECOMMENDED,
+                   gettext("Emails do not reach real inboxes (test backend). Password reset and comment notifications do not work."),
+                   gettext("Fill in DJANGO_EMAIL_BACKEND and the EMAIL_HOST/EMAIL_HOST_USER/EMAIL_HOST_PASSWORD settings for a real SMTP."))]
     out = []
     if backend.endswith("smtp.EmailBackend") and host in ("", "localhost", "127.0.0.1") and not getattr(settings, "EMAIL_HOST_USER", ""):
-        out.append(_c("email", g, "ارسال ایمیل", RECOMMENDED, "SMTP روی همین سرور و بدون ورود تنظیم شده؛ بیشتر ایمیل‌ها در اسپم می‌افتند یا رد می‌شوند.",
-                      "از یک سرویس SMTP معتبر استفاده کنید و با دکمهٔ «ارسال ایمیل آزمایشی» تست کنید."))
+        out.append(_c("email", g, gettext("Email sending"), RECOMMENDED, gettext("SMTP is configured on this same server without authentication; most emails land in spam or are rejected."),
+                      gettext("Use a reputable SMTP service and test it with the “Send test email” button.")))
     else:
-        out.append(_c("email", g, "ارسال ایمیل", GOOD, f"SMTP تنظیم شده است ({host}). برای اطمینان، ایمیل آزمایشی بفرستید."))
+        out.append(_c("email", g, gettext("Email sending"), GOOD, (gettext("SMTP is configured (%(host)s). To be sure, send a test email.") % {"host": host})))
     if "localhost" in settings.DEFAULT_FROM_EMAIL:
-        out.append(_c("email_from", g, "نشانی فرستنده", RECOMMENDED, "DEFAULT_FROM_EMAIL هنوز مقدار پیش‌فرض (localhost) است.",
-                      "نشانی واقعی دامنهٔ خودتان را بگذارید، مثلاً «سایت من <noreply@example.com>»."))
+        out.append(_c("email_from", g, gettext("Sender address"), RECOMMENDED, gettext("DEFAULT_FROM_EMAIL still has the default value (localhost)."),
+                      gettext("Set a real address on your own domain, e.g. “My Site <noreply@example.com>”.")))
     from .models import SiteSettings
 
     if SiteSettings.load().admin_email:
-        out.append(_c("email_admin", g, "ایمیل مدیر", GOOD, "ایمیل مدیر سایت ثبت شده است."))
+        out.append(_c("email_admin", g, gettext("Admin email"), GOOD, gettext("The site admin email is set.")))
     else:
-        out.append(_c("email_admin", g, "ایمیل مدیر", RECOMMENDED, "ایمیل مدیر ثبت نشده؛ اطلاع‌رسانی‌ها به جایی نمی‌رسند.", "در «تنظیمات سایت» ایمیل مدیر را وارد کنید."))
+        out.append(_c("email_admin", g, gettext("Admin email"), RECOMMENDED, gettext("No admin email is set; notifications go nowhere."), gettext("Enter the admin email in “Site settings”.")))
     return out
 
 
@@ -141,7 +141,7 @@ def check_email() -> list[Check]:
 def check_cache() -> list[Check]:
     from django.core.cache import cache
 
-    g = "کش و ذخیره‌سازی"
+    g = gettext("Cache and storage")
     backend = settings.CACHES["default"]["BACKEND"]
     key = f"ravix-health-{os.getpid()}"
     try:
@@ -149,49 +149,49 @@ def check_cache() -> list[Check]:
         works = cache.get(key) == "ok"
         cache.delete(key)
     except Exception as exc:  # noqa: BLE001
-        return [_c("cache", g, "کش", CRITICAL, f"کش پاسخ نمی‌دهد ({type(exc).__name__}).", "اتصال Redis/پوشهٔ کش را بررسی کنید.")]
+        return [_c("cache", g, gettext("Cache"), CRITICAL, (gettext("The cache is not responding (%(name)s).") % {"name": type(exc).__name__}), gettext("Check the Redis connection / cache folder."))]
     if not works:
-        return [_c("cache", g, "کش", RECOMMENDED if backend.endswith(("dummy.DummyCache",)) else CRITICAL,
-                   "نوشتن و خواندن در کش جواب نداد.", "تنظیمات CACHES را بررسی کنید.")]
+        return [_c("cache", g, gettext("Cache"), RECOMMENDED if backend.endswith(("dummy.DummyCache",)) else CRITICAL,
+                   gettext("Writing to and reading from the cache did not work."), gettext("Check the CACHES setting."))]
     if backend.endswith("locmem.LocMemCache") and not settings.DEBUG:
-        return [_c("cache", g, "کش", RECOMMENDED, "کش در حافظهٔ هر پروسه است و بین ورکرها مشترک نیست (محدودیت ورود دقیق کار نمی‌کند).",
-                   "RAVIX_REDIS_URL / REDIS_URL را تنظیم کنید.")]
-    return [_c("cache", g, "کش", GOOD, f"کش کار می‌کند ({backend.rsplit('.', 1)[-1]}).")]
+        return [_c("cache", g, gettext("Cache"), RECOMMENDED, gettext("The cache is per-process memory and is not shared between workers (precise login rate limiting does not work)."),
+                   gettext("Set RAVIX_REDIS_URL / REDIS_URL."))]
+    return [_c("cache", g, gettext("Cache"), GOOD, (gettext("The cache is working (%(value)s).") % {"value": backend.rsplit('.', 1)[-1]}))]
 
 
 def check_database() -> list[Check]:
     from django.db import connection
 
-    g = "کش و ذخیره‌سازی"
+    g = gettext("Cache and storage")
     out = []
     try:
         with connection.cursor() as cur:
             cur.execute("SELECT 1")
         engine = connection.vendor
         if engine == "sqlite" and not settings.DEBUG:
-            out.append(_c("db", g, "پایگاه داده", RECOMMENDED, "SQLite برای سایت واقعی با چند ورکر مناسب نیست.", "به PostgreSQL مهاجرت کنید (DATABASE_URL)."))
+            out.append(_c("db", g, gettext("Database"), RECOMMENDED, gettext("SQLite is not suitable for a real site with several workers."), gettext("Migrate to PostgreSQL (DATABASE_URL).")))
         else:
-            out.append(_c("db", g, "پایگاه داده", GOOD, f"اتصال برقرار است ({engine})."))
+            out.append(_c("db", g, gettext("Database"), GOOD, (gettext("The connection is established (%(engine)s).") % {"engine": engine})))
     except Exception as exc:  # noqa: BLE001
-        out.append(_c("db", g, "پایگاه داده", CRITICAL, f"اتصال به دیتابیس ناموفق بود ({type(exc).__name__}).", "سرویس دیتابیس را بررسی کنید."))
+        out.append(_c("db", g, gettext("Database"), CRITICAL, (gettext("Connecting to the database failed (%(name)s).") % {"name": type(exc).__name__}), gettext("Check the database service.")))
     media = Path(settings.MEDIA_ROOT)
     if media.is_dir() and os.access(str(media), os.W_OK):
-        out.append(_c("media", g, "پوشهٔ رسانه", GOOD, "پوشهٔ بارگذاری‌ها قابل نوشتن است."))
+        out.append(_c("media", g, gettext("Media folder"), GOOD, gettext("The uploads folder is writable.")))
     else:
-        out.append(_c("media", g, "پوشهٔ رسانه", CRITICAL, f"پوشهٔ رسانه ({media}) وجود ندارد یا قابل نوشتن نیست؛ بارگذاری تصویر کار نمی‌کند.",
-                      "مالکیت/مجوز پوشه را برای کاربر سرویس درست کنید."))
+        out.append(_c("media", g, gettext("Media folder"), CRITICAL, (gettext("The media folder (%(media)s) does not exist or is not writable; image upload does not work.") % {"media": media}),
+                      gettext("Fix the folder ownership/permissions for the service user.")))
     try:
         usage = shutil.disk_usage(str(media if media.exists() else settings.BASE_DIR))
         free_pct = usage.free * 100 / usage.total
         free_gb = usage.free / 1024 ** 3
         if usage.free < 200 * 1024 ** 2 or free_pct < 3:
-            out.append(_c("disk", g, "فضای دیسک", CRITICAL, f"فقط {free_gb:.1f} گیگابایت آزاد است.", "فایل‌های اضافه و پشتیبان‌های قدیمی را پاک کنید یا دیسک را بزرگ‌تر کنید."))
+            out.append(_c("disk", g, gettext("Disk space"), CRITICAL, (gettext("Only %(free_gb)s GB is free.") % {"free_gb": format(free_gb, '.1f')}), gettext("Delete extra files and old backups or enlarge the disk.")))
         elif usage.free < 1024 ** 3 or free_pct < 10:
-            out.append(_c("disk", g, "فضای دیسک", RECOMMENDED, f"{free_gb:.1f} گیگابایت آزاد است ({free_pct:.0f}٪).", "به‌زودی فضا را مدیریت کنید."))
+            out.append(_c("disk", g, gettext("Disk space"), RECOMMENDED, (gettext("%(free_gb)s GB is free (%(free_pct)s%%).") % {"free_gb": format(free_gb, '.1f'), "free_pct": format(free_pct, '.0f')}), gettext("Manage disk space soon.")))
         else:
-            out.append(_c("disk", g, "فضای دیسک", GOOD, f"{free_gb:.1f} گیگابایت آزاد ({free_pct:.0f}٪)."))
+            out.append(_c("disk", g, gettext("Disk space"), GOOD, (gettext("%(free_gb)s GB free (%(free_pct)s%%).") % {"free_gb": format(free_gb, '.1f'), "free_pct": format(free_pct, '.0f')})))
     except OSError:
-        out.append(_c("disk", g, "فضای دیسک", UNKNOWN, "فضای دیسک قابل سنجش نبود."))
+        out.append(_c("disk", g, gettext("Disk space"), UNKNOWN, gettext("Disk space could not be measured.")))
     return out
 
 
@@ -199,20 +199,20 @@ def check_database() -> list[Check]:
 def check_timers(now=None) -> list[Check]:
     from .management.commands.ravix_preflight import _ENABLED_OK, systemd_unit_state
 
-    g = "کارهای زمان‌بندی‌شده"
-    timers = [("ravix-publish-scheduled.timer", "انتشار نوشته‌های زمان‌بندی‌شده"), ("ravix-backup.timer", "پشتیبان‌گیری روزانه")]
+    g = gettext("Scheduled jobs")
+    timers = [("ravix-publish-scheduled.timer", gettext("Publishing scheduled posts")), ("ravix-backup.timer", gettext("Daily backup"))]
     if settings.SHOP_ENABLED:
-        timers.append(("ravix-expire-orders.timer", "لغو سفارش‌های پرداخت‌نشده"))
+        timers.append(("ravix-expire-orders.timer", gettext("Cancelling unpaid orders")))
     out = []
     for unit, label in timers:
         state = systemd_unit_state(unit)
         if state is None:
-            out.append(_c(unit, g, label, UNKNOWN, "systemd در دسترس نیست (کانتینر یا توسعه)؛ وضعیت این زمان‌بند از اینجا دیده نمی‌شود.",
-                          "در Docker، سرویس backup و دستور publish_scheduled را بررسی کنید؛ روی سرور: systemctl list-timers."))
+            out.append(_c(unit, g, label, UNKNOWN, gettext("systemd is not available (container or development); the status of this scheduler cannot be seen from here."),
+                          gettext("In Docker, check the backup service and the publish_scheduled command; on a server: systemctl list-timers.")))
         elif state[0] in _ENABLED_OK and state[1] == "active":
-            out.append(_c(unit, g, label, GOOD, f"{unit} فعال است."))
+            out.append(_c(unit, g, label, GOOD, (gettext("%(unit)s is active.") % {"unit": unit})))
         else:
-            out.append(_c(unit, g, label, CRITICAL, f"{unit} فعال نیست (enabled={state[0]}، active={state[1]}).",
+            out.append(_c(unit, g, label, CRITICAL, (gettext("%(unit)s is not active (enabled=%(state)s, active=%(state2)s).") % {"unit": unit, "state": state[0], "state2": state[1]}),
                           f"sudo systemctl enable --now {unit}"))
     # شاهد مستقل از systemd: نوشتهٔ زمان‌بندی‌شده‌ای که ۱۵ دقیقه از موعدش گذشته ولی هنوز «منتشر» نشده
     from apps.content.models import Post, PublishStatus
@@ -220,9 +220,9 @@ def check_timers(now=None) -> list[Check]:
     now = now or timezone.now()
     overdue = Post.objects.filter(status=PublishStatus.SCHEDULED, publish_at__lte=now - timedelta(minutes=15)).count()
     if overdue:
-        out.append(_c("scheduled_overdue", g, "نوشته‌های زمان‌بندی‌شدهٔ عقب‌افتاده", RECOMMENDED,
-                      f"{overdue} نوشته موعد انتشارش گذشته ولی وضعیتش هنوز «زمان‌بندی‌شده» است (به بازدیدکنندگان نمایش داده می‌شود ولی تایمر اجرا نشده).",
-                      "تایمر ravix-publish-scheduled را بررسی کنید یا دستور manage.py publish_scheduled را اجرا کنید."))
+        out.append(_c("scheduled_overdue", g, gettext("Overdue scheduled posts"), RECOMMENDED,
+                      (gettext("%(overdue)s posts are past their publish time but are still “scheduled” (they are shown to visitors but the timer has not run).") % {"overdue": overdue}),
+                      gettext("Check the ravix-publish-scheduled timer or run manage.py publish_scheduled.")))
     return out
 
 
@@ -254,41 +254,41 @@ def latest_backup_time(dirs=None) -> tuple[datetime | None, bool]:
 
 
 def check_backup(dirs=None, now=None) -> list[Check]:
-    g = "پشتیبان‌گیری"
+    g = gettext("Backups")
     when, readable = latest_backup_time(dirs)
     if when is None:
         if not readable:
-            return [_c("backup", g, "پشتیبان", UNKNOWN, "پوشهٔ پشتیبان برای برنامه قابل خواندن نیست (یا پشتیبانی تنظیم نشده).",
-                       "مطمئن شوید ravix-backup.timer فعال است و متغیر BACKUP_DIR به پوشهٔ خوانا اشاره می‌کند.")]
-        return [_c("backup", g, "پشتیبان", CRITICAL, "هیچ پشتیبان کاملی پیدا نشد.", "deploy/backup.sh را یک‌بار اجرا کنید و تایمر پشتیبان را فعال کنید.")]
+            return [_c("backup", g, gettext("Backup"), UNKNOWN, gettext("The backup folder is not readable by the application (or backups are not configured)."),
+                       gettext("Make sure ravix-backup.timer is active and BACKUP_DIR points to a readable folder."))]
+        return [_c("backup", g, gettext("Backup"), CRITICAL, gettext("No complete backup was found."), gettext("Run deploy/backup.sh once and enable the backup timer."))]
     age = ((now or timezone.now()) - when).total_seconds() / 3600
     when_txt = timezone.localtime(when).strftime("%Y-%m-%d %H:%M")
     if age > BACKUP_CRIT_HOURS:
-        return [_c("backup", g, "پشتیبان", CRITICAL, f"آخرین پشتیبان {int(age // 24)} روز پیش بوده ({when_txt}).", "تایمر پشتیبان و لاگ سرویس را بررسی کنید.")]
+        return [_c("backup", g, gettext("Backup"), CRITICAL, (gettext("The last backup was %(value)s days ago (%(when_txt)s).") % {"value": int(age // 24), "when_txt": when_txt}), gettext("Check the backup timer and the service log."))]
     if age > BACKUP_WARN_HOURS:
-        return [_c("backup", g, "پشتیبان", RECOMMENDED, f"آخرین پشتیبان {int(age)} ساعت پیش بوده ({when_txt}).", "تایمر پشتیبان را بررسی کنید.")]
-    return [_c("backup", g, "پشتیبان", GOOD, f"آخرین پشتیبان: {when_txt}. فایل .env جداگانه پشتیبان‌گیری شود.")]
+        return [_c("backup", g, gettext("Backup"), RECOMMENDED, (gettext("The last backup was %(age)s hours ago (%(when_txt)s).") % {"age": int(age), "when_txt": when_txt}), gettext("Check the backup timer."))]
+    return [_c("backup", g, gettext("Backup"), GOOD, (gettext("Last backup: %(when_txt)s. Back up the .env file separately.") % {"when_txt": when_txt}))]
 
 
 # ------------------------------------------------------------------ نسخه‌ها
 def check_versions() -> list[Check]:
     from apps.updater import versions
 
-    g = "نسخه‌ها"
+    g = gettext("Versions")
     out = []
     running = versions.running_version()
-    out.append(_c("ravix_version", g, "نسخهٔ راویکس", GOOD, f"نسخهٔ در حال اجرا: {running}."))
+    out.append(_c("ravix_version", g, gettext("Ravix version"), GOOD, (gettext("Running version: %(running)s.") % {"running": running})))
     try:
         if versions.restart_pending():
-            out.append(_c("restart", g, "راه‌اندازی دوباره", RECOMMENDED, f"روی دیسک نسخهٔ {versions.disk_version()} هست ولی نسخهٔ {running} در حال اجراست.",
-                          "سرویس را ری‌استارت کنید (systemctl restart ravix)."))
+            out.append(_c("restart", g, gettext("Restart"), RECOMMENDED, (gettext("Version %(disk_version)s is on disk but version %(running)s is running.") % {"disk_version": versions.disk_version(), "running": running}),
+                          gettext("Restart the service (systemctl restart ravix).")))
     except Exception:  # noqa: BLE001
         pass
     py = f"{sys.version_info.major}.{sys.version_info.minor}"
     if sys.version_info < (3, 11):
-        out.append(_c("python", g, "پایتون", CRITICAL, f"Python {py} پشتیبانی نمی‌شود.", "به Python 3.11 یا بالاتر ارتقا دهید."))
+        out.append(_c("python", g, gettext("Python"), CRITICAL, (gettext("Python %(py)s is not supported.") % {"py": py}), gettext("Upgrade to Python 3.11 or later.")))
     else:
-        out.append(_c("python", g, "پایتون", GOOD, f"Python {py}."))
+        out.append(_c("python", g, gettext("Python"), GOOD, f"Python {py}."))
     import django
 
     out.append(_c("django", g, "Django", GOOD, f"Django {django.get_version()}."))
@@ -298,31 +298,31 @@ def check_versions() -> list[Check]:
 
         plan = MigrationExecutor(connection).migration_plan(MigrationExecutor(connection).loader.graph.leaf_nodes())
         if plan:
-            out.append(_c("migrations", g, "مهاجرت‌های دیتابیس", CRITICAL, f"{len(plan)} مهاجرت اجرا نشده است.", "python manage.py migrate را اجرا کنید."))
+            out.append(_c("migrations", g, gettext("Database migrations"), CRITICAL, (gettext("%(plan_count)s migrations have not been applied.") % {"plan_count": len(plan)}), gettext("Run python manage.py migrate.")))
         else:
-            out.append(_c("migrations", g, "مهاجرت‌های دیتابیس", GOOD, "دیتابیس به‌روز است."))
+            out.append(_c("migrations", g, gettext("Database migrations"), GOOD, gettext("The database is up to date.")))
     except Exception:  # noqa: BLE001
-        out.append(_c("migrations", g, "مهاجرت‌های دیتابیس", UNKNOWN, "وضعیت مهاجرت‌ها قابل بررسی نبود."))
+        out.append(_c("migrations", g, gettext("Database migrations"), UNKNOWN, gettext("The migration status could not be checked.")))
     try:
         bad_themes = [t["slug"] for t in versions.installed_themes() if not t["valid"]]
         if bad_themes:
-            out.append(_c("themes", g, "قالب‌ها", RECOMMENDED, "قالب نامعتبر: " + "، ".join(bad_themes), "قالب را دوباره نصب یا حذف کنید."))
+            out.append(_c("themes", g, gettext("Themes"), RECOMMENDED, (gettext("Invalid theme: %(bad_themes)s") % {"bad_themes": "، ".join(bad_themes)}), gettext("Reinstall or remove the theme.")))
         else:
-            out.append(_c("themes", g, "قالب‌ها", GOOD, "همهٔ قالب‌های نصب‌شده معتبرند."))
+            out.append(_c("themes", g, gettext("Themes"), GOOD, gettext("All installed themes are valid.")))
         from apps.core.version import PLUGIN_API_VERSION
 
         bad_plugins = [p["slug"] for p in versions.installed_plugins()
                        if p["active"] and p.get("api_version") and not versions.satisfies(PLUGIN_API_VERSION, f">={p['api_version']}")]
         if bad_plugins:
-            out.append(_c("plugins", g, "افزونه‌ها", RECOMMENDED, "افزونهٔ نیازمند API جدیدتر: " + "، ".join(bad_plugins), "هسته یا افزونه را به‌روز کنید."))
+            out.append(_c("plugins", g, gettext("Plugins"), RECOMMENDED, (gettext("Plugin requiring a newer API: %(bad_plugins)s") % {"bad_plugins": "، ".join(bad_plugins)}), gettext("Update the core or the plugin.")))
         else:
-            out.append(_c("plugins", g, "افزونه‌ها", GOOD, "ناسازگاری شناخته‌شده‌ای در افزونه‌های فعال نیست."))
+            out.append(_c("plugins", g, gettext("Plugins"), GOOD, gettext("There are no known incompatibilities among the active plugins.")))
     except Exception:  # noqa: BLE001
-        out.append(_c("plugins", g, "قالب‌ها و افزونه‌ها", UNKNOWN, "نسخهٔ قالب‌ها و افزونه‌ها قابل بررسی نبود."))
+        out.append(_c("plugins", g, gettext("Themes and plugins"), UNKNOWN, gettext("The version of themes and plugins could not be checked.")))
     return out
 
 
-GROUP_ORDER = ["امنیت و HTTPS", "ایمیل", "کش و ذخیره‌سازی", "کارهای زمان‌بندی‌شده", "پشتیبان‌گیری", "نسخه‌ها"]
+GROUP_ORDER = [gettext_lazy("Security and HTTPS"), gettext_lazy("Email"), gettext_lazy("Cache and storage"), gettext_lazy("Scheduled jobs"), gettext_lazy("Backups"), gettext_lazy("Versions")]
 
 
 def run_all(request=None) -> list[Check]:
@@ -331,7 +331,7 @@ def run_all(request=None) -> list[Check]:
         try:
             checks.extend(fn())
         except Exception as exc:  # noqa: BLE001 — یک بررسی خراب نباید کل صفحه را بیندازد
-            checks.append(_c("internal", "سامانه", "خطای بررسی", UNKNOWN, f"یکی از بررسی‌ها اجرا نشد ({type(exc).__name__})."))
+            checks.append(_c("internal", gettext("System"), gettext("Check error"), UNKNOWN, (gettext("One of the checks did not run (%(name)s).") % {"name": type(exc).__name__})))
     return checks
 
 
@@ -340,9 +340,9 @@ def summarize(checks: list[Check]) -> dict:
     scored = counts[GOOD] + counts[RECOMMENDED] + counts[CRITICAL]
     score = round((counts[GOOD] + counts[RECOMMENDED] * 0.5) * 100 / scored) if scored else 100
     if counts[CRITICAL]:
-        verdict, tone = "مشکل‌های بحرانی دارید", CRITICAL
+        verdict, tone = gettext("You have critical problems"), CRITICAL
     elif counts[RECOMMENDED]:
-        verdict, tone = "سایت خوب کار می‌کند، چند بهبود پیشنهاد می‌شود", RECOMMENDED
+        verdict, tone = gettext("The site works well; a few improvements are suggested"), RECOMMENDED
     else:
-        verdict, tone = "سایت شما سالم است", GOOD
+        verdict, tone = gettext("Your site is healthy"), GOOD
     return {"counts": counts, "score": score, "verdict": verdict, "tone": tone}

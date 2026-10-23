@@ -1,10 +1,11 @@
+{% load i18n %}
 {% load ravix_ui %}
 {% if is_paginated %}
 <div class="pagination">
-  <span>صفحه {{ page_obj.number|fa_digits }} از {{ paginator.num_pages|fa_digits }} ({{ paginator.count|fa_digits }} مورد)</span>
+  <span>{% blocktrans trimmed with number=page_obj.number|fa_digits num_pages=paginator.num_pages|fa_digits count=paginator.count|fa_digits %}Page {{ number }} of {{ num_pages }} ({{ count }} items){% endblocktrans %}</span>
   <span style="display:flex;gap:.5rem">
-    {% if page_obj.has_previous %}<a class="btn btn-light btn-sm" href="?{% if query_string %}{{ query_string }}&{% endif %}page={{ page_obj.previous_page_number }}">قبلی</a>{% endif %}
-    {% if page_obj.has_next %}<a class="btn btn-light btn-sm" href="?{% if query_string %}{{ query_string }}&{% endif %}page={{ page_obj.next_page_number }}">بعدی</a>{% endif %}
+    {% if page_obj.has_previous %}<a class="btn btn-light btn-sm" href="?{% if query_string %}{{ query_string }}&{% endif %}page={{ page_obj.previous_page_number }}">{% trans "Previous" %}</a>{% endif %}
+    {% if page_obj.has_next %}<a class="btn btn-light btn-sm" href="?{% if query_string %}{{ query_string }}&{% endif %}page={{ page_obj.next_page_number }}">{% trans "Next" %}</a>{% endif %}
   </span>
 </div>
 {% endif %}

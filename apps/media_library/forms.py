@@ -1,3 +1,4 @@
+from django.utils.translation import gettext, gettext_lazy
 from django import forms
 from django.core.exceptions import ValidationError
 from PIL import Image
@@ -27,15 +28,15 @@ class MultipleFileField(forms.FileField):
 
 
 class MediaUploadForm(StyledFormMixin, forms.Form):
-    files = MultipleFileField(label="فایل‌ها", help_text=f"حداکثر {MAX_FILES_PER_UPLOAD} فایل در هر بار بارگذاری.")
-    title = forms.CharField(label="عنوان", max_length=200, required=False, help_text="فقط هنگام بارگذاری یک فایل اعمال می‌شود.")
-    alt_text = forms.CharField(label="متن جایگزین (Alt Text)", max_length=300, required=False,
-                               help_text="فقط هنگام بارگذاری یک تصویر اعمال می‌شود؛ برای چند فایل بعداً جداگانه ثبت کنید.")
+    files = MultipleFileField(label=gettext_lazy("Files"), help_text=(gettext_lazy("At most %(MAX_FILES_PER_UPLOAD)s files per upload.") % {"MAX_FILES_PER_UPLOAD": MAX_FILES_PER_UPLOAD}))
+    title = forms.CharField(label=gettext_lazy("Title"), max_length=200, required=False, help_text=gettext_lazy("Applies only when uploading a single file."))
+    alt_text = forms.CharField(label=gettext_lazy("Alt text"), max_length=300, required=False,
+                               help_text=gettext_lazy("Applies only when uploading a single image; for several files, set it separately later."))
 
     def clean_files(self):
         files = self.cleaned_data["files"]
         if len(files) > MAX_FILES_PER_UPLOAD:
-            raise ValidationError(f"در هر بار حداکثر {MAX_FILES_PER_UPLOAD} فایل می‌توانید بارگذاری کنید.")
+            raise ValidationError((gettext("You can upload at most %(MAX_FILES_PER_UPLOAD)s files at a time.") % {"MAX_FILES_PER_UPLOAD": MAX_FILES_PER_UPLOAD}))
         errors, kinds = [], {}
         for f in files:
             try:

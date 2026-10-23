@@ -1,27 +1,28 @@
 {% extends "layouts/panel.html" %}
+{% load i18n %}
 {% load ravix_ui %}
-{% block title %}نصب افزونه از بسته{% endblock %}
-{% block page_title %}نصب افزونه از بسته{% endblock %}
+{% block title %}{% trans "Install a plugin from a package" %}{% endblock %}
+{% block page_title %}{% trans "Install a plugin from a package" %}{% endblock %}
 {% block content_class %}content-narrow{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>نصب افزونه از بسته</h1><p>دریافت و جایگذاری امن بسته. پس از آن، مشخصات و کد را بازبینی و نصب را صریحاً تأیید می‌کنید؛ هیچ افزونه‌ای خودکار نصب یا فعال نمی‌شود.</p></div>
-  <a class="btn btn-light" href="{% url 'plugins:list' %}">بازگشت</a></div>
-<div class="form-errors warn" role="note"><p><strong>امضای دیجیتال فقط اصالت بسته را تأیید می‌کند، نه بی‌خطر بودن کد را.</strong> افزونه کد پایتون است و با دسترسی کامل سرور اجرا می‌شود. فقط افزونهٔ ناشر مورد اعتماد را نصب کنید و کدش را در مرحلهٔ بازبینی ببینید.</p></div>
-{% if not web_install %}<div class="form-errors" role="alert"><p>نصب از طریق وب خاموش است. مدیر سرور باید <span class="ltr">RAVIX_PLUGIN_WEB_INSTALL=true</span> را تنظیم و پوشهٔ <span class="ltr">RAVIX_PLUGIN_INSTALL_DIR</span> را برای سرویس قابل‌نوشتن کند.</p></div>{% endif %}
-{% if not trusted_count %}<div class="form-errors warn" role="status"><p>هیچ کلید امضای مورد اعتمادی تعریف نشده است؛ بستهٔ امضاشده پذیرفته نمی‌شود. مدیرکل می‌تواند در «کلیدهای مورد اعتماد» کلید عمومی ناشر را ثبت کند.</p></div>{% endif %}
-<div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>از مخزن رسمی</h2></div><div class="card-body">
+<div class="page-head"><div><h1>{% trans "Install a plugin from a package" %}</h1><p>{% trans "Safely fetch and place a package. After that you review the details and code and explicitly confirm the installation; no plugin is installed or enabled automatically." %}</p></div>
+  <a class="btn btn-light" href="{% url 'plugins:list' %}">{% trans "Back" %}</a></div>
+<div class="form-errors warn" role="note"><p>{% trans "<strong>A digital signature only confirms the package’s authenticity, not that the code is harmless.</strong> A plugin is Python code and runs with full server access. Install only plugins from a trusted publisher and look at their code in the review step." %}</p></div>
+{% if not web_install %}<div class="form-errors" role="alert"><p>{% trans "Web installation is off. The server administrator must set" %} <span class="ltr">RAVIX_PLUGIN_WEB_INSTALL=true</span> {% trans "and make the directory" %} <span class="ltr">RAVIX_PLUGIN_INSTALL_DIR</span> {% trans "writable for the service." %}</p></div>{% endif %}
+{% if not trusted_count %}<div class="form-errors warn" role="status"><p>{% trans "No trusted signing key is defined; a signed package is not accepted. The superadmin can register the publisher’s public key in “Trusted keys”." %}</p></div>{% endif %}
+<div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>{% trans "From the official registry" %}</h2></div><div class="card-body">
   {% if has_registry %}<form method="post" data-once>{% csrf_token %}<input type="hidden" name="op" value="registry">
-    <div class="field"><label for="slug">شناسهٔ افزونه</label><input class="input ltr" id="slug" name="slug" value="{{ prefill_slug }}" maxlength="40" required></div>
-    <div class="field"><label for="version">نسخه (خالی = آخرین نسخهٔ سازگار)</label><input class="input ltr" id="version" name="version" value="{{ prefill_version }}" maxlength="20"></div>
-    <button class="btn" type="submit" {% if not web_install %}disabled{% endif %}>دریافت و بررسی</button></form>
-  {% else %}<div class="empty">مخزن رسمی تنظیم نشده است (<span class="ltr">RAVIX_OFFICIAL_REGISTRY_URL</span>).</div>{% endif %}
+    <div class="field"><label for="slug">{% trans "Plugin identifier" %}</label><input class="input ltr" id="slug" name="slug" value="{{ prefill_slug }}" maxlength="40" required></div>
+    <div class="field"><label for="version">{% trans "Version (empty = latest compatible version)" %}</label><input class="input ltr" id="version" name="version" value="{{ prefill_version }}" maxlength="20"></div>
+    <button class="btn" type="submit" {% if not web_install %}disabled{% endif %}>{% trans "Fetch and review" %}</button></form>
+  {% else %}<div class="empty">{% trans "The official registry is not configured (" %}<span class="ltr">RAVIX_OFFICIAL_REGISTRY_URL</span>).</div>{% endif %}
 </div></div>
-<div class="card"><div class="card-header"><h2>از فایل محلی (zip)</h2></div><div class="card-body">
+<div class="card"><div class="card-header"><h2>{% trans "From a local file (zip)" %}</h2></div><div class="card-body">
   <form method="post" enctype="multipart/form-data" data-once>{% csrf_token %}<input type="hidden" name="op" value="local">
-    <div class="field"><label for="package">فایل بسته</label><input class="input" type="file" id="package" name="package" accept=".zip" required></div>
-    <div class="field"><label for="signature">امضا (base64){% if allow_unsigned %} — اختیاری{% else %} — الزامی{% endif %}</label><input class="input ltr" id="signature" name="signature" maxlength="200" autocomplete="off"></div>
-    <div class="field"><label for="key_id">شناسهٔ کلید امضاکننده (اختیاری)</label><input class="input ltr" id="key_id" name="key_id" maxlength="16"></div>
-    <div class="field-check"><input type="checkbox" class="check" name="upgrade" id="upgrade"><label for="upgrade">اگر این افزونه نصب است، به‌عنوان ارتقا (با پشتیبان‌گیری) جایگزین شود.</label></div>
-    <button class="btn" type="submit" {% if not web_install %}disabled{% endif %}>بارگذاری و بررسی</button></form>
+    <div class="field"><label for="package">{% trans "Package file" %}</label><input class="input" type="file" id="package" name="package" accept=".zip" required></div>
+    <div class="field"><label for="signature">{% trans "Signature (base64)" %}{% if allow_unsigned %} {% trans "— optional" %}{% else %} {% trans "— required" %}{% endif %}</label><input class="input ltr" id="signature" name="signature" maxlength="200" autocomplete="off"></div>
+    <div class="field"><label for="key_id">{% trans "Signing key identifier (optional)" %}</label><input class="input ltr" id="key_id" name="key_id" maxlength="16"></div>
+    <div class="field-check"><input type="checkbox" class="check" name="upgrade" id="upgrade"><label for="upgrade">{% trans "If this plugin is installed, replace it as an upgrade (with a backup)." %}</label></div>
+    <button class="btn" type="submit" {% if not web_install %}disabled{% endif %}>{% trans "Upload and review" %}</button></form>
 </div></div>
 {% endblock %}

@@ -1,22 +1,23 @@
 {% extends "layouts/panel.html" %}
+{% load i18n %}
 {% load ravix_ui %}
 {% block title %}{{ p.name }}{% endblock %}
 {% block page_title %}{{ p.name }}{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>{{ p.name }}</h1><p><span class="ltr">{{ p.slug }}</span> — ناشر: {{ p.publisher.display_name }}{% if p.category %} — {{ p.category.name }}{% endif %}</p></div>
-  <a class="btn btn-light" href="{% url 'pluginhub:directory' %}">بازگشت</a></div>
+<div class="page-head"><div><h1>{{ p.name }}</h1><p><span class="ltr">{{ p.slug }}</span> {% blocktrans trimmed with display_name=p.publisher.display_name %}— Publisher: {{ display_name }}{% endblocktrans %}{% if p.category %} — {{ p.category.name }}{% endif %}</p></div>
+  <a class="btn btn-light" href="{% url 'pluginhub:directory' %}">{% trans "Back" %}</a></div>
 <div class="card"><div class="card-body">
   <p>{{ p.description|default:p.summary|linebreaksbr }}</p>
-  <p class="muted">{% if p.license %}مجوز: <span class="ltr">{{ p.license }}</span> — {% endif %}{% if p.homepage %}<a href="{{ p.homepage }}" rel="noopener noreferrer nofollow" class="ltr">{{ p.homepage }}</a>{% endif %}</p>
-  {% if installed %}<p><span class="badge badge-published">نصب‌شده</span> نسخهٔ <span class="ltr">{{ installed.version }}</span> — <a href="{% url 'plugins:detail' p.slug %}">مدیریت</a></p>{% endif %}
+  <p class="muted">{% if p.license %}{% trans "License:" %} <span class="ltr">{{ p.license }}</span> — {% endif %}{% if p.homepage %}<a href="{{ p.homepage }}" rel="noopener noreferrer nofollow" class="ltr">{{ p.homepage }}</a>{% endif %}</p>
+  {% if installed %}<p><span class="badge badge-published">{% trans "Installed" %}</span> {% trans "Version no." %} <span class="ltr">{{ installed.version }}</span> — <a href="{% url 'plugins:detail' p.slug %}">{% trans "Manage" %}</a></p>{% endif %}
 </div></div>
 <div class="card" style="margin-top:1rem"><div class="card-body">
-  <h2>نسخه‌ها و سازگاری</h2>
-  <div class="table-wrap"><table class="table"><thead><tr><th>نسخه</th><th>وضعیت</th><th>سازگاری با این Ravix</th><th>SHA-256</th><th>حجم</th></tr></thead><tbody>
+  <h2>{% trans "Versions and compatibility" %}</h2>
+  <div class="table-wrap"><table class="table"><thead><tr><th>{% trans "Version" %}</th><th>{% trans "Status" %}</th><th>{% trans "Compatibility with this Ravix" %}</th><th>SHA-256</th><th>{% trans "Size" %}</th></tr></thead><tbody>
   {% for r in rows %}<tr>
     <td class="ltr">{{ r.v.version }}</td>
-    <td>{% if r.v.status == 'published' %}<span class="badge badge-published">منتشرشده</span>{% else %}<span class="badge badge-inactive">پس‌گرفته‌شده</span>{% if r.v.yank_reason %}<br>{{ r.v.yank_reason }}{% endif %}{% endif %}</td>
-    <td style="white-space:normal">{% if r.compat.ok %}<span class="badge badge-published">سازگار</span>{% else %}<span class="badge badge-inactive">ناسازگار</span><ul class="theme-errors">{% for pr in r.compat.problems %}<li>{{ pr }}</li>{% endfor %}</ul>{% endif %}
+    <td>{% if r.v.status == 'published' %}<span class="badge badge-published">{% trans "Published" %}</span>{% else %}<span class="badge badge-inactive">{% trans "Withdrawn" %}</span>{% if r.v.yank_reason %}<br>{{ r.v.yank_reason }}{% endif %}{% endif %}</td>
+    <td style="white-space:normal">{% if r.compat.ok %}<span class="badge badge-published">{% trans "Compatible" %}</span>{% else %}<span class="badge badge-inactive">{% trans "Incompatible" %}</span><ul class="theme-errors">{% for pr in r.compat.problems %}<li>{{ pr }}</li>{% endfor %}</ul>{% endif %}
       <br><span class="muted ltr">Ravix {{ r.v.ravin_spec }}</span></td>
     <td class="ltr" style="word-break:break-all;max-width:260px"><code>{{ r.v.sha256 }}</code></td>
     <td class="ltr">{{ r.v.size }} B</td></tr>{% endfor %}
@@ -24,11 +25,11 @@
 </div></div>
 {% if latest %}
 <div class="card" style="margin-top:1rem"><div class="card-body">
-  <h2>دریافت (آخرین نسخهٔ سازگار: <span class="ltr">{{ latest.version }}</span>)</h2>
-  <p>بسته فقط از HTTPS و با بررسی SHA-256 دریافت و در پوشهٔ <span class="ltr">plugins/</span> قرار می‌گیرد؛ <strong>نصب و فعال‌سازی خودکار نیست</strong> و باید در «افزونه‌ها» با اعتماد صریح شما انجام شود.</p>
-  <p><a class="btn" href="{% url 'plugins:install_package' %}?slug={{ p.slug }}&version={{ latest.version }}">نصب از مخزن (با بررسی امضا)</a></p>
-  <p class="muted">یا از خط فرمان:</p>
+  <h2>{% trans "Download (latest compatible version:" %} <span class="ltr">{{ latest.version }}</span>)</h2>
+  <p>{% trans "The package is downloaded only over HTTPS with a SHA-256 check and is placed in the folder" %} <span class="ltr">plugins/</span> {% trans "; <strong>it is not installed or enabled automatically</strong> and must be done in “Plugins” with your explicit trust." %}</p>
+  <p><a class="btn" href="{% url 'plugins:install_package' %}?slug={{ p.slug }}&version={{ latest.version }}">{% trans "Install from the registry (with signature check)" %}</a></p>
+  <p class="muted">{% trans "or from the command line:" %}</p>
   <pre class="ltr" dir="ltr" style="overflow:auto"><code>python manage.py plugin_fetch {{ p.slug }} --plugin-version {{ latest.version }} --registry {{ registry_url }} --sha256 {{ latest.sha256 }}</code></pre>
 </div></div>
-{% else %}<div class="form-errors warn" role="status"><p>هیچ نسخهٔ سازگاری با این Ravix وجود ندارد.</p></div>{% endif %}
+{% else %}<div class="form-errors warn" role="status"><p>{% trans "There is no version compatible with this Ravix." %}</p></div>{% endif %}
 {% endblock %}

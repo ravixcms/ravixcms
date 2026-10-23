@@ -1,16 +1,17 @@
 {% extends "layouts/panel.html" %}
+{% load i18n %}
 {% load ravix_ui %}
-{% block title %}داشبورد{% endblock %}
-{% block page_title %}داشبورد{% endblock %}
+{% block title %}{% trans "Dashboard" %}{% endblock %}
+{% block page_title %}{% trans "Dashboard" %}{% endblock %}
 {% block content %}
 <section class="card welcome">
   <div class="card-body">
     <div>
-      <h1>{{ request.user.display_name }}، خوش آمدید 👋</h1>
-      <p>شما با نقش «{{ request.user.get_role_display }}» وارد {{ site.site_name }} شده‌اید.{% if request.user.last_login %} آخرین ورود: {{ request.user.last_login|jalali_datetime }}{% endif %}</p>
+      <h1>{% blocktrans trimmed with display_name=request.user.display_name %}Welcome, {{ display_name }} 👋{% endblocktrans %}</h1>
+      <p>{% blocktrans trimmed with get_role_display=request.user.get_role_display site_name=site.site_name %}You signed in to {{ site_name }} with the role “{{ get_role_display }}”.{% endblocktrans %}{% if request.user.last_login %} {% blocktrans trimmed with last_login=request.user.last_login|jalali_datetime %}Last sign-in: {{ last_login }}{% endblocktrans %}{% endif %}</p>
     </div>
     <div>
-      <div style="font-size:.85rem">تکمیل پروفایل: {{ profile_completeness|fa_digits }}٪</div>
+      <div style="font-size:.85rem">{% blocktrans trimmed with profile_completeness=profile_completeness|fa_digits %}Profile completion: {{ profile_completeness }}%{% endblocktrans %}</div>
       <div class="progress" role="progressbar" aria-valuenow="{{ profile_completeness }}" aria-valuemin="0" aria-valuemax="100"><i style="width: {{ profile_completeness }}%"></i></div>
     </div>
   </div>
@@ -19,8 +20,8 @@
 {% if onboarding %}
 <section class="card onboarding" aria-labelledby="onb-title">
   <div class="card-header">
-    <h2 id="onb-title">شروع سریع — {{ onboarding.done|fa_digits }} از {{ onboarding.total|fa_digits }} گام انجام شد</h2>
-    <form method="post" action="{% url 'dashboard:onboarding_dismiss' %}">{% csrf_token %}<button class="btn btn-light btn-sm" type="submit">بستن راهنما</button></form>
+    <h2 id="onb-title">{% blocktrans trimmed with done=onboarding.done|fa_digits total=onboarding.total|fa_digits %}Quick start — {{ done }} of {{ total }} steps done{% endblocktrans %}</h2>
+    <form method="post" action="{% url 'dashboard:onboarding_dismiss' %}">{% csrf_token %}<button class="btn btn-light btn-sm" type="submit">{% trans "Close guide" %}</button></form>
   </div>
   <div class="card-body">
     <div class="progress" role="progressbar" aria-valuenow="{{ onboarding.percent }}" aria-valuemin="0" aria-valuemax="100"><i style="width: {{ onboarding.percent }}%"></i></div>
@@ -29,7 +30,7 @@
       <li class="onb-step{% if s.done %} done{% endif %}" style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
         <span aria-hidden="true" style="font-size:1.2rem">{% if s.done %}✅{% else %}⬜{% endif %}</span>
         <div style="flex:1;min-width:14rem"><strong>{{ s.title }}</strong><div class="help">{{ s.hint }}</div></div>
-        {% if s.done %}<span class="badge">انجام شد</span>{% else %}<a class="btn btn-primary btn-sm" href="{{ s.url }}">{{ s.button }}</a>{% endif %}
+        {% if s.done %}<span class="badge">{% trans "Done" %}</span>{% else %}<a class="btn btn-primary btn-sm" href="{{ s.url }}">{{ s.button }}</a>{% endif %}
       </li>
       {% endfor %}
     </ol>
@@ -37,29 +38,29 @@
 </section>
 {% endif %}
 {% if has_samples %}
-<section class="card" aria-label="محتوای نمونه">
+<section class="card" aria-label="{% trans "Sample content" %}">
   <div class="card-body" style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
-    <p style="flex:1;margin:0">سایت شما یک نوشته و دو برگهٔ نمونه («درباره ما» و «تماس با ما») دارد. هر کدام را ویرایش کنید، مال شما می‌شود؛ بقیه را می‌توانید یک‌جا حذف کنید.</p>
-    <form method="post" action="{% url 'dashboard:samples_delete' %}" data-confirm="نمونه‌های ویرایش‌نشده حذف شوند؟">{% csrf_token %}<button class="btn btn-light btn-sm" type="submit">حذف محتوای نمونه</button></form>
+    <p style="flex:1;margin:0">{% trans "Your site has one sample post and two sample pages (“About us” and “Contact us”). Edit any of them and it becomes yours; you can delete the rest at once." %}</p>
+    <form method="post" action="{% url 'dashboard:samples_delete' %}" data-confirm="{% trans "Delete the unedited samples?" %}">{% csrf_token %}<button class="btn btn-light btn-sm" type="submit">{% trans "Delete sample content" %}</button></form>
   </div>
 </section>
 {% endif %}
 
 {% if stats %}
-<section class="stats-grid" aria-label="آمار کاربران">
-  <div class="card stat"><span class="stat-icon">{% icon "users" 24 %}</span><div><strong>{{ stats.total_users|fa_digits }}</strong><span>کل کاربران</span></div></div>
-  <div class="card stat"><span class="stat-icon green">{% icon "check" 24 %}</span><div><strong>{{ stats.active_users|fa_digits }}</strong><span>کاربران فعال</span></div></div>
-  <div class="card stat"><span class="stat-icon amber">{% icon "calendar" 24 %}</span><div><strong>{{ stats.new_users_7d|fa_digits }}</strong><span>عضو جدید در ۷ روز اخیر</span></div></div>
-  <div class="card stat"><span class="stat-icon red">{% icon "lock" 24 %}</span><div><strong>{{ stats.inactive_users|fa_digits }}</strong><span>حساب غیرفعال</span></div></div>
+<section class="stats-grid" aria-label="{% trans "User statistics" %}">
+  <div class="card stat"><span class="stat-icon">{% icon "users" 24 %}</span><div><strong>{{ stats.total_users|fa_digits }}</strong><span>{% trans "Total users" %}</span></div></div>
+  <div class="card stat"><span class="stat-icon green">{% icon "check" 24 %}</span><div><strong>{{ stats.active_users|fa_digits }}</strong><span>{% trans "Active users" %}</span></div></div>
+  <div class="card stat"><span class="stat-icon amber">{% icon "calendar" 24 %}</span><div><strong>{{ stats.new_users_7d|fa_digits }}</strong><span>{% trans "New members in the last 7 days" %}</span></div></div>
+  <div class="card stat"><span class="stat-icon red">{% icon "lock" 24 %}</span><div><strong>{{ stats.inactive_users|fa_digits }}</strong><span>{% trans "Inactive accounts" %}</span></div></div>
 </section>
 {% endif %}
 
 {% if content_stats %}
-<section class="stats-grid" aria-label="آمار محتوا">
-  <div class="card stat"><span class="stat-icon">{% icon "file" 24 %}</span><div><strong>{{ content_stats.posts_total|fa_digits }}</strong><span>{% if content_stats.scope_own %}نوشته‌های من{% else %}کل نوشته‌ها{% endif %}</span></div></div>
-  <div class="card stat"><span class="stat-icon green">{% icon "check" 24 %}</span><div><strong>{{ content_stats.posts_live|fa_digits }}</strong><span>منتشرشده</span></div></div>
-  <div class="card stat"><span class="stat-icon amber">{% icon "edit" 24 %}</span><div><strong>{{ content_stats.posts_draft|fa_digits }}</strong><span>پیش‌نویس</span></div></div>
-  <div class="card stat"><span class="stat-icon red">{% icon "clock" 24 %}</span><div><strong>{{ content_stats.posts_scheduled|fa_digits }}</strong><span>در انتظار انتشار</span></div></div>
+<section class="stats-grid" aria-label="{% trans "Content statistics" %}">
+  <div class="card stat"><span class="stat-icon">{% icon "file" 24 %}</span><div><strong>{{ content_stats.posts_total|fa_digits }}</strong><span>{% if content_stats.scope_own %}{% trans "My posts" %}{% else %}{% trans "Total posts" %}{% endif %}</span></div></div>
+  <div class="card stat"><span class="stat-icon green">{% icon "check" 24 %}</span><div><strong>{{ content_stats.posts_live|fa_digits }}</strong><span>{% trans "Published" %}</span></div></div>
+  <div class="card stat"><span class="stat-icon amber">{% icon "edit" 24 %}</span><div><strong>{{ content_stats.posts_draft|fa_digits }}</strong><span>{% trans "Draft" %}</span></div></div>
+  <div class="card stat"><span class="stat-icon red">{% icon "clock" 24 %}</span><div><strong>{{ content_stats.posts_scheduled|fa_digits }}</strong><span>{% trans "Awaiting publication" %}</span></div></div>
 </section>
 {% endif %}
 
@@ -67,10 +68,10 @@
   <div style="display:grid;gap:1.25rem">
     {% if latest_users %}
     <section class="card">
-      <div class="card-header"><h2>آخرین کاربران ثبت‌نام‌شده</h2><a href="{% url 'accounts:user_list' %}" class="btn btn-light btn-sm">همه کاربران</a></div>
+      <div class="card-header"><h2>{% trans "Latest registered users" %}</h2><a href="{% url 'accounts:user_list' %}" class="btn btn-light btn-sm">{% trans "All users" %}</a></div>
       <div class="table-wrap">
         <table class="table">
-          <thead><tr><th>کاربر</th><th>نقش</th><th>تاریخ عضویت</th></tr></thead>
+          <thead><tr><th>{% trans "User" %}</th><th>{% trans "Role" %}</th><th>{% trans "Joined" %}</th></tr></thead>
           <tbody>
           {% for u in latest_users %}
             <tr>
@@ -85,11 +86,11 @@
     </section>
     {% else %}
     <section class="card">
-      <div class="card-header"><h2>حساب من</h2></div>
+      <div class="card-header"><h2>{% trans "My account" %}</h2></div>
       <div class="card-body">
-        <p>نام کاربری: <span class="ltr">@{{ request.user.username }}</span></p>
-        <p>ایمیل: <span class="ltr">{{ request.user.email }}</span></p>
-        <p style="margin:0">عضویت از: {{ request.user.date_joined|jalali }}</p>
+        <p>{% trans "Username:" %} <span class="ltr">@{{ request.user.username }}</span></p>
+        <p>{% trans "Email:" %} <span class="ltr">{{ request.user.email }}</span></p>
+        <p style="margin:0">{% blocktrans trimmed with date_joined=request.user.date_joined|jalali %}Member since: {{ date_joined }}{% endblocktrans %}</p>
       </div>
     </section>
     {% endif %}
@@ -97,22 +98,22 @@
 
   <div style="display:grid;gap:1.25rem">
     <section class="card">
-      <div class="card-header"><h2>میانبرها</h2></div>
+      <div class="card-header"><h2>{% trans "Shortcuts" %}</h2></div>
       <div class="card-body shortcuts">
-        <a class="shortcut" href="{% url 'accounts:profile' %}">{% icon "user" 20 %} ویرایش پروفایل</a>
-        <a class="shortcut" href="{% url 'accounts:password_change' %}">{% icon "key" 20 %} تغییر رمز عبور</a>
-        {% if content_stats %}<a class="shortcut" href="{% url 'content:post_create' %}">{% icon "plus" 20 %} نوشته جدید</a>{% endif %}
-        {% if content_stats.media_total is not None %}<a class="shortcut" href="{% url 'media_library:media_upload' %}">{% icon "upload" 20 %} بارگذاری رسانه</a>{% endif %}
+        <a class="shortcut" href="{% url 'accounts:profile' %}">{% icon "user" 20 %} {% trans "Edit profile" %}</a>
+        <a class="shortcut" href="{% url 'accounts:password_change' %}">{% icon "key" 20 %} {% trans "Change password" %}</a>
+        {% if content_stats %}<a class="shortcut" href="{% url 'content:post_create' %}">{% icon "plus" 20 %} {% trans "New post" %}</a>{% endif %}
+        {% if content_stats.media_total is not None %}<a class="shortcut" href="{% url 'media_library:media_upload' %}">{% icon "upload" 20 %} {% trans "Upload media" %}</a>{% endif %}
         {% if request.user.is_staff %}
-          <a class="shortcut" href="{% url 'content:page_create' %}">{% icon "pages" 20 %} صفحه جدید</a>
-          <a class="shortcut" href="{% url 'accounts:user_list' %}">{% icon "users" 20 %} مدیریت کاربران</a>
-          <a class="shortcut" href="{% url 'core:site_settings' %}">{% icon "settings" 20 %} تنظیمات سایت</a>
+          <a class="shortcut" href="{% url 'content:page_create' %}">{% icon "pages" 20 %} {% trans "New page" %}</a>
+          <a class="shortcut" href="{% url 'accounts:user_list' %}">{% icon "users" 20 %} {% trans "Manage users" %}</a>
+          <a class="shortcut" href="{% url 'core:site_settings' %}">{% icon "settings" 20 %} {% trans "Site settings" %}</a>
         {% endif %}
       </div>
     </section>
     {% if stats %}
     <section class="card">
-      <div class="card-header"><h2>توزیع نقش‌ها</h2></div>
+      <div class="card-header"><h2>{% trans "Role distribution" %}</h2></div>
       <div class="card-body role-bars">
         {% for role in stats.roles %}
           <div class="role-row">

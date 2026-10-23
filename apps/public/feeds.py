@@ -5,6 +5,7 @@
 - نشانی‌ها مطلق‌اند و در صورت تنظیم، از ``RAVIX_SITE_URL`` ساخته می‌شوند (نه از سرآیند Host).
 - ``request`` از طریق شیء ``obj`` (نه ``self``) رد می‌شود؛ چون نمونهٔ Feed بین درخواست‌ها مشترک است.
 """
+from django.utils.translation import gettext
 from dataclasses import dataclass
 from typing import Any
 
@@ -63,7 +64,7 @@ def feed_links(request, *, category=None, tag=None, site_name: str = "") -> tupl
     scopes = [(category, tag)] if (category is not None or tag is not None) else []
     scopes.append((None, None))
     for cat, tg in scopes:
-        label = name if cat is None and tg is None else f"{name} — {(cat.name if cat is not None else 'برچسب: ' + tg.name)}"
+        label = name if cat is None and tg is None else (gettext("%(name)s — %(value)s") % {"name": name, "value": (cat.name if cat is not None else 'برچسب: ' + tg.name)})
         rss, atom = _paths(cat, tg)
         links.append(FeedLink(title=f"{label} (RSS)", url=absolute_url(request, rss), type=RSS_TYPE))
         links.append(FeedLink(title=f"{label} (Atom)", url=absolute_url(request, atom), type=ATOM_TYPE))
@@ -89,7 +90,7 @@ class PostFeed(Feed):
         if obj.category is not None:
             return f"{name} — {obj.category.name}"
         if obj.tag is not None:
-            return f"{name} — برچسب: {obj.tag.name}"
+            return (gettext("%(name)s — tag: %(name2)s") % {"name": name, "name2": obj.tag.name})
         return name
 
     def description(self, obj):

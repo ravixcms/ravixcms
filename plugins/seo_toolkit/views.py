@@ -1,3 +1,4 @@
+from django.utils.translation import gettext
 from django.contrib import messages
 from django.http import Http404
 
@@ -10,7 +11,7 @@ from .models import SeoMeta
 def _items():
     metas = {(m.kind, m.object_id): m for m in SeoMeta.objects.all()}
     rows = []
-    for kind, label, qs in (("page", "صفحه", Page.objects.all()), ("post", "نوشته", Post.objects.all())):
+    for kind, label, qs in (("page", gettext("Page"), Page.objects.all()), ("post", gettext("Post"), Post.objects.all())):
         for obj in qs.order_by("-updated_at")[:200]:
             m = metas.get((kind, obj.pk))
             rows.append({"kind": kind, "kind_label": label, "id": obj.pk, "title": obj.title, "meta": m})
@@ -18,7 +19,7 @@ def _items():
 
 
 def overview(request, api):
-    return api.render_admin(request, "overview.html", {"rows": _items()}, title="سئوی صفحات")
+    return api.render_admin(request, "overview.html", {"rows": _items()}, title=gettext("Page SEO"))
 
 
 def edit(request, api):
@@ -37,8 +38,8 @@ def edit(request, api):
     form = SeoMetaForm(request.POST or None, instance=meta)
     if request.method == "POST" and form.is_valid():
         form.save()
-        api.audit(request, f"تغییر سئوی {kind} #{obj_id}")
-        messages.success(request, "تنظیمات سئو ذخیره شد.")
+        api.audit(request, (gettext("Change SEO of %(kind)s #%(obj_id)s") % {"kind": kind, "obj_id": obj_id}))
+        messages.success(request, gettext("SEO settings were saved."))
         return api.redirect_admin("overview")
     return api.render_admin(request, "edit.html", {"form": form, "obj": obj, "kind": kind, "obj_id": obj_id},
-                            title=f"سئو: {obj.title}", status=400 if form.errors else 200)
+                            title=(gettext("SEO: %(title)s") % {"title": obj.title}), status=400 if form.errors else 200)

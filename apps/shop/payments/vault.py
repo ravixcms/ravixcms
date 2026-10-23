@@ -1,4 +1,5 @@
 """رمزنگاری تنظیمات محرمانهٔ درگاه (Fernet) و پاک‌سازی داده‌های گزارش. کلید هرگز در دیتابیس یا کد نیست."""
+from django.utils.translation import gettext
 import base64
 import json
 import re
@@ -21,14 +22,14 @@ def _keys() -> list[bytes]:
         # فقط برای توسعه: از SECRET_KEY مشتق می‌شود (با چرخش SECRET_KEY دادهٔ رمزشده خوانا نمی‌ماند)
         raw = HKDF(algorithm=hashes.SHA256(), length=32, salt=None, info=b"ravin-gateway-secrets").derive(settings.SECRET_KEY.encode())
         return [base64.urlsafe_b64encode(raw)]
-    raise SecretsError("کلید رمزنگاری اسرار (RAVIX_SECRETS_KEY) تنظیم نشده است.")
+    raise SecretsError(gettext("The secrets encryption key (RAVIX_SECRETS_KEY) is not set."))
 
 
 def _fernet() -> MultiFernet:
     try:
         return MultiFernet([Fernet(k) for k in _keys()])  # کلید اول رمز می‌کند؛ همه برای رمزگشایی (چرخش کلید)
     except (ValueError, TypeError):
-        raise SecretsError("RAVIX_SECRETS_KEY معتبر نیست (باید کلید Fernet باشد).")
+        raise SecretsError(gettext("RAVIX_SECRETS_KEY is not valid (it must be a Fernet key)."))
 
 
 def key_configured() -> bool:
@@ -47,7 +48,7 @@ def decrypt_json(token: str) -> dict:
     try:
         return json.loads(_fernet().decrypt(token.encode()))
     except InvalidToken:
-        raise SecretsError("رمزگشایی تنظیمات ممکن نیست؛ کلید RAVIX_SECRETS_KEY تغییر کرده است.")
+        raise SecretsError(gettext("The settings cannot be decrypted; the RAVIX_SECRETS_KEY key has changed."))
 
 
 # ------------------------------------------------------------------ پاک‌سازی گزارش‌ها

@@ -1,20 +1,21 @@
 {% extends "layouts/panel.html" %}
+{% load i18n %}
 {% load ravix_ui %}
-{% block title %}گزارش افزونه‌ها{% endblock %}
-{% block page_title %}گزارش افزونه‌ها{% endblock %}
+{% block title %}{% trans "Plugin log" %}{% endblock %}
+{% block page_title %}{% trans "Plugin log" %}{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>گزارش رویدادها و خطاهای افزونه‌ها</h1></div><a class="btn btn-light" href="{% url 'plugins:list' %}">فهرست افزونه‌ها</a></div>
+<div class="page-head"><div><h1>{% trans "Plugin events and errors log" %}</h1></div><a class="btn btn-light" href="{% url 'plugins:list' %}">{% trans "Plugin list" %}</a></div>
 <div class="card">
   <form method="get" class="toolbar">
-    <select name="plugin" class="input" aria-label="افزونه"><option value="">همه افزونه‌ها</option>{% for s in slugs %}<option value="{{ s }}" {% if s == selected_slug %}selected{% endif %}>{{ s }}</option>{% endfor %}</select>
-    <select name="level" class="input" aria-label="سطح"><option value="">همه سطوح</option><option value="error" {% if selected_level == "error" %}selected{% endif %}>خطا</option><option value="warning" {% if selected_level == "warning" %}selected{% endif %}>هشدار</option><option value="info" {% if selected_level == "info" %}selected{% endif %}>اطلاع</option></select>
-    <button type="submit" class="btn">{% icon "search" 18 %} اعمال</button>
+    <select name="plugin" class="input" aria-label="{% trans "Plugin" %}"><option value="">{% trans "All plugins" %}</option>{% for s in slugs %}<option value="{{ s }}" {% if s == selected_slug %}selected{% endif %}>{{ s }}</option>{% endfor %}</select>
+    <select name="level" class="input" aria-label="{% trans "Level" %}"><option value="">{% trans "All levels" %}</option><option value="error" {% if selected_level == "error" %}selected{% endif %}>{% trans "Error" %}</option><option value="warning" {% if selected_level == "warning" %}selected{% endif %}>{% trans "Warning" %}</option><option value="info" {% if selected_level == "info" %}selected{% endif %}>{% trans "Info" %}</option></select>
+    <button type="submit" class="btn">{% icon "search" 18 %} {% trans "Actions" %}</button>
   </form>
-  {% if events %}<div class="table-wrap"><table class="table"><thead><tr><th>زمان</th><th>افزونه</th><th>نوع</th><th>پیام</th></tr></thead><tbody>
+  {% if events %}<div class="table-wrap"><table class="table"><thead><tr><th>{% trans "Time" %}</th><th>{% trans "Plugin" %}</th><th>{% trans "Type" %}</th><th>{% trans "Message" %}</th></tr></thead><tbody>
     {% for e in events %}<tr>
       <td>{{ e.created_at|jalali_datetime }}</td><td class="ltr">{{ e.slug }}</td>
       <td><span class="badge {% if e.level == 'error' %}badge-act-delete{% elif e.level == 'warning' %}badge-warn{% else %}badge-act-update{% endif %}">{{ e.kind }}</span></td>
-      <td style="white-space:normal;min-width:260px">{{ e.message }}{% if e.detail %}<details><summary class="muted">جزئیات فنی</summary><pre class="ltr" style="white-space:pre-wrap;font-size:.8rem">{{ e.detail }}</pre></details>{% endif %}</td></tr>{% endfor %}
-  </tbody></table></div>{% include "partials/_pagination.html" %}{% else %}<div class="empty">رویدادی ثبت نشده است.</div>{% endif %}
+      <td style="white-space:normal;min-width:260px">{{ e.message }}{% if e.detail %}<details><summary class="muted">{% trans "Technical details" %}</summary><pre class="ltr" style="white-space:pre-wrap;font-size:.8rem">{{ e.detail }}</pre></details>{% endif %}</td></tr>{% endfor %}
+  </tbody></table></div>{% include "partials/_pagination.html" %}{% else %}<div class="empty">{% trans "No event has been recorded." %}</div>{% endif %}
 </div>
 {% endblock %}

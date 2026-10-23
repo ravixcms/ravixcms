@@ -5,6 +5,7 @@
 
 محافظت‌ها: مسیر مطلق/``..``/بک‌اسلش، symlink، نام تکراری، سقف تعداد/حجم (ضد zip-bomb)، فایل‌های اجرایی عجیب، manifest نامعتبر.
 """
+from django.utils.translation import gettext
 import hashlib
 import io
 import stat
@@ -36,42 +37,42 @@ class Inspected:
 def _safe_members(zf: zipfile.ZipFile):
     infos = zf.infolist()
     if not infos:
-        raise PackageError("بسته خالی است.")
+        raise PackageError(gettext("The package is empty."))
     if len(infos) > MAX_FILES * 2:
-        raise PackageError("تعداد فایل‌های بسته از سقف مجاز بیشتر است.")
+        raise PackageError(gettext("The number of files in the package exceeds the allowed limit."))
     seen, files, total, root = set(), [], 0, None
     for info in infos:
         name = info.filename
         if "\\" in name or name.startswith("/") or "\x00" in name:
-            raise PackageError(f"نام فایل نامعتبر: {name!r}")
+            raise PackageError((gettext("Invalid file name: %(name)s") % {"name": repr(name)}))
         parts = PurePosixPath(name).parts
         if not parts or any(p in ("..", "") for p in parts) or (len(parts[0]) == 2 and parts[0][1] == ":"):
-            raise PackageError(f"مسیر ناامن در بسته: {name!r}")
+            raise PackageError((gettext("Unsafe path in package: %(name)s") % {"name": repr(name)}))
         mode = info.external_attr >> 16
         if stat.S_ISLNK(mode):
-            raise PackageError(f"پیوند نمادین (symlink) مجاز نیست: {name}")
+            raise PackageError((gettext("Symbolic links are not allowed: %(name)s") % {"name": name}))
         if stat.S_IFMT(mode) and not (stat.S_ISREG(mode) or stat.S_ISDIR(mode)):
-            raise PackageError(f"نوع فایل غیرعادی: {name}")
+            raise PackageError((gettext("Unusual file type: %(name)s") % {"name": name}))
         if info.flag_bits & 0x1:
-            raise PackageError("بستهٔ رمزگذاری‌شده مجاز نیست.")
+            raise PackageError(gettext("Encrypted packages are not allowed."))
         if root is None:
             root = parts[0]
         elif parts[0] != root:
-            raise PackageError("همهٔ فایل‌ها باید زیر یک پوشهٔ ریشه (نام افزونه) باشند.")
+            raise PackageError(gettext("All files must be under a single root folder (the plugin name)."))
         key = name.rstrip("/").lower()
         if key in seen:
-            raise PackageError(f"نام تکراری در بسته: {name}")
+            raise PackageError((gettext("Duplicate name in the package: %(name)s") % {"name": name}))
         seen.add(key)
         if info.is_dir():
             continue
         if len(parts) < 2:
-            raise PackageError("فایل بیرون از پوشهٔ افزونه است.")
+            raise PackageError(gettext("The file is outside the plugin folder."))
         total += info.file_size
         if total > MAX_TOTAL_BYTES:
-            raise PackageError("حجم بازشدهٔ بسته از سقف مجاز بیشتر است.")
+            raise PackageError(gettext("The extracted size of the package exceeds the allowed limit."))
         files.append(info)
     if len(files) > MAX_FILES:
-        raise PackageError("تعداد فایل‌های بسته از سقف مجاز بیشتر است.")
+        raise PackageError(gettext("The number of files in the package exceeds the allowed limit."))
     return root, files
 
 
@@ -80,14 +81,14 @@ def extract_to(data: bytes, dest: Path) -> str:
     try:
         zf = zipfile.ZipFile(io.BytesIO(data))
     except zipfile.BadZipFile:
-        raise PackageError("فایل zip معتبر نیست.")
+        raise PackageError(gettext("The zip file is not valid."))
     with zf:
         root, files = _safe_members(zf)
         written = 0
         for info in files:
             target = (dest / PurePosixPath(info.filename)).resolve()
             if dest.resolve() not in target.parents:
-                raise PackageError("مسیر خارج از پوشهٔ مقصد.")
+                raise PackageError(gettext("The path is outside the destination folder."))
             target.parent.mkdir(parents=True, exist_ok=True)
             with zf.open(info) as src, open(target, "wb") as out:
                 while True:
@@ -96,7 +97,7 @@ def extract_to(data: bytes, dest: Path) -> str:
                         break
                     written += len(chunk)
                     if written > MAX_TOTAL_BYTES:
-                        raise PackageError("حجم بازشدهٔ بسته از سقف مجاز بیشتر است.")
+                        raise PackageError(gettext("The extracted size of the package exceeds the allowed limit."))
                     out.write(chunk)
     return root
 
@@ -104,9 +105,9 @@ def extract_to(data: bytes, dest: Path) -> str:
 def inspect(data: bytes) -> Inspected:
     max_bytes = getattr(settings, "RAVIX_REGISTRY_MAX_PACKAGE_BYTES", 5 * 1024 * 1024)
     if not data:
-        raise PackageError("فایلی ارسال نشد.")
+        raise PackageError(gettext("No file was submitted."))
     if len(data) > max_bytes:
-        raise PackageError(f"حجم بسته بیشتر از {max_bytes // 1024} کیلوبایت است.")
+        raise PackageError((gettext("The package is larger than %(value)s KB.") % {"value": (max_bytes // 1024)}))
     import json
 
     with tempfile.TemporaryDirectory(prefix="ravix-pkg-") as tmp:
@@ -115,17 +116,17 @@ def inspect(data: bytes) -> Inspected:
         pdir = dest / root
         mpath = pdir / MANIFEST_FILE
         if not mpath.is_file():
-            raise PackageError("plugin.json در ریشهٔ بسته نیست.")
+            raise PackageError(gettext("plugin.json is not at the package root."))
         if mpath.stat().st_size > MAX_MANIFEST_BYTES:
-            raise PackageError("plugin.json بزرگ‌تر از حد مجاز است.")
+            raise PackageError(gettext("plugin.json is larger than the allowed limit."))
         try:
             raw = json.loads(mpath.read_text(encoding="utf-8"))
         except (UnicodeDecodeError, json.JSONDecodeError) as exc:
-            raise PackageError(f"plugin.json JSON معتبر نیست: {exc}")
+            raise PackageError((gettext("plugin.json is not valid JSON: %(exc)s") % {"exc": exc}))
         try:
             manifest = parse_manifest(raw, expected_slug=root)
         except ManifestError as exc:
-            raise PackageError("plugin.json نامعتبر: " + "؛ ".join(exc.errors))
+            raise PackageError((gettext("Invalid plugin.json: %(errors)s") % {"errors": "؛ ".join(exc.errors)}))
         try:
             fp = fingerprint(pdir)
         except IntegrityError as exc:

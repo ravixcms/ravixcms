@@ -1,4 +1,5 @@
 """اجرای مهاجرت‌های دیتابیس. در پروسهٔ جداگانه (``manage.py migrate``) تا کد تازهٔ روی دیسک بارگذاری شود نه کد قدیمیِ حافظه."""
+from django.utils.translation import gettext
 import os
 import subprocess
 import sys
@@ -17,7 +18,7 @@ class SubprocessRunner:
         r = subprocess.run([sys.executable, str(self.root / "manage.py"), *args], cwd=self.root, env=env, capture_output=True, text=True, timeout=self.timeout)
         out = sanitize((r.stdout or "") + (r.stderr or ""), 6000)
         if r.returncode != 0:
-            raise UpdateError(f"manage.py {args[0]} ناموفق بود:\n{out}")
+            raise UpdateError((gettext("manage.py %(args)s failed:\n%(out)s") % {"args": args[0], "out": out}))
         return out
 
     def migrate(self) -> str:

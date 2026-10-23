@@ -1,4 +1,5 @@
 """مدیریت سایت‌ها (فقط مدیرکل) و تعویض سایت فعال پنل."""
+from django.utils.translation import gettext
 from django.contrib import messages
 from apps.core.params import safe_id
 from django.core.exceptions import PermissionDenied, ValidationError
@@ -30,15 +31,15 @@ class SiteListView(SitesAdmin, View):
         name = request.POST.get("name", "").strip()[:100]
         slug = slugify(request.POST.get("slug", "") or name)[:50]
         if len(name) < 2 or not slug:
-            messages.error(request, "نام و شناسهٔ معتبر لازم است.")
+            messages.error(request, gettext("A valid name and identifier are required."))
         else:
             try:
                 site = create_site(name, slug, request.user)
             except IntegrityError:
-                messages.error(request, "این شناسه قبلاً استفاده شده است.")
+                messages.error(request, gettext("This identifier is already in use."))
             else:
-                log_event(request, AuditLog.Action.CREATE, site, f"سایت «{name}» ساخته شد")
-                messages.success(request, "سایت ساخته شد.")
+                log_event(request, AuditLog.Action.CREATE, site, (gettext("Site “%(name)s” was created") % {"name": name}))
+                messages.success(request, gettext("Site created."))
         return redirect("sites:list")
 
 
@@ -65,12 +66,12 @@ class SiteDetailView(SitesAdmin, View):
                 user = U.objects.filter(username=request.POST.get("username", "").strip()).first()
                 role = request.POST.get("role")
                 if user is None or role not in SiteMember.Role.values:
-                    raise ValidationError("کاربر یا نقش نامعتبر است.")
+                    raise ValidationError(gettext("Invalid user or role."))
                 SiteMember.objects.update_or_create(site=site, user=user, defaults={"role": role})
             elif action == "remove_member":
                 m = site.members.filter(pk=safe_id(request.POST.get("id")) or 0).first()
                 if m and m.user_id == site.owner_id:
-                    raise ValidationError("مالک سایت را نمی‌توان حذف کرد.")
+                    raise ValidationError(gettext("The site owner cannot be removed."))
                 if m:
                     m.delete()
             elif action == "toggle_active" and not site.is_default:
@@ -79,12 +80,12 @@ class SiteDetailView(SitesAdmin, View):
             else:
                 raise Http404
         except ValidationError as exc:
-            messages.error(request, "؛ ".join(exc.messages))
+            messages.error(request, gettext("; ").join(exc.messages))
         except IntegrityError:
-            messages.error(request, "این دامنه قبلاً ثبت شده است.")
+            messages.error(request, gettext("This domain is already registered."))
         else:
-            log_event(request, AuditLog.Action.UPDATE, site, f"تغییر سایت: {action}")
-            messages.success(request, "ذخیره شد.")
+            log_event(request, AuditLog.Action.UPDATE, site, (gettext("Site change: %(action)s") % {"action": action}))
+            messages.success(request, gettext("Saved."))
         return redirect("sites:detail", pk=pk)
 
 

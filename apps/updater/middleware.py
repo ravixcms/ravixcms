@@ -1,4 +1,5 @@
 """حالت تعمیر: فقط در لحظهٔ جایگزینی فایل‌ها و مهاجرت (عملیات «apply») پاسخ ۵۰۳ با Retry-After می‌دهد؛ صفحهٔ وضعیت به‌روزرسانی و /healthz آزادند."""
+from django.utils.translation import gettext
 import time
 
 from django.http import HttpResponse
@@ -32,11 +33,11 @@ class MaintenanceMiddleware:
 
     def __call__(self, request):
         if not request.path.startswith(EXEMPT) and maintenance_active():
-            message = "سایت در حال به‌روزرسانی است؛ چند لحظهٔ دیگر دوباره تلاش کنید."
+            message = gettext("The site is being updated; please try again in a few moments.")
             if "text/html" in request.headers.get("Accept", "text/html") or "*/*" in request.headers.get("Accept", ""):
                 from apps.core.errorpages import standalone_response
 
-                return standalone_response(request, 503, "سایت در حال تعمیر است", message, icon="🛠️", refresh=30,
+                return standalone_response(request, 503, gettext("The site is under maintenance"), message, icon="🛠️", refresh=30,
                                            headers={"Retry-After": "30"})
             return HttpResponse(message, status=503, headers={"Retry-After": "30"}, content_type="text/plain; charset=utf-8")
         return self.get_response(request)

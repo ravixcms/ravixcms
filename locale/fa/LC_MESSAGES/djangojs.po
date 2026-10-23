@@ -1,0 +1,469 @@
+# Ravix translation catalog (fa).
+# This file is distributed under the same license as Ravix.
+msgid ""
+msgstr ""
+"Project-Id-Version: Ravix 0.9.0\n"
+"Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
+"POT-Creation-Date: 2026-10-23 17:07+0330\n"
+"PO-Revision-Date: 2026-10-23 00:00+0000\n"
+"Last-Translator: Ravix\n"
+"Language-Team: Ravix Translators\n"
+"Language: fa\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: static/builder/builder.js
+msgid "Section"
+msgstr "بخش"
+
+#: static/builder/builder.js
+msgid "Row"
+msgstr "ردیف"
+
+#: static/builder/builder.js
+msgid "Column"
+msgstr "ستون"
+
+#: static/builder/builder.js
+msgid "Heading"
+msgstr "عنوان"
+
+#: static/builder/builder.js
+msgid "Text"
+msgstr "متن"
+
+#: static/builder/builder.js
+msgid "Image"
+msgstr "تصویر"
+
+#: static/builder/builder.js
+msgid "Button"
+msgstr "دکمه"
+
+#: static/builder/builder.js
+msgid "Unsaved changes…"
+msgstr "تغییرات ذخیره نشده…"
+
+#: static/builder/builder.js
+msgid "Invalid response from the server."
+msgstr "پاسخ نامعتبر از سرور."
+
+#: static/builder/builder.js
+msgid "Could not connect to the server."
+msgstr "ارتباط با سرور برقرار نشد."
+
+#: static/builder/builder.js
+msgid "Saving…"
+msgstr "در حال ذخیره…"
+
+#: static/builder/builder.js
+msgid "Saved at %(time)s"
+msgstr "ذخیره شد %(time)s"
+
+#: static/builder/builder.js
+msgid "Edit conflict — reload the page"
+msgstr "تداخل ویرایش — صفحه را دوباره بارگذاری کنید"
+
+#: static/builder/builder.js
+msgid "Data error — not saved"
+msgstr "خطا در داده‌ها — ذخیره نشد"
+
+#: static/builder/builder.js
+msgid "Not saved — we will try again"
+msgstr "ذخیره نشد — دوباره تلاش می‌کنیم"
+
+#: static/builder/builder.js
+msgid "You do not have access."
+msgstr "دسترسی ندارید."
+
+#: static/builder/builder.js
+msgid "Error"
+msgstr "خطا"
+
+#: static/builder/builder.js
+msgid "; "
+msgstr "؛ "
+
+#: static/builder/builder.js
+msgid "Drag to move"
+msgstr "بکشید تا جابه‌جا شود"
+
+#: static/builder/builder.js
+msgid "Move %(type)s"
+msgstr "جابه‌جایی %(type)s"
+
+#: static/builder/builder.js
+msgid "Previous column"
+msgstr "ستون قبلی"
+
+#: static/builder/builder.js
+msgid "Up"
+msgstr "بالا"
+
+#: static/builder/builder.js
+msgid "Next column"
+msgstr "ستون بعدی"
+
+#: static/builder/builder.js
+msgid "Down"
+msgstr "پایین"
+
+#: static/builder/builder.js
+msgid "Duplicate"
+msgstr "کپی"
+
+#: static/builder/builder.js
+msgid "Delete"
+msgstr "حذف"
+
+#: static/builder/builder.js
+msgid "(empty heading)"
+msgstr "(عنوان خالی)"
+
+#: static/builder/builder.js
+msgid "(empty text)"
+msgstr "(متن خالی)"
+
+#: static/builder/builder.js
+msgid "Image not found"
+msgstr "تصویر پیدا نشد"
+
+#: static/builder/builder.js static/js/ravix.js
+msgid "Loading…"
+msgstr "در حال بارگذاری…"
+
+#: static/builder/builder.js
+msgid "No image selected — select this element and choose an image"
+msgstr "تصویری انتخاب نشده — این عنصر را انتخاب و تصویر را برگزینید"
+
+#: static/builder/builder.js
+msgid "(button)"
+msgstr "(دکمه)"
+
+#: static/builder/builder.js
+msgid "Drag an element from the side panel and drop it here"
+msgstr "عنصری از پنل راست بکشید و اینجا رها کنید"
+
+#: static/builder/builder.js
+msgid "Drag a row from the side panel and drop it here"
+msgstr "ردیفی از پنل راست بکشید و اینجا رها کنید"
+
+#: static/builder/builder.js
+msgid "The page is empty."
+msgstr "صفحه خالی است."
+
+#: static/builder/builder.js
+msgid "Drag a “Section” from the side panel and drop it here, or click it."
+msgstr "«بخش» را از پنل راست بکشید و اینجا رها کنید، یا روی آن کلیک کنید."
+
+#: static/builder/builder.js
+msgid "You have reached the limit for the number of %(what)s in this section."
+msgstr "به سقف مجاز تعداد %(what)s در این بخش رسیده‌اید."
+
+#: static/builder/builder.js
+msgid "element"
+msgstr "عنصر"
+
+#: static/builder/builder.js
+msgid "The page has become too large."
+msgstr "صفحه بیش از حد بزرگ شده است."
+
+#: static/builder/builder.js
+msgid "First select a section."
+msgstr "ابتدا یک بخش را انتخاب کنید."
+
+#: static/builder/builder.js
+msgid "First select a column."
+msgstr "ابتدا ستونی را انتخاب کنید."
+
+#: static/builder/builder.js
+msgid "First select a column (or an element inside a column)."
+msgstr "ابتدا یک ستون (یا عنصر داخل ستون) را انتخاب کنید."
+
+#: static/builder/builder.js
+msgid "You have reached the limit."
+msgstr "به سقف مجاز رسیده‌اید."
+
+#: static/builder/builder.js
+msgid "To add a column use the row settings."
+msgstr "برای افزودن ستون از تنظیمات ردیف استفاده کنید."
+
+#: static/builder/builder.js
+msgid "A row must have at least one column; delete the row itself."
+msgstr "ردیف باید دست‌کم یک ستون داشته باشد؛ خود ردیف را حذف کنید."
+
+#: static/builder/builder.js
+msgid "1-column row"
+msgstr "ردیف ۱ ستونه"
+
+#: static/builder/builder.js
+msgid "%(n)s-column row"
+msgstr "ردیف %(n)s ستونه"
+
+#: static/builder/builder.js
+msgid "Default"
+msgstr "پیش‌فرض"
+
+#: static/builder/builder.js
+msgid "%(label)s (picker)"
+msgstr "%(label)s (انتخابگر)"
+
+#: static/builder/builder.js
+msgid "The hex color is not valid (e.g. #1d4ed8)."
+msgstr "رنگ هگز معتبر نیست (مثل #1d4ed8)."
+
+#: static/builder/builder.js
+msgid "Change image"
+msgstr "تغییر تصویر"
+
+#: static/builder/builder.js
+msgid "Choose from library"
+msgstr "انتخاب از کتابخانه"
+
+#: static/builder/builder.js
+msgid "Remove image"
+msgstr "حذف تصویر"
+
+#: static/builder/builder.js
+msgid "/about/  or  https://…"
+msgstr "/about/  یا  https://…"
+
+#: static/builder/builder.js
+msgid ""
+"The address is not allowed; use an internal path (/…), http(s), mailto or "
+"tel."
+msgstr "نشانی مجاز نیست؛ مسیر داخلی (/…)، http(s)، mailto یا tel."
+
+#: static/builder/builder.js
+msgid "Page settings"
+msgstr "تنظیمات صفحه"
+
+#: static/builder/builder.js
+msgid "To edit, click a section, row, column or element on the canvas."
+msgstr "برای ویرایش، روی یک بخش، ردیف، ستون یا عنصر در بوم کلیک کنید."
+
+#: static/builder/builder.js
+msgid "General"
+msgstr "عمومی"
+
+#: static/builder/builder.js
+msgid "Selection path"
+msgstr "مسیر انتخاب"
+
+#: static/builder/builder.js
+msgid "%(type)s settings"
+msgstr "تنظیمات %(type)s"
+
+#: static/builder/builder.js
+msgid "Content"
+msgstr "محتوا"
+
+#: static/builder/builder.js
+msgid "Layout and spacing"
+msgstr "چیدمان و فاصله"
+
+#: static/builder/builder.js
+msgid "Appearance"
+msgstr "ظاهر"
+
+#: static/builder/builder.js
+msgid "+ Add column"
+msgstr "+ افزودن ستون"
+
+#: static/builder/builder.js
+msgid "At most %(n)s columns per row."
+msgstr "حداکثر %(n)s ستون در هر ردیف."
+
+#: static/builder/builder.js
+msgid "Split columns equally"
+msgstr "تقسیم مساوی ستون‌ها"
+
+#: static/builder/builder.js
+msgid "Total width of this row’s columns: %(total)s of 12"
+msgstr "مجموع عرض ستون‌های این ردیف: %(total)s از ۱۲"
+
+#: static/builder/builder.js
+msgid "No image found. First upload an image to the media library."
+msgstr "تصویری یافت نشد. ابتدا در کتابخانه رسانه تصویر بارگذاری کنید."
+
+#: static/builder/builder.js
+msgid "Saved."
+msgstr "ذخیره شد."
+
+#: static/builder/builder.js
+msgid "Publish"
+msgstr "انتشار"
+
+#: static/builder/builder.js
+msgid "Submit for approval"
+msgstr "ارسال برای تأیید"
+
+#: static/builder/builder.js
+msgid "Publish this layout on the site"
+msgstr "انتشار این طرح در سایت"
+
+#: static/builder/builder.js
+msgid "The layout is sent to an administrator for approval"
+msgstr "طرح برای تأیید مدیر ارسال می‌شود"
+
+#: static/builder/builder.js
+msgid "Saving the draft must succeed first."
+msgstr "ابتدا باید ذخیره‌ی پیش‌نویس موفق باشد."
+
+#: static/builder/builder.js
+msgid "Publish layout"
+msgstr "انتشار طرح"
+
+#: static/builder/builder.js
+msgid ""
+"The current draft replaces the page content on the site. (The page’s own "
+"status — published or draft — is controlled in the “Pages” section.)"
+msgstr ""
+"پیش‌نویس فعلی در سایت جایگزین محتوای صفحه می‌شود. (وضعیت خود صفحه — منتشرشده"
+" یا پیش‌نویس — از بخش «صفحات» کنترل می‌شود.)"
+
+#: static/builder/builder.js
+msgid "The layout was published."
+msgstr "طرح منتشر شد."
+
+#: static/builder/builder.js
+msgid ""
+"It will be published on the site after an administrator approves it. Until "
+"then the current page is shown."
+msgstr ""
+"پس از تأیید مدیر در سایت منتشر می‌شود. تا آن زمان صفحه‌ی فعلی نمایش داده "
+"می‌شود."
+
+#: static/builder/builder.js
+msgid "Submitted for approval."
+msgstr "برای تأیید ارسال شد."
+
+#: static/builder/builder.js
+msgid "The version was saved."
+msgstr "نسخه ذخیره شد."
+
+#: static/builder/builder.js
+msgid "Unpublish the layout? The page goes back to its previous text content."
+msgstr "انتشار طرح لغو شود؟ صفحه به محتوای متنی قبلی برمی‌گردد."
+
+#: static/builder/builder.js
+msgid "The layout was unpublished."
+msgstr "انتشار طرح لغو شد."
+
+#: static/builder/builder.js
+msgid "No version has been saved yet."
+msgstr "هنوز نسخه‌ای ذخیره نشده است."
+
+#: static/builder/builder.js
+msgid "Published"
+msgstr "منتشرشده"
+
+#: static/builder/builder.js
+msgid "Automatic"
+msgstr "خودکار"
+
+#: static/builder/builder.js
+msgid "Version %(n)s"
+msgstr "نسخه %(n)s"
+
+#: static/builder/builder.js
+msgid " (reviewer: %(note)s)"
+msgstr " (بازبین: %(note)s)"
+
+#: static/builder/builder.js
+msgid "Preview"
+msgstr "پیش‌نمایش"
+
+#: static/builder/builder.js
+msgid "Restore"
+msgstr "بازیابی"
+
+#: static/builder/builder.js
+msgid ""
+"Replace the current draft with version %(n)s? An automatic version of the "
+"current state will be saved."
+msgstr ""
+"پیش‌نویس فعلی با نسخه %(n)s جایگزین شود؟ از وضعیت فعلی خودکار یک نسخه ذخیره "
+"می‌شود."
+
+#: static/builder/builder.js
+msgid "Version %(n)s was restored to the draft."
+msgstr "نسخه %(n)s در پیش‌نویس بازیابی شد."
+
+#: static/builder/builder.js
+msgid "Approve and publish"
+msgstr "تأیید و انتشار"
+
+#: static/builder/builder.js
+msgid "Approved and published."
+msgstr "تأیید و منتشر شد."
+
+#: static/builder/builder.js
+msgid "Reject"
+msgstr "رد"
+
+#: static/builder/builder.js
+msgid "Reason for rejection (optional):"
+msgstr "دلیل رد (اختیاری):"
+
+#: static/builder/builder.js
+msgid "The version was rejected."
+msgstr "نسخه رد شد."
+
+#: static/builder/builder.js
+msgid "Loading failed"
+msgstr "بارگذاری ناموفق بود"
+
+#: static/builder/builder.js
+msgid "Ready"
+msgstr "آماده"
+
+#: static/js/ravix.js
+msgid "Hide password"
+msgstr "پنهان کردن رمز عبور"
+
+#: static/js/ravix.js
+msgid "Show password"
+msgstr "نمایش رمز عبور"
+
+#: static/js/ravix.js
+msgid "The file is larger than the allowed limit."
+msgstr "حجم فایل بیشتر از حد مجاز است."
+
+#: static/js/ravix.js
+msgid "bold text"
+msgstr "متن پررنگ"
+
+#: static/js/ravix.js
+msgid "italic text"
+msgstr "متن کج"
+
+#: static/js/ravix.js
+msgid "code"
+msgstr "کد"
+
+#: static/js/ravix.js
+msgid "link text"
+msgstr "متن پیوند"
+
+#: static/js/ravix.js
+msgid "image description"
+msgstr "توضیح تصویر"
+
+#: static/js/ravix.js
+msgid "Nothing to preview."
+msgstr "چیزی برای نمایش نیست."
+
+#: static/js/ravix.js
+msgid "Preview is not available."
+msgstr "پیش‌نمایش در دسترس نیست."
+
+#: static/js/ravix.js
+msgid "%(n)s of %(max)s characters"
+msgstr "%(n)s از %(max)s کاراکتر"
+
+#: static/js/ravix.js
+msgid "Copied ✓"
+msgstr "کپی شد ✓"

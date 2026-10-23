@@ -1,3 +1,4 @@
+from django.utils.translation import gettext
 from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
 
@@ -45,9 +46,9 @@ def _create_redirect_on_slug_change(sender, instance, created, **kwargs):
     Redirect.objects.filter(new_path=old_url).update(new_path=new_url)  # بدون زنجیره
     redirect, was_created = Redirect.objects.update_or_create(
         old_path=old_url,
-        defaults={"new_path": new_url, "status_code": 301, "is_auto": True, "note": "تغییر خودکار نامک"},
+        defaults={"new_path": new_url, "status_code": 301, "is_auto": True, "note": gettext("Automatic slug change")},
     )
-    log_event(None, "create", redirect, f"ریدایرکت ۳۰۱ خودکار ساخته شد: {old_url} ← {new_url}")
+    log_event(None, "create", redirect, (gettext("Automatic 301 redirect created: %(old_url)s ← %(new_url)s") % {"old_url": old_url, "new_url": new_url}))
 
 
 for _model in (Post, Page):

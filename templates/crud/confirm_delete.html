@@ -1,17 +1,18 @@
 {% extends "layouts/panel.html" %}
+{% load i18n %}
 {% load ravix_ui %}
-{% block title %}حذف {{ object_label }}{% endblock %}
-{% block page_title %}حذف {{ object_label }}{% endblock %}
+{% block title %}{% blocktrans trimmed with object_label=object_label %}Delete {{ object_label }}{% endblocktrans %}{% endblock %}
+{% block page_title %}{% blocktrans trimmed with object_label=object_label %}Delete {{ object_label }}{% endblocktrans %}{% endblock %}
 {% block content_class %}content-narrow{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>حذف {{ object_label }}</h1></div></div>
+<div class="page-head"><div><h1>{% blocktrans trimmed with object_label=object_label %}Delete {{ object_label }}{% endblocktrans %}</h1></div></div>
 <div class="card"><div class="card-body" style="max-width:560px">
-  <div class="form-errors" role="alert"><p>آیا از حذف {{ object_label }} «<strong>{{ object }}</strong>» مطمئن هستید؟ این عملیات قابل بازگشت نیست.</p></div>
+  <div class="form-errors" role="alert"><p>{% blocktrans trimmed with object_label=object_label object=object %}Are you sure you want to delete {{ object_label }} “<strong>{{ object }}</strong>”? This cannot be undone.{% endblocktrans %}</p></div>
   <form method="post" data-once>
     {% csrf_token %}
     <div class="form-actions">
-      <button type="submit" class="btn btn-danger">{% icon "trash" 18 %} بله، حذف شود</button>
-      <a href="{{ cancel_url }}" class="btn btn-light">انصراف</a>
+      <button type="submit" class="btn btn-danger">{% icon "trash" 18 %} {% trans "Yes, delete" %}</button>
+      <a href="{{ cancel_url }}" class="btn btn-light">{% trans "Cancel" %}</a>
     </div>
   </form>
 </div></div>

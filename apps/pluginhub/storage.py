@@ -1,4 +1,5 @@
 """ذخیره‌گاه خصوصی بسته‌ها: خارج از MEDIA_ROOT و STATIC_ROOT؛ فقط از طریق view دانلود (پس از بازبینی SHA-256) سرو می‌شود."""
+from django.utils.translation import gettext
 import os
 
 from django.conf import settings
@@ -15,7 +16,7 @@ class PackageStorage(FileSystemStorage):
         return os.path.abspath(self.base_location)
 
     def url(self, name):  # هرگز نشانی مستقیم عمومی ندارد
-        raise ValueError("بسته‌ها نشانی عمومی ندارند.")
+        raise ValueError(gettext("Packages do not have a public URL."))
 
 
 def package_storage():

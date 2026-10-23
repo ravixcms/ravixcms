@@ -1,4 +1,5 @@
 """منطق انتشار و پیش‌نویس ظاهر سایت. تمام تغییرات فقط روی رکورد ``ThemeConfig`` انجام می‌شود."""
+from django.utils.translation import gettext, gettext_lazy
 import copy
 
 from django.db import transaction
@@ -13,7 +14,7 @@ from .config import sanitize
 from .constants import DEFAULT_THEME
 from .models import ThemeConfig
 
-AUDIT_TYPE = "ظاهر سایت"
+AUDIT_TYPE = gettext_lazy("Site appearance")
 
 
 class ThemeError(Exception):
@@ -39,9 +40,9 @@ def _locked() -> ThemeConfig:
 def _usable_theme(slug: str):
     theme = registry.get_theme(slug)
     if theme is None:
-        raise ThemeError("این قالب پیدا نشد. پوشه آن باید در مسیر قالب‌ها وجود داشته باشد.")
+        raise ThemeError(gettext("This theme was not found. Its folder must exist in the themes path."))
     if not theme.valid:
-        raise ThemeError("این قالب نامعتبر است و نمی‌تواند استفاده شود: " + "؛ ".join(theme.errors[:3]))
+        raise ThemeError((gettext("This theme is invalid and cannot be used: %(items)s") % {"items": "؛ ".join(theme.errors[:3])}))
     return theme
 
 
@@ -56,14 +57,14 @@ def save_draft_part(request, key: str, value) -> None:
         cfg = _locked()
         doc = working_doc(cfg)
         if key not in doc or key == "theme":
-            raise ThemeError("بخش نامعتبر.")
+            raise ThemeError(gettext("Invalid section."))
         doc[key] = value
         cfg.draft = sanitize(doc)
         cfg.draft_updated_at = timezone.now()
         _drop_draft_if_unchanged(cfg)
         cfg.save()
-    labels = {"appearance": "ظاهر", "header": "سربرگ", "footer": "پانویس", "menus": "منوها", "home": "صفحه اصلی"}
-    log_event(request, AuditLog.Action.UPDATE, None, f"پیش‌نویس ظاهر سایت ذخیره شد (بخش {labels.get(key, key)}).", object_type=AUDIT_TYPE)
+    labels = {"appearance": gettext("Appearance"), "header": gettext("Header"), "footer": gettext("Footer"), "menus": gettext("Menus"), "home": gettext("Home page")}
+    log_event(request, AuditLog.Action.UPDATE, None, (gettext("The site appearance draft was saved (section %(labels)s).") % {"labels": labels.get(key, key)}), object_type=AUDIT_TYPE)
 
 
 def set_draft_theme(request, slug: str) -> None:
@@ -77,25 +78,25 @@ def set_draft_theme(request, slug: str) -> None:
         cfg.draft_updated_at = timezone.now()
         _drop_draft_if_unchanged(cfg)
         cfg.save()
-    log_event(request, AuditLog.Action.UPDATE, None, f"پیش‌نمایش قالب «{theme.display_name}» آغاز شد.", object_type=AUDIT_TYPE)
+    log_event(request, AuditLog.Action.UPDATE, None, (gettext("Preview of theme “%(display_name)s” started.") % {"display_name": theme.display_name}), object_type=AUDIT_TYPE)
 
 
 def discard_draft(request) -> None:
     with transaction.atomic():
         cfg = _locked()
         if cfg.draft is None:
-            raise ThemeError("پیش‌نویسی برای دور انداختن وجود ندارد.")
+            raise ThemeError(gettext("There is no draft to discard."))
         cfg.draft = None
         cfg.draft_updated_at = None
         cfg.save()
-    log_event(request, AuditLog.Action.UPDATE, None, "پیش‌نویس تغییرات ظاهر سایت دور انداخته شد.", object_type=AUDIT_TYPE)
+    log_event(request, AuditLog.Action.UPDATE, None, gettext("The site appearance draft changes were discarded."), object_type=AUDIT_TYPE)
 
 
 def publish_draft(request) -> None:
     with transaction.atomic():
         cfg = _locked()
         if cfg.draft is None:
-            raise ThemeError("تغییر منتشرنشده‌ای وجود ندارد.")
+            raise ThemeError(gettext("There are no unpublished changes."))
         raw = cfg.draft if isinstance(cfg.draft, dict) else {}
         appearance = raw.get("appearance") if isinstance(raw.get("appearance"), dict) else {}
         doc = sanitize(raw)
@@ -103,7 +104,7 @@ def publish_draft(request) -> None:
         if (appearance.get("primary"), appearance.get("background"), appearance.get("text")) != (a["primary"], a["background"], a["text"]) or palette_errors(
             a["primary"], a["background"], a["text"]
         ):
-            raise ThemeError("رنگ‌های پیش‌نویس معتبر یا خوانا نیستند؛ ابتدا بخش «ظاهر» را اصلاح کنید.")
+            raise ThemeError(gettext("The draft colors are not valid or readable; first fix the “Appearance” section."))
         theme = _usable_theme(doc["theme"])
         cfg.published = doc
         cfg.active_theme = doc["theme"]
@@ -112,7 +113,7 @@ def publish_draft(request) -> None:
         cfg.published_at = timezone.now()
         cfg.published_by = request.user if request.user.is_authenticated else None
         cfg.save()
-    log_event(request, AuditLog.Action.PUBLISH, None, f"تغییرات ظاهر سایت منتشر شد (قالب «{theme.display_name}»).", object_type=AUDIT_TYPE)
+    log_event(request, AuditLog.Action.PUBLISH, None, (gettext("The site appearance changes were published (theme “%(display_name)s”).") % {"display_name": theme.display_name}), object_type=AUDIT_TYPE)
 
 
 def activate(request, slug: str) -> None:
@@ -120,7 +121,7 @@ def activate(request, slug: str) -> None:
     with transaction.atomic():
         cfg = _locked()
         if cfg.active_theme == slug:
-            raise ThemeError("این قالب هم‌اکنون فعال است.")
+            raise ThemeError(gettext("This theme is already active."))
         cfg.active_theme = slug
         published = copy.deepcopy(cfg.published) if isinstance(cfg.published, dict) else {}
         published["theme"] = slug
@@ -133,15 +134,15 @@ def activate(request, slug: str) -> None:
         cfg.published_at = timezone.now()
         cfg.published_by = request.user if request.user.is_authenticated else None
         cfg.save()
-    log_event(request, AuditLog.Action.PUBLISH, None, f"قالب «{theme.display_name}» فعال شد.", object_type=AUDIT_TYPE)
+    log_event(request, AuditLog.Action.PUBLISH, None, (gettext("Theme “%(display_name)s” was activated.") % {"display_name": theme.display_name}), object_type=AUDIT_TYPE)
 
 
 def deactivate(request, slug: str) -> None:
     """غیرفعال‌سازی قالب فعال = بازگشت به قالب پیش‌فرض (سایت همیشه باید یک قالب فعال داشته باشد)."""
     if slug == DEFAULT_THEME:
-        raise ThemeError("قالب پیش‌فرض غیرفعال نمی‌شود؛ برای تغییر ظاهر، قالب دیگری را فعال کنید.")
+        raise ThemeError(gettext("The default theme cannot be deactivated; to change the appearance, activate another theme."))
     with transaction.atomic():
         cfg = _locked()
         if cfg.active_theme != slug:
-            raise ThemeError("این قالب فعال نیست.")
+            raise ThemeError(gettext("This theme is not active."))
     activate(request, DEFAULT_THEME)

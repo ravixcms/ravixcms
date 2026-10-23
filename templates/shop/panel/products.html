@@ -1,16 +1,17 @@
 {% extends "layouts/panel.html" %}
+{% load i18n %}
 {% load ravix_ui %}
-{% block title %}محصولات{% endblock %}
-{% block page_title %}محصولات{% endblock %}
+{% block title %}{% trans "Products" %}{% endblock %}
+{% block page_title %}{% trans "Products" %}{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>محصولات</h1><p>سایت: {{ site_obj.name }}</p></div><a class="btn" href="{% url 'shop_panel:product_create' %}">{% icon "plus" 18 %} محصول جدید</a></div>
+<div class="page-head"><div><h1>{% trans "Products" %}</h1><p>{% blocktrans trimmed with name=site_obj.name %}Site: {{ name }}{% endblocktrans %}</p></div><a class="btn" href="{% url 'shop_panel:product_create' %}">{% icon "plus" 18 %} {% trans "New product" %}</a></div>
 <div class="card">
-  <form method="get" class="toolbar" role="search"><input type="search" name="q" value="{{ q }}" class="input grow" placeholder="جستجوی نام" aria-label="جستجو"><button class="btn">{% icon "search" 18 %} جستجو</button></form>
-  {% if page_obj %}<div class="table-wrap"><table class="table"><thead><tr><th>نام</th><th>قیمت</th><th>موجودی</th><th>وضعیت</th><th></th></tr></thead><tbody>
+  <form method="get" class="toolbar" role="search"><input type="search" name="q" value="{{ q }}" class="input grow" placeholder="{% trans "Search by name" %}" aria-label="{% trans "Search" %}"><button class="btn">{% icon "search" 18 %} {% trans "Search" %}</button></form>
+  {% if page_obj %}<div class="table-wrap"><table class="table"><thead><tr><th>{% trans "Name" %}</th><th>{% trans "Price" %}</th><th>{% trans "Stock" %}</th><th>{% trans "Status" %}</th><th></th></tr></thead><tbody>
   {% for p in page_obj %}<tr><td>{{ p.name }}</td><td>{{ p.price|money }}</td><td>{{ p.stock|fa_digits }}</td>
-    <td><span class="badge {% if p.is_active %}badge-published{% else %}badge-draft{% endif %}">{% if p.is_active %}فعال{% else %}غیرفعال{% endif %}</span></td>
-    <td style="display:flex;gap:.4rem"><a class="btn btn-light btn-sm" href="{% url 'shop_panel:product_edit' p.pk %}">ویرایش</a>
-    <form method="post" action="{% url 'shop_panel:product_delete' p.pk %}">{% csrf_token %}<button class="btn btn-danger btn-sm" type="submit">حذف</button></form></td></tr>{% endfor %}
-  </tbody></table></div>{% include "partials/_pagination.html" %}{% else %}<div class="empty">محصولی وجود ندارد.</div>{% endif %}
+    <td><span class="badge {% if p.is_active %}badge-published{% else %}badge-draft{% endif %}">{% if p.is_active %}{% trans "Active" %}{% else %}{% trans "Inactive" %}{% endif %}</span></td>
+    <td style="display:flex;gap:.4rem"><a class="btn btn-light btn-sm" href="{% url 'shop_panel:product_edit' p.pk %}">{% trans "Edit" %}</a>
+    <form method="post" action="{% url 'shop_panel:product_delete' p.pk %}">{% csrf_token %}<button class="btn btn-danger btn-sm" type="submit">{% trans "Delete" %}</button></form></td></tr>{% endfor %}
+  </tbody></table></div>{% include "partials/_pagination.html" %}{% else %}<div class="empty">{% trans "There is no product." %}</div>{% endif %}
 </div>
 {% endblock %}

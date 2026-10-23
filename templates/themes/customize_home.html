@@ -1,17 +1,18 @@
 {% extends "themes/customize_base.html" %}
+{% load i18n %}
 {% load ravix_ui %}
 {% block tab_content %}
 <form method="post" novalidate data-once>
   {% csrf_token %}
-  <p class="help">بخش‌های پشتیبانی‌شده توسط قالب «{{ working_theme.display_name }}»: {{ supported_sections|join:"، " }}. بخش‌های دیگر ذخیره می‌شوند اما نمایش داده نمی‌شوند. ترتیب با عدد «ردیف» مشخص می‌شود.</p>
+  <p class="help">{% trans ", " as list_sep %}{% blocktrans trimmed with display_name=working_theme.display_name supported_sections=supported_sections|join:list_sep %}Sections supported by the “{{ display_name }}” theme: {{ supported_sections }}. Other sections are saved but not displayed. The order is set by the “Row” number.{% endblocktrans %}</p>
   <section class="card formset" aria-labelledby="sections-title">
-    <div class="card-header"><h2 id="sections-title">بخش‌های صفحه اصلی</h2></div>
+    <div class="card-header"><h2 id="sections-title">{% trans "Home page sections" %}</h2></div>
     <div class="card-body">
       {{ formset.management_form }}
       {% for e in formset.non_form_errors %}<div class="form-errors" role="alert"><p>{{ e }}</p></div>{% endfor %}
       {% for f in formset %}
       <fieldset class="formset-row{% if f.errors %} has-errors{% endif %}">
-        <legend class="sr-only">بخش {{ forloop.counter }}</legend>
+        <legend class="sr-only">{% blocktrans trimmed with counter=forloop.counter %}Section {{ counter }}{% endblocktrans %}</legend>
         {% for e in f.non_field_errors %}<p class="error-text">{{ e }}</p>{% endfor %}
         <div class="row-grid">
           {% include "partials/_field.html" with field=f.type %}
@@ -33,7 +34,7 @@
       {% endfor %}
     </div>
   </section>
-  <div class="form-actions"><button type="submit" class="btn">{% icon "check" 18 %} ذخیره در پیش‌نویس</button></div>
+  <div class="form-actions"><button type="submit" class="btn">{% icon "check" 18 %} {% trans "Save to draft" %}</button></div>
 </form>
 {% include "themes/_preview_frame.html" %}
 {% endblock %}

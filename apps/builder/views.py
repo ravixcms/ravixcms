@@ -1,3 +1,4 @@
+from django.utils.translation import gettext
 import json
 
 from django.core.exceptions import PermissionDenied
@@ -98,12 +99,12 @@ class PreviewView(CapabilityRequiredMixin, View):
             show_title = bool(validate_document(doc)["meta"]["show_title"])
         except DocumentInvalid:
             show_title = True
-        item = pub.page_item(page, body_html=html or "<p>طرح نامعتبر است.</p>", builder=True, show_title=show_title)
+        item = pub.page_item(page, body_html=html or gettext("<p>The layout is invalid.</p>"), builder=True, show_title=show_title)
 
         def seo(site):
-            return {"title": f"پیش‌نمایش: {page.title}", "robots": "noindex,nofollow", "description": "", "canonical": ""}
+            return {"title": (gettext("Preview: %(title)s") % {"title": page.title}), "robots": "noindex,nofollow", "description": "", "canonical": ""}
 
-        ctx = {"page": item, "breadcrumbs": _crumbs(("خانه", "/"), (page.title, ""))}
+        ctx = {"page": item, "breadcrumbs": _crumbs((gettext("Home"), "/"), (page.title, ""))}
         return render_page(request, "page_detail.html", ctx, embedded=True, seo_factory=seo)
 
 
@@ -120,23 +121,23 @@ class ApiView(View):
     def dispatch(self, request, *args, **kwargs):
         user = request.user
         if not user.is_authenticated:
-            return _err("ابتدا وارد حساب کاربری شوید.", 401)
+            return _err(gettext("Please sign in first."), 401)
         if not user.has_cap(self.required_capability):
-            return _err("اجازه‌ی این کار را ندارید.", 403)
+            return _err(gettext("You do not have permission to do this."), 403)
         return super().dispatch(request, *args, **kwargs)
 
     def json_body(self):
         request = self.request
         if request.content_type != "application/json":
-            raise ValueError("نوع محتوا باید application/json باشد.")
+            raise ValueError(gettext("The content type must be application/json."))
         if len(request.body) > LIMITS["max_json_bytes"] + 4096:
-            raise ValueError("حجم داده بیش از حد مجاز است.")
+            raise ValueError(gettext("The data size exceeds the limit."))
         try:
             data = json.loads(request.body.decode("utf-8"))
         except (UnicodeDecodeError, json.JSONDecodeError):
-            raise ValueError("JSON نامعتبر است.")
+            raise ValueError(gettext("Invalid JSON."))
         if not isinstance(data, dict):
-            raise ValueError("بدنه‌ی درخواست باید یک شیء JSON باشد.")
+            raise ValueError(gettext("The request body must be a JSON object."))
         return data
 
     def get_design(self, page_id):
@@ -182,14 +183,14 @@ class DraftApi(ApiView):
             data = self.json_body()
             revision = data.get("revision")
             if isinstance(revision, bool) or not isinstance(revision, int):
-                raise ValueError("شماره‌ی ویرایش نامعتبر است.")
+                raise ValueError(gettext("The revision number is invalid."))
             design = services.save_draft(design.pk, data.get("document"), revision, request.user)
         except ValueError as exc:
             return _err(str(exc))
         except DocumentInvalid as exc:
-            return _err("ساختار صفحه معتبر نیست.", 422, errors=exc.as_json())
+            return _err(gettext("The page structure is not valid."), 422, errors=exc.as_json())
         except services.ConflictError as exc:
-            return _err("این صفحه در جای دیگری ویرایش و ذخیره شده است. صفحه را دوباره بارگذاری کنید.", 409, revision=exc.current_revision)
+            return _err(gettext("This page was edited and saved elsewhere. Reload the page."), 409, revision=exc.current_revision)
         return JsonResponse({"ok": True, "revision": design.revision})
 
 
@@ -205,7 +206,7 @@ class VersionsApi(ApiView):
             action = data.get("action")
             note = data.get("note", "")
             if not isinstance(note, str):
-                raise ValueError("یادداشت باید متن باشد.")
+                raise ValueError(gettext("The note must be text."))
             note = note.strip()[:200]
             if action == "save":
                 services.save_version(design.pk, request.user, note)
@@ -216,13 +217,13 @@ class VersionsApi(ApiView):
             elif action == "unpublish":
                 services.unpublish(design.pk, request.user)
             else:
-                raise ValueError("عملیات ناشناخته است.")
+                raise ValueError(gettext("Unknown action."))
         except ValueError as exc:
             return _err(str(exc))
         except PermissionDenied:
-            return _err("اجازه‌ی تأیید و انتشار را ندارید.", 403)
+            return _err(gettext("You do not have permission to approve and publish."), 403)
         except DocumentInvalid as exc:
-            return _err("طرح هنوز کامل نیست؛ موارد زیر را اصلاح کنید.", 422, errors=exc.as_json())
+            return _err(gettext("The layout is not complete yet; fix the items below."), 422, errors=exc.as_json())
         except services.WorkflowError as exc:
             return _err(str(exc), 409)
         page.refresh_from_db()
@@ -244,7 +245,7 @@ class VersionActionApi(ApiView):
             action = data.get("action")
             note = data.get("note", "")
             if not isinstance(note, str):
-                raise ValueError("یادداشت باید متن باشد.")
+                raise ValueError(gettext("The note must be text."))
             note = note.strip()[:200]
             if action == "restore":
                 services.restore(design.pk, number, request.user)
@@ -253,13 +254,13 @@ class VersionActionApi(ApiView):
             elif action == "reject":
                 services.reject(design.pk, number, request.user, note)
             else:
-                raise ValueError("عملیات ناشناخته است.")
+                raise ValueError(gettext("Unknown action."))
         except ValueError as exc:
             return _err(str(exc))
         except PermissionDenied:
-            return _err("اجازه‌ی تأیید و انتشار را ندارید.", 403)
+            return _err(gettext("You do not have permission to approve and publish."), 403)
         except DocumentInvalid as exc:
-            return _err("این نسخه معتبر نیست.", 422, errors=exc.as_json())
+            return _err(gettext("This version is not valid."), 422, errors=exc.as_json())
         except services.WorkflowError as exc:
             return _err(str(exc), 409)
         page.refresh_from_db()

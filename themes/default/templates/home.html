@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% load ravix_theme %}
 {% block body_class %}page-home{% endblock %}
 {% block content %}
@@ -21,14 +22,14 @@
   <section class="band" aria-labelledby="sec-{{ forloop.counter }}">
     <div class="container">
       <div class="band-head">
-        <h2 id="sec-{{ forloop.counter }}">{% if s.title %}{{ s.title }}{% else %}نوشته‌ها{% endif %}</h2>
-        {% if s.button_url %}<a class="more" href="{{ s.button_url }}">{% if s.button_label %}{{ s.button_label }}{% else %}مشاهده همه{% endif %}</a>{% endif %}
+        <h2 id="sec-{{ forloop.counter }}">{% if s.title %}{{ s.title }}{% else %}{% trans "Posts" %}{% endif %}</h2>
+        {% if s.button_url %}<a class="more" href="{{ s.button_url }}">{% if s.button_label %}{{ s.button_label }}{% else %}{% trans "View all" %}{% endif %}</a>{% endif %}
       </div>
       {% for post in s.posts %}{% if forloop.first %}
       <article class="lead{% if post.image_url %} has-media{% endif %}">
         {% if post.image_url %}<a class="lead-media" href="{{ post.url }}" tabindex="-1" aria-hidden="true"><img src="{{ post.image_url }}" alt="" decoding="async" fetchpriority="high"></a>{% endif %}
         <div class="lead-body">
-          {% if post.categories %}<ul class="chips" aria-label="دسته‌بندی‌ها">{% for c in post.categories %}<li><a href="{{ c.url }}">{{ c.name }}</a></li>{% endfor %}</ul>{% endif %}
+          {% if post.categories %}<ul class="chips" aria-label="{% trans "Content categories" %}">{% for c in post.categories %}<li><a href="{{ c.url }}">{{ c.name }}</a></li>{% endfor %}</ul>{% endif %}
           <h3 class="lead-title"><a href="{{ post.url }}">{{ post.title }}</a></h3>
           {% if post.excerpt %}<p class="lead-excerpt">{{ post.excerpt }}</p>{% endif %}
           <ul class="meta">{% if post.author_name %}<li>{{ post.author_name }}</li>{% endif %}<li><time datetime="{{ post.date_iso }}">{{ post.date_display }}</time></li></ul>
@@ -46,10 +47,10 @@
   {% elif s.type == "categories" %}
   <section class="band" aria-labelledby="sec-{{ forloop.counter }}">
     <div class="container">
-      <div class="band-head"><h2 id="sec-{{ forloop.counter }}">{% if s.title %}{{ s.title }}{% else %}دسته‌بندی‌ها{% endif %}</h2></div>
+      <div class="band-head"><h2 id="sec-{{ forloop.counter }}">{% if s.title %}{{ s.title }}{% else %}{% trans "Content categories" %}{% endif %}</h2></div>
       <ul class="cat-list">
         {% for c in s.categories %}
-        <li><a href="{{ c.url }}"><strong>{{ c.name }}</strong><span>{{ c.post_count|fa_digits }} نوشته</span>{% if c.description %}<small>{{ c.description }}</small>{% endif %}</a></li>
+        <li><a href="{{ c.url }}"><strong>{{ c.name }}</strong><span>{% blocktrans trimmed with post_count=c.post_count|fa_digits %}{{ post_count }} posts{% endblocktrans %}</span>{% if c.description %}<small>{{ c.description }}</small>{% endif %}</a></li>
         {% endfor %}
       </ul>
     </div>
@@ -61,7 +62,7 @@
       <div class="article">
         <h2 id="sec-{{ forloop.counter }}">{{ s.title }}</h2>
         <div class="prose">{{ s.page.body_html }}</div>
-        <p><a class="more" href="{{ s.page.url }}">ادامه در صفحهٔ «{{ s.page.title }}»</a></p>
+        <p><a class="more" href="{{ s.page.url }}">{% blocktrans trimmed with title=s.page.title %}Continue on the “{{ title }}” page{% endblocktrans %}</a></p>
       </div>
     </div>
   </section>
@@ -79,8 +80,8 @@
   {% endif %}
 {% empty %}
   <section class="band"><div class="container empty-state">
-    <p>صفحهٔ اصلی هنوز بخشی ندارد.</p>
-    {% if viewer.customize_url %}<p><a class="btn" href="{{ viewer.customize_url }}">بخش‌های صفحهٔ اصلی را تنظیم کنید</a></p>{% endif %}
+    <p>{% trans "The home page has no sections yet." %}</p>
+    {% if viewer.customize_url %}<p><a class="btn" href="{{ viewer.customize_url }}">{% trans "Set up the home page sections" %}</a></p>{% endif %}
   </div></section>
 {% endfor %}
 {% endblock %}

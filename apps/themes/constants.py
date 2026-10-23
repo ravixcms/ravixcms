@@ -1,11 +1,12 @@
 """ثابت‌های قرارداد قالب (Theme Contract). هر تغییر ناسازگار در این قرارداد باید API_VERSION را افزایش دهد."""
+from django.utils.translation import gettext_lazy
 
 API_VERSION = 1
 DEFAULT_THEME = "default"
 THEME_MANIFEST = "theme.json"
 
-# قالب‌ها فقط می‌توانند این کتابخانه تگ را بارگذاری کنند ({% load ravix_theme %}).
-ALLOWED_LIBRARIES = frozenset({"ravix_theme", "ravin_theme"})  # «ravin_theme»: نام منسوخ؛ تا 2.0
+# Themes may load only these tag libraries ({% load ravix_theme %}, {% load i18n %}).
+ALLOWED_LIBRARIES = frozenset({"ravix_theme", "ravin_theme", "i18n"})  # «ravin_theme»: نام منسوخ؛ تا 2.0
 
 # قالب‌هایی که هر قالب حتماً باید داشته باشد.
 REQUIRED_TEMPLATES = (
@@ -45,39 +46,39 @@ SCREENSHOT_EXTENSIONS = frozenset({"png", "jpg", "jpeg", "webp"})
 # ------------------------------------------------------------------ سفارشی‌سازی
 FONTS = {
     "vazirmatn": {
-        "label": "وزیرمتن (بدون‌سریف، پیش‌فرض)",
+        "label": gettext_lazy("Vazirmatn (sans-serif, default)"),
         "stack": "'Vazirmatn', Tahoma, 'Segoe UI', sans-serif",
         "preload": "fonts/Vazirmatn-Variable.woff2",
     },
     "noto-naskh": {
-        "label": "نوتو نسخ (سنتی، مناسب متن‌های طولانی)",
+        "label": gettext_lazy("Noto Naskh (traditional, suited to long text)"),
         "stack": "'Noto Naskh Arabic', 'Traditional Arabic', 'Times New Roman', serif",
         "preload": "fonts/noto-naskh-arabic-arabic-wght-normal.woff2",
     },
     "system": {
-        "label": "فونت سیستم (سریع‌ترین، بدون دانلود)",
+        "label": gettext_lazy("System font (fastest, no download)"),
         "stack": "system-ui, -apple-system, 'Segoe UI', Tahoma, sans-serif",
         "preload": None,
     },
 }
-FONT_SIZES = {"sm": ("کوچک", 16), "md": ("متوسط", 17), "lg": ("بزرگ", 19)}
+FONT_SIZES = {"sm": (gettext_lazy("Small"), 16), "md": (gettext_lazy("Medium"), 17), "lg": (gettext_lazy("Large"), 19)}
 
 HOME_SECTION_TYPES = {
-    "hero": "معرفی (Hero)",
-    "latest_posts": "آخرین نوشته‌ها",
-    "category_posts": "نوشته‌های یک دسته‌بندی",
-    "categories": "فهرست دسته‌بندی‌ها",
-    "page": "نمایش محتوای یک صفحه ثابت",
-    "text": "متن آزاد",
+    "hero": gettext_lazy("Introduction (Hero)"),
+    "latest_posts": gettext_lazy("Latest posts"),
+    "category_posts": gettext_lazy("Posts in a category"),
+    "categories": gettext_lazy("Category list"),
+    "page": gettext_lazy("Show the content of a static page"),
+    "text": gettext_lazy("Free text"),
 }
 
-MENU_LOCATIONS = {"header": "منوی سربرگ", "footer": "منوی پانویس"}
+MENU_LOCATIONS = {"header": gettext_lazy("Header menu"), "footer": gettext_lazy("Footer menu")}
 MENU_KINDS = {
-    "home": "صفحه اصلی",
-    "blog": "فهرست نوشته‌ها",
-    "page": "یک صفحه ثابت",
-    "category": "یک دسته‌بندی",
-    "url": "نشانی دلخواه",
+    "home": gettext_lazy("Home page"),
+    "blog": gettext_lazy("Post list"),
+    "page": gettext_lazy("A static page"),
+    "category": gettext_lazy("A category"),
+    "url": gettext_lazy("Custom URL"),
 }
 
 MAX_MENU_ITEMS = 12

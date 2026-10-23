@@ -1,3 +1,4 @@
+from django.utils.translation import gettext, gettext_lazy
 from pathlib import Path
 
 from django.conf import settings
@@ -113,19 +114,19 @@ class ThemeUploadView(ThemeListView):
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated and not request.user.has_cap(self.required_capability):
-            installer._audit(request, "رد شد", "کاربر بدون مجوز «themes.install» تلاش کرد قالب نصب کند.")
+            installer._audit(request, gettext("Was rejected"), gettext("A user without the “themes.install” permission tried to install a theme."))
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         form = ThemeUploadForm(request.POST, request.FILES)
         if not form.is_valid():
-            return self._fail(form.errors.get("theme_zip", ["فایل نامعتبر است."])[0])
+            return self._fail(form.errors.get("theme_zip", [gettext("The file is invalid.")])[0])
         try:
             result = installer.install_theme_zip(request, form.cleaned_data["theme_zip"])
         except installer.ThemeInstallError as exc:
             return self._fail(exc.message, exc.details)
-        messages.success(request, f"قالب «{result.name}» نصب شد و در فهرست زیر قرار گرفت؛ فعال نشده است و هر زمان خواستید خودتان فعالش کنید.")
+        messages.success(request, (gettext("Theme “%(name)s” was installed and added to the list below; it is not activated, and you can activate it yourself whenever you want.") % {"name": result.name}))
         return redirect(f"{reverse('themes:list')}?installed={result.slug}")
 
     def _fail(self, message, details=()):
@@ -137,13 +138,13 @@ class ThemeActivateView(ThemeActionView):
     def perform(self, request, slug):
         services.activate(request, slug)
         theme = registry.get_theme(slug)
-        messages.success(request, f"قالب «{theme.display_name}» فعال شد و هم‌اکنون روی سایت اعمال است.")
+        messages.success(request, (gettext("Theme “%(display_name)s” was activated and is now applied to the site.") % {"display_name": theme.display_name}))
 
 
 class ThemeDeactivateView(ThemeActionView):
     def perform(self, request, slug):
         services.deactivate(request, slug)
-        messages.success(request, "قالب غیرفعال شد و قالب پیش‌فرض جایگزین آن شد.")
+        messages.success(request, gettext("The theme was deactivated and replaced by the default theme."))
 
 
 class ThemePreviewView(ThemeActionView):
@@ -163,7 +164,7 @@ class PreviewStartView(ThemeActionView):
 
 
 class PreviewStopView(ThemeActionView):
-    success_message = "از حالت پیش‌نمایش خارج شدید."
+    success_message = gettext_lazy("You left preview mode.")
 
     def perform(self, request):
         preview.stop(request)
@@ -173,7 +174,7 @@ class PreviewStopView(ThemeActionView):
 
 
 class PublishView(ThemeActionView):
-    success_message = "تغییرات ظاهر سایت منتشر شد و برای همه بازدیدکنندگان اعمال است."
+    success_message = gettext_lazy("The site appearance changes were published and are applied for all visitors.")
 
     def perform(self, request):
         services.publish_draft(request)
@@ -184,7 +185,7 @@ class PublishView(ThemeActionView):
 
 
 class DiscardView(ThemeActionView):
-    success_message = "تغییرات منتشرنشده دور ریخته شد."
+    success_message = gettext_lazy("The unpublished changes were discarded.")
 
     def perform(self, request):
         services.discard_draft(request)
@@ -224,11 +225,11 @@ class CustomizeView(ThemesAdminMixin, TemplateView):
         return ctx
 
     def saved(self, request):
-        messages.success(request, "تغییرات در پیش‌نویس ذخیره شد. برای اعمال روی سایت، آن را منتشر کنید.")
+        messages.success(request, gettext("The changes were saved to the draft. Publish it to apply it to the site."))
         return redirect(request.path)
 
     def invalid(self, request, ctx_updates):
-        messages.error(request, "ذخیره انجام نشد. لطفاً خطاهای فرم را بررسی کنید.")
+        messages.error(request, gettext("Could not save. Please check the form errors."))
         ctx = self.get_context_data(**ctx_updates)
         return self.render_to_response(ctx)
 

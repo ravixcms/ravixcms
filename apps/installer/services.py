@@ -1,4 +1,5 @@
 """منطق نصب؛ مشترک بین صفحهٔ وب، دستور ``ravix_install`` و اسکریپت‌ها."""
+from django.utils.translation import gettext
 import logging
 
 from django.core.management import call_command
@@ -58,7 +59,7 @@ def pending_migrations() -> list[str]:
         executor = MigrationExecutor(connection)
         plan = executor.migration_plan(executor.loader.graph.leaf_nodes())
     except DatabaseError:
-        return ["(دیتابیس)"]
+        return [gettext("(database)")]
     return [f"{m.app_label}.{m.name}" for m, _ in plan]
 
 
@@ -78,9 +79,9 @@ def run_migrations() -> None:
 
 def validate_regional(language: str, tz: str) -> None:
     if language not in dict(language_choices()):
-        raise InstallError("زبان انتخاب‌شده پشتیبانی نمی‌شود.")
+        raise InstallError(gettext("The selected language is not supported."))
     if not valid_timezone(tz):
-        raise InstallError("منطقهٔ زمانی نامعتبر است.")
+        raise InstallError(gettext("The time zone is invalid."))
 
 
 def perform_install(*, site_name: str, language: str, timezone_name: str, username: str, email: str, password: str) -> User:

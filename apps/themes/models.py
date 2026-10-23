@@ -1,3 +1,4 @@
+from django.utils.translation import gettext, gettext_lazy
 from django.conf import settings
 from django.db import models
 
@@ -15,23 +16,23 @@ class ThemeConfig(models.Model):
     تغییر ظاهر فقط همین رکورد را عوض می‌کند و هیچ داده‌ای از نوشته‌ها، صفحات یا رسانه‌ها را تغییر نمی‌دهد یا حذف نمی‌کند.
     """
 
-    active_theme = models.CharField("قالب فعال", max_length=60, default=DEFAULT_THEME)
-    published = models.JSONField("پیکربندی منتشرشده", default=default_config)
-    draft = models.JSONField("پیش‌نویس تغییرات", null=True, blank=True, default=None)
-    draft_updated_at = models.DateTimeField("آخرین ویرایش پیش‌نویس", null=True, blank=True)
-    published_at = models.DateTimeField("زمان آخرین انتشار", null=True, blank=True)
+    active_theme = models.CharField(gettext_lazy("Active theme"), max_length=60, default=DEFAULT_THEME)
+    published = models.JSONField(gettext_lazy("Published configuration"), default=default_config)
+    draft = models.JSONField(gettext_lazy("Draft changes"), null=True, blank=True, default=None)
+    draft_updated_at = models.DateTimeField(gettext_lazy("Last draft edit"), null=True, blank=True)
+    published_at = models.DateTimeField(gettext_lazy("Last publish time"), null=True, blank=True)
     published_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL,
-        related_name="+", verbose_name="منتشرکننده",
+        related_name="+", verbose_name=gettext_lazy("Published by"),
     )
-    updated_at = models.DateTimeField("آخرین ویرایش", auto_now=True)
+    updated_at = models.DateTimeField(gettext_lazy("Last edit"), auto_now=True)
 
     class Meta:
-        verbose_name = "تنظیمات ظاهر سایت"
-        verbose_name_plural = "تنظیمات ظاهر سایت"
+        verbose_name = gettext_lazy("Site appearance settings")
+        verbose_name_plural = gettext_lazy("Site appearance settings")
 
     def __str__(self):
-        return f"قالب فعال: {self.active_theme}"
+        return (gettext("Active theme: %(active_theme)s") % {"active_theme": self.active_theme})
 
     def save(self, *args, **kwargs):
         self.pk = 1  # singleton

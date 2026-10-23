@@ -4,6 +4,7 @@
 ``inspect_theme_dir`` هرگز استثنا نمی‌اندازد و همیشه یک ``ThemeInfo`` برمی‌گرداند؛ قالب نامعتبر در فهرست قالب‌ها همراه
 با فهرست خطاهایش نمایش داده می‌شود اما قابل فعال‌سازی نیست.
 """
+from django.utils.translation import gettext
 import json
 import os
 import re
@@ -70,10 +71,10 @@ def _str_field(data: dict, key: str, errors: list, *, max_len: int, required: bo
     value = data.get(key, "")
     if value in ("", None):
         if required:
-            errors.append(f"فیلد «{key}» در theme.json الزامی است.")
+            errors.append((gettext("The field “%(key)s” is required in theme.json.") % {"key": key}))
         return ""
     if not isinstance(value, str) or len(value) > max_len:
-        errors.append(f"فیلد «{key}» باید متنی حداکثر {max_len} نویسه‌ای باشد.")
+        errors.append((gettext("The field “%(key)s” must be a string of at most %(max_len)s characters.") % {"key": key, "max_len": max_len}))
         return ""
     return value.strip()
 
@@ -82,42 +83,42 @@ def _scan_tree(root: Path, errors: list) -> None:
     total = 0
     for entry in sorted(root.iterdir()):
         if entry.name not in ALLOWED_TOP_LEVEL:
-            errors.append(f"فایل یا پوشه غیرمجاز در ریشه قالب: «{entry.name}».")
+            errors.append((gettext("File or folder not allowed in the theme root: “%(name)s”.") % {"name": entry.name}))
     for dirpath, dirnames, filenames in os.walk(root, followlinks=False):
         base = Path(dirpath)
         for name in list(dirnames):
             if (base / name).is_symlink():
-                errors.append(f"پیوند نمادین (symlink) مجاز نیست: «{(base / name).relative_to(root)}».")
+                errors.append((gettext("Symbolic links are not allowed: “%(relative_to)s”.") % {"relative_to": (base / name).relative_to(root)}))
                 dirnames.remove(name)
         for name in filenames:
             path = base / name
             rel = path.relative_to(root)
             total += 1
             if path.is_symlink():
-                errors.append(f"پیوند نمادین (symlink) مجاز نیست: «{rel}».")
+                errors.append((gettext("Symbolic links are not allowed: “%(rel)s”.") % {"rel": rel}))
                 continue
             if len(rel.parts) == 1:
                 continue  # فایل‌های ریشه با ALLOWED_TOP_LEVEL بررسی شده‌اند
             ext = path.suffix.lstrip(".").lower()
             top = rel.parts[0]
             if ext not in ALLOWED_EXTENSIONS:
-                errors.append(f"نوع فایل «{rel}» در قالب مجاز نیست (فقط فایل‌های غیرقابل‌اجرا روی سرور).")
+                errors.append((gettext("The file type of “%(rel)s” is not allowed in a theme (only files that cannot run on the server).") % {"rel": rel}))
             elif top == "templates" and ext != "html":
-                errors.append(f"پوشه templates فقط فایل‌های html می‌پذیرد: «{rel}».")
+                errors.append((gettext("The templates folder accepts only html files: “%(rel)s”.") % {"rel": rel}))
             elif top == "static" and ext == "html":
                 # فایل‌های static مستقیم از وب سرو می‌شوند؛ html در آن‌جا یک صفحه هم‌مبدأ بدون کنترل سایت می‌شد.
-                errors.append(f"فایل html در پوشه static مجاز نیست: «{rel}» (قالب‌های html باید در templates باشند).")
+                errors.append((gettext("html files are not allowed in the static folder: “%(rel)s” (html templates must be in templates).") % {"rel": rel}))
             elif path.stat().st_size > MAX_FILE_BYTES:
-                errors.append(f"حجم فایل «{rel}» بیش از حد مجاز است.")
+                errors.append((gettext("The size of file “%(rel)s” exceeds the limit.") % {"rel": rel}))
     if total > MAX_FILES:
-        errors.append(f"تعداد فایل‌های قالب بیش از {MAX_FILES} است.")
+        errors.append((gettext("The number of theme files exceeds %(MAX_FILES)s.") % {"MAX_FILES": MAX_FILES}))
 
 
 def _scan_templates(theme_dir: Path, errors: list) -> None:
     templates_dir = theme_dir / "templates"
     for name in REQUIRED_TEMPLATES:
         if not (templates_dir / name).is_file():
-            errors.append(f"قالب الزامی «{name}» وجود ندارد.")
+            errors.append((gettext("The required template “%(name)s” does not exist.") % {"name": name}))
     engine = build_engine(templates_dir)
     for path in sorted(templates_dir.rglob("*.html")):
         rel = path.relative_to(templates_dir)
@@ -126,7 +127,7 @@ def _scan_templates(theme_dir: Path, errors: list) -> None:
         try:
             source = path.read_text(encoding="utf-8")
         except (OSError, UnicodeDecodeError):
-            errors.append(f"فایل «{rel}» باید متن UTF-8 معتبر باشد.")
+            errors.append((gettext("The file “%(rel)s” must be valid UTF-8 text.") % {"rel": rel}))
             continue
         for match in LOAD_RE.finditer(source):
             parts = match.group(1).split()
@@ -135,17 +136,17 @@ def _scan_templates(theme_dir: Path, errors: list) -> None:
                 if lib == "ravin_theme":
                     warn_legacy("{% load ravin_theme %}", "{% load ravix_theme %}")
                 if lib not in ALLOWED_LIBRARIES:
-                    errors.append(f"بارگذاری کتابخانه «{lib}» در «{rel}» مجاز نیست (فقط ravix_theme).")
+                    errors.append((gettext("Loading the library “%(lib)s” in “%(rel)s” is not allowed (only ravix_theme and i18n).") % {"lib": lib, "rel": rel}))
         if DEBUG_TAG_RE.search(source):
-            errors.append(f"تگ {{% debug %}} در «{rel}» مجاز نیست.")
+            errors.append((gettext("The {%% debug %%} tag is not allowed in “%(rel)s”.") % {"rel": rel}))
         try:
             engine.from_string(source)
         except TemplateSyntaxError as exc:
-            errors.append(f"خطای نحوی در «{rel}»: {exc}")
+            errors.append((gettext("Syntax error in “%(rel)s”: %(exc)s") % {"rel": rel, "exc": exc}))
         if rel.as_posix() == "base.html":
             for tag in REQUIRED_BASE_TAGS:
                 if not re.search(r"\{%-?\s*" + tag + r"\b", source):
-                    errors.append(f"base.html باید از تگ {{% {tag} %}} استفاده کند.")
+                    errors.append((gettext("base.html must use the {%% %(tag)s %%} tag.") % {"tag": tag}))
 
 
 def inspect_theme_dir(theme_dir: Path) -> ThemeInfo:
@@ -155,39 +156,39 @@ def inspect_theme_dir(theme_dir: Path) -> ThemeInfo:
     data: dict = {}
 
     if not SLUG_RE.match(slug):
-        errors.append("نام پوشه قالب فقط می‌تواند شامل حروف کوچک انگلیسی، عدد، «-» و «_» باشد.")
+        errors.append(gettext("The theme folder name may only contain lowercase English letters, digits, “-” and “_”."))
     if theme_dir.is_symlink():
-        errors.append("پوشه قالب نمی‌تواند پیوند نمادین (symlink) باشد.")
+        errors.append(gettext("The theme folder cannot be a symbolic link."))
         return ThemeInfo(slug=slug, path=theme_dir, errors=tuple(errors))
 
     manifest = theme_dir / THEME_MANIFEST
     if not manifest.is_file():
-        errors.append("فایل theme.json پیدا نشد.")
+        errors.append(gettext("The theme.json file was not found."))
     elif manifest.is_symlink():
-        errors.append("theme.json نمی‌تواند پیوند نمادین باشد.")
+        errors.append(gettext("theme.json cannot be a symbolic link."))
     elif manifest.stat().st_size > MAX_MANIFEST_BYTES:
-        errors.append("حجم theme.json بیش از حد مجاز است.")
+        errors.append(gettext("The size of theme.json exceeds the limit."))
     else:
         try:
             loaded = json.loads(manifest.read_text(encoding="utf-8"))
             if isinstance(loaded, dict):
                 data = loaded
             else:
-                errors.append("theme.json باید یک شیء JSON باشد.")
+                errors.append(gettext("theme.json must be a JSON object."))
         except (ValueError, UnicodeDecodeError) as exc:
-            errors.append(f"theme.json معتبر نیست: {exc}")
+            errors.append((gettext("theme.json is not valid: %(exc)s") % {"exc": exc}))
 
     name = version = author = description = screenshot = ravix = ""
     home_sections = tuple(HOME_SECTION_TYPES)
     if data:
         if data.get("api_version") != API_VERSION:
-            errors.append(f"api_version باید {API_VERSION} باشد (قالب با نسخه دیگری از قرارداد ساخته شده است).")
+            errors.append((gettext("api_version must be %(API_VERSION)s (the theme was built for another version of the contract).") % {"API_VERSION": API_VERSION}))
         if data.get("slug") != slug:
-            errors.append("مقدار «slug» در theme.json باید دقیقاً با نام پوشه قالب یکی باشد.")
+            errors.append(gettext("The “slug” value in theme.json must match the theme folder name exactly."))
         name = _str_field(data, "name", errors, max_len=60)
         version = _str_field(data, "version", errors, max_len=40)
         if version and not VERSION_RE.match(version):
-            errors.append("«version» باید به شکل نسخه‌دهی معنایی باشد (مثلاً 1.0.0).")
+            errors.append(gettext("“version” must be in semantic versioning form (e.g. 1.0.0)."))
         author = _str_field(data, "author", errors, max_len=80)
         data = upgrade_legacy_key(data, f"theme.json ({slug})")
         ravix = _str_field(data, "ravix", errors, max_len=50, required=False)
@@ -195,13 +196,13 @@ def inspect_theme_dir(theme_dir: Path) -> ThemeInfo:
             from apps.plugins.versions import is_valid_spec
 
             if not is_valid_spec(ravix):
-                errors.append("«ravix» باید بازهٔ نسخه باشد (مثلاً >=0.6,<1.0).")
+                errors.append(gettext("“ravix” must be a version range (e.g. >=0.6,<1.0)."))
                 ravix = ""
         description = _str_field(data, "description", errors, max_len=300, required=False)
         screenshot = _str_field(data, "screenshot", errors, max_len=100, required=False)
         if screenshot:
             if ".." in screenshot or screenshot.startswith("/") or screenshot.lower().rsplit(".", 1)[-1] not in SCREENSHOT_EXTENSIONS:
-                errors.append("مسیر «screenshot» نامعتبر است (باید فایل png/jpg/webp داخل static باشد).")
+                errors.append(gettext("The “screenshot” path is invalid (it must be a png/jpg/webp file inside static)."))
                 screenshot = ""
             elif not (theme_dir / "static" / screenshot).is_file():
                 screenshot = ""  # تصویر معرفی اختیاری است؛ نبودنش خطا نیست
@@ -213,12 +214,12 @@ def inspect_theme_dir(theme_dir: Path) -> ThemeInfo:
 
     if theme_dir.is_dir():
         if not (theme_dir / "templates").is_dir():
-            errors.append("پوشه templates وجود ندارد.")
+            errors.append(gettext("The templates folder does not exist."))
         else:
             _scan_tree(theme_dir, errors)
             _scan_templates(theme_dir, errors)
     else:
-        errors.append("پوشه قالب وجود ندارد.")
+        errors.append(gettext("The theme folder does not exist."))
 
     return ThemeInfo(
         slug=slug,

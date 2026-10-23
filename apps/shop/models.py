@@ -1,3 +1,4 @@
+from django.utils.translation import gettext, gettext_lazy
 import secrets
 
 from django.conf import settings
@@ -19,13 +20,13 @@ DIGITAL_EXTENSIONS = ["pdf", "zip", "epub", "mp3", "mp4", "txt", "csv", "jpg", "
 
 class ProductCategory(TimeStampedModel):
     site = models.ForeignKey(Site, on_delete=models.CASCADE, related_name="product_categories")
-    name = models.CharField("نام دسته", max_length=80)
-    slug = models.SlugField("نامک", max_length=90, allow_unicode=True)
-    order = models.PositiveSmallIntegerField("ترتیب", default=100)
+    name = models.CharField(gettext_lazy("Category name"), max_length=80)
+    slug = models.SlugField(gettext_lazy("Slug"), max_length=90, allow_unicode=True)
+    order = models.PositiveSmallIntegerField(gettext_lazy("Sort order"), default=100)
 
     class Meta:
-        verbose_name = "دستهٔ محصول"
-        verbose_name_plural = "دسته‌های محصول"
+        verbose_name = gettext_lazy("Product category")
+        verbose_name_plural = gettext_lazy("Product categories")
         ordering = ["order", "name"]
         constraints = [models.UniqueConstraint(fields=["site", "slug"], name="shop_category_unique_slug_per_site")]
 
@@ -35,27 +36,27 @@ class ProductCategory(TimeStampedModel):
 
 class Product(TimeStampedModel):
     class Kind(models.TextChoices):
-        PHYSICAL = "physical", "فیزیکی"
-        DIGITAL = "digital", "دیجیتال (دانلودی)"
+        PHYSICAL = "physical", gettext_lazy("Physical")
+        DIGITAL = "digital", gettext_lazy("Digital (downloadable)")
 
     site = models.ForeignKey(Site, on_delete=models.CASCADE, related_name="products")
-    kind = models.CharField("نوع", max_length=10, choices=Kind.choices, default=Kind.PHYSICAL, db_index=True)
+    kind = models.CharField(gettext_lazy("Type"), max_length=10, choices=Kind.choices, default=Kind.PHYSICAL, db_index=True)
     category = models.ForeignKey("ProductCategory", null=True, blank=True, on_delete=models.SET_NULL, related_name="products")
-    name = models.CharField("نام محصول", max_length=200)
-    slug = models.SlugField("نامک", max_length=220, allow_unicode=True)
-    description = models.TextField("توضیحات", blank=True, max_length=5000)
-    price = models.PositiveBigIntegerField("قیمت", validators=[MinValueValidator(1)], help_text="به واحد پول سایت (پیش‌فرض تومان)، عدد صحیح.")
-    discount_percent = models.PositiveSmallIntegerField("درصد تخفیف", default=0, validators=[MaxValueValidator(90)], help_text="۰ تا ۹۰؛ قیمت نهایی همیشه در سرور محاسبه می‌شود.")
-    stock = models.PositiveIntegerField("موجودی", default=0)
-    track_stock = models.BooleanField("کنترل موجودی", default=True, help_text="برای محصول دیجیتالِ نامحدود خاموش کنید.")
-    digital_file = models.FileField("فایل دیجیتال", upload_to=RandomUploadPath("digital"), storage=private_storage, blank=True, max_length=200,
+    name = models.CharField(gettext_lazy("Product name"), max_length=200)
+    slug = models.SlugField(gettext_lazy("Slug"), max_length=220, allow_unicode=True)
+    description = models.TextField(gettext_lazy("Description"), blank=True, max_length=5000)
+    price = models.PositiveBigIntegerField(gettext_lazy("Price"), validators=[MinValueValidator(1)], help_text=gettext_lazy("In the site currency (default toman), a whole number."))
+    discount_percent = models.PositiveSmallIntegerField(gettext_lazy("Discount percentage"), default=0, validators=[MaxValueValidator(90)], help_text=gettext_lazy("0 to 90; the final price is always calculated on the server."))
+    stock = models.PositiveIntegerField(gettext_lazy("Stock"), default=0)
+    track_stock = models.BooleanField(gettext_lazy("Stock control"), default=True, help_text=gettext_lazy("Turn it off for an unlimited digital product."))
+    digital_file = models.FileField(gettext_lazy("Digital file"), upload_to=RandomUploadPath("digital"), storage=private_storage, blank=True, max_length=200,
                                     validators=[FileExtensionValidator(DIGITAL_EXTENSIONS)])
-    is_active = models.BooleanField("فعال (قابل مشاهده و خرید)", default=True)
-    image = models.ImageField("تصویر", upload_to=RandomUploadPath("shop"), blank=True, validators=[validate_image_file])
+    is_active = models.BooleanField(gettext_lazy("Active (visible and purchasable)"), default=True)
+    image = models.ImageField(gettext_lazy("Image"), upload_to=RandomUploadPath("shop"), blank=True, validators=[validate_image_file])
 
     class Meta:
-        verbose_name = "محصول"
-        verbose_name_plural = "محصولات"
+        verbose_name = gettext_lazy("Product")
+        verbose_name_plural = gettext_lazy("Products")
         ordering = ["-created_at", "-id"]
         constraints = [models.UniqueConstraint(fields=["site", "slug"], name="shop_product_unique_slug_per_site")]
         indexes = [models.Index(fields=["site", "is_active", "-created_at"])]
@@ -96,7 +97,7 @@ class Product(TimeStampedModel):
         from django.core.exceptions import ValidationError
 
         if self.is_digital and self.pk and self.is_active and not self.digital_file:
-            raise ValidationError({"digital_file": "برای محصول دیجیتال فعال، فایل لازم است."})
+            raise ValidationError({"digital_file": gettext("An active digital product needs a file.")})
 
     def get_absolute_url(self):
         return reverse("shop:product", args=[self.slug])
@@ -104,9 +105,9 @@ class Product(TimeStampedModel):
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="gallery")
-    image = models.ImageField("تصویر", upload_to=RandomUploadPath("shop"), validators=[validate_image_file])
-    alt = models.CharField("متن جایگزین", max_length=150, blank=True)
-    order = models.PositiveSmallIntegerField("ترتیب", default=100)
+    image = models.ImageField(gettext_lazy("Image"), upload_to=RandomUploadPath("shop"), validators=[validate_image_file])
+    alt = models.CharField(gettext_lazy("Alternative text"), max_length=150, blank=True)
+    order = models.PositiveSmallIntegerField(gettext_lazy("Sort order"), default=100)
 
     class Meta:
         ordering = ["order", "id"]
@@ -118,37 +119,37 @@ class ProductImage(models.Model):
 
 class Order(models.Model):
     class Status(models.TextChoices):
-        PENDING = "pending_payment", "در انتظار پرداخت"
-        PAID = "paid", "پرداخت‌شده"
-        PROCESSING = "processing", "در حال پردازش"
-        SHIPPED = "shipped", "ارسال‌شده"
-        COMPLETED = "completed", "تکمیل‌شده"
-        CANCELLED = "cancelled", "لغوشده"
-        REFUNDED = "refunded", "مستردشده"
+        PENDING = "pending_payment", gettext_lazy("Awaiting payment")
+        PAID = "paid", gettext_lazy("Paid")
+        PROCESSING = "processing", gettext_lazy("Processing")
+        SHIPPED = "shipped", gettext_lazy("Shipped")
+        COMPLETED = "completed", gettext_lazy("Completed")
+        CANCELLED = "cancelled", gettext_lazy("Cancelled")
+        REFUNDED = "refunded", gettext_lazy("Refunded")
 
     site = models.ForeignKey(Site, on_delete=models.PROTECT, related_name="orders")
-    number = models.CharField("شماره سفارش", max_length=20)
+    number = models.CharField(gettext_lazy("Order number"), max_length=20)
     token = models.CharField(max_length=40, unique=True, editable=False)  # کلید غیرقابل‌حدس برای مشاهدهٔ سفارش توسط مشتری
-    status = models.CharField("وضعیت", max_length=20, choices=Status.choices, default=Status.PENDING, db_index=True)
-    customer_name = models.CharField("نام و نام‌خانوادگی", max_length=100)
-    phone = models.CharField("تلفن", max_length=20)
-    email = models.EmailField("ایمیل", blank=True)
-    address = models.TextField("نشانی", max_length=500, blank=True)  # فقط برای سفارش دارای کالای فیزیکی الزامی است
-    note = models.CharField("توضیح مشتری", max_length=300, blank=True)
-    admin_note = models.CharField("یادداشت مدیر", max_length=500, blank=True)
-    subtotal = models.PositiveBigIntegerField("جمع پیش از تخفیف", default=0)
-    discount_total = models.PositiveBigIntegerField("جمع تخفیف", default=0)
-    total = models.PositiveBigIntegerField("جمع کل")
-    currency = models.CharField("واحد پول", max_length=5, default="IRT")
-    needs_shipping = models.BooleanField("نیاز به ارسال", default=True)
+    status = models.CharField(gettext_lazy("Status"), max_length=20, choices=Status.choices, default=Status.PENDING, db_index=True)
+    customer_name = models.CharField(gettext_lazy("Full name"), max_length=100)
+    phone = models.CharField(gettext_lazy("Phone"), max_length=20)
+    email = models.EmailField(gettext_lazy("Email"), blank=True)
+    address = models.TextField(gettext_lazy("URL"), max_length=500, blank=True)  # فقط برای سفارش دارای کالای فیزیکی الزامی است
+    note = models.CharField(gettext_lazy("Customer note"), max_length=300, blank=True)
+    admin_note = models.CharField(gettext_lazy("Admin note"), max_length=500, blank=True)
+    subtotal = models.PositiveBigIntegerField(gettext_lazy("Subtotal before discount"), default=0)
+    discount_total = models.PositiveBigIntegerField(gettext_lazy("Total discount"), default=0)
+    total = models.PositiveBigIntegerField(gettext_lazy("Grand total"))
+    currency = models.CharField(gettext_lazy("Currency"), max_length=5, default="IRT")
+    needs_shipping = models.BooleanField(gettext_lazy("Requires shipping"), default=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     paid_at = models.DateTimeField(null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = "سفارش"
-        verbose_name_plural = "سفارش‌ها"
+        verbose_name = gettext_lazy("Order")
+        verbose_name_plural = gettext_lazy("Orders")
         ordering = ["-created_at", "-id"]
         constraints = [models.UniqueConstraint(fields=["site", "number"], name="shop_order_unique_number_per_site")]
         indexes = [models.Index(fields=["site", "status", "-created_at"])]
@@ -181,10 +182,10 @@ class OrderItem(models.Model):
     product = models.ForeignKey(Product, null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
     name = models.CharField(max_length=200)  # عکس لحظهٔ خرید؛ با تغییر/حذف محصول عوض نمی‌شود
     kind = models.CharField(max_length=10, choices=Product.Kind.choices, default=Product.Kind.PHYSICAL)
-    list_price = models.PositiveBigIntegerField("قیمت پیش از تخفیف", default=0)
-    unit_discount = models.PositiveBigIntegerField("تخفیف هر واحد", default=0)
+    list_price = models.PositiveBigIntegerField(gettext_lazy("Price before discount"), default=0)
+    unit_discount = models.PositiveBigIntegerField(gettext_lazy("Discount per unit"), default=0)
     download_count = models.PositiveSmallIntegerField(default=0)
-    tracked = models.BooleanField("موجودی‌اش کسر شده", default=True)  # برای برگرداندن دقیق موجودی هنگام لغو/استرداد
+    tracked = models.BooleanField(gettext_lazy("Its stock has been deducted"), default=True)  # برای برگرداندن دقیق موجودی هنگام لغو/استرداد
     unit_price = models.PositiveBigIntegerField()
     quantity = models.PositiveIntegerField()
     line_total = models.PositiveBigIntegerField()
@@ -192,10 +193,10 @@ class OrderItem(models.Model):
 
 class Payment(models.Model):
     class Status(models.TextChoices):
-        INITIATED = "initiated", "آغاز شده"
-        SUCCEEDED = "succeeded", "موفق"
-        FAILED = "failed", "ناموفق"
-        REVIEW = "needs_review", "نیازمند بررسی"  # پرداخت موفق برای سفارشی که دیگر قابل پذیرش نبود
+        INITIATED = "initiated", gettext_lazy("Started")
+        SUCCEEDED = "succeeded", gettext_lazy("Succeeded")
+        FAILED = "failed", gettext_lazy("Failed")
+        REVIEW = "needs_review", gettext_lazy("Needs review")  # پرداخت موفق برای سفارشی که دیگر قابل پذیرش نبود
 
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="payments")
     gateway = models.CharField(max_length=30)
@@ -226,9 +227,9 @@ class SandboxTransaction(models.Model):
     """سمت «بانک» در درگاه آزمایشی. فقط صفحهٔ آزمایشی پرداخت وضعیت را تغییر می‌دهد؛ تأیید سرور همین را می‌خواند، نه پارامترهای مرورگر."""
 
     class State(models.TextChoices):
-        PENDING = "pending", "در انتظار"
-        PAID = "paid", "پرداخت‌شده"
-        FAILED = "failed", "ناموفق"
+        PENDING = "pending", gettext_lazy("Pending")
+        PAID = "paid", gettext_lazy("Paid")
+        FAILED = "failed", gettext_lazy("Failed")
 
     reference = models.CharField(max_length=40, unique=True)
     amount = models.PositiveBigIntegerField()
@@ -239,11 +240,11 @@ class OrderEvent(models.Model):
     """تاریخچهٔ تغییرات مهم سفارش (فقط افزودنی). برای حسابرسی؛ از طریق رابط کاربری ویرایش/حذف نمی‌شود."""
 
     class Kind(models.TextChoices):
-        CREATED = "created", "ثبت سفارش"
-        STATUS = "status", "تغییر وضعیت"
-        PAYMENT = "payment", "پرداخت"
-        NOTE = "note", "یادداشت"
-        DOWNLOAD = "download", "دانلود"
+        CREATED = "created", gettext_lazy("Order placed")
+        STATUS = "status", gettext_lazy("Status change")
+        PAYMENT = "payment", gettext_lazy("Payment")
+        NOTE = "note", gettext_lazy("Note")
+        DOWNLOAD = "download", gettext_lazy("Download")
 
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="events")
     kind = models.CharField(max_length=10, choices=Kind.choices, db_index=True)
@@ -261,14 +262,14 @@ class PaymentEvent(models.Model):
     """گزارش رخدادهای تراکنش. داده‌ها پیش از ذخیره پاک‌سازی می‌شوند (بدون کلید/توکن/اطلاعات کارت)."""
 
     class Kind(models.TextChoices):
-        CREATED = "created", "ایجاد تراکنش"
-        REDIRECT = "redirect", "هدایت به درگاه"
-        CALLBACK = "callback", "بازگشت مشتری"
-        VERIFY = "verify", "تأیید"
-        INQUIRE = "inquire", "استعلام وضعیت"
-        STATUS = "status", "تغییر وضعیت"
-        DUPLICATE = "duplicate", "درخواست تکراری"
-        ERROR = "error", "خطا"
+        CREATED = "created", gettext_lazy("Transaction created")
+        REDIRECT = "redirect", gettext_lazy("Redirect to gateway")
+        CALLBACK = "callback", gettext_lazy("Customer return")
+        VERIFY = "verify", gettext_lazy("Approve")
+        INQUIRE = "inquire", gettext_lazy("Status inquiry")
+        STATUS = "status", gettext_lazy("Status change")
+        DUPLICATE = "duplicate", gettext_lazy("Duplicate request")
+        ERROR = "error", gettext_lazy("Error")
 
     payment = models.ForeignKey(Payment, on_delete=models.CASCADE, related_name="events")
     kind = models.CharField(max_length=12, choices=Kind.choices)
@@ -287,8 +288,8 @@ class GatewayConfig(TimeStampedModel):
 
     site = models.ForeignKey("sites.Site", on_delete=models.CASCADE, related_name="gateway_configs")
     gateway = models.CharField(max_length=30)
-    enabled = models.BooleanField("فعال", default=False)
-    test_mode = models.BooleanField("حالت آزمایشی", default=True)
+    enabled = models.BooleanField(gettext_lazy("Active"), default=False)
+    test_mode = models.BooleanField(gettext_lazy("Test mode"), default=True)
     public_config = models.JSONField(default=dict, blank=True)  # فقط فیلدهای غیرمحرمانه
     secrets_encrypted = models.TextField(blank=True)
     updated_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+")

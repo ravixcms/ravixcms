@@ -4,6 +4,7 @@
 این تنها کتابخانه‌ای است که قالب‌ها اجازه بارگذاری آن را دارند. تگ‌های ``theme_head`` و ``theme_toolbar`` برای
 هر قالب الزامی هستند تا سئوی پایه، فونت‌ها، رنگ‌های سفارشی و نوار پیش‌نمایش همه‌جا یکسان کار کنند.
 """
+from django.utils.translation import gettext
 import json
 import re
 
@@ -150,17 +151,17 @@ def theme_toolbar(context):
     is_preview = bool(context.get("is_preview"))
     links = []
     if viewer.get("edit_url"):
-        links.append(format_html('<a href="{}">ویرایش این مورد</a>', viewer["edit_url"]))
+        links.append(format_html(gettext("<a href=\"{}\">Edit this item</a>"), viewer["edit_url"]))
     if viewer.get("customize_url"):
-        links.append(format_html('<a href="{}">{}</a>', viewer["customize_url"], "بازگشت به ویرایشگر قالب" if is_preview else "سفارشی‌سازی ظاهر"))
-    links.append(format_html('<a href="{}">پنل مدیریت</a>', viewer.get("panel_url", "/panel/")))
+        links.append(format_html('<a href="{}">{}</a>', viewer["customize_url"], gettext("Back to the theme editor") if is_preview else gettext("Customize appearance")))
+    links.append(format_html(gettext("<a href=\"{}\">Admin panel</a>"), viewer.get("panel_url", "/panel/")))
     message = (
-        mark_safe("<strong>حالت پیش‌نمایش:</strong> این تغییرات هنوز منتشر نشده‌اند و بازدیدکنندگان آن‌ها را نمی‌بینند.")
+        mark_safe(gettext("<strong>Preview mode:</strong> these changes are not published yet and visitors do not see them."))
         if is_preview
-        else format_html("وارد شده‌اید: {}", viewer.get("name", ""))
+        else format_html(gettext("Signed in: {}"), viewer.get("name", ""))
     )
     return format_html(
-        '<style>{}</style><div id="rv-toolbar" class="{}" role="region" aria-label="نوار مدیریت"><span>{}</span>{}</div>',
+        gettext("<style>{}</style><div id=\"rv-toolbar\" class=\"{}\" role=\"region\" aria-label=\"Admin bar\"><span>{}</span>{}</div>"),
         mark_safe(_TOOLBAR_CSS),
         "rv-preview" if is_preview else "",
         message,

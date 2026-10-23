@@ -1,4 +1,5 @@
 """پاک‌سازی متن گزارش‌ها: مقدارهای سرّی (SECRET_KEY، رمز دیتابیس، کلیدهای رمزنگاری/امضا، متغیرهای محیطی حساس) و کلید خصوصی PEM حذف می‌شوند."""
+from django.utils.translation import gettext
 import os
 import re
 
@@ -23,10 +24,10 @@ def _secret_values() -> list[str]:
 
 def sanitize(text, limit: int = 4000) -> str:
     text = str(text or "")
-    text = PEM.sub("[کلید خصوصی حذف شد]", text)
+    text = PEM.sub(gettext("[private key removed]"), text)
     text = URL_PASSWORD.sub(r"\1***\2", text)
     for secret in _secret_values():
         text = text.replace(secret, "***")
     if len(text) > limit:
-        text = text[:limit] + "\n… (کوتاه شد)"
+        text = (gettext("%(text)s\n… (truncated)") % {"text": text[:limit]})
     return text

@@ -1,1 +1,2 @@
-{% if site.logo %}<img src="{{ site.logo.url }}" alt="لوگوی {{ site.site_name }}">{% else %}{{ site.site_name|slice:":1" }}{% endif %}
+{% load i18n %}
+{% if site.logo %}<img src="{{ site.logo.url }}" alt="{% blocktrans with name=site.site_name %}Logo of {{ name }}{% endblocktrans %}">{% else %}{{ site.site_name|slice:":1" }}{% endif %}

@@ -1,1 +1,1 @@
-تأیید ایمیل حساب شما
+{% load i18n %}{% trans "Verify your account email" %}

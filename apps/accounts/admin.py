@@ -1,3 +1,4 @@
+from django.utils.translation import gettext_lazy
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 
@@ -9,5 +10,5 @@ class UserAdmin(DjangoUserAdmin):
     list_display = ("username", "email", "role", "is_active", "date_joined")
     list_filter = ("role", "is_active")
     search_fields = ("username", "email", "first_name", "last_name")
-    fieldsets = DjangoUserAdmin.fieldsets + (("پروفایل Ravix", {"fields": ("role", "phone", "bio", "avatar")}),)
+    fieldsets = DjangoUserAdmin.fieldsets + ((gettext_lazy("Ravix profile"), {"fields": ("role", "phone", "bio", "avatar")}),)
     add_fieldsets = DjangoUserAdmin.add_fieldsets + ((None, {"fields": ("email", "role")}),)

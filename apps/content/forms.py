@@ -1,3 +1,4 @@
+from django.utils.translation import gettext, gettext_lazy
 from django import forms
 from django.contrib.auth import get_user_model
 from django.db.models import Q
@@ -22,11 +23,11 @@ class UserChoiceField(forms.ModelChoiceField):
 
 class PostForm(StyledFormMixin, forms.ModelForm):
     publish_at = forms.DateTimeField(
-        label="زمان انتشار",
+        label=gettext_lazy("Publish time"),
         required=False,
         widget=forms.DateTimeInput(attrs={"type": "datetime-local", "dir": "ltr"}, format=DATETIME_LOCAL),
         input_formats=[DATETIME_LOCAL, "%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M"],
-        help_text="فقط برای وضعیت «زمان‌بندی‌شده» لازم است؛ نوشته در این زمان به‌صورت خودکار منتشر‌شده حساب می‌شود.",
+        help_text=gettext_lazy("Required only for the “Scheduled” status; the post is treated as published automatically at this time."),
     )
 
     class Meta:
@@ -56,7 +57,7 @@ class PostForm(StyledFormMixin, forms.ModelForm):
             if self.instance.author_id:
                 eligible |= Q(pk=self.instance.author_id)  # نویسنده فعلی همیشه قابل انتخاب می‌ماند
             self.fields["author"] = UserChoiceField(
-                label="نویسنده",
+                label=gettext("Author"),
                 queryset=User.objects.filter(eligible),
                 required=True,
                 initial=self.instance.author_id or user.pk,
@@ -66,7 +67,7 @@ class PostForm(StyledFormMixin, forms.ModelForm):
             del self.fields["author"]
             del self.fields["publish_at"]
             self.fields["status"].choices = [(PublishStatus.DRAFT, PublishStatus.DRAFT.label)]
-            self.fields["status"].help_text = "انتشار نوشته توسط مدیر انجام می‌شود؛ نوشته شما به‌صورت پیش‌نویس ذخیره می‌شود."
+            self.fields["status"].help_text = gettext("Publishing is done by an administrator; your post will be saved as a draft.")
 
     def clean(self):
         cleaned = super().clean()
@@ -77,14 +78,14 @@ class PostForm(StyledFormMixin, forms.ModelForm):
         now = timezone.now()
         if status == PublishStatus.SCHEDULED:
             if not publish_at:
-                self.add_error("publish_at", "برای نوشته زمان‌بندی‌شده، زمان انتشار را مشخص کنید.")
+                self.add_error("publish_at", gettext("For a scheduled post, specify the publish time."))
             else:
                 changed = self.instance.status != PublishStatus.SCHEDULED or self.instance.publish_at != publish_at
                 if changed and publish_at <= now:
-                    self.add_error("publish_at", "زمان انتشار باید در آینده باشد.")
+                    self.add_error("publish_at", gettext("The publish time must be in the future."))
         elif status == PublishStatus.PUBLISHED and publish_at and publish_at > now:
             # «منتشرشده» یعنی همین حالا زنده است؛ انتشار در آینده فقط با وضعیت زمان‌بندی‌شده معنا دارد.
-            self.add_error("publish_at", "برای انتشار در زمان آینده، وضعیت «زمان‌بندی‌شده» را انتخاب کنید.")
+            self.add_error("publish_at", gettext("To publish at a future time, choose the “Scheduled” status."))
         return cleaned
 
     def save(self, commit=True):
@@ -120,7 +121,7 @@ class PageForm(StyledFormMixin, forms.ModelForm):
     def clean_slug(self):
         slug = (self.cleaned_data.get("slug") or "").strip().lower()
         if slug in RESERVED_PAGE_SLUGS:
-            raise forms.ValidationError("این نامک برای بخش‌های سیستمی سایت رزرو شده است؛ نامک دیگری انتخاب کنید.")
+            raise forms.ValidationError(gettext("This slug is reserved for system sections of the site; choose another slug."))
         return self.cleaned_data.get("slug")
 
     def save(self, commit=True):
@@ -146,12 +147,12 @@ class CategoryForm(StyledFormMixin, forms.ModelForm):
         if self.instance.pk:
             qs = qs.exclude(pk=self.instance.pk).exclude(pk__in=self.instance.descendant_ids())
         self.fields["parent"].queryset = qs
-        self.fields["parent"].empty_label = "— بدون والد —"
+        self.fields["parent"].empty_label = gettext("— No parent —")
 
     def clean_name(self):
         name = self.cleaned_data["name"].strip()
         if not name:
-            raise forms.ValidationError("نام نمی‌تواند خالی باشد.")
+            raise forms.ValidationError(gettext("The name cannot be empty."))
         return name
 
 
@@ -164,7 +165,7 @@ class TagForm(StyledFormMixin, forms.ModelForm):
     def clean_name(self):
         name = self.cleaned_data["name"].strip()
         if not name:
-            raise forms.ValidationError("نام نمی‌تواند خالی باشد.")
+            raise forms.ValidationError(gettext("The name cannot be empty."))
         return name
 
 

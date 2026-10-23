@@ -1,10 +1,10 @@
-{% autoescape off %}سلام {{ user.display_name }}،
+{% load i18n %}{% autoescape off %}{% blocktrans with name=user.display_name %}Hello {{ name }},{% endblocktrans %}
 
-برای تأیید ایمیل حساب خود، پیوند زیر را باز کنید و دکمهٔ تأیید را بزنید:
+{% trans "To verify your account email, open the link below and press the verification button:" %}
 
 {{ link }}
 
-این پیوند فقط یک بار قابل استفاده است و پس از {{ hours }} ساعت منقضی می‌شود.
+{% blocktrans with hours=hours %}This link can be used only once and expires after {{ hours }} hours.{% endblocktrans %}
 
-اگر شما این حساب را نساخته‌اید، این ایمیل را نادیده بگیرید.
+{% trans "If you did not create this account, ignore this email." %}
 {% endautoescape %}

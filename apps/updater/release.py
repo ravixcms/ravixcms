@@ -2,6 +2,7 @@
 سمت ناشر: ساخت بستهٔ هسته/قالب، امضا (Ed25519) و تولید ``index.json``. این ماژول روی سرور سایت لازم نیست؛ روی ماشین انتشار اجرا می‌شود.
 کلید خصوصی فقط از فایل (مجوز ۶۰۰) یا متغیر محیطی خوانده می‌شود و هرگز چاپ/ذخیره نمی‌شود.
 """
+from django.utils.translation import gettext
 import hashlib
 import json
 import zipfile
@@ -55,7 +56,7 @@ def build_core(source_root: Path, out_dir: Path, *, seed: str | None, requires: 
     source_root, out_dir = Path(source_root), Path(out_dir)
     version = versions.disk_version(source_root)
     if not version:
-        raise UpdateError("RAVIX_VERSION در apps/core/version.py پیدا نشد.")
+        raise UpdateError(gettext("RAVIX_VERSION was not found in apps/core/version.py."))
     req = _with_legacy(requires)
     release = {"schema": UPDATE_SCHEMA_VERSION, "component": "core", "version": version, "requires": req, "migrations": migrations}
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -78,7 +79,7 @@ def build_theme(theme_dir: Path, out_dir: Path, *, seed: str | None, requires: d
     theme_dir, out_dir = Path(theme_dir), Path(out_dir)
     info = inspect_theme_dir(theme_dir)
     if not info.valid:
-        raise UpdateError("قالب نامعتبر است: " + "؛ ".join(info.errors[:5]))
+        raise UpdateError((gettext("Invalid format: %(items)s") % {"items": "؛ ".join(info.errors[:5])}))
     out_dir.mkdir(parents=True, exist_ok=True)
     fname = f"ravix-theme-{info.slug}-{info.version}.zip"
     with zipfile.ZipFile(out_dir / fname, "w") as zf:

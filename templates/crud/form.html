@@ -1,4 +1,5 @@
 {% extends "layouts/panel.html" %}
+{% load i18n %}
 {% load ravix_ui %}
 {% block title %}{{ heading }}{% endblock %}
 {% block page_title %}{{ heading }}{% endblock %}
@@ -11,8 +12,8 @@
     {% include "partials/_form_errors.html" %}
     {% for field in form %}{% include "partials/_field.html" %}{% endfor %}
     <div class="form-actions">
-      <button type="submit" class="btn">{% icon "check" 18 %} ذخیره</button>
-      <a href="{{ cancel_url }}" class="btn btn-light">انصراف</a>
+      <button type="submit" class="btn">{% icon "check" 18 %} {% trans "Save" %}</button>
+      <a href="{{ cancel_url }}" class="btn btn-light">{% trans "Cancel" %}</a>
     </div>
   </form>
 </div></div>

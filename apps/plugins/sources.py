@@ -2,6 +2,7 @@
 منبع‌های افزونه برای نصب‌کننده: مخزن رسمی راه دور (HTTPS) یا مخزن همین نمونه (apps.pluginhub). هر دو یک شکل داده برمی‌گردانند.
 هیچ اعتمادی به منبع نیست: تمامیت (SHA-256) و امضا را نصب‌کننده خودش دوباره می‌سنجد.
 """
+from django.utils.translation import gettext
 import json
 import logging
 import urllib.error
@@ -31,7 +32,7 @@ class _NoRedirect(urllib.request.HTTPRedirectHandler):
 def http_get(url: str, max_bytes: int, allow_insecure: bool = False, timeout: int = 30) -> tuple[bytes, dict]:
     parsed = urllib.parse.urlparse(url)
     if parsed.scheme != "https" and not (allow_insecure and settings.DEBUG and parsed.scheme == "http"):
-        raise RegistryUnavailable("فقط نشانی HTTPS مجاز است.")
+        raise RegistryUnavailable(gettext("Only HTTPS addresses are allowed."))
     req = urllib.request.Request(url, headers={"User-Agent": "ravix-plugin-installer/1"})
     opener = urllib.request.build_opener(_NoRedirect)
     try:
@@ -39,11 +40,11 @@ def http_get(url: str, max_bytes: int, allow_insecure: bool = False, timeout: in
             data = resp.read(max_bytes + 1)
             headers = dict(resp.headers)
     except urllib.error.HTTPError as exc:
-        raise RegistryUnavailable(f"مخزن پاسخ خطا داد ({exc.code}).")
+        raise RegistryUnavailable((gettext("The registry returned an error (%(code)s).") % {"code": exc.code}))
     except (urllib.error.URLError, TimeoutError, OSError) as exc:
-        raise RegistryUnavailable(f"اتصال به مخزن ممکن نیست: {exc}")
+        raise RegistryUnavailable((gettext("Cannot connect to the registry: %(exc)s") % {"exc": exc}))
     if len(data) > max_bytes:
-        raise RegistryUnavailable("پاسخ مخزن از سقف حجم بزرگ‌تر است.")
+        raise RegistryUnavailable(gettext("The registry response exceeds the size limit."))
     return data, headers
 
 
@@ -60,15 +61,15 @@ class RemoteSource:
         try:
             data = json.loads(raw)
         except json.JSONDecodeError:
-            raise RegistryUnavailable("پاسخ مخزن JSON معتبر نیست.")
+            raise RegistryUnavailable(gettext("The registry response is not valid JSON."))
         if not isinstance(data, dict) or "versions" not in data:
-            raise RegistryUnavailable("پاسخ مخزن ناقص است.")
+            raise RegistryUnavailable(gettext("The registry response is incomplete."))
         return data
 
     def download(self, slug: str, entry: dict) -> bytes:
         url = entry.get("download_url") or ""
         if urllib.parse.urlparse(url).netloc != urllib.parse.urlparse(self.base).netloc:
-            raise RegistryUnavailable("نشانی دریافت روی دامنهٔ دیگری است؛ برای امنیت رد شد.")
+            raise RegistryUnavailable(gettext("The download URL is on a different domain; rejected for security."))
         data, _ = http_get(url, getattr(settings, "RAVIX_REGISTRY_MAX_PACKAGE_BYTES", 5 * 1024 * 1024), self.allow_insecure)
         return data
 
@@ -89,7 +90,7 @@ class LocalHubSource:
 
         p = HubPlugin.objects.filter(slug=slug, is_listed=True, publisher__is_active=True).first()
         if p is None:
-            raise RegistryUnavailable("افزونه در مخزن پیدا نشد.")
+            raise RegistryUnavailable(gettext("The plugin was not found in the registry."))
         vs = [v for v in p.versions.all() if v.status == HubVersion.Status.PUBLISHED]
         return {"slug": p.slug, "name": p.name, "versions": [
             {"version": v.version, "status": "published", "sha256": v.sha256, "fingerprint": v.fingerprint, "signature": v.signature or None,
@@ -101,12 +102,12 @@ class LocalHubSource:
 
         v = HubVersion.objects.filter(plugin__slug=slug, version=entry["version"], status=HubVersion.Status.PUBLISHED).first()
         if v is None:
-            raise RegistryUnavailable("نسخه پیدا نشد.")
+            raise RegistryUnavailable(gettext("Version not found."))
         try:
             v.package.open("rb")
             return v.package.read()
         except OSError:
-            raise RegistryUnavailable("فایل بسته در مخزن در دسترس نیست.")
+            raise RegistryUnavailable(gettext("The package file is not available in the registry."))
         finally:
             v.package.close()
 
@@ -122,7 +123,7 @@ def get_source():
         return RemoteSource(url)
     if getattr(settings, "RAVIX_REGISTRY_ENABLED", False) and django_apps.is_installed("apps.pluginhub"):
         return LocalHubSource()
-    raise RegistryUnavailable("مخزن رسمی تنظیم نشده است (RAVIX_OFFICIAL_REGISTRY_URL).")
+    raise RegistryUnavailable(gettext("The official registry is not configured (RAVIX_OFFICIAL_REGISTRY_URL)."))
 
 
 def has_source() -> bool:
@@ -139,14 +140,14 @@ def pick_version(info: dict, version: str | None) -> dict:
     if version:
         entry = next((v for v in pub if v.get("version") == version), None)
         if entry is None:
-            raise RegistryUnavailable(f"نسخهٔ {version} در مخزن منتشر نشده است.")
+            raise RegistryUnavailable((gettext("Version %(version)s has not been published in the registry.") % {"version": version}))
     else:
         ok = [v for v in pub if v.get("compatibility", {}).get("compatible")]
         if not ok:
-            raise RegistryUnavailable("هیچ نسخهٔ سازگار با این Ravix در مخزن نیست.")
+            raise RegistryUnavailable(gettext("The registry has no version compatible with this Ravix."))
         entry = max(ok, key=lambda v: versions.parse(v["version"]) or (0, 0, 0))
     if not entry.get("compatibility", {}).get("compatible"):
-        raise RegistryUnavailable("این نسخه با Ravix فعلی سازگار نیست: " + "؛ ".join(entry.get("compatibility", {}).get("problems", [])))
+        raise RegistryUnavailable((gettext("This version is not compatible with the current Ravix: %(entry)s") % {"entry": "؛ ".join(entry.get("compatibility", {}).get("problems", []))}))
     return entry
 
 

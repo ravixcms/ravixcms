@@ -1,3 +1,4 @@
+from django.utils.translation import gettext, gettext_lazy
 from django import forms
 from django.core.exceptions import ValidationError
 
@@ -17,7 +18,7 @@ from .constants import (
 )
 from .validators import normalize_color, normalize_link
 
-BLANK = [("", "— انتخاب کنید —")]
+BLANK = [("", gettext_lazy("— Select —"))]
 
 
 class MediaChoice(forms.ModelChoiceField):
@@ -27,23 +28,23 @@ class MediaChoice(forms.ModelChoiceField):
 
 class PageChoice(forms.ModelChoiceField):
     def label_from_instance(self, obj):
-        return obj.title if obj.is_live else f"{obj.title} (پیش‌نویس)"
+        return obj.title if obj.is_live else (gettext("%(title)s (draft)") % {"title": obj.title})
 
 
 # ----------------------------------------------------------------------------- ظاهر
 class AppearanceForm(StyledFormMixin, forms.Form):
-    primary = forms.CharField(label="رنگ اصلی", widget=forms.TextInput(attrs={"type": "color"}),
-                              help_text="برای دکمه‌ها، پیوندها و تأکیدها.")
-    background = forms.CharField(label="رنگ پس‌زمینه", widget=forms.TextInput(attrs={"type": "color"}))
-    text = forms.CharField(label="رنگ متن", widget=forms.TextInput(attrs={"type": "color"}))
-    font = forms.ChoiceField(label="فونت", choices=[(k, v["label"]) for k, v in FONTS.items()])
-    font_size = forms.ChoiceField(label="اندازه متن", choices=[(k, f"{v[0]} ({v[1]}px)") for k, v in FONT_SIZES.items()])
-    logo_media = MediaChoice(queryset=Media.objects.filter(kind="image"), required=False, label="لوگوی سایت",
-                             empty_label="— لوگوی «تنظیمات سایت» (پیش‌فرض) —",
-                             help_text="از کتابخانه رسانه انتخاب کنید؛ تصویر جدید را ابتدا در «رسانه‌ها» بارگذاری کنید.")
-    favicon_media = MediaChoice(queryset=Media.objects.filter(kind="image"), required=False, label="آیکون سایت (Favicon)",
-                                empty_label="— آیکون «تنظیمات سایت» (پیش‌فرض) —",
-                                help_text="تصویر مربعی (ترجیحاً PNG ۱۲۸×۱۲۸ یا بزرگ‌تر).")
+    primary = forms.CharField(label=gettext_lazy("Primary color"), widget=forms.TextInput(attrs={"type": "color"}),
+                              help_text=gettext_lazy("For buttons, links and emphasis."))
+    background = forms.CharField(label=gettext_lazy("Background color"), widget=forms.TextInput(attrs={"type": "color"}))
+    text = forms.CharField(label=gettext_lazy("Text color"), widget=forms.TextInput(attrs={"type": "color"}))
+    font = forms.ChoiceField(label=gettext_lazy("Font"), choices=[(k, v["label"]) for k, v in FONTS.items()])
+    font_size = forms.ChoiceField(label=gettext_lazy("Text size"), choices=[(k, f"{v[0]} ({v[1]}px)") for k, v in FONT_SIZES.items()])
+    logo_media = MediaChoice(queryset=Media.objects.filter(kind="image"), required=False, label=gettext_lazy("Site logo"),
+                             empty_label=gettext_lazy("— “Site settings” logo (default) —"),
+                             help_text=gettext_lazy("Choose from the media library; upload a new image under “Media” first."))
+    favicon_media = MediaChoice(queryset=Media.objects.filter(kind="image"), required=False, label=gettext_lazy("Site icon (favicon)"),
+                                empty_label=gettext_lazy("— “Site settings” icon (default) —"),
+                                help_text=gettext_lazy("A square image (preferably PNG 128×128 or larger)."))
 
     @classmethod
     def from_doc(cls, doc: dict, **kwargs):
@@ -80,20 +81,20 @@ class AppearanceForm(StyledFormMixin, forms.Form):
 
 # ----------------------------------------------------------------------------- سربرگ و پانویس
 class LayoutForm(StyledFormMixin, forms.Form):
-    header_show_tagline = forms.BooleanField(label="نمایش شعار سایت در سربرگ", required=False)
-    header_sticky = forms.BooleanField(label="چسبیدن سربرگ به بالای صفحه هنگام اسکرول", required=False)
-    header_show_search = forms.BooleanField(label="نمایش جست‌وجو در سربرگ", required=False)
-    header_cta_label = forms.CharField(label="متن دکمه سربرگ", max_length=30, required=False)
-    header_cta_url = forms.CharField(label="نشانی دکمه سربرگ", max_length=500, required=False,
-                                     widget=forms.TextInput(attrs={"dir": "ltr", "placeholder": "/contact یا https://..."}),
-                                     help_text="دکمه فقط وقتی نمایش داده می‌شود که هر دو بخش پر باشند.")
-    footer_text = forms.CharField(label="متن پانویس", max_length=300, required=False,
-                                  help_text="در صورت خالی بودن، «متن پانویس» تنظیمات سایت استفاده می‌شود.")
-    footer_show_menu = forms.BooleanField(label="نمایش منوی پانویس", required=False)
-    footer_show_contact = forms.BooleanField(label="نمایش اطلاعات تماس (ایمیل، تلفن، نشانی)", required=False)
+    header_show_tagline = forms.BooleanField(label=gettext_lazy("Show the site tagline in the header"), required=False)
+    header_sticky = forms.BooleanField(label=gettext_lazy("Keep the header stuck to the top of the page when scrolling"), required=False)
+    header_show_search = forms.BooleanField(label=gettext_lazy("Show search in the header"), required=False)
+    header_cta_label = forms.CharField(label=gettext_lazy("Header button text"), max_length=30, required=False)
+    header_cta_url = forms.CharField(label=gettext_lazy("Header button URL"), max_length=500, required=False,
+                                     widget=forms.TextInput(attrs={"dir": "ltr", "placeholder": gettext_lazy("/contact or https://...")}),
+                                     help_text=gettext_lazy("The button is shown only when both fields are filled."))
+    footer_text = forms.CharField(label=gettext_lazy("Footer text"), max_length=300, required=False,
+                                  help_text=gettext_lazy("If left empty, the “Footer text” from the site settings is used."))
+    footer_show_menu = forms.BooleanField(label=gettext_lazy("Show the footer menu"), required=False)
+    footer_show_contact = forms.BooleanField(label=gettext_lazy("Show contact information (email, phone, address)"), required=False)
     footer_social = forms.CharField(
-        label="پیوندهای شبکه‌های اجتماعی", required=False, widget=forms.Textarea(attrs={"rows": 4, "dir": "ltr"}),
-        help_text=f"هر خط یک پیوند، به شکل: عنوان | نشانی  (حداکثر {MAX_SOCIAL_LINKS} مورد). مثال: Instagram | https://instagram.com/example",
+        label=gettext_lazy("Social media links"), required=False, widget=forms.Textarea(attrs={"rows": 4, "dir": "ltr"}),
+        help_text=(gettext_lazy("One link per line, in the form: Title | URL  (at most %(MAX_SOCIAL_LINKS)s items). Example: Instagram | https://instagram.com/example") % {"MAX_SOCIAL_LINKS": MAX_SOCIAL_LINKS}),
     )
 
     @classmethod
@@ -118,21 +119,21 @@ class LayoutForm(StyledFormMixin, forms.Form):
             label, sep, url = line.partition("|")
             label = label.strip()
             if not sep or not label or len(label) > 40:
-                raise ValidationError(f"خط {number}: قالب درست «عنوان | نشانی» است (عنوان حداکثر ۴۰ نویسه).")
+                raise ValidationError((gettext("Line %(number)s: the correct format is “Title | URL” (title at most 40 characters).") % {"number": number}))
             try:
                 url = normalize_link(url, allow_empty=False)
             except ValidationError as exc:
-                raise ValidationError(f"خط {number}: {exc.messages[0]}") from exc
+                raise ValidationError((gettext("Line %(number)s: %(messages)s") % {"number": number, "messages": exc.messages[0]})) from exc
             result.append({"label": label, "url": url})
         if len(result) > MAX_SOCIAL_LINKS:
-            raise ValidationError(f"حداکثر {MAX_SOCIAL_LINKS} پیوند مجاز است.")
+            raise ValidationError((gettext("At most %(MAX_SOCIAL_LINKS)s links are allowed.") % {"MAX_SOCIAL_LINKS": MAX_SOCIAL_LINKS}))
         return result
 
     def clean(self):
         cleaned = super().clean()
         label, url = cleaned.get("header_cta_label", "").strip(), cleaned.get("header_cta_url", "")
         if bool(label) != bool(url) and "header_cta_url" not in self.errors:
-            self.add_error("header_cta_label" if not label else "header_cta_url", "متن و نشانی دکمه را هم‌زمان پر کنید یا هر دو را خالی بگذارید.")
+            self.add_error("header_cta_label" if not label else "header_cta_url", gettext("Fill in both the button text and URL, or leave both empty."))
         return cleaned
 
     def to_docs(self) -> tuple[dict, dict]:
@@ -150,25 +151,25 @@ class LayoutForm(StyledFormMixin, forms.Form):
 
 # ----------------------------------------------------------------------------- منوها
 class MenuItemForm(StyledFormMixin, forms.Form):
-    label = forms.CharField(label="عنوان", max_length=60, required=False)
-    kind = forms.ChoiceField(label="نوع پیوند", choices=BLANK + list(MENU_KINDS.items()), required=False)
-    page = PageChoice(queryset=Page.objects.order_by("title"), required=False, label="صفحه", empty_label="—")
-    category = forms.ModelChoiceField(queryset=Category.objects.order_by("name"), required=False, label="دسته‌بندی", empty_label="—")
-    url = forms.CharField(label="نشانی", max_length=500, required=False, widget=forms.TextInput(attrs={"dir": "ltr"}))
-    new_tab = forms.BooleanField(label="در زبانه جدید", required=False)
+    label = forms.CharField(label=gettext_lazy("Title"), max_length=60, required=False)
+    kind = forms.ChoiceField(label=gettext_lazy("Link type"), choices=BLANK + list(MENU_KINDS.items()), required=False)
+    page = PageChoice(queryset=Page.objects.order_by("title"), required=False, label=gettext_lazy("Page"), empty_label="—")
+    category = forms.ModelChoiceField(queryset=Category.objects.order_by("name"), required=False, label=gettext_lazy("Content category"), empty_label="—")
+    url = forms.CharField(label=gettext_lazy("URL"), max_length=500, required=False, widget=forms.TextInput(attrs={"dir": "ltr"}))
+    new_tab = forms.BooleanField(label=gettext_lazy("In a new tab"), required=False)
 
     def clean(self):
         cleaned = super().clean()
         kind, label = cleaned.get("kind"), (cleaned.get("label") or "").strip()
         if not kind:
-            self.add_error("kind", "نوع پیوند را انتخاب کنید.")
+            self.add_error("kind", gettext("Choose the link type."))
             return cleaned
         if not label:
-            self.add_error("label", "عنوان منو را وارد کنید.")
+            self.add_error("label", gettext("Enter the menu title."))
         if kind == "page" and not cleaned.get("page"):
-            self.add_error("page", "یک صفحه انتخاب کنید.")
+            self.add_error("page", gettext("Choose a page."))
         if kind == "category" and not cleaned.get("category"):
-            self.add_error("category", "یک دسته‌بندی انتخاب کنید.")
+            self.add_error("category", gettext("Choose a category."))
         if kind == "url":
             try:
                 cleaned["url"] = normalize_link(cleaned.get("url", ""), allow_empty=False)
@@ -207,16 +208,16 @@ def menu_from_formset(formset) -> list[dict]:
 
 # ----------------------------------------------------------------------------- بخش‌های صفحه اصلی
 class SectionForm(StyledFormMixin, forms.Form):
-    type = forms.ChoiceField(label="نوع بخش", choices=BLANK + list(HOME_SECTION_TYPES.items()), required=False)
-    hidden = forms.BooleanField(label="موقتاً پنهان باشد", required=False)
-    title = forms.CharField(label="عنوان", max_length=120, required=False)
-    subtitle = forms.CharField(label="زیرعنوان", max_length=300, required=False)
-    body = forms.CharField(label="متن (Markdown)", max_length=5000, required=False, widget=forms.Textarea(attrs={"rows": 3}))
-    button_label = forms.CharField(label="متن دکمه", max_length=40, required=False)
-    button_url = forms.CharField(label="نشانی دکمه", max_length=500, required=False, widget=forms.TextInput(attrs={"dir": "ltr"}))
-    category = forms.ModelChoiceField(queryset=Category.objects.order_by("name"), required=False, label="دسته‌بندی", empty_label="—")
-    page = PageChoice(queryset=Page.objects.order_by("title"), required=False, label="صفحه", empty_label="—")
-    count = forms.IntegerField(label="تعداد", min_value=1, max_value=24, required=False, widget=forms.NumberInput(attrs={"dir": "ltr"}))
+    type = forms.ChoiceField(label=gettext_lazy("Section type"), choices=BLANK + list(HOME_SECTION_TYPES.items()), required=False)
+    hidden = forms.BooleanField(label=gettext_lazy("Temporarily hidden"), required=False)
+    title = forms.CharField(label=gettext_lazy("Title"), max_length=120, required=False)
+    subtitle = forms.CharField(label=gettext_lazy("Subtitle"), max_length=300, required=False)
+    body = forms.CharField(label=gettext_lazy("Body (Markdown)"), max_length=5000, required=False, widget=forms.Textarea(attrs={"rows": 3}))
+    button_label = forms.CharField(label=gettext_lazy("Button text"), max_length=40, required=False)
+    button_url = forms.CharField(label=gettext_lazy("Button URL"), max_length=500, required=False, widget=forms.TextInput(attrs={"dir": "ltr"}))
+    category = forms.ModelChoiceField(queryset=Category.objects.order_by("name"), required=False, label=gettext_lazy("Content category"), empty_label="—")
+    page = PageChoice(queryset=Page.objects.order_by("title"), required=False, label=gettext_lazy("Page"), empty_label="—")
+    count = forms.IntegerField(label=gettext_lazy("Count"), min_value=1, max_value=24, required=False, widget=forms.NumberInput(attrs={"dir": "ltr"}))
 
     def clean_button_url(self):
         return normalize_link(self.cleaned_data.get("button_url", ""))
@@ -225,17 +226,17 @@ class SectionForm(StyledFormMixin, forms.Form):
         cleaned = super().clean()
         kind = cleaned.get("type")
         if not kind:
-            self.add_error("type", "نوع بخش را انتخاب کنید.")
+            self.add_error("type", gettext("Choose the section type."))
             return cleaned
         if kind == "category_posts" and not cleaned.get("category"):
-            self.add_error("category", "یک دسته‌بندی انتخاب کنید.")
+            self.add_error("category", gettext("Choose a category."))
         if kind == "page" and not cleaned.get("page"):
-            self.add_error("page", "یک صفحه انتخاب کنید.")
+            self.add_error("page", gettext("Choose a page."))
         if kind == "text" and not (cleaned.get("body") or "").strip():
-            self.add_error("body", "متن بخش را وارد کنید.")
+            self.add_error("body", gettext("Enter the section text."))
         label, url = (cleaned.get("button_label") or "").strip(), cleaned.get("button_url", "")
         if bool(label) != bool(url) and "button_url" not in self.errors:
-            self.add_error("button_label" if not label else "button_url", "متن و نشانی دکمه را هم‌زمان پر کنید یا هر دو را خالی بگذارید.")
+            self.add_error("button_label" if not label else "button_url", gettext("Fill in both the button text and URL, or leave both empty."))
         return cleaned
 
     def to_section(self) -> dict:
@@ -264,5 +265,5 @@ def sections_from_formset(formset) -> list[dict]:
 class ThemeUploadForm(forms.Form):
     """فرم بارگذاری ZIP؛ بررسی واقعی (امضای ZIP، سقف‌ها، ساختار) در apps.themes.installer انجام می‌شود، نه اینجا."""
 
-    theme_zip = forms.FileField(label="فایل ZIP قالب", allow_empty_file=False, error_messages={"required": "یک فایل ZIP انتخاب کنید."})
+    theme_zip = forms.FileField(label=gettext_lazy("Theme ZIP file"), allow_empty_file=False, error_messages={"required": gettext_lazy("Choose a ZIP file.")})
 

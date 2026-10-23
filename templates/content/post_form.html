@@ -1,4 +1,5 @@
 {% extends "layouts/panel.html" %}
+{% load i18n %}
 {% load ravix_ui %}
 {% block title %}{{ heading }}{% endblock %}
 {% block page_title %}{{ heading }}{% endblock %}
@@ -16,28 +17,28 @@
     </div></div>
     <aside class="editor-side">
       <div class="card">
-        <div class="card-header"><h2>انتشار</h2></div>
+        <div class="card-header"><h2>{% trans "Publish" %}</h2></div>
         <div class="card-body">
           {% include "partials/_field.html" with field=form.status %}
           {% if form.publish_at %}{% include "partials/_field.html" with field=form.publish_at %}{% endif %}
           {% if form.author %}{% include "partials/_field.html" with field=form.author %}{% endif %}
-          {% if object.pk %}<p class="help">ایجاد: {{ object.created_at|jalali_datetime }}<br>آخرین ویرایش: {{ object.updated_at|jalali_datetime }}</p>{% endif %}
-          <div class="form-actions"><button type="submit" class="btn">{% icon "check" 18 %} ذخیره</button><a href="{{ cancel_url }}" class="btn btn-light">انصراف</a></div>
+          {% if object.pk %}<p class="help">{% blocktrans trimmed with created_at=object.created_at|jalali_datetime updated_at=object.updated_at|jalali_datetime %}Created: {{ created_at }}<br>Last edited: {{ updated_at }}{% endblocktrans %}</p>{% endif %}
+          <div class="form-actions"><button type="submit" class="btn">{% icon "check" 18 %} {% trans "Save" %}</button><a href="{{ cancel_url }}" class="btn btn-light">{% trans "Cancel" %}</a></div>
         </div>
       </div>
-      <div class="card"><div class="card-header"><h2>تصویر شاخص</h2></div><div class="card-body">{% include "partials/_field.html" with field=form.featured_image %}</div></div>
-      <div class="card"><div class="card-header"><h2>دیدگاه‌ها</h2></div><div class="card-body">{% include "partials/_field.html" with field=form.comments_open %}</div></div>
-      <div class="card"><div class="card-header"><h2>سئو و اشتراک‌گذاری</h2></div><div class="card-body">
+      <div class="card"><div class="card-header"><h2>{% trans "Featured image" %}</h2></div><div class="card-body">{% include "partials/_field.html" with field=form.featured_image %}</div></div>
+      <div class="card"><div class="card-header"><h2>{% trans "Comments" %}</h2></div><div class="card-body">{% include "partials/_field.html" with field=form.comments_open %}</div></div>
+      <div class="card"><div class="card-header"><h2>{% trans "SEO and sharing" %}</h2></div><div class="card-body">
         {% include "partials/_field.html" with field=form.seo_title %}
         {% include "partials/_field.html" with field=form.seo_description %}
         {% include "partials/_field.html" with field=form.noindex %}
-        <p class="help">تصویر شاخص به‌عنوان تصویر پیش‌نمایش در شبکه‌های اجتماعی (og:image) استفاده می‌شود.</p>
+        <p class="help">{% trans "The featured image is used as the preview image on social networks (og:image)." %}</p>
       </div></div>
-      <div class="card"><div class="card-header"><h2>دسته‌بندی‌ها</h2></div><div class="card-body">
-        {% if form.categories.field.queryset %}{% include "partials/_field.html" with field=form.categories %}{% else %}<p class="muted" style="margin:0">هنوز دسته‌بندی‌ای وجود ندارد.</p>{% endif %}
+      <div class="card"><div class="card-header"><h2>{% trans "Content categories" %}</h2></div><div class="card-body">
+        {% if form.categories.field.queryset %}{% include "partials/_field.html" with field=form.categories %}{% else %}<p class="muted" style="margin:0">{% trans "There is no category yet." %}</p>{% endif %}
       </div></div>
-      <div class="card"><div class="card-header"><h2>برچسب‌ها</h2></div><div class="card-body">
-        {% if form.tags.field.queryset %}{% include "partials/_field.html" with field=form.tags %}{% else %}<p class="muted" style="margin:0">هنوز برچسبی وجود ندارد.</p>{% endif %}
+      <div class="card"><div class="card-header"><h2>{% trans "Tags" %}</h2></div><div class="card-body">
+        {% if form.tags.field.queryset %}{% include "partials/_field.html" with field=form.tags %}{% else %}<p class="muted" style="margin:0">{% trans "There is no tag yet." %}</p>{% endif %}
       </div></div>
     </aside>
   </div>

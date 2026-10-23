@@ -1,41 +1,42 @@
 {% extends "layouts/panel.html" %}
+{% load i18n %}
 {% load ravix_ui %}
-{% block title %}نوشته‌ها{% endblock %}
-{% block page_title %}نوشته‌ها{% endblock %}
+{% block title %}{% trans "Posts" %}{% endblock %}
+{% block page_title %}{% trans "Posts" %}{% endblock %}
 {% block content %}
 <div class="page-head">
-  <div><h1>نوشته‌ها</h1><p>{% if show_author_filter %}مدیریت نوشته‌های همه نویسندگان{% else %}نوشته‌های شما{% endif %}</p></div>
-  <a href="{% url 'content:post_create' %}" class="btn">{% icon "plus" 18 %} نوشته جدید</a>
+  <div><h1>{% trans "Posts" %}</h1><p>{% if show_author_filter %}{% trans "Manage posts of all authors" %}{% else %}{% trans "Your posts" %}{% endif %}</p></div>
+  <a href="{% url 'content:post_create' %}" class="btn">{% icon "plus" 18 %} {% trans "New post" %}</a>
 </div>
 <div class="card">
   <form method="get" class="toolbar" role="search">
-    <input type="search" name="q" value="{{ q }}" class="input grow" placeholder="جستجو در عنوان، خلاصه و متن" aria-label="جستجو">
-    <select name="status" class="input" aria-label="وضعیت">
-      <option value="">همه وضعیت‌ها</option>
-      <option value="published" {% if selected_status == "published" %}selected{% endif %}>منتشرشده</option>
-      <option value="scheduled" {% if selected_status == "scheduled" %}selected{% endif %}>زمان‌بندی‌شده</option>
-      <option value="draft" {% if selected_status == "draft" %}selected{% endif %}>پیش‌نویس</option>
+    <input type="search" name="q" value="{{ q }}" class="input grow" placeholder="{% trans "Search in title, excerpt and text" %}" aria-label="{% trans "Search" %}">
+    <select name="status" class="input" aria-label="{% trans "Status" %}">
+      <option value="">{% trans "All statuses" %}</option>
+      <option value="published" {% if selected_status == "published" %}selected{% endif %}>{% trans "Published" %}</option>
+      <option value="scheduled" {% if selected_status == "scheduled" %}selected{% endif %}>{% trans "Scheduled" %}</option>
+      <option value="draft" {% if selected_status == "draft" %}selected{% endif %}>{% trans "Draft" %}</option>
     </select>
-    <select name="category" class="input" aria-label="دسته‌بندی">
-      <option value="">همه دسته‌بندی‌ها</option>
+    <select name="category" class="input" aria-label="{% trans "Content category" %}">
+      <option value="">{% trans "All post categories" %}</option>
       {% for c in categories %}<option value="{{ c.pk }}" {% if selected_category == c.pk|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>{% endfor %}
     </select>
-    <select name="tag" class="input" aria-label="برچسب">
-      <option value="">همه برچسب‌ها</option>
+    <select name="tag" class="input" aria-label="{% trans "Tag" %}">
+      <option value="">{% trans "All tags" %}</option>
       {% for t in tags %}<option value="{{ t.pk }}" {% if selected_tag == t.pk|stringformat:"s" %}selected{% endif %}>{{ t.name }}</option>{% endfor %}
     </select>
     {% if show_author_filter %}
-    <select name="author" class="input" aria-label="نویسنده">
-      <option value="">همه نویسندگان</option>
+    <select name="author" class="input" aria-label="{% trans "Author" %}">
+      <option value="">{% trans "All authors" %}</option>
       {% for a in authors %}<option value="{{ a.pk }}" {% if selected_author == a.pk|stringformat:"s" %}selected{% endif %}>{{ a.display_name }}</option>{% endfor %}
     </select>
     {% endif %}
-    <button type="submit" class="btn">{% icon "search" 18 %} اعمال</button>
+    <button type="submit" class="btn">{% icon "search" 18 %} {% trans "Actions" %}</button>
   </form>
   {% if posts %}
   <div class="table-wrap">
     <table class="table">
-      <thead><tr><th>عنوان</th><th>نویسنده</th><th>دسته‌بندی‌ها</th><th>وضعیت</th><th>تاریخ</th><th></th></tr></thead>
+      <thead><tr><th>{% trans "Title" %}</th><th>{% trans "Author" %}</th><th>{% trans "Content categories" %}</th><th>{% trans "Status" %}</th><th>{% trans "Date" %}</th><th></th></tr></thead>
       <tbody>
       {% for post in posts %}
         <tr>
@@ -43,12 +44,12 @@
           <td>{{ post.author.display_name|default:"—" }}</td>
           <td style="white-space:normal">{% for c in post.categories.all %}<span class="badge">{{ c.name }}</span> {% empty %}<span class="muted">—</span>{% endfor %}</td>
           <td><span class="badge badge-{{ post.effective_status }}">{{ post.effective_status_label }}</span>{% if post.effective_status == "scheduled" %}<div class="muted" style="font-size:.78rem">{{ post.publish_at|jalali_datetime }}</div>{% endif %}</td>
-          <td><div style="font-size:.85rem">{{ post.created_at|jalali }}</div><div class="muted" style="font-size:.75rem">ویرایش: {{ post.updated_at|jalali }}</div></td>
+          <td><div style="font-size:.85rem">{{ post.created_at|jalali }}</div><div class="muted" style="font-size:.75rem">{% blocktrans trimmed with updated_at=post.updated_at|jalali %}Edited: {{ updated_at }}{% endblocktrans %}</div></td>
           <td>
             <a class="btn btn-light btn-sm" href="{% url 'content:post_detail' post.pk %}">{% icon "eye" 16 %}</a>
             {% if post.pk in editable_ids %}
-              <a class="btn btn-light btn-sm" href="{% url 'content:post_update' post.pk %}" title="ویرایش">{% icon "edit" 16 %}</a>
-              <a class="btn btn-light btn-sm" href="{% url 'content:post_delete' post.pk %}" title="حذف">{% icon "trash" 16 %}</a>
+              <a class="btn btn-light btn-sm" href="{% url 'content:post_update' post.pk %}" title="{% trans "Edit" %}">{% icon "edit" 16 %}</a>
+              <a class="btn btn-light btn-sm" href="{% url 'content:post_delete' post.pk %}" title="{% trans "Delete" %}">{% icon "trash" 16 %}</a>
             {% endif %}
           </td>
         </tr>
@@ -57,6 +58,6 @@
     </table>
   </div>
   {% include "partials/_pagination.html" %}
-  {% else %}<div class="empty">نوشته‌ای پیدا نشد.</div>{% endif %}
+  {% else %}<div class="empty">{% trans "No post was found." %}</div>{% endif %}
 </div>
 {% endblock %}

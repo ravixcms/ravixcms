@@ -1,3 +1,4 @@
+from django.utils.translation import gettext
 import os
 
 from django.core.exceptions import ValidationError
@@ -17,7 +18,7 @@ def validate_image_file(file):
     if not isinstance(file, UploadedFile) and getattr(file, "_committed", True) is not False:
         return
     if file.size > MAX_IMAGE_SIZE:
-        raise ValidationError("حجم تصویر نباید بیشتر از ۲ مگابایت باشد.")
+        raise ValidationError(gettext("The image size must not exceed 2 MB."))
     from PIL import Image
 
     try:
@@ -26,12 +27,12 @@ def validate_image_file(file):
             img.verify()
             fmt = img.format
     except Exception as exc:
-        raise ValidationError("فایل انتخاب‌شده یک تصویر معتبر نیست.") from exc
+        raise ValidationError(gettext("The selected file is not a valid image.")) from exc
     finally:
         file.seek(0)
     if fmt not in ALLOWED_IMAGE_FORMATS:
-        raise ValidationError("فقط تصاویر JPEG، PNG، GIF و WEBP مجاز هستند.")
+        raise ValidationError(gettext("Only JPEG, PNG, GIF and WEBP images are allowed."))
     # پسوند باید با نوع واقعی تصویر بخواند؛ وگرنه فایل چندریخت با پسوند .html/.php قابل سرو می‌شد.
     ext = os.path.splitext(file.name or "")[1].lstrip(".").lower()
     if ext not in EXTENSIONS_FOR_FORMAT[fmt]:
-        raise ValidationError("پسوند فایل با نوع واقعی تصویر مطابقت ندارد.")
+        raise ValidationError(gettext("The file extension does not match the real image type."))

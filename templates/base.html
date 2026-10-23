@@ -13,6 +13,7 @@
 <body class="{% block body_class %}{% endblock %}">
   {% include "partials/_messages.html" %}
   {% block body %}{% endblock %}
+  <script src="{% url 'javascript-catalog' %}"></script>
   <script src="{% static 'js/ravix.js' %}" defer></script>
   {% block scripts %}{% endblock %}
 </body>

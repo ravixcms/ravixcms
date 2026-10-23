@@ -1,4 +1,5 @@
 """منطق مخزن: ناشر مجاز، آپلود/انتشار نسخه، سازگاری، جست‌وجو. همهٔ بررسی‌های دسترسی اینجا (و در لایهٔ view) انجام می‌شود."""
+from django.utils.translation import gettext
 import hashlib
 from dataclasses import dataclass
 
@@ -49,9 +50,9 @@ class Compat:
 def compat_for(api_version: int, ravin_spec: str) -> Compat:
     problems = []
     if api_version != PLUGIN_API_VERSION:
-        problems.append(f"قرارداد افزونه {api_version} است؛ این CMS قرارداد {PLUGIN_API_VERSION} را پشتیبانی می‌کند.")
+        problems.append((gettext("The plugin contract is %(api_version)s; this CMS supports contract %(PLUGIN_API_VERSION)s.") % {"api_version": api_version, "PLUGIN_API_VERSION": PLUGIN_API_VERSION}))
     if not versions.satisfies(RAVIX_VERSION, ravin_spec):
-        problems.append(f"نیازمند Ravix «{ravin_spec}»؛ نسخهٔ فعلی {RAVIX_VERSION}.")
+        problems.append((gettext("Requires Ravix “%(ravin_spec)s”; current version is %(RAVIX_VERSION)s.") % {"ravin_spec": ravin_spec, "RAVIX_VERSION": RAVIX_VERSION}))
     return Compat(not problems, problems)
 
 
@@ -88,15 +89,15 @@ def search(q="", category="", compatible=False):
 # ------------------------------------------------------------------ آپلود و چرخهٔ نسخه
 def _check_ownership(plugin, publisher):
     if plugin.publisher_id != publisher.pk:
-        raise HubError("این شناسه متعلق به ناشر دیگری است.")
+        raise HubError(gettext("This identifier belongs to another publisher."))
 
 
 @transaction.atomic
 def upload_version(publisher: Publisher, user, data: bytes, *, changelog="", publish=False) -> HubVersion:
     if publisher is None or not publisher.is_active:
-        raise HubError("فقط ناشران مجاز می‌توانند افزونه منتشر کنند.")
+        raise HubError(gettext("Only authorized publishers can publish plugins."))
     if not settings.RAVIX_REGISTRY_ENABLED:
-        raise HubError("مخزن غیرفعال است.")
+        raise HubError(gettext("The registry is disabled."))
     try:
         info: Inspected = inspect(data)
     except PackageError as exc:
@@ -110,14 +111,14 @@ def upload_version(publisher: Publisher, user, data: bytes, *, changelog="", pub
     else:
         _check_ownership(plugin, publisher)
     if HubVersion.objects.filter(plugin=plugin, version=m.version).exists():
-        raise HubError(f"نسخهٔ {m.version} قبلاً ثبت شده است؛ نسخه‌ها تغییرناپذیرند. نسخهٔ جدید بسازید.")
+        raise HubError((gettext("Version %(version)s is already registered; versions are immutable. Create a new version.") % {"version": m.version}))
     ver = HubVersion(plugin=plugin, version=m.version, manifest=info.raw_manifest, sha256=info.sha256, fingerprint=info.fingerprint, size=info.size,
                      ravin_spec=m.ravix, api_version=m.api_version, changelog=(changelog or "")[:5000], uploaded_by=user)
     ver.package.save(f"{m.slug}-{m.version}.zip", ContentFile(info.data), save=False)
     try:
         ver.save()
     except IntegrityError:
-        raise HubError("نسخهٔ تکراری.")
+        raise HubError(gettext("Duplicate version."))
     if publish:
         publish_version(ver, publisher)
     return ver
@@ -127,11 +128,11 @@ def publish_version(ver: HubVersion, publisher: Publisher, *, is_admin=False):
     if not is_admin:
         _check_ownership(ver.plugin, publisher)
         if not publisher.is_active:
-            raise HubError("فقط ناشران مجاز می‌توانند افزونه منتشر کنند.")
+            raise HubError(gettext("Only authorized publishers can publish plugins."))
     if ver.status == HubVersion.Status.PUBLISHED:
         return ver
     if ver.status == HubVersion.Status.YANKED:
-        raise HubError("نسخهٔ پس‌گرفته‌شده دوباره منتشر نمی‌شود؛ نسخهٔ جدید بسازید.")
+        raise HubError(gettext("A withdrawn version cannot be published again; create a new version."))
     # بازبینی تمامیت فایل ذخیره‌شده پیش از انتشار
     ver.package.open("rb")
     try:
@@ -139,7 +140,7 @@ def publish_version(ver: HubVersion, publisher: Publisher, *, is_admin=False):
     finally:
         ver.package.close()
     if actual != ver.sha256:
-        raise HubError("تمامیت فایل ذخیره‌شده تأیید نشد (SHA-256 مغایر).")
+        raise HubError(gettext("The integrity of the stored file could not be verified (SHA-256 mismatch)."))
     sign_version(ver)
     ver.status = HubVersion.Status.PUBLISHED
     ver.published_at = timezone.now()
@@ -157,7 +158,7 @@ def sign_version(ver: HubVersion) -> bool:
             return False
         ver.signature, ver.signature_key_id = signing.sign(seed, ver.plugin.slug, ver.version, ver.sha256, ver.fingerprint)
     except (signing.SigningError, ValueError) as exc:
-        raise HubError(f"امضای نسخه ناموفق بود (کلید امضای مخزن را بررسی کنید): {exc}")
+        raise HubError((gettext("Signing the version failed (check the registry signing key): %(exc)s") % {"exc": exc}))
     return True
 
 
@@ -173,6 +174,6 @@ def yank_version(ver: HubVersion, publisher: Publisher | None, reason="", *, is_
 def delete_draft(ver: HubVersion, publisher: Publisher):
     _check_ownership(ver.plugin, publisher)
     if ver.status != HubVersion.Status.DRAFT:
-        raise HubError("فقط پیش‌نویس حذف می‌شود؛ نسخهٔ منتشرشده را «پس بگیرید».")
+        raise HubError(gettext("Only drafts can be deleted; “withdraw” a published version instead."))
     ver.package.delete(save=False)
     ver.delete()

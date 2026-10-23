@@ -1,3 +1,4 @@
+from django.utils.translation import gettext, gettext_lazy
 from django.contrib import messages
 from apps.core.params import safe_id, safe_ids
 from django.db.models import Count, Q
@@ -14,7 +15,7 @@ from . import services
 from .models import Comment
 
 CAP = "comments.moderate"
-STATUS_LABELS = {"approve": "تأیید", "pending": "بازگشت به «در انتظار»", "spam": "اسپم", "trash": "انتقال به زباله"}
+STATUS_LABELS = {"approve": gettext_lazy("Approve"), "pending": gettext_lazy("Back to “Pending”"), "spam": gettext_lazy("Spam"), "trash": gettext_lazy("Move to trash")}
 
 
 class CommentListView(CapabilityRequiredMixin, QueryStringMixin, ListView):
@@ -43,7 +44,7 @@ class CommentListView(CapabilityRequiredMixin, QueryStringMixin, ListView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         counts = dict(Comment.objects.values_list("status").annotate(n=Count("id")))
-        ctx["tabs"] = [("", "فعال", sum(counts.get(s, 0) for s in ("pending", "approved")))] + [
+        ctx["tabs"] = [("", gettext("Active"), sum(counts.get(s, 0) for s in ("pending", "approved")))] + [
             (value, label, counts.get(value, 0)) for value, label in Comment.Status.choices
         ]
         ctx["status"] = self.current_status()
@@ -67,19 +68,19 @@ class CommentBulkView(CapabilityRequiredMixin, View):
         else:
             ids = safe_ids(request.POST.getlist("ids"))
             if not ids:
-                messages.error(request, "هیچ دیدگاهی انتخاب نشده است.")
+                messages.error(request, gettext("No comments were selected."))
                 return redirect(target)
             qs = Comment.objects.filter(pk__in=ids)
         if action in services.BULK_ACTIONS:
             n = services.change_status(request, qs, services.BULK_ACTIONS[action])
-            log_event(request, "update", None, f"وضعیت {n} دیدگاه: {STATUS_LABELS[action]}", object_type="دیدگاه")
-            messages.success(request, f"{n} دیدگاه: {STATUS_LABELS[action]}.")
+            log_event(request, "update", None, (gettext("Status of %(n)s comments: %(STATUS_LABELS)s") % {"n": n, "STATUS_LABELS": STATUS_LABELS[action]}), object_type=gettext("Comment"))
+            messages.success(request, (gettext("%(n)s comments: %(STATUS_LABELS)s.") % {"n": n, "STATUS_LABELS": STATUS_LABELS[action]}))
         elif action in ("delete", "empty_trash"):
             qs = qs.filter(status__in=[Comment.Status.SPAM, Comment.Status.TRASH])
             n = qs.count()
             qs.delete()
-            log_event(request, "delete", None, f"{n} دیدگاه برای همیشه حذف شد.", object_type="دیدگاه")
-            messages.success(request, f"{n} دیدگاه برای همیشه حذف شد.")
+            log_event(request, "delete", None, (gettext("%(n)s comments were permanently deleted.") % {"n": n}), object_type=gettext("Comment"))
+            messages.success(request, (gettext("%(n)s comments were permanently deleted.") % {"n": n}))
         else:
-            messages.error(request, "عملیات نامعتبر است.")
+            messages.error(request, gettext("The action is invalid."))
         return redirect(target)

@@ -1,30 +1,30 @@
 {% extends "layouts/panel.html" %}
+{% load i18n %}
 {% load ravix_ui %}
-{% block title %}{% if mode == "update" %}تأیید تغییرات{% else %}نصب{% endif %} افزونه{% endblock %}
-{% block page_title %}{% if mode == "update" %}تأیید تغییرات افزونه{% else %}نصب افزونه{% endif %}{% endblock %}
+{% block title %}{% if mode == "update" %}{% trans "Approve changes" %}{% else %}{% trans "Install" %}{% endif %} {% trans "Plugin" %}{% endblock %}
+{% block page_title %}{% if mode == "update" %}{% trans "Approve plugin changes" %}{% else %}{% trans "Install plugin" %}{% endif %}{% endblock %}
 {% block content_class %}content-narrow{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>{% if mode == "update" %}تأیید تغییرات{% else %}نصب{% endif %} «{{ row.name }}»</h1>
-  <p>پیش از ادامه، آنچه این افزونه اعلام می‌کند را بررسی کنید.</p></div></div>
-<div class="form-errors warn" role="alert"><p><strong>هشدار امنیتی:</strong> افزونه کد پایتون است و با دسترسی کامل سرور اجرا می‌شود؛ هیچ سندباکسی وجود ندارد.
-  فقط افزونه‌ای را تأیید کنید که کدش را بررسی کرده‌اید یا از منبع مورد اعتماد آمده است. با تأیید، فقط همین کدِ دقیق (اثرانگشت زیر) اجازهٔ اجرا می‌گیرد؛ هر تغییر بعدی در فایل‌ها افزونه را فوراً متوقف می‌کند.</p></div>
-{% if problems %}<div class="form-errors" role="alert"><p><strong>امکان ادامه نیست:</strong></p><ul>{% for p in problems %}<li>{{ p }}</li>{% endfor %}</ul></div>{% endif %}
-<div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>مشخصات اعلام‌شده</h2></div><div class="card-body">
-  {% if mode == "update" %}<p class="muted">نسخهٔ نصب‌شده: <span class="ltr">{{ row.record.version }}</span> ← نسخهٔ روی دیسک: <span class="ltr">{{ row.manifest.version }}</span></p>{% endif %}
+<div class="page-head"><div><h1>{% if mode == "update" %}{% trans "Approve changes" %}{% else %}{% trans "Install" %}{% endif %} «{{ row.name }}»</h1>
+  <p>{% trans "Before continuing, review what this plugin declares." %}</p></div></div>
+<div class="form-errors warn" role="alert"><p>{% trans "<strong>Security warning:</strong> a plugin is Python code and runs with full server access; there is no sandbox. Approve only a plugin whose code you have reviewed or that comes from a trusted source. When you approve, only this exact code (the fingerprint below) is allowed to run; any later change to the files stops the plugin immediately." %}</p></div>
+{% if problems %}<div class="form-errors" role="alert"><p>{% trans "<strong>Cannot continue:</strong>" %}</p><ul>{% for p in problems %}<li>{{ p }}</li>{% endfor %}</ul></div>{% endif %}
+<div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>{% trans "Declared details" %}</h2></div><div class="card-body">
+  {% if mode == "update" %}<p class="muted">{% trans "Installed version:" %} <span class="ltr">{{ row.record.version }}</span> {% trans "← version on disk:" %} <span class="ltr">{{ row.manifest.version }}</span></p>{% endif %}
   <p>{{ row.manifest.description }}</p>
   {% include "plugins/_manifest_summary.html" with manifest=row.manifest %}
 </div></div>
-<div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>فایل‌های افزونه ({{ files|length|fa_digits }})</h2></div><div class="card-body">
+<div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>{% blocktrans trimmed with files=files|length|fa_digits %}Plugin files ({{ files }}){% endblocktrans %}</h2></div><div class="card-body">
   <ul class="ltr" style="margin:0;padding-inline-start:1.2rem">{% for name, size in files %}<li>{{ name }} <span class="muted">({{ size }} B)</span></li>{% endfor %}</ul>
-  <p style="margin-top:1rem">اثرانگشت SHA-256: <code class="ltr" style="word-break:break-all">{{ fingerprint }}</code></p>
+  <p style="margin-top:1rem">{% trans "SHA-256 fingerprint:" %} <code class="ltr" style="word-break:break-all">{{ fingerprint }}</code></p>
 </div></div>
 {% if not problems %}
 <form method="post" novalidate data-once>
   {% csrf_token %}
   <input type="hidden" name="fingerprint" value="{{ fingerprint }}">
-  <div class="field-check"><input type="checkbox" class="check" name="trust" id="trust"><label for="trust">کد این افزونه را بررسی کرده‌ام و اجازهٔ اجرای آن را روی سرور می‌دهم.</label></div>
-  <p><button class="btn" type="submit">{% if mode == "update" %}تأیید تغییرات{% else %}نصب افزونه{% endif %}</button>
-  <a class="btn btn-light" href="{% url 'plugins:detail' row.slug %}">انصراف</a></p>
+  <div class="field-check"><input type="checkbox" class="check" name="trust" id="trust"><label for="trust">{% trans "I have reviewed this plugin’s code and allow it to run on the server." %}</label></div>
+  <p><button class="btn" type="submit">{% if mode == "update" %}{% trans "Approve changes" %}{% else %}{% trans "Install plugin" %}{% endif %}</button>
+  <a class="btn btn-light" href="{% url 'plugins:detail' row.slug %}">{% trans "Cancel" %}</a></p>
 </form>
-{% else %}<p><a class="btn btn-light" href="{% url 'plugins:list' %}">بازگشت</a></p>{% endif %}
+{% else %}<p><a class="btn btn-light" href="{% url 'plugins:list' %}">{% trans "Back" %}</a></p>{% endif %}
 {% endblock %}

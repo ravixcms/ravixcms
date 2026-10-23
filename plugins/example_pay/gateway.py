@@ -9,6 +9,7 @@
 
 هیچ‌یک از این آدرس‌ها واقعی نیست. برای درگاه واقعی: همین ساختار را نگه دارید و فقط فراخوانی‌ها/نگاشت‌ها را طبق مستندات رسمی ارائه‌دهنده بنویسید.
 """
+from django.utils.translation import gettext, gettext_lazy
 from urllib.parse import quote
 
 from apps.shop.payments import (ConfigField, CreateResult, GatewayError, PaymentGateway, Redirect, VerifyResult, VerifyStatus)
@@ -21,15 +22,15 @@ PENDING = {"pending", "created", "processing"}
 
 class ExamplePay(PaymentGateway):
     name = "example_pay"
-    label = "ExamplePay (نمونه)"
-    description = "درگاه نمونهٔ آموزشی؛ متصل به سرویس واقعی نیست."
+    label = gettext_lazy("ExamplePay (sample)")
+    description = gettext_lazy("A tutorial sample gateway; it is not connected to a real service.")
     supported_currencies = ("IRT", "IRR")
     reports_currency = True
     config_fields = (
-        ConfigField("api_base", "آدرس API (محیط واقعی)", type="url", help="مثال: https://api.examplepay.invalid"),
-        ConfigField("sandbox_api_base", "آدرس API (محیط آزمایشی)", type="url", required=False),
-        ConfigField("pay_host", "میزبان صفحهٔ پرداخت", help="فقط نام میزبان، مثل pay.examplepay.invalid؛ هدایت فقط به همین میزبان مجاز است."),
-        ConfigField("api_key", "کلید API", secret=True),
+        ConfigField("api_base", gettext_lazy("API URL (live)"), type="url", help=gettext_lazy("Example: https://api.examplepay.invalid")),
+        ConfigField("sandbox_api_base", gettext_lazy("API URL (sandbox)"), type="url", required=False),
+        ConfigField("pay_host", gettext_lazy("Payment page host"), help=gettext_lazy("Hostname only, e.g. pay.examplepay.invalid; redirecting is allowed only to this host.")),
+        ConfigField("api_key", gettext_lazy("API key"), secret=True),
     )
 
     def __init__(self, config=None, test_mode=False):
@@ -57,7 +58,7 @@ class ExamplePay(PaymentGateway):
         elif status in PENDING:
             kind = VerifyStatus.PENDING
         else:
-            raise GatewayError("وضعیت ناشناخته از درگاه.")  # هرگز موفق فرض نمی‌شود
+            raise GatewayError(gettext("Unknown status from the gateway."))  # هرگز موفق فرض نمی‌شود
         try:
             amount = int(data.get("amount", 0))
         except (TypeError, ValueError):
@@ -71,7 +72,7 @@ class ExamplePay(PaymentGateway):
         data = request_json("POST", f"{self._base()}/v1/payments", json_body=body, headers=self._headers(idempotency=ctx.reference))
         pid, token = str(data.get("id", "")), str(data.get("pay_token", ""))
         if not pid or not token:
-            raise GatewayError("پاسخ ایجاد تراکنش ناقص است.")
+            raise GatewayError(gettext("The create-transaction response is incomplete."))
         return CreateResult(redirect=Redirect(url=f"https://{self.redirect_hosts[0]}/pay/{quote(token, safe='')}"), gateway_ref=pid, raw={"id": pid})
 
     def verify_transaction(self, ctx, params):

@@ -1,13 +1,14 @@
 {% extends "layouts/panel.html" %}
+{% load i18n %}
 {% load ravix_ui %}
-{% block title %}دسته‌بندی‌ها{% endblock %}
-{% block page_title %}دسته‌بندی‌ها{% endblock %}
+{% block title %}{% trans "Content categories" %}{% endblock %}
+{% block page_title %}{% trans "Content categories" %}{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>دسته‌بندی‌ها</h1></div><a href="{% url 'content:category_create' %}" class="btn">{% icon "plus" 18 %} دسته‌بندی جدید</a></div>
+<div class="page-head"><div><h1>{% trans "Content categories" %}</h1></div><a href="{% url 'content:category_create' %}" class="btn">{% icon "plus" 18 %} {% trans "New category" %}</a></div>
 <div class="card">
   {% if categories %}
   <div class="table-wrap"><table class="table">
-    <thead><tr><th>نام</th><th>نامک</th><th>والد</th><th>تعداد نوشته</th><th></th></tr></thead>
+    <thead><tr><th>{% trans "Name" %}</th><th>{% trans "Slug" %}</th><th>{% trans "Parent" %}</th><th>{% trans "Post count" %}</th><th></th></tr></thead>
     <tbody>
     {% for c in categories %}
       <tr>
@@ -17,6 +18,6 @@
       </tr>
     {% endfor %}
     </tbody></table></div>
-  {% else %}<div class="empty">هنوز دسته‌بندی‌ای ساخته نشده است.</div>{% endif %}
+  {% else %}<div class="empty">{% trans "No category has been created yet." %}</div>{% endif %}
 </div>
 {% endblock %}

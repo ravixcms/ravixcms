@@ -7,6 +7,7 @@
 
 ساختار مورد انتظار: ``<slug>/theme.json`` ، ``<slug>/templates/…`` ، ``<slug>/static/…`` (یک پوشهٔ ریشه به نام شناسهٔ قالب).
 """
+from django.utils.translation import gettext
 import os
 import re
 import stat
@@ -79,12 +80,12 @@ class PackageInfo:
 
 def check_upload_bytes(data: bytes) -> None:
     if not data:
-        raise ThemePackageError("فایلی ارسال نشد یا فایل خالی است.")
+        raise ThemePackageError(gettext("No file was sent or the file is empty."))
     if len(data) > MAX_ZIP_BYTES:
-        raise ThemePackageError(f"حجم فایل بیشتر از {MAX_ZIP_BYTES // (1024 * 1024)} مگابایت است.")
+        raise ThemePackageError((gettext("The file is larger than %(value)s MB.") % {"value": (MAX_ZIP_BYTES // (1024 * 1024))}))
     if not data.startswith(ZIP_MAGIC):
         # پسوند .zip به‌تنهایی کافی نیست؛ امضای واقعی ZIP بررسی می‌شود (ZIP خالی هم رد می‌شود).
-        raise ThemePackageError("این فایل یک ZIP معتبر نیست (امضای فایل با ZIP نمی‌خواند).")
+        raise ThemePackageError(gettext("This file is not a valid ZIP (the file signature does not match ZIP)."))
 
 
 def open_zip(data: bytes) -> zipfile.ZipFile:
@@ -94,22 +95,22 @@ def open_zip(data: bytes) -> zipfile.ZipFile:
     try:
         return zipfile.ZipFile(io.BytesIO(data))
     except (zipfile.BadZipFile, OSError, EOFError, ValueError, NotImplementedError):
-        raise ThemePackageError("فایل ZIP خراب یا ناقص است و باز نشد.") from None
+        raise ThemePackageError(gettext("The ZIP file is corrupted or incomplete and could not be opened.")) from None
 
 
 def _split(name: str) -> tuple[tuple[str, ...], bool]:
     if "\\" in name:
-        raise ThemePackageError(f"نام ناامن در ZIP (بک‌اسلش): «{show(name)}».", security=True)
+        raise ThemePackageError((gettext("Unsafe name in ZIP (backslash): “%(show)s”.") % {"show": show(name)}), security=True)
     if "\x00" in name or any(ord(c) < 32 or ord(c) == 127 for c in name):
-        raise ThemePackageError("نام ناامن در ZIP (نویسهٔ کنترلی).", security=True)
+        raise ThemePackageError(gettext("Unsafe name in ZIP (control character)."), security=True)
     if name.startswith("/") or DRIVE_RE.match(name):
-        raise ThemePackageError(f"مسیر مطلق در ZIP مجاز نیست: «{show(name)}».", security=True)
+        raise ThemePackageError((gettext("Absolute paths are not allowed in ZIP: “%(show)s”.") % {"show": show(name)}), security=True)
     is_dir = name.endswith("/")
     parts = tuple(name.rstrip("/").split("/")) if name.rstrip("/") else ()
     if not parts or any(p in ("", ".", "..") for p in parts):
-        raise ThemePackageError(f"مسیر ناامن در ZIP (. یا .. یا بخش خالی): «{show(name)}».", security=True)
+        raise ThemePackageError((gettext("Unsafe path in ZIP (. or .. or an empty segment): “%(show)s”.") % {"show": show(name)}), security=True)
     if len(name) > MAX_PATH_LENGTH or len(parts) > MAX_PATH_DEPTH:
-        raise ThemePackageError(f"مسیر «{show(name)}» بیش از حد طولانی یا عمیق است.")
+        raise ThemePackageError((gettext("The path “%(show)s” is too long or too deep.") % {"show": show(name)}))
     return parts, is_dir
 
 
@@ -117,8 +118,7 @@ def _check_component_names(parts: tuple[str, ...], name: str) -> None:
     for comp in parts:
         if not COMPONENT_RE.match(comp):
             raise ThemePackageError(
-                f"نام «{show(comp)}» مجاز نیست؛ نام فایل‌ها و پوشه‌ها فقط می‌تواند شامل حروف انگلیسی، عدد، «.»، «-» و «_» باشد "
-                "(بدون فاصله، بدون فارسی و بدون نقطهٔ ابتدایی)."
+                (gettext("The name “%(show)s” is not allowed; file and folder names may only contain English letters, digits, “.”, “-” and “_” (no spaces, no Persian characters, no leading dot).") % {"show": show(comp)})
             )
 
 
@@ -128,23 +128,23 @@ def _check_extension(parts: tuple[str, ...], name: str) -> None:
         return
     pieces = base.lower().split(".")
     if len(pieces) < 2:
-        raise ThemePackageError(f"فایل بدون پسوند مجاز نیست: «{show(name)}».")
+        raise ThemePackageError((gettext("A file without an extension is not allowed: “%(show)s”.") % {"show": show(name)}))
     if any(p in FORBIDDEN_EXTENSIONS for p in pieces[1:]):
-        raise ThemePackageError(f"فایل اجرایی یا اسکریپتی در قالب مجاز نیست (مثل py یا php): «{show(name)}».", security=True)
+        raise ThemePackageError((gettext("An executable or script file is not allowed in a theme (such as py or php): “%(show)s”.") % {"show": show(name)}), security=True)
     ext = pieces[-1]
     if ext in BLOCKED_IN_UPLOAD:
-        raise ThemePackageError(f"فایل SVG در این نسخه مجاز نیست: «{show(name)}». به‌جای آن از png، webp یا jpg استفاده کنید.")
+        raise ThemePackageError((gettext("SVG files are not allowed in this version: “%(show)s”. Use png, webp or jpg instead.") % {"show": show(name)}))
     if ext not in UPLOAD_EXTENSIONS:
-        raise ThemePackageError(f"پسوند فایل «{show(name)}» در قالب مجاز نیست.")
+        raise ThemePackageError((gettext("The file extension of “%(show)s” is not allowed in a theme.") % {"show": show(name)}))
 
 
 def validate(zf: zipfile.ZipFile, zip_bytes: int) -> PackageInfo:
     """فهرست ورودی‌های ZIP را بدون هیچ استخراجی بررسی می‌کند و در صورت مشکل ThemePackageError می‌دهد."""
     infos = zf.infolist()
     if not infos:
-        raise ThemePackageError("ZIP خالی است.")
+        raise ThemePackageError(gettext("The ZIP is empty."))
     if len(infos) > MAX_ZIP_ENTRIES:
-        raise ThemePackageError(f"تعداد ورودی‌های ZIP بیش از حد مجاز است (حداکثر {MAX_ZIP_ENTRIES}).")
+        raise ThemePackageError((gettext("The number of ZIP entries exceeds the limit (at most %(MAX_ZIP_ENTRIES)s).") % {"MAX_ZIP_ENTRIES": MAX_ZIP_ENTRIES}))
     seen: set[str] = set()
     file_paths: set[str] = set()
     dir_paths: set[str] = set()
@@ -158,18 +158,18 @@ def validate(zf: zipfile.ZipFile, zip_bytes: int) -> PackageInfo:
         _check_component_names(parts, name)
         mode = info.external_attr >> 16
         if stat.S_ISLNK(mode):
-            raise ThemePackageError(f"پیوند نمادین (symlink) در ZIP مجاز نیست: «{show(name)}».", security=True)
+            raise ThemePackageError((gettext("Symbolic links are not allowed in ZIP: “%(show)s”.") % {"show": show(name)}), security=True)
         if stat.S_IFMT(mode) and not (stat.S_ISREG(mode) or stat.S_ISDIR(mode)):
-            raise ThemePackageError(f"ورودی ویژه یا غیرعادی در ZIP مجاز نیست: «{show(name)}».", security=True)
+            raise ThemePackageError((gettext("Special or unusual entries are not allowed in ZIP: “%(show)s”.") % {"show": show(name)}), security=True)
         if info.flag_bits & 0x1:
-            raise ThemePackageError("ZIP رمزگذاری‌شده مجاز نیست.")
+            raise ThemePackageError(gettext("Encrypted ZIP files are not allowed."))
         if info.compress_type not in (zipfile.ZIP_STORED, zipfile.ZIP_DEFLATED):
-            raise ThemePackageError("روش فشرده‌سازی ZIP پشتیبانی نمی‌شود (فقط Deflate یا بدون فشرده‌سازی).")
+            raise ThemePackageError(gettext("The ZIP compression method is not supported (only Deflate or no compression)."))
         if is_dir != info.is_dir():
-            raise ThemePackageError(f"ورودی ناسازگار در ZIP: «{show(name)}».", security=True)
+            raise ThemePackageError((gettext("Inconsistent entry in ZIP: “%(show)s”.") % {"show": show(name)}), security=True)
         key = "/".join(parts).lower()
         if key in seen:
-            raise ThemePackageError(f"نام تکراری (یا فقط با تفاوت بزرگی/کوچکی حروف) در ZIP: «{show(name)}».", security=True)
+            raise ThemePackageError((gettext("Duplicate name (or differing only in letter case) in ZIP: “%(show)s”.") % {"show": show(name)}), security=True)
         seen.add(key)
         roots.add(parts[0])
         if is_dir:
@@ -178,44 +178,42 @@ def validate(zf: zipfile.ZipFile, zip_bytes: int) -> PackageInfo:
             continue
         if len(parts) < 2:
             raise ThemePackageError(
-                f"فایل «{show(name)}» بیرون از پوشهٔ قالب است. همهٔ فایل‌ها باید داخل یک پوشه به نام شناسهٔ قالب باشند "
-                "(مثلاً my-theme/theme.json)."
+                (gettext("The file “%(show)s” is outside the theme folder. All files must be inside one folder named after the theme ID (e.g. my-theme/theme.json).") % {"show": show(name)})
             )
         _check_extension(parts, name)
         if info.file_size > MAX_FILE_BYTES:
-            raise ThemePackageError(f"حجم فایل «{show(name)}» بیش از {MAX_FILE_BYTES // (1024 * 1024)} مگابایت است.")
+            raise ThemePackageError((gettext("The size of file “%(show)s” exceeds %(value)s MB.") % {"show": show(name), "value": (MAX_FILE_BYTES // (1024 * 1024))}))
         if info.file_size > 0 and info.compress_size == 0:
-            raise ThemePackageError("ZIP مشکوک است (فایل با حجم صفر در فشرده).", security=True)
+            raise ThemePackageError(gettext("The ZIP is suspicious (a zero-size file in the compressed data)."), security=True)
         if info.compress_size > 0 and info.file_size > 64 * 1024 and info.file_size / info.compress_size > MAX_COMPRESSION_RATIO:
-            raise ThemePackageError(f"نسبت فشرده‌سازی «{show(name)}» غیرعادی است (احتمال zip-bomb).", security=True)
+            raise ThemePackageError((gettext("The compression ratio of “%(show)s” is unusual (possible zip bomb).") % {"show": show(name)}), security=True)
         declared += info.file_size
         if declared > MAX_EXTRACTED_BYTES:
             raise ThemePackageError(
-                f"مجموع حجم فایل‌های بازشده بیش از {MAX_EXTRACTED_BYTES // (1024 * 1024)} مگابایت است.", security=True
+                (gettext("The total size of the extracted files exceeds %(value)s MB.") % {"value": (MAX_EXTRACTED_BYTES // (1024 * 1024))}), security=True
             )
         files += 1
         if files > MAX_FILES:
-            raise ThemePackageError(f"تعداد فایل‌های قالب بیش از {MAX_FILES} است.")
+            raise ThemePackageError((gettext("The number of theme files exceeds %(MAX_FILES)s.") % {"MAX_FILES": MAX_FILES}))
         file_paths.add(key)
         entries.append(Entry(info, parts, False))
     if len(roots) != 1:
         raise ThemePackageError(
-            "ZIP باید فقط یک پوشهٔ ریشه (به نام شناسهٔ قالب) داشته باشد. اگر ZIP را با macOS ساخته‌اید، پوشهٔ __MACOSX را نگذارید؛ "
-            "فایل‌ها را داخل یک پوشه بگذارید و دوباره ZIP کنید."
+            gettext("The ZIP must have only one root folder (named after the theme ID). If you made the ZIP on macOS, do not include the __MACOSX folder; put the files inside one folder and zip again.")
         )
     root = next(iter(roots))
     if not SLUG_RE.match(root):
         raise ThemePackageError(
-            f"نام پوشهٔ ریشه («{show(root)}») شناسهٔ معتبر قالب نیست؛ فقط حروف کوچک انگلیسی، عدد، «-» و «_» (حداکثر ۴۹ نویسه)."
+            (gettext("The root folder name (“%(show)s”) is not a valid theme ID; only lowercase English letters, digits, “-” and “_” (at most 49 characters).") % {"show": show(root)})
         )
     all_dirs = set(dir_paths)  # پوشه‌های صریح + پوشه‌های ضمنی (والد هر فایل)
     for fp in file_paths:
         segs = fp.split("/")
         all_dirs.update("/".join(segs[:i]) for i in range(1, len(segs)))
     if file_paths & all_dirs:  # یک نام هم فایل است و هم پوشه
-        raise ThemePackageError("مسیرهای متعارض در ZIP (یک نام هم فایل است و هم پوشه).", security=True)
+        raise ThemePackageError(gettext("Conflicting paths in ZIP (one name is both a file and a folder)."), security=True)
     if files == 0:
-        raise ThemePackageError("ZIP هیچ فایلی ندارد.")
+        raise ThemePackageError(gettext("The ZIP contains no files."))
     return PackageInfo(root=root, entries=tuple(entries), zip_bytes=zip_bytes, declared_bytes=declared, file_count=files)
 
 
@@ -235,7 +233,7 @@ def extract(zf: zipfile.ZipFile, package: PackageInfo, dest: Path) -> int:
             os.makedirs(parent, mode=0o750, exist_ok=True)
             real_parent = os.path.realpath(parent)
             if real_parent != real_dest and not real_parent.startswith(real_dest + os.sep):
-                raise ThemePackageError("مسیر خارج از پوشهٔ مقصد در ZIP (zip-slip).", security=True)
+                raise ThemePackageError(gettext("Path outside the destination folder in ZIP (zip-slip)."), security=True)
             if entry.is_dir:
                 continue
             written = 0
@@ -248,17 +246,17 @@ def extract(zf: zipfile.ZipFile, package: PackageInfo, dest: Path) -> int:
                     written += len(chunk)
                     total += len(chunk)
                     if written > MAX_FILE_BYTES or total > MAX_EXTRACTED_BYTES:
-                        raise ThemePackageError("حجم واقعی فایل‌های بازشده از سقف مجاز بیشتر است (احتمال zip-bomb).", security=True)
+                        raise ThemePackageError(gettext("The real size of the extracted files exceeds the limit (possible zip bomb)."), security=True)
                     out.write(chunk)
             if written != entry.info.file_size:
-                raise ThemePackageError("حجم واقعی یکی از فایل‌ها با اعلام ZIP یکی نیست؛ ZIP دست‌کاری‌شده یا خراب است.", security=True)
+                raise ThemePackageError(gettext("The real size of one of the files does not match the ZIP declaration; the ZIP is tampered with or corrupted."), security=True)
     except (zipfile.BadZipFile, zlib.error, EOFError, NotImplementedError, RuntimeError):
-        raise ThemePackageError("فایل ZIP خراب است (محتوای فشرده معتبر نیست).") from None
+        raise ThemePackageError(gettext("The ZIP file is corrupted (the compressed content is not valid).")) from None
     except FileExistsError:
-        raise ThemePackageError("نام تکراری در ZIP.", security=True) from None
+        raise ThemePackageError(gettext("Duplicate name in ZIP."), security=True) from None
     except OSError as exc:
         if isinstance(exc, PermissionError) or exc.errno in (13, 28, 30):  # دسترسی/پر بودن دیسک/فقط‌خواندنی: پیام عمومی
-            raise ThemePackageError("نوشتن در پوشهٔ موقت ممکن نشد؛ مجوزها و فضای دیسک سرور را بررسی کنید.") from None
+            raise ThemePackageError(gettext("Could not write to the temporary folder; check the server’s permissions and disk space.")) from None
         raise
     return total
 

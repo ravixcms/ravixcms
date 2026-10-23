@@ -1,3 +1,4 @@
+from django.utils.translation import gettext, gettext_lazy
 from django import forms
 
 from .models import SiteSettings
@@ -24,9 +25,9 @@ class StyledFormMixin:
 
 class SiteSettingsForm(StyledFormMixin, forms.ModelForm):
     # اختیاری: فرم‌ها/کلاینت‌های قدیمی که این دو را نمی‌فرستند، مقدار فعلی را نگه می‌دارند (نه خطا).
-    language = forms.ChoiceField(label="زبان", choices=language_choices, required=False)
-    timezone = forms.ChoiceField(label="منطقهٔ زمانی", choices=timezone_choices, required=False,
-                                 help_text="تاریخ و ساعت‌ها در پنل و سایت با این منطقه نمایش داده می‌شوند.")
+    language = forms.ChoiceField(label=gettext_lazy("Language"), choices=language_choices, required=False)
+    timezone = forms.ChoiceField(label=gettext_lazy("Time zone"), choices=timezone_choices, required=False,
+                                 help_text=gettext_lazy("Dates and times in the panel and on the site are shown in this time zone."))
 
     def clean_language(self):
         return self.cleaned_data.get("language") or self.instance.language
@@ -64,5 +65,5 @@ class SiteSettingsForm(StyledFormMixin, forms.ModelForm):
     def clean_site_name(self):
         name = self.cleaned_data["site_name"].strip()
         if not name:
-            raise forms.ValidationError("نام سایت نمی‌تواند خالی باشد.")
+            raise forms.ValidationError(gettext("The site name cannot be empty."))
         return name

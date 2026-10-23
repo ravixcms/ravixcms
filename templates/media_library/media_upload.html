@@ -1,10 +1,11 @@
 {% extends "layouts/panel.html" %}
+{% load i18n %}
 {% load ravix_ui %}
-{% block title %}بارگذاری فایل{% endblock %}
-{% block page_title %}بارگذاری فایل{% endblock %}
+{% block title %}{% trans "Upload file" %}{% endblock %}
+{% block page_title %}{% trans "Upload file" %}{% endblock %}
 {% block content_class %}content-narrow{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>بارگذاری فایل</h1><p>چند فایل را می‌توانید هم‌زمان انتخاب کنید.</p></div></div>
+<div class="page-head"><div><h1>{% trans "Upload file" %}</h1><p>{% trans "You can select several files at once." %}</p></div></div>
 <div class="card"><div class="card-body" style="max-width:640px">
   <form method="post" enctype="multipart/form-data" novalidate data-once>
     {% csrf_token %}
@@ -12,15 +13,15 @@
     <div class="field {% if form.files.errors %}has-error{% endif %}">
       <label for="{{ form.files.id_for_label }}">{{ form.files.label }}</label>
       {{ form.files }}
-      <p class="help">{{ form.files.help_text }} تصاویر تا ۵ مگابایت، اسناد تا ۱۵، صوت تا ۲۵ و ویدئو تا ۵۰ مگابایت.</p>
+      <p class="help">{% blocktrans trimmed with help_text=form.files.help_text %}{{ help_text }} Images up to 5 MB, documents up to 15, audio up to 25 and video up to 50 MB.{% endblocktrans %}</p>
       {% for error in form.files.errors %}<p class="error-text">{{ error }}</p>{% endfor %}
     </div>
     {% include "partials/_field.html" with field=form.title %}
     {% include "partials/_field.html" with field=form.alt_text %}
-    <p class="help">فرمت‌های مجاز: JPG، PNG، GIF، WEBP، PDF، TXT، CSV، DOC/DOCX، XLS/XLSX، PPT/PPTX، MP3، WAV، OGG، MP4، WEBM. فایل‌های اجرایی، اسکریپت، HTML و SVG پذیرفته نمی‌شوند.</p>
+    <p class="help">{% trans "Allowed formats: JPG, PNG, GIF, WEBP, PDF, TXT, CSV, DOC/DOCX, XLS/XLSX, PPT/PPTX, MP3, WAV, OGG, MP4, WEBM. Executable files, scripts, HTML and SVG are not accepted." %}</p>
     <div class="form-actions">
-      <button type="submit" class="btn">{% icon "upload" 18 %} بارگذاری</button>
-      <a href="{% url 'media_library:media_list' %}" class="btn btn-light">انصراف</a>
+      <button type="submit" class="btn">{% icon "upload" 18 %} {% trans "Upload" %}</button>
+      <a href="{% url 'media_library:media_list' %}" class="btn btn-light">{% trans "Cancel" %}</a>
     </div>
   </form>
 </div></div>

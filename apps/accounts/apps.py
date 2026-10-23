@@ -1,10 +1,11 @@
+from django.utils.translation import gettext_lazy
 from django.apps import AppConfig
 
 
 class AccountsConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "apps.accounts"
-    verbose_name = "حساب‌های کاربری"
+    verbose_name = gettext_lazy("User accounts")
 
     def ready(self):
         from apps.core.navigation import NavItem, register_nav_item
@@ -12,7 +13,7 @@ class AccountsConfig(AppConfig):
         register_nav_item(
             NavItem(
                 key="accounts.users",
-                label="کاربران",
+                label=gettext_lazy("Users"),
                 url_name="accounts:user_list",
                 icon="users",
                 section="system",

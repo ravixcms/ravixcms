@@ -1,3 +1,4 @@
+from django.utils.translation import gettext
 from django.contrib import messages
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -24,13 +25,13 @@ class SiteSettingsView(CapabilityRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        changed = "، ".join(str(form.fields[f].label) for f in form.changed_data) or "بدون تغییر"
-        log_event(self.request, "update", self.object, f"تنظیمات سایت ویرایش شد ({changed}).", object_type="تنظیمات سایت")
-        messages.success(self.request, "تنظیمات سایت با موفقیت ذخیره شد.")
+        changed = gettext(", ").join(str(form.fields[f].label) for f in form.changed_data) or gettext("No changes")
+        log_event(self.request, "update", self.object, (gettext("Site settings were edited (%(changed)s).") % {"changed": changed}), object_type=gettext("Site settings"))
+        messages.success(self.request, gettext("Site settings were saved successfully."))
         return response
 
     def form_invalid(self, form):
-        messages.error(self.request, "تنظیمات ذخیره نشد. لطفاً خطاهای فرم را بررسی کنید.")
+        messages.error(self.request, gettext("The settings were not saved. Please check the form errors."))
         return super().form_invalid(form)
 
 
@@ -63,21 +64,21 @@ class SiteHealthTestEmailView(CapabilityRequiredMixin, View):
 
         to = request.user.email
         if not to:
-            messages.error(request, "حساب شما ایمیل ندارد؛ ابتدا در پروفایل ایمیل ثبت کنید.")
+            messages.error(request, gettext("Your account has no email; add an email in your profile first."))
             return redirect("core:site_health")
         key = f"health-test-email:{request.user.pk}"
         if not cache.add(key, 1, 30):
-            messages.warning(request, "چند ثانیه صبر کنید و دوباره تلاش کنید.")
+            messages.warning(request, gettext("Wait a few seconds and try again."))
             return redirect("core:site_health")
         try:
-            sent = EmailMessage("ایمیل آزمایشی راویکس", "این پیام آزمایشی است و نشان می‌دهد ارسال ایمیل از سایت شما کار می‌کند.", to=[to]).send(fail_silently=False)
+            sent = EmailMessage(gettext("Ravix test email"), gettext("This is a test message and shows that sending email from your site works."), to=[to]).send(fail_silently=False)
         except Exception as exc:  # noqa: BLE001
-            messages.error(request, f"ارسال ناموفق بود ({type(exc).__name__}). تنظیمات SMTP را بررسی کنید.")
+            messages.error(request, (gettext("Sending failed (%(name)s). Check the SMTP settings.") % {"name": type(exc).__name__}))
         else:
             if sent:
-                messages.success(request, f"ایمیل آزمایشی به {to} تحویل سرور ایمیل شد؛ رسیدن به صندوق را خودتان بررسی کنید.")
+                messages.success(request, (gettext("The test email was handed to the mail server at %(to)s; check yourself that it reaches the inbox.") % {"to": to}))
             else:
-                messages.error(request, "ارسال ناموفق بود (سرویس ایمیل پیامی نپذیرفت).")
+                messages.error(request, gettext("Sending failed (the mail service did not accept the message)."))
         return redirect("core:site_health")
 
 
@@ -87,11 +88,11 @@ def _error(request, status, title, message):
 
 
 def bad_request(request, exception=None):
-    return _error(request, 400, "درخواست نامعتبر", "درخواست شما قابل پردازش نبود.")
+    return _error(request, 400, gettext("Invalid request"), gettext("Your request could not be processed."))
 
 
 def permission_denied(request, exception=None):
-    return _error(request, 403, "دسترسی غیرمجاز", "شما اجازه دسترسی به این بخش را ندارید.")
+    return _error(request, 403, gettext("Access denied"), gettext("You do not have permission to access this section."))
 
 
 def not_found(request, exception=None):
@@ -100,19 +101,19 @@ def not_found(request, exception=None):
     response = render_not_found(request)  # مسیرهای سایت عمومی با ظاهر قالب فعال؛ پنل/API → None
     if response is not None:
         return response
-    return _error(request, 404, "صفحه پیدا نشد", "صفحه‌ای که دنبال آن هستید وجود ندارد یا جابه‌جا شده است.")
+    return _error(request, 404, gettext("Page not found"), gettext("The page you are looking for does not exist or has been moved."))
 
 
 def server_error(request):
     from .errorpages import standalone_response  # مستقل از دیتابیس/static/context processor
 
-    return standalone_response(request, 500, "مشکلی پیش آمد", "خطایی در سمت سرور رخ داد و گزارش آن ثبت شد. لطفاً کمی بعد دوباره تلاش کنید.")
+    return standalone_response(request, 500, gettext("Something went wrong"), gettext("A server error occurred and it was logged. Please try again a little later."))
 
 
 def csrf_failure(request, reason=""):
     return _error(
         request,
         403,
-        "نشست منقضی شده است",
-        "اعتبار فرم به پایان رسیده یا درخواست معتبر نبود. صفحه را بازخوانی کرده و دوباره تلاش کنید.",
+        gettext("Session expired"),
+        gettext("The form has expired or the request was not valid. Reload the page and try again."),
     )

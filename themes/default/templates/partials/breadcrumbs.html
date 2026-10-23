@@ -1,5 +1,6 @@
+{% load i18n %}
 {% if breadcrumbs %}
-<nav class="crumbs" aria-label="مسیر صفحه">
+<nav class="crumbs" aria-label="{% trans "Breadcrumb" %}">
   <ol>
     {% for crumb in breadcrumbs %}
     <li>{% if crumb.url %}<a href="{{ crumb.url }}">{{ crumb.label }}</a>{% else %}<span aria-current="page">{{ crumb.label }}</span>{% endif %}</li>

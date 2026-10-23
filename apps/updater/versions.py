@@ -1,4 +1,5 @@
 """نسخهٔ هسته (در حال اجرا و روی دیسک)، فهرست نسخهٔ قالب‌ها/افزونه‌ها، و بررسی وابستگی‌ها (requirements) بدون اجرای کد."""
+from django.utils.translation import gettext
 import re
 import sys
 from importlib import metadata
@@ -67,17 +68,17 @@ def requirement_problem(line: str) -> str | None:
         return None
     m = _REQ.match(line)
     if not m:
-        return f"سطر نامعتبر در requirements: {line[:60]}"
+        return (gettext("Invalid line in requirements: %(line)s") % {"line": line[:60]})
     name, spec = m.group(1), m.group(2).strip()
     try:
         installed = metadata.version(name)
     except metadata.PackageNotFoundError:
-        return f"بستهٔ «{name}» نصب نیست (نیاز: {spec or 'هر نسخه'})."
+        return (gettext("Package “%(name)s” is not installed (required: %(value)s).") % {"name": name, "value": (spec or 'هر نسخه')})
     have = _loose(installed)
     for part in [p.strip() for p in spec.split(",") if p.strip()]:
         c = _CLAUSE.match(part)
         if not c:
-            return f"قید نامعتبر برای «{name}»: {part[:30]}"
+            return (gettext("Invalid constraint for “%(name)s”: %(part)s") % {"name": name, "part": part[:30]})
         op, ref = c.group(1), _loose(c.group(2))
         if have is None or ref is None:
             continue
@@ -85,7 +86,7 @@ def requirement_problem(line: str) -> str | None:
         a, b = have + (0,) * (n - len(have)), ref + (0,) * (n - len(ref))
         ok = {">=": a >= b, "<=": a <= b, "==": a == b, "!=": a != b, ">": a > b, "<": a < b, "~=": a >= b and a[: n - 1] == b[: n - 1]}[op]
         if not ok:
-            return f"«{name}» نسخهٔ {installed} دارد ولی نیاز است {op}{c.group(2)}."
+            return (gettext("“%(name)s” is version %(installed)s but %(op)s%(group)s is required.") % {"name": name, "installed": installed, "op": op, "group": c.group(2)})
     return None
 
 
@@ -97,7 +98,7 @@ def python_problem(spec: str) -> str | None:
     if not spec:
         return None
     cur = ".".join(map(str, sys.version_info[:3]))
-    return None if satisfies(cur, spec) else f"نیازمند Python «{spec}»؛ نسخهٔ فعلی {cur}."
+    return None if satisfies(cur, spec) else (gettext("Requires Python “%(spec)s”; current version is %(cur)s.") % {"spec": spec, "cur": cur})
 
 
 def installed_plugins() -> list[dict]:

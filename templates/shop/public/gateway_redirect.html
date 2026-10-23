@@ -1,7 +1,8 @@
+{% load i18n %}
 {% load static %}
-<p>در حال انتقال به درگاه پرداخت… اگر منتقل نشدید دکمهٔ زیر را بزنید.</p>
+<p>{% trans "Redirecting to the payment gateway… If you are not redirected, press the button below." %}</p>
 <form method="post" action="{{ redirect.url }}" id="gw-form">
   {% for k, v in redirect.fields.items %}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endfor %}
-  <button class="btn btn-primary" type="submit">رفتن به درگاه</button>
+  <button class="btn btn-primary" type="submit">{% trans "Go to the gateway" %}</button>
 </form>
 <script src="{% static 'shop/redirect.js' %}" defer></script>
