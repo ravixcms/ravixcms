@@ -1,0 +1,480 @@
+# Ravix translation catalog (fr).
+# This file is distributed under the same license as Ravix.
+msgid ""
+msgstr ""
+"Project-Id-Version: Ravix 0.9.0\n"
+"Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
+"POT-Creation-Date: 2026-10-23 17:16+0330\n"
+"PO-Revision-Date: 2026-10-23 00:00+0000\n"
+"Last-Translator: Ravix\n"
+"Language-Team: Ravix Translators\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+
+#: static/builder/builder.js
+msgid "Section"
+msgstr "Section"
+
+#: static/builder/builder.js
+msgid "Row"
+msgstr "Ligne"
+
+#: static/builder/builder.js
+msgid "Column"
+msgstr "Colonne"
+
+#: static/builder/builder.js
+msgid "Heading"
+msgstr "Titre"
+
+#: static/builder/builder.js
+msgid "Text"
+msgstr "Texte"
+
+#: static/builder/builder.js
+msgid "Image"
+msgstr "Image"
+
+#: static/builder/builder.js
+msgid "Button"
+msgstr "Bouton"
+
+#: static/builder/builder.js
+msgid "Unsaved changes…"
+msgstr "Modifications non enregistrées…"
+
+#: static/builder/builder.js
+msgid "Invalid response from the server."
+msgstr "Réponse non valide du serveur."
+
+#: static/builder/builder.js
+msgid "Could not connect to the server."
+msgstr "Impossible de se connecter au serveur."
+
+#: static/builder/builder.js
+msgid "Saving…"
+msgstr "Enregistrement…"
+
+#: static/builder/builder.js
+msgid "Saved at %(time)s"
+msgstr "Enregistré à %(time)s"
+
+#: static/builder/builder.js
+msgid "Edit conflict — reload the page"
+msgstr "Conflit de modification — rechargez la page"
+
+#: static/builder/builder.js
+msgid "Data error — not saved"
+msgstr "Erreur de données — non enregistré"
+
+#: static/builder/builder.js
+msgid "Not saved — we will try again"
+msgstr "Non enregistré — nouvelle tentative à venir"
+
+#: static/builder/builder.js
+msgid "You do not have access."
+msgstr "Vous n’avez pas accès."
+
+#: static/builder/builder.js
+msgid "Error"
+msgstr "Erreur"
+
+#: static/builder/builder.js
+msgid "; "
+msgstr "; "
+
+#: static/builder/builder.js
+msgid "Drag to move"
+msgstr "Faites glisser pour déplacer"
+
+#: static/builder/builder.js
+msgid "Move %(type)s"
+msgstr "Déplacer : %(type)s"
+
+#: static/builder/builder.js
+msgid "Previous column"
+msgstr "Colonne précédente"
+
+#: static/builder/builder.js
+msgid "Up"
+msgstr "Haut"
+
+#: static/builder/builder.js
+msgid "Next column"
+msgstr "Colonne suivante"
+
+#: static/builder/builder.js
+msgid "Down"
+msgstr "Bas"
+
+#: static/builder/builder.js
+msgid "Duplicate"
+msgstr "Dupliquer"
+
+#: static/builder/builder.js
+msgid "Delete"
+msgstr "Supprimer"
+
+#: static/builder/builder.js
+msgid "(empty heading)"
+msgstr "(titre vide)"
+
+#: static/builder/builder.js
+msgid "(empty text)"
+msgstr "(texte vide)"
+
+#: static/builder/builder.js
+msgid "Image not found"
+msgstr "Image introuvable"
+
+#: static/builder/builder.js static/js/ravix.js
+msgid "Loading…"
+msgstr "Chargement…"
+
+#: static/builder/builder.js
+msgid "No image selected — select this element and choose an image"
+msgstr ""
+"Aucune image sélectionnée — sélectionnez cet élément et choisissez une image"
+
+#: static/builder/builder.js
+msgid "(button)"
+msgstr "(bouton)"
+
+#: static/builder/builder.js
+msgid "Drag an element from the side panel and drop it here"
+msgstr "Faites glisser un élément depuis le panneau latéral et déposez-le ici"
+
+#: static/builder/builder.js
+msgid "Drag a row from the side panel and drop it here"
+msgstr "Faites glisser une ligne depuis le panneau latéral et déposez-la ici"
+
+#: static/builder/builder.js
+msgid "The page is empty."
+msgstr "La page est vide."
+
+#: static/builder/builder.js
+msgid "Drag a “Section” from the side panel and drop it here, or click it."
+msgstr ""
+"Faites glisser une « Section » depuis le panneau latéral et déposez-la ici, "
+"ou cliquez dessus."
+
+#: static/builder/builder.js
+msgid "You have reached the limit for the number of %(what)s in this section."
+msgstr "Vous avez atteint la limite du nombre de %(what)s dans cette section."
+
+#: static/builder/builder.js
+msgid "element"
+msgstr "éléments"
+
+#: static/builder/builder.js
+msgid "The page has become too large."
+msgstr "La page est devenue trop volumineuse."
+
+#: static/builder/builder.js
+msgid "First select a section."
+msgstr "Sélectionnez d’abord une section."
+
+#: static/builder/builder.js
+msgid "First select a column."
+msgstr "Sélectionnez d’abord une colonne."
+
+#: static/builder/builder.js
+msgid "First select a column (or an element inside a column)."
+msgstr "Sélectionnez d’abord une colonne (ou un élément dans une colonne)."
+
+#: static/builder/builder.js
+msgid "You have reached the limit."
+msgstr "Vous avez atteint la limite."
+
+#: static/builder/builder.js
+msgid "To add a column use the row settings."
+msgstr "Pour ajouter une colonne, utilisez les réglages de la ligne."
+
+#: static/builder/builder.js
+msgid "A row must have at least one column; delete the row itself."
+msgstr ""
+"Une ligne doit avoir au moins une colonne ; supprimez la ligne elle-même."
+
+#: static/builder/builder.js
+msgid "1-column row"
+msgstr "Ligne à 1 colonne"
+
+#: static/builder/builder.js
+msgid "%(n)s-column row"
+msgstr "Ligne de %(n)s colonnes"
+
+#: static/builder/builder.js
+msgid "Default"
+msgstr "Par défaut"
+
+#: static/builder/builder.js
+msgid "%(label)s (picker)"
+msgstr "%(label)s (sélecteur)"
+
+#: static/builder/builder.js
+msgid "The hex color is not valid (e.g. #1d4ed8)."
+msgstr "La couleur hexadécimale n’est pas valide (p. ex. #1d4ed8)."
+
+#: static/builder/builder.js
+msgid "Change image"
+msgstr "Changer l’image"
+
+#: static/builder/builder.js
+msgid "Choose from library"
+msgstr "Choisir dans la médiathèque"
+
+#: static/builder/builder.js
+msgid "Remove image"
+msgstr "Supprimer l’image"
+
+#: static/builder/builder.js
+msgid "/about/  or  https://…"
+msgstr "/about/  ou  https://…"
+
+#: static/builder/builder.js
+msgid ""
+"The address is not allowed; use an internal path (/…), http(s), mailto or "
+"tel."
+msgstr ""
+"L’adresse n’est pas autorisée ; utilisez un chemin interne (/…), http(s), "
+"mailto ou tel."
+
+#: static/builder/builder.js
+msgid "Page settings"
+msgstr "Réglages de la page"
+
+#: static/builder/builder.js
+msgid "To edit, click a section, row, column or element on the canvas."
+msgstr ""
+"Pour modifier, cliquez sur une section, une ligne, une colonne ou un élément"
+" du canevas."
+
+#: static/builder/builder.js
+msgid "General"
+msgstr "Général"
+
+#: static/builder/builder.js
+msgid "Selection path"
+msgstr "Chemin de la sélection"
+
+#: static/builder/builder.js
+msgid "%(type)s settings"
+msgstr "Réglages : %(type)s"
+
+#: static/builder/builder.js
+msgid "Content"
+msgstr "Contenu"
+
+#: static/builder/builder.js
+msgid "Layout and spacing"
+msgstr "Mise en page et espacement"
+
+#: static/builder/builder.js
+msgid "Appearance"
+msgstr "Apparence"
+
+#: static/builder/builder.js
+msgid "+ Add column"
+msgstr "+ Ajouter une colonne"
+
+#: static/builder/builder.js
+msgid "At most %(n)s columns per row."
+msgstr "%(n)s colonnes au maximum par ligne."
+
+#: static/builder/builder.js
+msgid "Split columns equally"
+msgstr "Répartir les colonnes à parts égales"
+
+#: static/builder/builder.js
+msgid "Total width of this row’s columns: %(total)s of 12"
+msgstr "Largeur totale des colonnes de cette ligne : %(total)s sur 12"
+
+#: static/builder/builder.js
+msgid "No image found. First upload an image to the media library."
+msgstr ""
+"Aucune image trouvée. Téléversez d’abord une image dans la médiathèque."
+
+#: static/builder/builder.js
+msgid "Saved."
+msgstr "Enregistré."
+
+#: static/builder/builder.js
+msgid "Publish"
+msgstr "Publier"
+
+#: static/builder/builder.js
+msgid "Submit for approval"
+msgstr "Soumettre pour approbation"
+
+#: static/builder/builder.js
+msgid "Publish this layout on the site"
+msgstr "Publier cette mise en page sur le site"
+
+#: static/builder/builder.js
+msgid "The layout is sent to an administrator for approval"
+msgstr "La mise en page est envoyée à un administrateur pour approbation"
+
+#: static/builder/builder.js
+msgid "Saving the draft must succeed first."
+msgstr "L’enregistrement du brouillon doit d’abord réussir."
+
+#: static/builder/builder.js
+msgid "Publish layout"
+msgstr "Publier la mise en page"
+
+#: static/builder/builder.js
+msgid ""
+"The current draft replaces the page content on the site. (The page’s own "
+"status — published or draft — is controlled in the “Pages” section.)"
+msgstr ""
+"Le brouillon actuel remplace le contenu de la page sur le site. (Le statut "
+"propre de la page — publiée ou brouillon — se gère dans la section « Pages "
+"».)"
+
+#: static/builder/builder.js
+msgid "The layout was published."
+msgstr "La mise en page a été publiée."
+
+#: static/builder/builder.js
+msgid ""
+"It will be published on the site after an administrator approves it. Until "
+"then the current page is shown."
+msgstr ""
+"Elle sera publiée sur le site après approbation par un administrateur. D’ici"
+" là, la page actuelle est affichée."
+
+#: static/builder/builder.js
+msgid "Submitted for approval."
+msgstr "Envoyé pour approbation."
+
+#: static/builder/builder.js
+msgid "The version was saved."
+msgstr "La version a été enregistrée."
+
+#: static/builder/builder.js
+msgid "Unpublish the layout? The page goes back to its previous text content."
+msgstr ""
+"Dépublier la mise en page ? La page revient à son contenu textuel précédent."
+
+#: static/builder/builder.js
+msgid "The layout was unpublished."
+msgstr "La mise en page a été dépubliée."
+
+#: static/builder/builder.js
+msgid "No version has been saved yet."
+msgstr "Aucune version n’a encore été enregistrée."
+
+#: static/builder/builder.js
+msgid "Published"
+msgstr "Publié"
+
+#: static/builder/builder.js
+msgid "Automatic"
+msgstr "Automatique"
+
+#: static/builder/builder.js
+msgid "Version %(n)s"
+msgstr "Version %(n)s"
+
+#: static/builder/builder.js
+msgid " (reviewer: %(note)s)"
+msgstr " (relecteur : %(note)s)"
+
+#: static/builder/builder.js
+msgid "Preview"
+msgstr "Aperçu"
+
+#: static/builder/builder.js
+msgid "Restore"
+msgstr "Restaurer"
+
+#: static/builder/builder.js
+msgid ""
+"Replace the current draft with version %(n)s? An automatic version of the "
+"current state will be saved."
+msgstr ""
+"Remplacer le brouillon actuel par la version %(n)s ? Une version automatique"
+" de l’état actuel sera enregistrée."
+
+#: static/builder/builder.js
+msgid "Version %(n)s was restored to the draft."
+msgstr "La version %(n)s a été restaurée dans le brouillon."
+
+#: static/builder/builder.js
+msgid "Approve and publish"
+msgstr "Approuver et publier"
+
+#: static/builder/builder.js
+msgid "Approved and published."
+msgstr "Approuvé et publié."
+
+#: static/builder/builder.js
+msgid "Reject"
+msgstr "Rejeter"
+
+#: static/builder/builder.js
+msgid "Reason for rejection (optional):"
+msgstr "Motif du rejet (facultatif) :"
+
+#: static/builder/builder.js
+msgid "The version was rejected."
+msgstr "La version a été rejetée."
+
+#: static/builder/builder.js
+msgid "Loading failed"
+msgstr "Échec du chargement"
+
+#: static/builder/builder.js
+msgid "Ready"
+msgstr "Prêt"
+
+#: static/js/ravix.js
+msgid "Hide password"
+msgstr "Masquer le mot de passe"
+
+#: static/js/ravix.js
+msgid "Show password"
+msgstr "Afficher le mot de passe"
+
+#: static/js/ravix.js
+msgid "The file is larger than the allowed limit."
+msgstr "Le fichier dépasse la limite autorisée."
+
+#: static/js/ravix.js
+msgid "bold text"
+msgstr "texte en gras"
+
+#: static/js/ravix.js
+msgid "italic text"
+msgstr "texte en italique"
+
+#: static/js/ravix.js
+msgid "code"
+msgstr "code"
+
+#: static/js/ravix.js
+msgid "link text"
+msgstr "texte du lien"
+
+#: static/js/ravix.js
+msgid "image description"
+msgstr "description de l’image"
+
+#: static/js/ravix.js
+msgid "Nothing to preview."
+msgstr "Rien à prévisualiser."
+
+#: static/js/ravix.js
+msgid "Preview is not available."
+msgstr "L’aperçu n’est pas disponible."
+
+#: static/js/ravix.js
+msgid "%(n)s of %(max)s characters"
+msgstr "%(n)s sur %(max)s caractères"
+
+#: static/js/ravix.js
+msgid "Copied ✓"
+msgstr "Copié ✓"

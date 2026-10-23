@@ -1,0 +1,471 @@
+# Ravix translation catalog (tr).
+# This file is distributed under the same license as Ravix.
+msgid ""
+msgstr ""
+"Project-Id-Version: Ravix 0.9.0\n"
+"Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
+"POT-Creation-Date: 2026-10-23 17:16+0330\n"
+"PO-Revision-Date: 2026-10-23 00:00+0000\n"
+"Last-Translator: Ravix\n"
+"Language-Team: Ravix Translators\n"
+"Language: tr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: static/builder/builder.js
+msgid "Section"
+msgstr "Bölüm"
+
+#: static/builder/builder.js
+msgid "Row"
+msgstr "Satır"
+
+#: static/builder/builder.js
+msgid "Column"
+msgstr "Sütun"
+
+#: static/builder/builder.js
+msgid "Heading"
+msgstr "Başlık"
+
+#: static/builder/builder.js
+msgid "Text"
+msgstr "Metin"
+
+#: static/builder/builder.js
+msgid "Image"
+msgstr "Görsel"
+
+#: static/builder/builder.js
+msgid "Button"
+msgstr "Düğme"
+
+#: static/builder/builder.js
+msgid "Unsaved changes…"
+msgstr "Kaydedilmemiş değişiklikler…"
+
+#: static/builder/builder.js
+msgid "Invalid response from the server."
+msgstr "Sunucudan geçersiz yanıt."
+
+#: static/builder/builder.js
+msgid "Could not connect to the server."
+msgstr "Sunucuya bağlanılamadı."
+
+#: static/builder/builder.js
+msgid "Saving…"
+msgstr "Kaydediliyor…"
+
+#: static/builder/builder.js
+msgid "Saved at %(time)s"
+msgstr "%(time)s saatinde kaydedildi"
+
+#: static/builder/builder.js
+msgid "Edit conflict — reload the page"
+msgstr "Düzenleme çakışması — sayfayı yeniden yükleyin"
+
+#: static/builder/builder.js
+msgid "Data error — not saved"
+msgstr "Veri hatası — kaydedilmedi"
+
+#: static/builder/builder.js
+msgid "Not saved — we will try again"
+msgstr "Kaydedilmedi — yeniden denenecek"
+
+#: static/builder/builder.js
+msgid "You do not have access."
+msgstr "Erişiminiz yok."
+
+#: static/builder/builder.js
+msgid "Error"
+msgstr "Hata"
+
+#: static/builder/builder.js
+msgid "; "
+msgstr "; "
+
+#: static/builder/builder.js
+msgid "Drag to move"
+msgstr "Taşımak için sürükleyin"
+
+#: static/builder/builder.js
+msgid "Move %(type)s"
+msgstr "%(type)s öğesini taşı"
+
+#: static/builder/builder.js
+msgid "Previous column"
+msgstr "Önceki sütun"
+
+#: static/builder/builder.js
+msgid "Up"
+msgstr "Yukarı"
+
+#: static/builder/builder.js
+msgid "Next column"
+msgstr "Sonraki sütun"
+
+#: static/builder/builder.js
+msgid "Down"
+msgstr "Aşağı"
+
+#: static/builder/builder.js
+msgid "Duplicate"
+msgstr "Çoğalt"
+
+#: static/builder/builder.js
+msgid "Delete"
+msgstr "Sil"
+
+#: static/builder/builder.js
+msgid "(empty heading)"
+msgstr "(boş başlık)"
+
+#: static/builder/builder.js
+msgid "(empty text)"
+msgstr "(boş metin)"
+
+#: static/builder/builder.js
+msgid "Image not found"
+msgstr "Görsel bulunamadı"
+
+#: static/builder/builder.js static/js/ravix.js
+msgid "Loading…"
+msgstr "Yükleniyor…"
+
+#: static/builder/builder.js
+msgid "No image selected — select this element and choose an image"
+msgstr "Görsel seçilmedi — bu öğeyi seçin ve bir görsel belirleyin"
+
+#: static/builder/builder.js
+msgid "(button)"
+msgstr "(düğme)"
+
+#: static/builder/builder.js
+msgid "Drag an element from the side panel and drop it here"
+msgstr "Yan panelden bir öğeyi sürükleyip buraya bırakın"
+
+#: static/builder/builder.js
+msgid "Drag a row from the side panel and drop it here"
+msgstr "Yan panelden bir satırı sürükleyip buraya bırakın"
+
+#: static/builder/builder.js
+msgid "The page is empty."
+msgstr "Sayfa boş."
+
+#: static/builder/builder.js
+msgid "Drag a “Section” from the side panel and drop it here, or click it."
+msgstr "Yan panelden bir “Bölüm” sürükleyip buraya bırakın veya ona tıklayın."
+
+#: static/builder/builder.js
+msgid "You have reached the limit for the number of %(what)s in this section."
+msgstr "Bu bölümdeki %(what)s sayısı sınırına ulaştınız."
+
+#: static/builder/builder.js
+msgid "element"
+msgstr "öğe"
+
+#: static/builder/builder.js
+msgid "The page has become too large."
+msgstr "Sayfa çok büyüdü."
+
+#: static/builder/builder.js
+msgid "First select a section."
+msgstr "Önce bir bölüm seçin."
+
+#: static/builder/builder.js
+msgid "First select a column."
+msgstr "Önce bir sütun seçin."
+
+#: static/builder/builder.js
+msgid "First select a column (or an element inside a column)."
+msgstr "Önce bir sütun (veya bir sütunun içindeki bir öğe) seçin."
+
+#: static/builder/builder.js
+msgid "You have reached the limit."
+msgstr "Sınıra ulaştınız."
+
+#: static/builder/builder.js
+msgid "To add a column use the row settings."
+msgstr "Sütun eklemek için satır ayarlarını kullanın."
+
+#: static/builder/builder.js
+msgid "A row must have at least one column; delete the row itself."
+msgstr "Bir satırın en az bir sütunu olmalıdır; satırın kendisini silin."
+
+#: static/builder/builder.js
+msgid "1-column row"
+msgstr "1 sütunlu satır"
+
+#: static/builder/builder.js
+msgid "%(n)s-column row"
+msgstr "%(n)s sütunlu satır"
+
+#: static/builder/builder.js
+msgid "Default"
+msgstr "Varsayılan"
+
+#: static/builder/builder.js
+msgid "%(label)s (picker)"
+msgstr "%(label)s (seçici)"
+
+#: static/builder/builder.js
+msgid "The hex color is not valid (e.g. #1d4ed8)."
+msgstr "Onaltılık renk geçerli değil (ör. #1d4ed8)."
+
+#: static/builder/builder.js
+msgid "Change image"
+msgstr "Görseli değiştir"
+
+#: static/builder/builder.js
+msgid "Choose from library"
+msgstr "Kitaplıktan seç"
+
+#: static/builder/builder.js
+msgid "Remove image"
+msgstr "Görseli kaldır"
+
+#: static/builder/builder.js
+msgid "/about/  or  https://…"
+msgstr "/about/  veya  https://…"
+
+#: static/builder/builder.js
+msgid ""
+"The address is not allowed; use an internal path (/…), http(s), mailto or "
+"tel."
+msgstr ""
+"Adrese izin verilmiyor; bir iç yol (/…), http(s), mailto veya tel kullanın."
+
+#: static/builder/builder.js
+msgid "Page settings"
+msgstr "Sayfa ayarları"
+
+#: static/builder/builder.js
+msgid "To edit, click a section, row, column or element on the canvas."
+msgstr ""
+"Düzenlemek için tuvaldeki bir bölüme, satıra, sütuna veya öğeye tıklayın."
+
+#: static/builder/builder.js
+msgid "General"
+msgstr "Genel"
+
+#: static/builder/builder.js
+msgid "Selection path"
+msgstr "Seçim yolu"
+
+#: static/builder/builder.js
+msgid "%(type)s settings"
+msgstr "%(type)s ayarları"
+
+#: static/builder/builder.js
+msgid "Content"
+msgstr "İçerik"
+
+#: static/builder/builder.js
+msgid "Layout and spacing"
+msgstr "Düzen ve boşluklar"
+
+#: static/builder/builder.js
+msgid "Appearance"
+msgstr "Görünüm"
+
+#: static/builder/builder.js
+msgid "+ Add column"
+msgstr "+ Sütun ekle"
+
+#: static/builder/builder.js
+msgid "At most %(n)s columns per row."
+msgstr "Satır başına en fazla %(n)s sütun."
+
+#: static/builder/builder.js
+msgid "Split columns equally"
+msgstr "Sütunları eşit böl"
+
+#: static/builder/builder.js
+msgid "Total width of this row’s columns: %(total)s of 12"
+msgstr "Bu satırın sütunlarının toplam genişliği: %(total)s / 12"
+
+#: static/builder/builder.js
+msgid "No image found. First upload an image to the media library."
+msgstr "Hiç görsel bulunamadı. Önce medya kitaplığına bir görsel yükleyin."
+
+#: static/builder/builder.js
+msgid "Saved."
+msgstr "Kaydedildi."
+
+#: static/builder/builder.js
+msgid "Publish"
+msgstr "Yayımla"
+
+#: static/builder/builder.js
+msgid "Submit for approval"
+msgstr "Onaya gönder"
+
+#: static/builder/builder.js
+msgid "Publish this layout on the site"
+msgstr "Bu düzeni sitede yayımla"
+
+#: static/builder/builder.js
+msgid "The layout is sent to an administrator for approval"
+msgstr "Düzen, onay için bir yöneticiye gönderilir"
+
+#: static/builder/builder.js
+msgid "Saving the draft must succeed first."
+msgstr "Önce taslağın kaydedilmesi başarılı olmalıdır."
+
+#: static/builder/builder.js
+msgid "Publish layout"
+msgstr "Düzeni yayımla"
+
+#: static/builder/builder.js
+msgid ""
+"The current draft replaces the page content on the site. (The page’s own "
+"status — published or draft — is controlled in the “Pages” section.)"
+msgstr ""
+"Geçerli taslak, sitedeki sayfa içeriğinin yerini alır. (Sayfanın kendi "
+"durumu — yayımlanmış veya taslak — “Sayfalar” bölümünden denetlenir.)"
+
+#: static/builder/builder.js
+msgid "The layout was published."
+msgstr "Düzen yayımlandı."
+
+#: static/builder/builder.js
+msgid ""
+"It will be published on the site after an administrator approves it. Until "
+"then the current page is shown."
+msgstr ""
+"Bir yönetici onayladıktan sonra sitede yayımlanacak. O zamana kadar geçerli "
+"sayfa gösterilir."
+
+#: static/builder/builder.js
+msgid "Submitted for approval."
+msgstr "Onaya gönderildi."
+
+#: static/builder/builder.js
+msgid "The version was saved."
+msgstr "Sürüm kaydedildi."
+
+#: static/builder/builder.js
+msgid "Unpublish the layout? The page goes back to its previous text content."
+msgstr "Düzenin yayını kaldırılsın mı? Sayfa önceki metin içeriğine döner."
+
+#: static/builder/builder.js
+msgid "The layout was unpublished."
+msgstr "Düzenin yayını kaldırıldı."
+
+#: static/builder/builder.js
+msgid "No version has been saved yet."
+msgstr "Henüz hiçbir sürüm kaydedilmedi."
+
+#: static/builder/builder.js
+msgid "Published"
+msgstr "Yayımlandı"
+
+#: static/builder/builder.js
+msgid "Automatic"
+msgstr "Otomatik"
+
+#: static/builder/builder.js
+msgid "Version %(n)s"
+msgstr "Sürüm %(n)s"
+
+#: static/builder/builder.js
+msgid " (reviewer: %(note)s)"
+msgstr " (inceleyen: %(note)s)"
+
+#: static/builder/builder.js
+msgid "Preview"
+msgstr "Önizleme"
+
+#: static/builder/builder.js
+msgid "Restore"
+msgstr "Geri yükle"
+
+#: static/builder/builder.js
+msgid ""
+"Replace the current draft with version %(n)s? An automatic version of the "
+"current state will be saved."
+msgstr ""
+"Geçerli taslak %(n)s sürümüyle değiştirilsin mi? Geçerli durumun otomatik "
+"bir sürümü kaydedilecek."
+
+#: static/builder/builder.js
+msgid "Version %(n)s was restored to the draft."
+msgstr "%(n)s sürümü taslağa geri yüklendi."
+
+#: static/builder/builder.js
+msgid "Approve and publish"
+msgstr "Onayla ve yayımla"
+
+#: static/builder/builder.js
+msgid "Approved and published."
+msgstr "Onaylandı ve yayımlandı."
+
+#: static/builder/builder.js
+msgid "Reject"
+msgstr "Reddet"
+
+#: static/builder/builder.js
+msgid "Reason for rejection (optional):"
+msgstr "Ret nedeni (isteğe bağlı):"
+
+#: static/builder/builder.js
+msgid "The version was rejected."
+msgstr "Sürüm reddedildi."
+
+#: static/builder/builder.js
+msgid "Loading failed"
+msgstr "Yükleme başarısız oldu"
+
+#: static/builder/builder.js
+msgid "Ready"
+msgstr "Hazır"
+
+#: static/js/ravix.js
+msgid "Hide password"
+msgstr "Parolayı gizle"
+
+#: static/js/ravix.js
+msgid "Show password"
+msgstr "Parolayı göster"
+
+#: static/js/ravix.js
+msgid "The file is larger than the allowed limit."
+msgstr "Dosya izin verilen sınırdan büyük."
+
+#: static/js/ravix.js
+msgid "bold text"
+msgstr "kalın metin"
+
+#: static/js/ravix.js
+msgid "italic text"
+msgstr "italik metin"
+
+#: static/js/ravix.js
+msgid "code"
+msgstr "kod"
+
+#: static/js/ravix.js
+msgid "link text"
+msgstr "bağlantı metni"
+
+#: static/js/ravix.js
+msgid "image description"
+msgstr "görsel açıklaması"
+
+#: static/js/ravix.js
+msgid "Nothing to preview."
+msgstr "Önizlenecek bir şey yok."
+
+#: static/js/ravix.js
+msgid "Preview is not available."
+msgstr "Önizleme kullanılamıyor."
+
+#: static/js/ravix.js
+msgid "%(n)s of %(max)s characters"
+msgstr "%(n)s / %(max)s karakter"
+
+#: static/js/ravix.js
+msgid "Copied ✓"
+msgstr "Kopyalandı ✓"
