@@ -210,8 +210,10 @@ LOGOUT_REDIRECT_URL = "accounts:login"
 # ---------------------------------------------------------------------------
 # Internationalisation
 # ---------------------------------------------------------------------------
-# LANGUAGE_CODE is also the language of operator-facing text (management commands, start-up errors, preflight, logs) unless
-# RAVIX_CLI_LANG says otherwise; both default to English. "fa" shows those messages in Persian.
+# LANGUAGE_CODE is only the last-resort language of the web interface (used when the site settings hold no valid default language;
+# existing sites keep their stored default, "fa" for every site created before multilingual support).
+# RAVIX_CLI_LANG alone decides the language of operator-facing text (management commands, start-up errors, preflight, logs):
+# English by default, "fa" for Persian.
 LANGUAGE_CODE = env("LANGUAGE_CODE", "en")
 RAVIX_CLI_LANG = env("RAVIX_CLI_LANG", "")
 # Language names are endonyms (each in its own language) and are intentionally not translated.

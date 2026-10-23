@@ -18,7 +18,7 @@ ALLOWED_SCHEMES = {"http", "https", "mailto"}
 AUTO_DIR_TAGS = ("p", "h2", "h3", "h4", "h5", "h6", "ul", "ol", "blockquote", "table")
 
 
-def render_markdown(text: str) -> str:
+def render_markdown(text: str, *, auto_dir: bool = True) -> str:
     if not text:
         return ""
     html = markdown.markdown(text, extensions=["extra", "sane_lists", "nl2br"], output_format="html")
@@ -28,5 +28,5 @@ def render_markdown(text: str) -> str:
         attributes=ALLOWED_ATTRIBUTES,
         url_schemes=ALLOWED_SCHEMES,
         link_rel="noopener noreferrer nofollow",
-        set_tag_attribute_values={tag: {"dir": "auto"} for tag in AUTO_DIR_TAGS},
+        set_tag_attribute_values={tag: {"dir": "auto"} for tag in AUTO_DIR_TAGS} if auto_dir else {},
     )

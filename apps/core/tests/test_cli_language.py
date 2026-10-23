@@ -1,4 +1,4 @@
-"""Operator-facing text (commands, start-up errors, preflight, logs): English by default, Persian for RAVIX_CLI_LANG / LANGUAGE_CODE = fa."""
+"""Operator-facing text (commands, start-up errors, preflight, logs): English by default, Persian only for RAVIX_CLI_LANG = fa (LANGUAGE_CODE is unrelated)."""
 import os
 import subprocess
 import sys
@@ -24,18 +24,14 @@ class CliLanguageTests(SimpleTestCase):
         clilang.reset_cache()
         self.addCleanup(clilang.reset_cache)
 
-    def test_cli_language_beats_language_code(self):
-        with override_settings(LANGUAGE_CODE="fa", RAVIX_CLI_LANG="en"):
+    def test_only_ravix_cli_lang_decides(self):
+        with override_settings(LANGUAGE_CODE="fa", RAVIX_CLI_LANG=""):  # a Persian web interface does not make the CLI Persian
             self.assertEqual(cli_language(), "en")
+            self.assertEqual(cli_gettext("The email address is not valid."), "The email address is not valid.")
+        with override_settings(LANGUAGE_CODE="fa", RAVIX_CLI_LANG="en"):
             self.assertEqual(cli_gettext("The email address is not valid."), "The email address is not valid.")
         with override_settings(LANGUAGE_CODE="en", RAVIX_CLI_LANG="fa"):
             self.assertEqual(cli_gettext("The email address is not valid."), "نشانی ایمیل معتبر نیست.")
-
-    def test_language_code_is_the_fallback(self):
-        with override_settings(LANGUAGE_CODE="fa", RAVIX_CLI_LANG=""):
-            self.assertEqual(cli_gettext("The email address is not valid."), "نشانی ایمیل معتبر نیست.")
-        with override_settings(LANGUAGE_CODE="en", RAVIX_CLI_LANG=""):
-            self.assertEqual(cli_gettext("The email address is not valid."), "The email address is not valid.")
 
     def test_language_without_a_catalog_shows_english(self):
         for code in ("de", "pt-br", "zh-hans", "xx", ""):
@@ -93,8 +89,8 @@ class CommandOutputTests(TestCase):
             self.assertIn(SLUG_ERROR_EN, self.error())
         with override_settings(LANGUAGE_CODE="en", RAVIX_CLI_LANG="fa"):
             self.assertIn(SLUG_ERROR_FA, self.error())
-        with override_settings(LANGUAGE_CODE="fa", RAVIX_CLI_LANG=""):
-            self.assertIn(SLUG_ERROR_FA, self.error())
+        with override_settings(LANGUAGE_CODE="fa", RAVIX_CLI_LANG=""):  # LANGUAGE_CODE does not matter
+            self.assertIn(SLUG_ERROR_EN, self.error())
 
     def test_preflight_report_language(self):
         def report():
@@ -145,7 +141,7 @@ class SettingsErrorTests(SimpleTestCase):
 
     def test_startup_error_in_persian(self):
         self.assertIn("DJANGO_SECRET_KEY باید تنظیم شده", self.run_settings(RAVIX_CLI_LANG="fa"))
-        self.assertIn("DJANGO_SECRET_KEY باید تنظیم شده", self.run_settings(LANGUAGE_CODE="fa"))
+        self.assertIn("DJANGO_SECRET_KEY must be set", self.run_settings(LANGUAGE_CODE="fa"))  # LANGUAGE_CODE is unrelated
 
 
 class StartThemeTests(SimpleTestCase):
