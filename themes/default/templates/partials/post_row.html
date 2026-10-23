@@ -1,5 +1,5 @@
 {% load i18n %}
-{# پارامترها: post، hlevel (۲ یا ۳: سطح عنوان بر اساس جایگاه در صفحه) #}
+{# Parameters: post, hlevel (2 or 3: the heading level, depending on where the row sits in the page) #}
 <article class="row{% if post.image_url %} has-media{% endif %}">
   {% if post.image_url %}
   <a class="row-media" href="{{ post.url }}" tabindex="-1" aria-hidden="true"><img src="{{ post.image_url }}" alt="" loading="lazy" decoding="async"></a>

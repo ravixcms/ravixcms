@@ -4,7 +4,7 @@
 {% block body_class %}page-static{% if page.builder %} page-built{% endif %}{% endblock %}
 {% block content %}
 {% if page.builder %}
-{# صفحه ساخته‌شده با صفحه‌ساز: بدنه تمام‌عرض و خودکفاست (HTML امن + <style> خودش)؛ فقط عنوان و مسیر را قالب می‌دهد. #}
+{# A page made with the page builder: its body is full width and self-contained (safe HTML + its own <style>); the theme only renders the title and breadcrumbs. #}
 {% if page.show_title %}
 <div class="container">
   {% include "partials/breadcrumbs.html" %}

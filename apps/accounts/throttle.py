@@ -1,4 +1,5 @@
 """محدودسازی تلاش‌های ناموفق ورود در برابر حدس رمز: هم به‌ازای (IP، نام‌کاربری) و هم مجموع هر IP (چرخاندن نام‌کاربری فایده ندارد)."""
+from apps.core.clilang import cli_gettext
 import logging
 import time
 
@@ -50,7 +51,7 @@ def _with_cache(fn):
         now = time.monotonic()
         if now - _last_warn >= _WARN_EVERY:
             _last_warn = now
-            logger.warning("کش اصلی برای محدودسازی ورود خراب است (%s: %s)؛ از کش جدولی دیتابیس استفاده می‌شود. پوشهٔ کش/Redis را بررسی کنید.",
+            logger.warning(cli_gettext("The main cache used for login throttling is broken (%s: %s); the database cache table is used instead. Check the cache folder / Redis."),
                            type(exc).__name__, exc)
         return fn(fb)
 
@@ -114,5 +115,5 @@ def allow_send(request, email: str, kind: str) -> bool:
     n_ip, n_mail = _with_cache(hit)
     allowed = n_ip <= settings.RAVIX_MAIL_LIMIT_PER_IP and n_mail <= settings.RAVIX_MAIL_LIMIT_PER_EMAIL
     if not allowed:
-        logger.warning("محدودیت نرخ ارسال ایمیل (%s) برای IP %s فعال شد.", kind, ip or "نامعلوم")
+        logger.warning(cli_gettext("Email sending rate limit (%s) was triggered for IP %s."), kind, ip or cli_gettext("unknown"))
     return allowed

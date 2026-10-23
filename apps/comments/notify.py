@@ -1,3 +1,4 @@
+from apps.core.clilang import cli_gettext
 from django.utils.translation import gettext
 import logging
 
@@ -31,6 +32,6 @@ def notify_admin(request, comment) -> bool:
     try:
         EmailMessage(subject, "\n".join(lines), settings.DEFAULT_FROM_EMAIL, [cfg.admin_email]).send()
     except Exception:  # noqa: BLE001
-        logger.exception("ارسال ایمیل اطلاع دیدگاه جدید شکست خورد.")
+        logger.exception(cli_gettext("Sending the new-comment notification email failed."))
         return False
     return True

@@ -1,3 +1,4 @@
+from apps.core.clilang import cli_gettext
 from django.utils.translation import gettext
 import logging
 
@@ -25,7 +26,7 @@ def _audit(request, message):
     try:
         audit_log(request, AuditLog.Action.UPDATE, None, message, object_type=gettext("Update"))
     except Exception:  # noqa: BLE001
-        logger.exception("ثبت audit ناموفق بود")
+        logger.exception(cli_gettext("Recording the audit entry failed"))
 
 
 class ViewMixin(CapabilityRequiredMixin):

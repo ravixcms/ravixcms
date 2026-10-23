@@ -4,6 +4,7 @@
 هیچ اعتمادی به منبع نیست: SHA-256 و امضای هر بسته را خود به‌روزرسان می‌سنجد (امضا نوع/شناسه/نسخه/هش را می‌پوشاند)، پس فهرست دست‌کاری‌شده
 نمی‌تواند بستهٔ دیگری را جایگزین کند. فهرست اختیاراً امضا هم می‌شود (RAVIX_UPDATE_REQUIRE_SIGNED_INDEX).
 """
+from apps.core.clilang import cli_gettext
 from django.utils.translation import gettext
 import hashlib
 import json
@@ -182,7 +183,7 @@ def cached_index(force: bool = False) -> dict:
     try:
         idx = get_source().index()
     except UpdateError as exc:
-        logger.warning("منبع به‌روزرسانی در دسترس نیست: %s", exc)
+        logger.warning(cli_gettext("The update source is not available: %s"), exc)
         cache.set(fail_key, str(exc)[:300], FAIL_TTL)
         raise
     cache.delete(fail_key)

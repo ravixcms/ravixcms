@@ -1,4 +1,5 @@
 """منطق فروشگاه: سبد (نشست)، ثبت سفارش با رزرو موجودی و قیمت‌گذاری سمت سرور، پرداخت و تأیید سمت سرور، تغییر وضعیت با تاریخچه و انقضا."""
+from apps.core.clilang import cli_gettext
 from django.utils.translation import gettext
 import logging
 from datetime import timedelta
@@ -221,7 +222,7 @@ def start_payment(order, request, gateway_name=None):
         _fail(payment, str(exc), sec)
         raise ShopError(gettext("The gateway did not accept the transaction; please try again or choose another gateway."))
     except Exception:  # noqa: BLE001 - باگ افزونهٔ درگاه نباید صفحه را خراب کند
-        logger.exception("خطای غیرمنتظره در درگاه %s", gw.name)
+        logger.exception(cli_gettext("Unexpected error in gateway %s"), gw.name)
         _fail(payment, gettext("Internal gateway error"), sec)
         raise ShopError(gettext("Internal gateway error; please try again later."))
     try:
@@ -285,7 +286,7 @@ def _run(payment, params, *, inquire):
         log_payment(payment, PaymentEvent.Kind.ERROR, (gettext("The gateway inquiry failed: %(exc)s") % {"exc": exc}), secrets=sec)
         return payment, order, "unknown"
     except Exception:  # noqa: BLE001
-        logger.exception("خطای غیرمنتظره در تأیید پرداخت %s", payment.reference)
+        logger.exception(cli_gettext("Unexpected error while verifying payment %s"), payment.reference)
         log_payment(payment, PaymentEvent.Kind.ERROR, gettext("Internal gateway error during verification."))
         return payment, order, "unknown"
     return _apply(payment.pk, result, gw, sec, kind)
@@ -320,11 +321,11 @@ def _apply(payment_id, result, gw, sec, kind):
         if problems:
             payment.status = Payment.Status.REVIEW
             msg = (gettext("The payment was reported successful by the gateway but has a mismatch (%(problems)s); manual review required.") % {"problems": gettext(", ").join(problems)})
-            logger.warning("مغایرت پرداخت %s: %s", payment.reference, problems)
+            logger.warning(cli_gettext("Payment mismatch %s: %s"), payment.reference, problems)
         elif order.status != Order.Status.PENDING:
             payment.status = Payment.Status.REVIEW
             msg = (gettext("A successful payment arrived for an order with status “%(status)s”; manual review required.") % {"status": order.get_status_display()})
-            logger.warning("پرداخت موفق برای سفارش غیرقابل‌پذیرش %s (%s)", order.number, order.status)
+            logger.warning(cli_gettext("Successful payment for an order that cannot be accepted %s (%s)"), order.number, order.status)
         else:
             payment.status = Payment.Status.SUCCEEDED
             msg = (gettext("The payment was verified by gateway “%(gateway)s”.") % {"gateway": payment.gateway})

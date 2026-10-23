@@ -1,4 +1,4 @@
-/* قالب پیش‌فرض راویکس. فقط به متغیرهای --rv-* وابسته است؛ مقدارهای زیر تنها پیش‌فرضِ ایمن‌اند (specificity صفر). */
+/* Ravix default theme. It depends only on the --rv-* variables; the values below are just safe defaults (zero specificity). */
 :where(:root){
   --rv-primary:#1d4ed8;--rv-on-primary:#fff;--rv-primary-soft:#eef3fd;--rv-bg:#fff;--rv-surface:#f4f5f7;
   --rv-border:#d6d9df;--rv-text:#1b1f27;--rv-muted:#505763;
@@ -28,7 +28,7 @@ ul,ol{padding-inline-start:1.4em}
 .skip-link:focus{top:.75rem}
 .muted{color:var(--rv-muted)}
 
-/* دکمه‌ها */
+/* Buttons */
 .btn{display:inline-block;background:var(--rv-primary);color:var(--rv-on-primary);border:2px solid var(--rv-primary);
   padding:.35rem 1.1rem;border-radius:var(--radius);font:inherit;font-weight:700;text-decoration:none;cursor:pointer;line-height:1.7}
 .btn:hover{filter:brightness(.92);text-decoration:none}
@@ -37,7 +37,7 @@ ul,ol{padding-inline-start:1.4em}
 .btn-lg{padding:.55rem 1.6rem;font-size:1.05rem}
 .more{font-weight:700}
 
-/* سربرگ */
+/* Header */
 .site-header{background:var(--rv-bg);border-bottom:1px solid var(--rv-border)}
 .site-header.is-sticky{position:sticky;top:0;z-index:20}
 .header-inner{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1.5rem;padding-block:.75rem}
@@ -54,7 +54,7 @@ ul,ol{padding-inline-start:1.4em}
 .site-nav + .header-tools{margin-inline-start:0}
 .brand ~ .header-tools:last-child{margin-inline-start:auto}
 
-/* جستجو */
+/* Search */
 .search-form{display:flex;gap:.35rem}
 .search-form input{font:inherit;color:var(--rv-text);background:var(--rv-bg);border:1px solid var(--rv-border);border-radius:var(--radius);
   padding:.3rem .75rem;min-width:0;width:11rem}
@@ -62,7 +62,7 @@ ul,ol{padding-inline-start:1.4em}
 .search-form-lg{max-width:32rem;margin-block:1rem 1.5rem}
 .search-form-lg input{flex:1;width:auto;padding:.5rem 1rem}
 
-/* مسیر صفحه و سرتیتر */
+/* Breadcrumbs and headings */
 .crumbs{margin-bottom:1.25rem;font-size:.88rem}
 .crumbs ol{display:flex;flex-wrap:wrap;gap:.25rem .5rem;color:var(--rv-muted)}
 .crumbs li+li::before{content:"‹";margin-inline-end:.5rem}
@@ -73,21 +73,21 @@ ul,ol{padding-inline-start:1.4em}
 .page-lead{font-size:1.1rem;max-width:var(--measure)}
 .sub-head{font-size:1.2rem;margin-top:2rem}
 
-/* قهرمان صفحه اصلی */
+/* Home page hero */
 .hero{background:var(--rv-primary-soft);border-bottom:1px solid var(--rv-border);margin-block:calc(-1*clamp(1.5rem,4vw,3rem)) 0;padding-block:clamp(2.5rem,8vw,5.5rem)}
 .hero-inner{max-width:46rem;padding-inline-start:clamp(1rem,3vw,2rem);border-inline-start:6px solid var(--rv-primary)}
 .hero-title{font-size:clamp(2rem,6vw,3.6rem);font-weight:900;line-height:1.3;margin-bottom:.35em}
 .hero-sub{font-size:clamp(1.05rem,2.2vw,1.35rem);color:var(--rv-muted);max-width:36rem}
 .hero-body{max-width:36rem}
 
-/* بخش‌ها */
+/* Sections */
 .band{padding-block:clamp(1.75rem,5vw,3.25rem)}
 .band + .band{border-top:1px solid var(--rv-border)}
 .hero + .band{border-top:0}
 .band-head{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;margin-bottom:1.25rem}
 .band-head h2{font-size:1.6rem;margin:0}
 
-/* نوشتهٔ شاخص */
+/* Featured post */
 .lead{display:grid;gap:var(--gap);margin-bottom:var(--gap)}
 .lead.has-media{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);align-items:center}
 .lead-media img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:var(--radius);background:var(--rv-surface)}
@@ -96,7 +96,7 @@ ul,ol{padding-inline-start:1.4em}
 .lead-title a:hover,.row-title a:hover{color:var(--rv-primary);text-decoration:underline}
 .lead-excerpt{color:var(--rv-muted);font-size:1.05rem}
 
-/* فهرست افقی نوشته‌ها */
+/* Horizontal post list */
 .river{display:grid;gap:0}
 .river-two{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--gap)}
 .row{display:grid;gap:1rem;padding-block:1.25rem;border-top:1px solid var(--rv-border)}
@@ -112,7 +112,7 @@ ul,ol{padding-inline-start:1.4em}
 .chips a:hover{background:var(--rv-primary);color:var(--rv-on-primary)}
 .cat-nav{margin-bottom:1.5rem}
 
-/* فهرست دسته‌ها */
+/* Category list */
 .cat-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(15rem,1fr));gap:var(--gap)}
 .cat-list a{display:block;height:100%;padding:1rem 1.25rem;color:var(--rv-text);text-decoration:none;background:var(--rv-surface);
   border-inline-start:4px solid var(--rv-primary);border-radius:var(--radius)}
@@ -121,7 +121,7 @@ ul,ol{padding-inline-start:1.4em}
 .cat-list span{color:var(--rv-muted);font-size:.85rem}
 .cat-list small{display:block;margin-top:.35rem;color:var(--rv-muted);line-height:1.7}
 
-/* مقاله و صفحهٔ ثابت */
+/* Article and static page */
 .article{max-width:var(--measure);margin-inline:auto}
 .article-head h1{font-size:clamp(1.8rem,4.5vw,2.7rem);font-weight:900}
 .article-lead{font-size:1.15rem;color:var(--rv-muted)}
@@ -144,7 +144,7 @@ ul,ol{padding-inline-start:1.4em}
 .related{margin-top:3.5rem;padding-top:1.5rem;border-top:2px solid var(--rv-text)}
 .related h2{font-size:1.35rem}
 
-/* صفحه‌بندی */
+/* Pagination */
 .pager{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.75rem;margin-top:2rem}
 .pager ul{display:flex;gap:.25rem}
 .pager a,.pager span{display:inline-block;min-width:2.4rem;padding:.15rem .6rem;text-align:center;border-radius:var(--radius);text-decoration:none}
@@ -154,7 +154,7 @@ ul,ol{padding-inline-start:1.4em}
 .pager .gap{color:var(--rv-muted);padding-inline:.25rem}
 .pager-step{font-weight:700}
 
-/* وضعیت‌ها */
+/* States */
 .empty-state,.error-box{max-width:34rem;margin-inline:auto;text-align:center;padding-block:3rem}
 .empty-state{border:2px dashed var(--rv-border);border-radius:var(--radius);padding:2.5rem 1.5rem}
 .error-code{font-size:clamp(4rem,14vw,7rem);font-weight:900;line-height:1;margin:0;color:var(--rv-primary)}
@@ -166,7 +166,7 @@ ul,ol{padding-inline-start:1.4em}
 .search-status{margin-bottom:1rem}
 .link-list li{padding-block:.4rem;border-bottom:1px solid var(--rv-border)}
 
-/* پانویس */
+/* Footer */
 .site-footer{flex-shrink:0;background:var(--rv-surface);border-top:1px solid var(--rv-border);margin-top:auto;font-size:.92rem}
 .footer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(13rem,1fr));gap:var(--gap);padding-block:2.25rem}
 .footer-name{font-size:1.2rem;font-weight:900;margin-bottom:.4rem}
@@ -183,7 +183,7 @@ ul,ol{padding-inline-start:1.4em}
 .rv-lang button{cursor:pointer}
 .rv-sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-/* واکنش‌گرایی */
+/* Responsive */
 @media (max-width:50rem){
   .lead.has-media{grid-template-columns:1fr}
   .river-two{grid-template-columns:1fr}
@@ -202,7 +202,7 @@ ul,ol{padding-inline-start:1.4em}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 @media print{.site-header,.site-footer,.pager,.skip-link,#rv-toolbar{display:none!important}body{color:#000;background:#fff}a{color:inherit}}
 
-/* دیدگاه‌ها */
+/* Comments */
 .comments{margin-top:3.5rem;padding-top:1.5rem;border-top:2px solid var(--rv-text)}
 .comments h2{font-size:1.35rem}
 .comments-count{color:var(--rv-muted);font-weight:400}

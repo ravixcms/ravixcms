@@ -1,0 +1,926 @@
+# Ravix operator-facing text (management commands, start-up errors, preflight, logs): Persian.
+# Source of truth is this file; msgids are English. Compile with: msgfmt -o cli.mo cli.po
+msgid ""
+msgstr ""
+"Project-Id-Version: Ravix\n"
+"PO-Revision-Date: 2026-10-23 12:00+0000\n"
+"Last-Translator: Ravix\n"
+"Language-Team: Persian\n"
+"Language: fa\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#, python-format
+msgid ""
+"\n"
+"%(a1)s passed, %(a2)s warnings, %(a3)s errors"
+msgstr ""
+"\n"
+"%(a1)s موفق، %(a2)s هشدار، %(a3)s خطا"
+
+msgid " — rename them to RAVIX_* (they are removed in 2.0; docs/upgrade.md)"
+msgstr " — به نام RAVIX_* تغییر دهید (در 2.0 حذف می‌شوند؛ docs/upgrade.md)"
+
+msgid " — use ravix_preflight instead"
+msgstr " — به‌جای آن ravix_preflight"
+
+msgid " — use ravix_release instead"
+msgstr " — به‌جای آن ravix_release"
+
+msgid " — use ravix_update instead"
+msgstr " — به‌جای آن ravix_update"
+
+#, python-format
+msgid "%(a1)s inconclusive transactions were closed."
+msgstr "%(a1)s تراکنش بی‌نتیجه بسته شد."
+
+#, python-format
+msgid "%(a1)s migrations have not been applied; run migrate"
+msgstr "%(a1)s مهاجرت اجرا نشده؛ migrate را اجرا کنید"
+
+#, python-format
+msgid "%(a1)s orders were cancelled."
+msgstr "%(a1)s سفارش لغو شد."
+
+#, python-format
+msgid "%(bad)s plugins have problems."
+msgstr "%(bad)s افزونه مشکل دارد."
+
+#, python-format
+msgid "%(bad)s themes are invalid or missing."
+msgstr "%(bad)s قالب نامعتبر یا ناموجود است."
+
+#, python-format
+msgid "%(count)s posts were published."
+msgstr "%(count)s نوشته منتشر شد."
+
+#, python-format
+msgid "%(n)s events were deleted."
+msgstr "%(n)s رویداد حذف شد."
+
+#, python-format
+msgid "%(n)s versions were signed."
+msgstr "%(n)s نسخه امضا شد."
+
+#, python-format
+msgid "%(n_pages)s pages and %(n_posts)s posts have a slug equal to a language code (for example /de/ is now the German home page). Run: python manage.py ravix_fix_slugs"
+msgstr "%(n_pages)s برگه و %(n_posts)s نوشته نامکی برابر کد زبان دارند (مثلاً /de/ حالا صفحهٔ اصلی آلمانی است). اجرا کنید: python manage.py ravix_fix_slugs"
+
+#, python-format
+msgid "%(slug)s %(a2)s was placed (SHA-256 and signature verified: %(a3)s)."
+msgstr "%(slug)s %(a2)s قرار گرفت (SHA-256 و امضا تأیید شد: %(a3)s)."
+
+#, python-format
+msgid "%(stuck)s upgrades need manual recovery (panel → Updates)"
+msgstr "%(stuck)s ارتقا نیازمند بازیابی دستی است (پنل ← به‌روزرسانی‌ها)"
+
+#, python-format
+msgid "%(target)s already exists."
+msgstr "%(target)s از قبل وجود دارد."
+
+#, python-format
+msgid "%(where)s: key “%(key)s”"
+msgstr "%(where)s: کلید «%(key)s»"
+
+msgid "(Development only) Creates the migrations of a plugin. The code is loaded without approval; allowed only with DEBUG=True."
+msgstr "(فقط توسعه) مهاجرت‌های یک افزونه را می‌سازد. کد بدون تأیید بارگذاری می‌شود؛ فقط با DEBUG=True مجاز است."
+
+msgid ", "
+msgstr "، "
+
+msgid "--allow-insecure is allowed only with DEBUG on."
+msgstr "--allow-insecure فقط با DEBUG روشن مجاز است."
+
+msgid "--key-file is required."
+msgstr "--key-file لازم است."
+
+msgid "--run is required."
+msgstr "--run لازم است."
+
+msgid "--slug and --user (administrator) are required."
+msgstr "--slug و --user (مدیر) لازم است."
+
+msgid "--slug is required."
+msgstr "--slug لازم است."
+
+msgid "--theme-dir is required."
+msgstr "--theme-dir لازم است."
+
+msgid "; "
+msgstr "؛ "
+
+#, python-format
+msgid "A new theme based on the theme “%s”; edit this description."
+msgstr "قالب جدید بر پایهٔ قالب «%s»؛ این توضیح را ویرایش کنید."
+
+#, python-format
+msgid "A theme with the slug “%(slug)s” already exists."
+msgstr "قالبی با نامک «%(slug)s» از قبل وجود دارد."
+
+msgid "A trusted public key for package signatures is configured"
+msgstr "کلید عمومی مورد اعتماد برای امضای بسته‌ها تنظیم شده"
+
+msgid "A trusted signing key is defined"
+msgstr "کلید مورد اعتماد برای امضا تعریف شده"
+
+msgid "ALLOWED_HOSTS is empty or *"
+msgstr "ALLOWED_HOSTS خالی یا * است"
+
+msgid "ALLOWED_HOSTS is set"
+msgstr "ALLOWED_HOSTS مشخص است"
+
+#, python-format
+msgid "Active lock: %(a1)s since %(a2)s"
+msgstr "قفل فعال: %(a1)s از %(a2)s"
+
+msgid "Active payment gateway(s): "
+msgstr "درگاه(های) پرداخت فعال: "
+
+msgid "Administrator username/email (required for plugins)"
+msgstr "نام‌کاربری/ایمیل مدیر (برای افزونه‌ها لازم است)"
+
+msgid "All migrations have been applied"
+msgstr "همهٔ مهاجرت‌ها اجرا شده"
+
+msgid "Also create a database model"
+msgstr "مدل دیتابیس هم داشته باشد"
+
+msgid "An update source is configured"
+msgstr "منبع به‌روزرسانی تنظیم شده"
+
+msgid "Applying upgrades from the web is off (recommended)"
+msgstr "اعمال ارتقا از وب خاموش است (توصیه‌شده)"
+
+msgid "Author name"
+msgstr "نام سازنده"
+
+msgid "Before cancelling, asks the gateway; then cancels overdue unpaid orders, restores stock and closes inconclusive transactions. Run it with a timer every few minutes."
+msgstr "پیش از لغو، از درگاه استعلام می‌گیرد؛ سپس سفارش‌های پرداخت‌نشدهٔ از مهلت گذشته را لغو و موجودی را برمی‌گرداند و تراکنش‌های بی‌نتیجه را می‌بندد. با تایمر هر چند دقیقه اجرا شود."
+
+msgid "Blocker: "
+msgstr "مانع: "
+
+msgid "Builds a core/theme package, signs it and generates index.json for release (on the publisher's machine)."
+msgstr "ساخت بستهٔ هسته/قالب، امضا و تولید index.json برای انتشار (روی ماشین ناشر)."
+
+msgid "CSRF_TRUSTED_ORIGINS is empty (usually required behind HTTPS with a domain)"
+msgstr "CSRF_TRUSTED_ORIGINS خالی است (پشت HTTPS با دامنه، معمولاً لازم است)"
+
+msgid "CSRF_TRUSTED_ORIGINS is set"
+msgstr "CSRF_TRUSTED_ORIGINS تنظیم شده"
+
+msgid "Cancelling unpaid orders"
+msgstr "لغو سفارش‌های پرداخت‌نشده"
+
+#, python-format
+msgid "Check: python manage.py check_plugins %(slug)s   then review and install it in the panel → Plugins."
+msgstr "بررسی: python manage.py check_plugins %(slug)s   سپس در پنل ← افزونه‌ها آن را بررسی و نصب کنید."
+
+#, python-format
+msgid "Check: python manage.py check_themes %(slug)s"
+msgstr "بررسی: python manage.py check_themes %(slug)s"
+
+#, python-format
+msgid "Checking the circuit breaker of plugin %s failed"
+msgstr "بررسی قطع‌کنندهٔ مدار افزونه %s ناموفق بود"
+
+msgid "Checks deployment readiness (configuration, security, migrations, paths). Exits with code 1 on errors."
+msgstr "بررسی آمادگی استقرار (پیکربندی، امنیت، مهاجرت‌ها، مسیرها). با خطا کد خروج ۱ می‌دهد."
+
+msgid "Checks the available plugins (manifest, compatibility, fingerprint). No code is run."
+msgstr "افزونه‌های موجود را بررسی می‌کند (manifest، سازگاری، اثرانگشت). هیچ کدی اجرا نمی‌شود."
+
+msgid "Checks the installed themes against the theme contract (theme.json, required files, allowed tags)."
+msgstr "قالب‌های نصب‌شده را بر اساس قرارداد قالب (theme.json، فایل‌های الزامی، تگ‌های مجاز) بررسی می‌کند."
+
+msgid "Client IP detection: no problem seen (for a live check open the “Site health” page through the domain)"
+msgstr "تشخیص IP کلاینت: مشکلی دیده نشده (برای بررسی زنده صفحهٔ «سلامت سایت» را از طریق دامنه باز کنید)"
+
+msgid "Confirm that the rollback destroys data created after the upgrade"
+msgstr "تأیید اینکه بازگشت، داده‌های بعد از ارتقا را از بین می‌برد"
+
+#, python-format
+msgid "Content fingerprint: %(a1)s"
+msgstr "اثرانگشت محتوا: %(a1)s"
+
+msgid "Cookies are Secure"
+msgstr "کوکی‌ها Secure هستند"
+
+msgid "Cookies are not Secure"
+msgstr "کوکی‌ها Secure نیستند"
+
+msgid "Creates a new theme from the default theme (themes/<slug>) to make starting easy."
+msgstr "یک قالب جدید را از روی قالب پیش‌فرض می‌سازد (themes/<slug>) تا شروع کار ساده باشد."
+
+msgid "Creates a signing key pair: the private key goes to --out (600), the public key is printed."
+msgstr "جفت‌کلید امضا می‌سازد: کلید خصوصی در --out (600)، کلید عمومی چاپ می‌شود."
+
+msgid "Creates the skeleton of a new plugin in the first RAVIX_PLUGIN_DIRS folder."
+msgstr "اسکلت یک افزونهٔ جدید را در اولین پوشهٔ RAVIX_PLUGIN_DIRS می‌سازد."
+
+msgid "Creating the sample content failed"
+msgstr "ساخت محتوای نمونه ناموفق بود"
+
+#, python-format
+msgid "DATABASE_URL with the scheme “%(a1)s” is not supported."
+msgstr "DATABASE_URL با scheme «%(a1)s» پشتیبانی نمی‌شود."
+
+msgid "DEBUG is off"
+msgstr "DEBUG خاموش است"
+
+msgid "DEBUG is on"
+msgstr "DEBUG روشن است"
+
+msgid "DEBUG is on; no token is needed."
+msgstr "DEBUG روشن است؛ توکن لازم نیست."
+
+msgid "DJANGO_ALLOWED_HOSTS must be set in production."
+msgstr "DJANGO_ALLOWED_HOSTS باید در محیط تولید تنظیم شود."
+
+msgid "DJANGO_SECRET_KEY must be set and at least 32 characters long."
+msgstr "DJANGO_SECRET_KEY باید تنظیم شده و حداقل ۳۲ کاراکتر باشد."
+
+msgid "Daily backup"
+msgstr "پشتیبان‌گیری روزانه"
+
+#, python-format
+msgid "Database connection failed: %(exc)s"
+msgstr "اتصال به دیتابیس ناموفق: %(exc)s"
+
+msgid "Deletes events older than N days (default 90)."
+msgstr "رویدادهای قدیمی‌تر از N روز (پیش‌فرض ۹۰) را حذف می‌کند."
+
+msgid "Destination folder (default: RAVIX_PLUGIN_INSTALL_DIR)"
+msgstr "پوشهٔ مقصد (پیش‌فرض: RAVIX_PLUGIN_INSTALL_DIR)"
+
+#, python-format
+msgid "Disabling the plugin %s failed"
+msgstr "غیرفعال‌سازی افزونه %s ناموفق بود"
+
+msgid "Display name of the theme"
+msgstr "نام نمایشی قالب"
+
+msgid "Downloads a plugin from the registry, verifies integrity and signature, and places it in the install folder (does not install it)."
+msgstr "افزونه را از مخزن دریافت، تمامیت و امضا را بررسی و در پوشهٔ نصب قرار می‌دهد (نصب نمی‌کند)."
+
+#, python-format
+msgid "Duplicate theme “%s” in %s was ignored."
+msgstr "قالب تکراری «%s» در %s نادیده گرفته شد."
+
+msgid "EMAIL_BACKEND is the console one; no email is sent"
+msgstr "EMAIL_BACKEND کنسولی است؛ ایمیلی ارسال نمی‌شود"
+
+#, python-format
+msgid "Email sending rate limit (%s) was triggered for IP %s."
+msgstr "محدودیت نرخ ارسال ایمیل (%s) برای IP %s فعال شد."
+
+msgid "Expected hash (from the Directory page) for an independent check"
+msgstr "هش مورد انتظار (از صفحهٔ Directory) برای بررسی مستقل"
+
+msgid "Fetch and validate completely without changing files"
+msgstr "دریافت و اعتبارسنجی کامل بدون تغییر فایل‌ها"
+
+#, python-format
+msgid "Fetching the registry versions failed: %s"
+msgstr "دریافت نسخه‌های مخزن ناموفق بود: %s"
+
+msgid "Finds pages and posts whose slug is a language code (fa, en, de …), renames them with a suffix (for example de-page), creates a 301 redirect and records it in the audit log. --dry-run only reports."
+msgstr "برگه‌ها و نوشته‌هایی را که نامکشان کد زبان است (fa، en، de …) پیدا و با پسوند (مثلاً de-page) عوض می‌کند، ریدایرکت ۳۰۱ می‌سازد و در لاگ ممیزی ثبت می‌کند. --dry-run فقط گزارش می‌دهد."
+
+msgid "HSTS is enabled"
+msgstr "HSTS فعال است"
+
+msgid "HSTS is off"
+msgstr "HSTS خاموش است"
+
+msgid "HTTPS redirect is enabled"
+msgstr "ریدایرکت HTTPS فعال است"
+
+msgid "In production DATABASE_URL must point to a PostgreSQL database."
+msgstr "در محیط تولید باید DATABASE_URL به یک PostgreSQL اشاره کند."
+
+msgid "Install without the web (for scripts/Docker): runs migrations and creates the superadmin and initial settings. The password comes only from an environment variable (--password-env) or an interactive prompt; never from a command-line argument."
+msgstr "نصب بدون وب (برای اسکریپت‌ها/Docker): مهاجرت‌ها را اجرا و مدیرکل و تنظیمات اولیه را می‌سازد. رمز عبور فقط از متغیر محیطی (--password-env) یا پرسش تعاملی؛ هرگز از آرگومان خط فرمان."
+
+msgid "Installation complete."
+msgstr "نصب کامل شد."
+
+msgid "Installation failed"
+msgstr "نصب ناموفق بود"
+
+msgid "Installation has already been done."
+msgstr "نصب قبلاً انجام شده است."
+
+msgid "Installation has already been done; no token is needed."
+msgstr "نصب قبلاً انجام شده؛ توکنی لازم نیست."
+
+#, python-format
+msgid "Key id: %(a1)s"
+msgstr "شناسهٔ کلید: %(a1)s"
+
+msgid "Local development only: allow http"
+msgstr "فقط توسعهٔ محلی: اجازهٔ http"
+
+msgid "Minimum source version"
+msgstr "کمترین نسخهٔ مبدأ"
+
+msgid "Name of the environment variable that holds the password"
+msgstr "نام متغیر محیطی که رمز عبور را دارد"
+
+#, python-format
+msgid ""
+"Needs recovery: run #%(a1)s\n"
+"%(a2)s"
+msgstr ""
+"نیازمند بازیابی: اجرا #%(a1)s\n"
+"%(a2)s"
+
+#, python-format
+msgid "New version: %(a1)s (current %(a2)s)"
+msgstr "نسخهٔ جدید: %(a1)s (فعلی %(a2)s)"
+
+msgid "Next step: in the panel “Plugins”, review the details and files and install it with explicit approval. Nothing was installed or enabled automatically."
+msgstr "گام بعد: در پنل «افزونه‌ها» مشخصات و فایل‌ها را بازبینی و با تأیید صریح نصب کنید. نصب/فعال‌سازی خودکار انجام نشد."
+
+msgid "No page or post has a language code as its slug"
+msgstr "نامک هیچ برگه یا نوشته‌ای کد زبان نیست"
+
+msgid "No page or post has a language code as its slug."
+msgstr "نامک هیچ برگه یا نوشته‌ای کد زبان نیست."
+
+msgid "No plugin with this name was found."
+msgstr "افزونه‌ای با این نام پیدا نشد."
+
+msgid "No signing key was given: --key-file or RAVIX_RELEASE_SIGNING_KEY (or --no-sign)."
+msgstr "کلید امضا داده نشد: --key-file یا RAVIX_RELEASE_SIGNING_KEY (یا --no-sign)."
+
+msgid "No theme was found in the RAVIX_THEME_DIRS paths."
+msgstr "هیچ قالبی در مسیرهای RAVIX_THEME_DIRS پیدا نشد."
+
+msgid "No trusted key is defined; a signed package is not accepted"
+msgstr "هیچ کلید مورد اعتمادی تعریف نشده؛ بستهٔ امضاشده پذیرفته نمی‌شود"
+
+msgid "No update source (RAVIX_UPDATE_URL) is configured; checking for new versions is disabled"
+msgstr "منبع به‌روزرسانی (RAVIX_UPDATE_URL) تنظیم نشده؛ بررسی نسخهٔ جدید غیرفعال است"
+
+msgid "No update source is configured (RAVIX_UPDATE_URL or RAVIX_UPDATE_DIR)."
+msgstr "منبع به‌روزرسانی تنظیم نشده است (RAVIX_UPDATE_URL یا RAVIX_UPDATE_DIR)."
+
+msgid "No upgrade needs recovery"
+msgstr "هیچ ارتقای نیازمند بازیابی نیست"
+
+msgid "Old environment variables are in use: "
+msgstr "متغیرهای محیطی قدیمی استفاده شده‌اند: "
+
+#, python-format
+msgid ""
+"Package built: %(a1)s (sha256 %(a2)s…, %(signed_label)s)\n"
+"Index: %(path)s"
+msgstr ""
+"بسته ساخته شد: %(a1)s (sha256 %(a2)s…، %(signed_label)s)\n"
+"فهرست: %(path)s"
+
+msgid "Path of the private key file (outside the code repository!)"
+msgstr "مسیر فایل کلید خصوصی (خارج از مخزن کد!)"
+
+#, python-format
+msgid "Payment mismatch %s: %s"
+msgstr "مغایرت پرداخت %s: %s"
+
+#, python-format
+msgid "Plugin error %s (%s): %r"
+msgstr "خطای افزونه %s (%s): %r"
+
+msgid "Plugin installation from the web is on (RAVIX_PLUGIN_WEB_INSTALL); keep it on only if you need it, because a plugin is executable code"
+msgstr "نصب افزونه از طریق وب روشن است (RAVIX_PLUGIN_WEB_INSTALL)؛ فقط اگر لازم دارید روشن بماند، چون افزونه کد قابل اجراست"
+
+msgid "Plugin safe mode is off"
+msgstr "حالت امن افزونه‌ها خاموش است"
+
+msgid "Plugin safe mode is on (no plugin runs)"
+msgstr "حالت امن افزونه‌ها روشن است (هیچ افزونه‌ای اجرا نمی‌شود)"
+
+msgid "Prints the install token of the /install/ page (creates one if there is none). Prints nothing after installation."
+msgstr "توکن نصب صفحهٔ /install/ را چاپ می‌کند (اگر نبود می‌سازد). پس از نصب چیزی چاپ نمی‌شود."
+
+msgid "Private key seed file (permissions 600)"
+msgstr "فایل seed کلید خصوصی (مجوز 600)"
+
+msgid "Private key seed file (permissions 600) — or the environment variable RAVIX_RELEASE_SIGNING_KEY"
+msgstr "فایل seed کلید خصوصی (مجوز ۶۰۰) — یا متغیر محیطی RAVIX_RELEASE_SIGNING_KEY"
+
+#, python-format
+msgid ""
+"Private key written to %(kf)s (permissions 600; keep it and make a safe backup). Key id (key_id; for revocation): %(key_id)s\n"
+"Public key (for apps/core/official.py or RAVIX_TRUSTED_PUBLIC_KEYS; the last line):\n"
+"%(pub)s"
+msgstr ""
+"کلید خصوصی در %(kf)s نوشته شد (مجوز ۶۰۰؛ آن را نگه‌داری و پشتیبان امن کنید). شناسهٔ کلید (key_id؛ برای ابطال): %(key_id)s\n"
+"کلید عمومی (برای apps/core/official.py یا RAVIX_TRUSTED_PUBLIC_KEYS؛ آخرین خط):\n"
+"%(pub)s"
+
+#, python-format
+msgid "Private key written: %(path)s (permissions 600; keep a safe backup, it cannot be recovered)"
+msgstr "کلید خصوصی نوشته شد: %(path)s (مجوز 600؛ پشتیبان امن بگیرید، قابل بازیابی نیست)"
+
+#, python-format
+msgid "Public key (to register on sites): %(pub)s"
+msgstr "کلید عمومی (برای ثبت در سایت‌ها): %(pub)s"
+
+msgid "Publishes scheduled posts whose publish time has come."
+msgstr "نوشته‌های زمان‌بندی‌شده‌ای که زمان انتشارشان رسیده را منتشر می‌کند."
+
+msgid "Publishing scheduled posts"
+msgstr "انتشار نوشته‌های زمان‌بندی‌شده"
+
+msgid "Python range such as >=3.11"
+msgstr "بازهٔ Python مثل >=3.11"
+
+msgid "RAVIX_PLUGINS_ALLOW_UNSIGNED is on; local upload without a signature is allowed"
+msgstr "RAVIX_PLUGINS_ALLOW_UNSIGNED روشن است؛ آپلود محلی بدون امضا مجاز است"
+
+msgid "RAVIX_PLUGIN_DIRS is empty."
+msgstr "RAVIX_PLUGIN_DIRS خالی است."
+
+msgid "RAVIX_SECRETS_KEY is not set (required before adding a gateway key)"
+msgstr "RAVIX_SECRETS_KEY تنظیم نشده (پیش از افزودن کلید درگاه لازم است)"
+
+msgid "RAVIX_SECRETS_KEY is not set; gateway keys cannot be stored or read safely"
+msgstr "RAVIX_SECRETS_KEY تنظیم نشده؛ کلیدهای درگاه قابل نگهداری/خواندن امن نیستند"
+
+#, python-format
+msgid "RAVIX_SHOP_PRIVATE_ROOT (%(priv)s) is inside the public media; digital files would leak"
+msgstr "RAVIX_SHOP_PRIVATE_ROOT (%(priv)s) داخل media عمومی است؛ فایل‌های دیجیتال لو می‌روند"
+
+msgid "RAVIX_THEME_DIRS is empty."
+msgstr "RAVIX_THEME_DIRS خالی است."
+
+#, python-format
+msgid "RAVIX_TRUSTED_PROXIES contains an invalid entry: %(bad_proxies)s"
+msgstr "RAVIX_TRUSTED_PROXIES شامل ورودی نامعتبر است: %(bad_proxies)s"
+
+msgid "RAVIX_TRUSTED_PROXIES is valid"
+msgstr "RAVIX_TRUSTED_PROXIES معتبر است"
+
+#, python-format
+msgid "RAVIX_TRUSTED_PUBLIC_KEYS contains an invalid entry: %(bad_keys)s"
+msgstr "RAVIX_TRUSTED_PUBLIC_KEYS شامل ورودی نامعتبر است: %(bad_keys)s"
+
+msgid "RAVIX_TRUST_PROXY_HEADERS has been removed and has no effect; nothing is needed behind a Unix socket, and for a proxy over TCP use RAVIX_TRUSTED_PROXIES"
+msgstr "RAVIX_TRUST_PROXY_HEADERS حذف شده و اثری ندارد؛ پشت سوکت یونیکس چیزی لازم نیست و برای پراکسی روی TCP از RAVIX_TRUSTED_PROXIES استفاده کنید"
+
+msgid "RAVIX_UPDATE_URL must be https"
+msgstr "RAVIX_UPDATE_URL باید https باشد"
+
+msgid "RAVIX_UPDATE_WEB_APPLY is on; the web service must have write access to the code and the database"
+msgstr "RAVIX_UPDATE_WEB_APPLY روشن است؛ سرویس وب باید به کد و دیتابیس دسترسی نوشتن داشته باشد"
+
+#, python-format
+msgid "Ravix install token (for the /install/ page): %s — %s"
+msgstr "توکن نصب Ravix (برای صفحهٔ /install/): %s — %s"
+
+#, python-format
+msgid "Ravix installation complete; superadmin: %s"
+msgstr "نصب Ravix کامل شد؛ مدیرکل: %s"
+
+msgid "Ravix test email"
+msgstr "ایمیل آزمایشی Ravix"
+
+msgid "Real email is configured"
+msgstr "ایمیل واقعی پیکربندی شده"
+
+msgid "Recipient email address"
+msgstr "نشانی ایمیل گیرنده"
+
+msgid "Recording the IP observation failed"
+msgstr "ثبت مشاهدهٔ IP ناموفق بود"
+
+msgid "Recording the audit entry failed"
+msgstr "ثبت audit ناموفق بود"
+
+msgid "Recording the failure step in the history was not possible"
+msgstr "ثبت مرحلهٔ شکست در تاریخچه ممکن نشد"
+
+#, python-format
+msgid "Recording the plugin event %s failed"
+msgstr "ثبت رویداد افزونه %s ناموفق بود"
+
+msgid "Registry base URL, for example https://registry.example.com"
+msgstr "نشانی پایهٔ مخزن، مثلاً https://registry.example.com"
+
+#, python-format
+msgid "Registry signing key: %(exc)s"
+msgstr "کلید امضای مخزن: %(exc)s"
+
+msgid "Rendering the 404 page with the site theme failed."
+msgstr "رندر صفحه ۴۰۴ با قالب سایت ناموفق بود."
+
+#, python-format
+msgid "Rendering the theme “%s” failed; the default theme was used instead."
+msgstr "رندر قالب «%s» ناموفق بود؛ قالب پیش‌فرض جایگزین شد."
+
+msgid "Repeat password: "
+msgstr "تکرار رمز عبور: "
+
+msgid "Report only; nothing is changed"
+msgstr "فقط نمایش؛ چیزی تغییر نمی‌کند"
+
+#, python-format
+msgid "Requests arrive from the proxy %(a1)s which is not trusted; all visitors are counted as one IP. Add it to RAVIX_TRUSTED_PROXIES (or put Gunicorn on a Unix socket)"
+msgstr "درخواست‌ها از پراکسی %(a1)s می‌رسند که مورداعتماد نیست؛ همهٔ بازدیدکننده‌ها یک IP شمرده می‌شوند. آن را در RAVIX_TRUSTED_PROXIES بنویسید (یا Gunicorn را روی سوکت یونیکس بگذارید)"
+
+#, python-format
+msgid "Rollback done (run #%(a1)s). %(a2)s"
+msgstr "بازگشت انجام شد (اجرا #%(a1)s). %(a2)s"
+
+msgid "Root of the core source"
+msgstr "ریشهٔ سورس هسته"
+
+#, python-format
+msgid "Run #%(a1)s: %(a2)s — %(a3)s → %(a4)s"
+msgstr "اجرا #%(a1)s: %(a2)s — %(a3)s → %(a4)s"
+
+#, python-format
+msgid "Running core: %(a1)s | on disk: %(a2)s"
+msgstr "هستهٔ در حال اجرا: %(a1)s | روی دیسک: %(a2)s"
+
+msgid "SECRET_KEY is strong"
+msgstr "SECRET_KEY قوی است"
+
+msgid "SECRET_KEY is weak or the default"
+msgstr "SECRET_KEY ضعیف/پیش‌فرض است"
+
+msgid "SECURE_SSL_REDIRECT is off"
+msgstr "SECURE_SSL_REDIRECT خاموش است"
+
+msgid "SITE_URL is empty; absolute URLs are built from the request Host"
+msgstr "SITE_URL خالی است؛ آدرس مطلق از Host درخواست ساخته می‌شود"
+
+msgid "SITE_URL is set (absolute sitemap/canonical URLs)"
+msgstr "SITE_URL تنظیم شده (آدرس‌های مطلق sitemap/canonical)"
+
+#, python-format
+msgid "STATIC_ROOT (%(static_root)s) does not exist or is not readable; run collectstatic"
+msgstr "STATIC_ROOT (%(static_root)s) وجود ندارد یا خوانا نیست؛ collectstatic را اجرا کنید"
+
+msgid "STATIC_ROOT exists and is readable"
+msgstr "STATIC_ROOT وجود دارد و خوانا است"
+
+msgid "Sending failed (the backend accepted no message)."
+msgstr "ارسال ناموفق بود (backend هیچ پیامی نپذیرفت)."
+
+#, python-format
+msgid "Sending failed: %(a1)s: %(exc)s"
+msgstr "ارسال ناموفق بود: %(a1)s: %(exc)s"
+
+msgid "Sending the new-comment notification email failed."
+msgstr "ارسال ایمیل اطلاع دیدگاه جدید شکست خورد."
+
+#, python-format
+msgid "Sending the verification email to user %s failed."
+msgstr "ارسال ایمیل تأیید برای کاربر %s ناموفق بود."
+
+msgid "Sends a test email using the current email settings to check SMTP. The SMTP password is never printed."
+msgstr "یک ایمیل آزمایشی با تنظیمات فعلی ایمیل می‌فرستد تا SMTP آزموده شود. رمز SMTP هرگز چاپ نمی‌شود."
+
+msgid "Signs a zip package with a private key (file)."
+msgstr "بستهٔ zip را با کلید خصوصی (فایل) امضا می‌کند."
+
+msgid "Signs published versions that have no signature."
+msgstr "امضای نسخه‌های منتشرشدهٔ بدون امضا."
+
+msgid "Slugs of the themes to check (default: all)"
+msgstr "نامک قالب‌هایی که باید بررسی شوند (پیش‌فرض: همه)"
+
+msgid "Source theme (default: default)"
+msgstr "قالب مبدأ (پیش‌فرض: default)"
+
+msgid "Specific version (default: the latest compatible version)"
+msgstr "نسخهٔ مشخص (پیش‌فرض: آخرین نسخهٔ سازگار)"
+
+msgid "Specify the target: core | theme | plugin"
+msgstr "هدف را مشخص کنید: core | theme | plugin"
+
+#, python-format
+msgid "Successful payment for an order that cannot be accepted %s (%s)"
+msgstr "پرداخت موفق برای سفارش غیرقابل‌پذیرش %s (%s)"
+
+msgid "Superadmin password: "
+msgstr "رمز عبور مدیرکل: "
+
+msgid "The backend is the console one: the message was printed above and no real email was sent (development mode)."
+msgstr "backend کنسولی است: پیام در خروجی بالا چاپ شد و ایمیل واقعی نرفت (حالت توسعه)."
+
+#, python-format
+msgid "The cache folder (%(cdir)s) does not exist or is not writable for the service user (use CacheDirectory=ravix in ravix.service)"
+msgstr "پوشهٔ کش (%(cdir)s) وجود ندارد یا برای کاربر سرویس قابل نوشتن نیست (در ravix.service از CacheDirectory=ravix استفاده کنید)"
+
+#, python-format
+msgid "The cache folder (%(cdir)s) is writable"
+msgstr "پوشهٔ کش (%(cdir)s) قابل نوشتن است"
+
+msgid "The code on disk is newer than the running process; restart the service"
+msgstr "کد روی دیسک جدیدتر از پروسهٔ در حال اجراست؛ سرویس را راه‌اندازی مجدد کنید"
+
+msgid "The code on disk is newer than the running process; restart the service."
+msgstr "کد روی دیسک جدیدتر از پروسهٔ در حال اجراست؛ سرویس را راه‌اندازی مجدد کنید."
+
+msgid "The code on disk is the same as the running process"
+msgstr "کد روی دیسک با پروسهٔ در حال اجرا یکی است"
+
+msgid "The comment honeypot was filled in; ignored."
+msgstr "honeypot دیدگاه پر شده بود؛ نادیده گرفته شد."
+
+msgid "The core upgrade failed with an unexpected error"
+msgstr "ارتقای هسته با خطای غیرمنتظره شکست خورد"
+
+#, python-format
+msgid "The database is %(a1)s (PostgreSQL is required for production)"
+msgstr "دیتابیس %(a1)s است (برای تولید PostgreSQL لازم است)"
+
+msgid "The database is PostgreSQL"
+msgstr "دیتابیس PostgreSQL است"
+
+#, python-format
+msgid "The digital-files folder (%(priv)s) has not been created yet or is not writable (it is created on first upload; include it in backups)"
+msgstr "پوشهٔ فایل‌های دیجیتال (%(priv)s) هنوز ساخته نشده یا قابل نوشتن نیست (با اولین بارگذاری ساخته می‌شود؛ در پشتیبان‌گیری لحاظ کنید)"
+
+msgid "The digital-files folder is outside the public media"
+msgstr "پوشهٔ فایل‌های دیجیتال خارج از media عمومی است"
+
+msgid "The digital-files folder is writable"
+msgstr "پوشهٔ فایل‌های دیجیتال قابل نوشتن است"
+
+msgid "The email address is not valid."
+msgstr "نشانی ایمیل معتبر نیست."
+
+#, python-format
+msgid "The email was handed to the backend (to %(to)s). Check yourself that it reaches the inbox."
+msgstr "ایمیل به backend تحویل داده شد (به %(to)s). رسیدن به صندوق را خودتان بررسی کنید."
+
+msgid "The fallback cache table (ravin_cache) exists in the database"
+msgstr "جدول کش جایگزین (ravin_cache) در دیتابیس هست"
+
+msgid "The fallback cache table (ravin_cache) is missing; run migrate"
+msgstr "جدول کش جایگزین (ravin_cache) نیست؛ migrate را اجرا کنید"
+
+msgid "The file already exists; not overwriting."
+msgstr "فایل از قبل وجود دارد؛ بازنویسی نمی‌کنیم."
+
+msgid "The gateway is active in test mode: "
+msgstr "درگاه در حالت آزمایشی فعال است: "
+
+msgid "The gateway secrets encryption key (RAVIX_SECRETS_KEY) is set"
+msgstr "کلید رمزنگاری اسرار درگاه (RAVIX_SECRETS_KEY) تنظیم شده"
+
+msgid "The gateway secrets encryption key is set"
+msgstr "کلید رمزنگاری اسرار درگاه تنظیم شده"
+
+msgid "The given hash does not match the registry hash; stopped."
+msgstr "هش داده‌شده با هش مخزن یکی نیست؛ متوقف شد."
+
+#, python-format
+msgid "The main cache does not work (%(cache_err)s). Panel sign-in falls back to the database cache table without a healthy cache and logs a warning"
+msgstr "کش اصلی کار نمی‌کند (%(cache_err)s). ورود به پنل بدون کش سالم به کش جدولی دیتابیس برمی‌گردد و هشدار لاگ می‌دهد"
+
+#, python-format
+msgid "The main cache used for login throttling is broken (%s: %s); the database cache table is used instead. Check the cache folder / Redis."
+msgstr "کش اصلی برای محدودسازی ورود خراب است (%s: %s)؛ از کش جدولی دیتابیس استفاده می‌شود. پوشهٔ کش/Redis را بررسی کنید."
+
+msgid "The main cache works (a test write/read succeeded)"
+msgstr "کش اصلی کار می‌کند (نوشتن/خواندن آزمایشی موفق)"
+
+#, python-format
+msgid "The media folder (%(media)s) does not exist or is not writable (create it: mkdir -p %(media)s and give ownership to the service user)"
+msgstr "پوشهٔ media (%(media)s) وجود ندارد یا قابل نوشتن نیست (بسازید: mkdir -p %(media)s و مالکیت را به کاربر سرویس بدهید)"
+
+msgid "The media folder is writable"
+msgstr "پوشهٔ media قابل نوشتن است"
+
+#, python-format
+msgid "The old timer %(old_unit)s is active; migrate to %(unit)s (docs/upgrade.md). The old name is removed in 2.0"
+msgstr "تایمر قدیمی %(old_unit)s فعال است؛ به %(unit)s مهاجرت کنید (docs/upgrade.md). نام قدیمی در 2.0 حذف می‌شود"
+
+#, python-format
+msgid "The page-builder document was invalid at render time and was not displayed: %s"
+msgstr "سند صفحه‌ساز هنگام رندر نامعتبر بود و نمایش داده نشد: %s"
+
+#, python-format
+msgid "The path %(target)s already exists."
+msgstr "مسیر %(target)s از قبل وجود دارد."
+
+#, python-format
+msgid "The plugin backup folder (%(backup_dir)s) does not exist or is not writable"
+msgstr "پوشهٔ پشتیبان افزونه‌ها (%(backup_dir)s) وجود ندارد یا قابل نوشتن نیست"
+
+msgid "The plugin backup folder is writable"
+msgstr "پوشهٔ پشتیبان افزونه‌ها قابل نوشتن است"
+
+msgid "The plugin code changed; an administrator must approve it again before it is used on a server."
+msgstr "کد افزونه تغییر کرد؛ پیش از استفاده در سرور باید دوباره توسط مدیر تأیید شود."
+
+#, python-format
+msgid "The plugin folder %(d)s is read-only for this user"
+msgstr "پوشهٔ افزونه %(d)s برای این کاربر فقط‌خواندنی است"
+
+#, python-format
+msgid "The plugin folder %(d)s is writable for the service user (recommended: read-only)"
+msgstr "پوشهٔ افزونه %(d)s برای کاربر سرویس قابل نوشتن است (توصیه: فقط‌خواندنی)"
+
+#, python-format
+msgid "The plugin install folder (%(install_dir)s) does not exist or is not writable"
+msgstr "پوشهٔ نصب افزونه (%(install_dir)s) وجود ندارد یا قابل نوشتن نیست"
+
+msgid "The plugin install folder is writable"
+msgstr "پوشهٔ نصب افزونه قابل نوشتن است"
+
+#, python-format
+msgid "The plugin was created in %(target)s."
+msgstr "افزونه در %(target)s ساخته شد."
+
+#, python-format
+msgid "The post “%(post)s” was published on schedule."
+msgstr "نوشته «%(post)s» طبق زمان‌بندی منتشر شد."
+
+msgid "The registry signing key file is readable and has safe permissions"
+msgstr "فایل کلید امضای مخزن خوانا و دارای مجوز امن است"
+
+msgid "The registry signing key is not set (RAVIX_REGISTRY_SIGNING_KEY_FILE or RAVIX_REGISTRY_SIGNING_KEY)."
+msgstr "کلید امضای مخزن تنظیم نشده است (RAVIX_REGISTRY_SIGNING_KEY_FILE یا RAVIX_REGISTRY_SIGNING_KEY)."
+
+msgid "The shop is on but no real gateway is active; ordering is disabled (RAVIX_SHOP_ENABLED=false turns it off completely)"
+msgstr "فروشگاه روشن ولی درگاه واقعی فعال نیست؛ ثبت سفارش غیرفعال است (RAVIX_SHOP_ENABLED=false برای خاموش‌کردن کامل)"
+
+msgid "The shop is on but no real gateway is connected; ordering stays disabled until a gateway is connected."
+msgstr "فروشگاه روشن است ولی درگاه واقعی متصل نیست؛ ثبت سفارش تا اتصال درگاه غیرفعال می‌ماند."
+
+msgid "The slug is invalid or reserved (lowercase English letters, digits and _, starting with a letter, 3 to 31 characters)."
+msgstr "نامک نامعتبر یا رزرو است (حروف کوچک انگلیسی، عدد و _، با حرف شروع شود، ۳ تا ۳۱ نویسه)."
+
+msgid "The slug is invalid; only lowercase English letters, digits, “-” and “_” (at most 49 characters)."
+msgstr "نامک نامعتبر است؛ فقط حروف کوچک انگلیسی، عدد، «-» و «_» (حداکثر ۴۹ نویسه)."
+
+#, python-format
+msgid "The source theme “%(a1)s” was not found."
+msgstr "قالب مبدأ «%(a1)s» پیدا نشد."
+
+msgid "The state of the systemd timers (scheduled publishing, backup, orders) could not be checked; run again on a server with systemd or look manually with “systemctl list-timers”"
+msgstr "وضعیت تایمرهای systemd (انتشار زمان‌بندی‌شده، پشتیبان، سفارش‌ها) قابل بررسی نبود؛ روی سرور با systemd دوباره اجرا کنید یا با «systemctl list-timers» دستی ببینید"
+
+msgid "The test gateway is allowed in production; real customers must not pay with it"
+msgstr "درگاه آزمایشی در تولید مجاز شده است؛ مشتریان واقعی نباید با آن پرداخت کنند"
+
+msgid "The test gateway is enabled in the panel; disable it in production"
+msgstr "درگاه آزمایشی در پنل فعال است؛ در تولید غیرفعالش کنید"
+
+msgid "The theme upgrade failed with an unexpected error"
+msgstr "ارتقای قالب با خطای غیرمنتظره شکست خورد"
+
+#, python-format
+msgid "The theme “%(slug)s” was created in %(target)s."
+msgstr "قالب «%(slug)s» در %(target)s ساخته شد."
+
+#, python-format
+msgid "The theme “%s” is invalid: %s"
+msgstr "قالب «%s» نامعتبر است: %s"
+
+#, python-format
+msgid "The theme “%s” is not available; the default theme was used instead."
+msgstr "قالب «%s» در دسترس نیست؛ قالب پیش‌فرض جایگزین شد."
+
+#, python-format
+msgid "The timer %(unit)s (%(label)s) is active"
+msgstr "تایمر %(unit)s (%(label)s) فعال است"
+
+#, python-format
+msgid "The timer %(unit)s (%(label)s) is not active (enabled=%(enabled)s, active=%(active)s): sudo cp deploy/%(a5)s.{service,timer} /etc/systemd/system/ && sudo systemctl daemon-reload && sudo systemctl enable --now %(unit)s"
+msgstr "تایمر %(unit)s (%(label)s) فعال نیست (enabled=%(enabled)s، active=%(active)s): sudo cp deploy/%(a5)s.{service,timer} /etc/systemd/system/ && sudo systemctl daemon-reload && sudo systemctl enable --now %(unit)s"
+
+msgid "The trusted proxy sends no IP header; the client IP cannot be determined (only per-username throttling applies)"
+msgstr "پراکسی مورداعتماد هدر IP نمی‌فرستد؛ IP کلاینت قابل‌تشخیص نیست (فقط محدودیت به‌ازای نام‌کاربری)"
+
+msgid "The two passwords do not match."
+msgstr "دو رمز عبور یکسان نیستند."
+
+msgid "The update source is HTTPS"
+msgstr "منبع به‌روزرسانی HTTPS است"
+
+#, python-format
+msgid "The update source is not available: %s"
+msgstr "منبع به‌روزرسانی در دسترس نیست: %s"
+
+#, python-format
+msgid "The variable %(a1)s is not set or is empty."
+msgstr "متغیر %(a1)s تنظیم نشده یا خالی است."
+
+msgid "The written value could not be read back"
+msgstr "مقدار نوشته‌شده خوانده نشد"
+
+msgid "Theme slug: lowercase English letters, digits, “-” and “_”"
+msgstr "نامک قالب: حروف کوچک انگلیسی، عدد، «-» و «_»"
+
+msgid "There is no trusted key (RAVIX_TRUSTED_PUBLIC_KEYS); no update package is accepted"
+msgstr "هیچ کلید مورد اعتمادی (RAVIX_TRUSTED_PUBLIC_KEYS) نیست؛ هیچ بستهٔ به‌روزرسانی پذیرفته نمی‌شود"
+
+#, python-format
+msgid "This is a test message; it shows that Ravix email is being sent from %(a1)s."
+msgstr "این پیام آزمایشی است و نشان می‌دهد ایمیل Ravix از روی %(a1)s ارسال می‌شود."
+
+msgid "Trusted keys (env) are valid"
+msgstr "کلیدهای مورد اعتماد (env) معتبرند"
+
+#, python-format
+msgid "Unexpected error during %s of plugin %s"
+msgstr "خطای غیرمنتظره در %s افزونه %s"
+
+#, python-format
+msgid "Unexpected error in gateway %s"
+msgstr "خطای غیرمنتظره در درگاه %s"
+
+msgid "Unexpected error while installing the theme ZIP"
+msgstr "خطای غیرمنتظره در نصب قالب ZIP"
+
+#, python-format
+msgid "Unexpected error while verifying payment %s"
+msgstr "خطای غیرمنتظره در تأیید پرداخت %s"
+
+msgid "Unsigned (sites will refuse to install it)"
+msgstr "بدون امضا (سایت‌ها نصب را رد می‌کنند)"
+
+msgid "Unsigned packages are not accepted"
+msgstr "بستهٔ بدون امضا پذیرفته نمی‌شود"
+
+#, python-format
+msgid "Up to date (%(a1)s)."
+msgstr "به‌روز است (%(a1)s)."
+
+msgid "User not found."
+msgstr "کاربر پیدا نشد."
+
+msgid "Version (default: the latest compatible version)"
+msgstr "نسخه (پیش‌فرض: آخرین نسخهٔ سازگار)"
+
+msgid "Warning: "
+msgstr "هشدار: "
+
+msgid "Warning: the private key is inside the project folder; move it outside the code repository and never commit it."
+msgstr "هشدار: کلید خصوصی داخل پوشهٔ پروژه است؛ آن را به مسیری بیرون از مخزن کد ببرید و هرگز commit نکنید."
+
+msgid "Writing the theme version stamp failed; other workers will not see the new theme until their next cache refresh."
+msgstr "نوشتن مهر نسخهٔ قالب‌ها ممکن نشد؛ workerهای دیگر تا کش بعدی قالب جدید را نمی‌بینند."
+
+msgid "[deprecated] "
+msgstr "[منسوخ] "
+
+msgid "changed"
+msgstr "تغییر کرد"
+
+msgid "collectstatic has been run"
+msgstr "collectstatic اجرا شده"
+
+msgid "collectstatic has not been run"
+msgstr "collectstatic اجرا نشده است"
+
+msgid "empty"
+msgstr "خالی"
+
+#, python-format
+msgid "key “%(key)s”"
+msgstr "کلید «%(key)s»"
+
+msgid "set"
+msgstr "تنظیم شده"
+
+msgid "signed"
+msgstr "امضاشده"
+
+#, python-format
+msgid "smtp:     %(a1)s:%(a2)s (TLS=%(a3)s, user=%(user_state)s, password=%(password_state)s)"
+msgstr "smtp:     %(a1)s:%(a2)s (TLS=%(a3)s, کاربر=%(user_state)s, رمز=%(password_state)s)"
+
+msgid "unknown"
+msgstr "نامعلوم"
+
+msgid "unsigned"
+msgstr "بدون امضا"
+
+msgid "will be changed"
+msgstr "تغییر می‌کند"
+
+#, python-format
+msgid "“%(old)s” is deprecated and will be removed in Ravix %(version)s; use “%(new)s” instead (docs/upgrade.md)."
+msgstr "«%(old)s» منسوخ است و در Ravix %(version)s حذف می‌شود؛ به‌جای آن از «%(new)s» استفاده کنید (docs/upgrade.md)."
+
+#, python-format
+msgid "✓ %(slug)s (version %(a2)s) is valid."
+msgstr "✓ %(slug)s (نسخه %(a2)s) معتبر است."
+
+#, python-format
+msgid "✗ %(slug)s is invalid:"
+msgstr "✗ %(slug)s نامعتبر است:"
+
+#, python-format
+msgid "✗ %(slug)s: no theme with this name was found."
+msgstr "✗ %(slug)s: قالبی با این نام پیدا نشد."

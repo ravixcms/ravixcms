@@ -2,6 +2,7 @@
 منبع‌های افزونه برای نصب‌کننده: مخزن رسمی راه دور (HTTPS) یا مخزن همین نمونه (apps.pluginhub). هر دو یک شکل داده برمی‌گردانند.
 هیچ اعتمادی به منبع نیست: تمامیت (SHA-256) و امضا را نصب‌کننده خودش دوباره می‌سنجد.
 """
+from apps.core.clilang import cli_gettext
 from django.utils.translation import gettext
 import json
 import logging
@@ -159,7 +160,7 @@ def latest_versions() -> dict:
     try:
         data = get_source().latest_map()
     except Exception as exc:  # noqa: BLE001
-        logger.warning("دریافت نسخه‌های مخزن ناموفق بود: %s", exc)
+        logger.warning(cli_gettext("Fetching the registry versions failed: %s"), exc)
         data = {}
     cache.set("plugins:latest_versions", data, 600 if data else 60)
     return data

@@ -3,6 +3,7 @@
 بازیابی رمز از ``django.contrib.auth.views`` می‌آید (توکن آن به هش رمز وابسته است، پس بعد از استفاده باطل می‌شود).
 هیچ پاسخ HTTP نباید فاش کند که یک ایمیل در سیستم هست یا نه؛ پس خطای ارسال فقط لاگ می‌شود.
 """
+from apps.core.clilang import cli_gettext
 import hashlib
 import logging
 from urllib.parse import urlsplit
@@ -70,6 +71,6 @@ def send_verification_email(request, user) -> bool:
     try:
         EmailMessage(subject, body, to=[user.email]).send(fail_silently=False)
     except Exception:  # noqa: BLE001 - SMTP خراب نباید ثبت‌نام/ورود را بشکند یا چیزی فاش کند
-        logger.exception("ارسال ایمیل تأیید برای کاربر %s ناموفق بود.", user.pk)
+        logger.exception(cli_gettext("Sending the verification email to user %s failed."), user.pk)
         return False
     return True

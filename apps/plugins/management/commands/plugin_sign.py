@@ -1,4 +1,5 @@
 """امضای یک بستهٔ zip (برای ناشران/توسعه‌دهندگان). خروجی: امضای base64 و شناسهٔ کلید."""
+from apps.core.clilang import cli_gettext
 from pathlib import Path
 
 from django.core.management.base import BaseCommand, CommandError
@@ -8,11 +9,11 @@ from apps.plugins.package import PackageError, inspect
 
 
 class Command(BaseCommand):
-    help = "بستهٔ zip را با کلید خصوصی (فایل) امضا می‌کند."
+    help = cli_gettext("Signs a zip package with a private key (file).")
 
     def add_arguments(self, parser):
         parser.add_argument("package")
-        parser.add_argument("--key-file", required=True, help="فایل seed کلید خصوصی (مجوز 600)")
+        parser.add_argument("--key-file", required=True, help=cli_gettext("Private key seed file (permissions 600)"))
 
     def handle(self, *args, package, key_file, **opts):
         try:

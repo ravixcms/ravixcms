@@ -1,3 +1,4 @@
+from apps.core.clilang import cli_gettext
 import getpass
 import os
 
@@ -10,8 +11,7 @@ from apps.installer import services
 
 
 class Command(BaseCommand):
-    help = ("نصب بدون وب (برای اسکریپت‌ها/Docker): مهاجرت‌ها را اجرا و مدیرکل و تنظیمات اولیه را می‌سازد. "
-            "رمز عبور فقط از متغیر محیطی (--password-env) یا پرسش تعاملی؛ هرگز از آرگومان خط فرمان.")
+    help = (cli_gettext("Install without the web (for scripts/Docker): runs migrations and creates the superadmin and initial settings. The password comes only from an environment variable (--password-env) or an interactive prompt; never from a command-line argument."))
 
     def add_arguments(self, parser):
         parser.add_argument("--site-name", default="", help="default: \"Ravix\" in the --language language")
@@ -19,28 +19,28 @@ class Command(BaseCommand):
         parser.add_argument("--timezone", default="Asia/Tehran")
         parser.add_argument("--username", required=True)
         parser.add_argument("--email", required=True)
-        parser.add_argument("--password-env", metavar="VAR", help="نام متغیر محیطی که رمز عبور را دارد")
+        parser.add_argument("--password-env", metavar="VAR", help=cli_gettext("Name of the environment variable that holds the password"))
         parser.add_argument("--skip-migrate", action="store_true")
 
     def handle(self, *args, **o):
         if services.is_installed():
-            raise CommandError("نصب قبلاً انجام شده است.")
+            raise CommandError(cli_gettext("Installation has already been done."))
         password = os.environ.get(o["password_env"]) if o["password_env"] else None
         if not password:
             if o["password_env"]:
-                raise CommandError(f"متغیر {o['password_env']} تنظیم نشده یا خالی است.")
-            password = getpass.getpass("رمز عبور مدیرکل: ")
-            if password != getpass.getpass("تکرار رمز عبور: "):
-                raise CommandError("دو رمز عبور یکسان نیستند.")
+                raise CommandError(cli_gettext("The variable %(a1)s is not set or is empty.") % {"a1": o['password_env']})
+            password = getpass.getpass(cli_gettext("Superadmin password: "))
+            if password != getpass.getpass(cli_gettext("Repeat password: ")):
+                raise CommandError(cli_gettext("The two passwords do not match."))
         try:
             validate_password(password, user=User(username=o["username"], email=o["email"]))
         except ValidationError as exc:
-            raise CommandError("؛ ".join(exc.messages)) from exc
+            raise CommandError(cli_gettext("; ").join(exc.messages)) from exc
         if not o["skip_migrate"]:
             services.run_migrations()
         try:
             services.perform_install(site_name=o["site_name"] or services.default_site_name(o["language"]), language=o["language"], timezone_name=o["timezone"],
                                      username=o["username"], email=o["email"].strip().lower(), password=password)
         except (services.InstallError, services.AlreadyInstalled) as exc:
-            raise CommandError(str(exc) or "نصب قبلاً انجام شده است.") from exc
-        self.stdout.write(self.style.SUCCESS("نصب کامل شد."))
+            raise CommandError(str(exc) or cli_gettext("Installation has already been done.")) from exc
+        self.stdout.write(self.style.SUCCESS(cli_gettext("Installation complete.")))

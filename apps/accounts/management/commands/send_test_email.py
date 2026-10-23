@@ -1,3 +1,4 @@
+from apps.core.clilang import cli_gettext
 import socket
 
 from django.conf import settings
@@ -6,28 +7,30 @@ from django.core.management.base import BaseCommand, CommandError
 
 
 class Command(BaseCommand):
-    help = "یک ایمیل آزمایشی با تنظیمات فعلی ایمیل می‌فرستد تا SMTP آزموده شود. رمز SMTP هرگز چاپ نمی‌شود."
+    help = cli_gettext("Sends a test email using the current email settings to check SMTP. The SMTP password is never printed.")
 
     def add_arguments(self, parser):
-        parser.add_argument("to", help="نشانی ایمیل گیرنده")
-        parser.add_argument("--subject", default="ایمیل آزمایشی Ravix")
+        parser.add_argument("to", help=cli_gettext("Recipient email address"))
+        parser.add_argument("--subject", default=cli_gettext("Ravix test email"))
 
     def handle(self, *args, to, subject, **options):
         if "@" not in to or " " in to:
-            raise CommandError("نشانی ایمیل معتبر نیست.")
+            raise CommandError(cli_gettext("The email address is not valid."))
         backend = settings.EMAIL_BACKEND
         self.stdout.write(f"backend:  {backend}")
         if backend.endswith("smtp.EmailBackend"):
-            self.stdout.write(f"smtp:     {settings.EMAIL_HOST}:{settings.EMAIL_PORT} (TLS={settings.EMAIL_USE_TLS}, کاربر={'تنظیم شده' if settings.EMAIL_HOST_USER else 'خالی'}, رمز={'تنظیم شده' if settings.EMAIL_HOST_PASSWORD else 'خالی'})")
+            user_state = cli_gettext("set") if settings.EMAIL_HOST_USER else cli_gettext("empty")
+            password_state = cli_gettext("set") if settings.EMAIL_HOST_PASSWORD else cli_gettext("empty")
+            self.stdout.write(cli_gettext("smtp:     %(a1)s:%(a2)s (TLS=%(a3)s, user=%(user_state)s, password=%(password_state)s)") % {"a1": settings.EMAIL_HOST, "a2": settings.EMAIL_PORT, "a3": settings.EMAIL_USE_TLS, "user_state": user_state, "password_state": password_state})
         self.stdout.write(f"from:     {settings.DEFAULT_FROM_EMAIL}")
-        body = f"این پیام آزمایشی است و نشان می‌دهد ایمیل Ravix از روی {socket.gethostname()} ارسال می‌شود."
+        body = cli_gettext("This is a test message; it shows that Ravix email is being sent from %(a1)s.") % {"a1": socket.gethostname()}
         try:
             sent = EmailMessage(subject, body, to=[to]).send(fail_silently=False)
         except Exception as exc:  # noqa: BLE001 - هر خطای SMTP/شبکه را روشن گزارش بده
-            raise CommandError(f"ارسال ناموفق بود: {type(exc).__name__}: {exc}") from None
+            raise CommandError(cli_gettext("Sending failed: %(a1)s: %(exc)s") % {"a1": type(exc).__name__, "exc": exc}) from None
         if not sent:
-            raise CommandError("ارسال ناموفق بود (backend هیچ پیامی نپذیرفت).")
+            raise CommandError(cli_gettext("Sending failed (the backend accepted no message)."))
         if backend.endswith("console.EmailBackend"):
-            self.stdout.write(self.style.WARNING("backend کنسولی است: پیام در خروجی بالا چاپ شد و ایمیل واقعی نرفت (حالت توسعه)."))
+            self.stdout.write(self.style.WARNING(cli_gettext("The backend is the console one: the message was printed above and no real email was sent (development mode).")))
         else:
-            self.stdout.write(self.style.SUCCESS(f"ایمیل به backend تحویل داده شد (به {to}). رسیدن به صندوق را خودتان بررسی کنید."))
+            self.stdout.write(self.style.SUCCESS(cli_gettext("The email was handed to the backend (to %(to)s). Check yourself that it reaches the inbox.") % {"to": to}))

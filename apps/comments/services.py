@@ -1,4 +1,5 @@
 """منطق دیدگاه: پاک‌سازی، ضداسپم (honeypot خارج از اینجا، نرخ، کلمات مسدود، تکراری)، ثبت و تغییر وضعیت."""
+from apps.core.clilang import cli_gettext
 from django.utils.translation import gettext
 import hashlib
 import logging
@@ -105,7 +106,7 @@ def submit(request, post, data) -> Comment | None:
     from apps.plugins.hooks import apply_filter, run_action
 
     if (data.get(HONEYPOT) or "").strip():
-        logger.info("honeypot دیدگاه پر شده بود؛ نادیده گرفته شد.")
+        logger.info(cli_gettext("The comment honeypot was filled in; ignored."))
         return None
     if rate_limited(request):
         raise CommentRejected({"form": gettext("You have submitted too many comments; try again in a few minutes.")}, status=429)

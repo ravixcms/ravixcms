@@ -10,6 +10,7 @@
 - ``collectstatic`` هرگز از داخل درخواست وب اجرا نمی‌شود.
 - اگر قفل فایل‌سیستمی قابل‌اعتماد نباشد یا ``rename`` اتمی ممکن نشود، نصب انجام **نمی‌شود** (جایگزین ناامن نداریم).
 """
+from apps.core.clilang import cli_gettext
 from django.utils.translation import gettext, gettext_lazy
 import fcntl
 import logging
@@ -196,7 +197,7 @@ def _touch_revision(root: Path) -> None:
     try:
         (root / REVISION_FILE).write_text(uuid.uuid4().hex, encoding="utf-8")
     except OSError:
-        logger.warning("نوشتن مهر نسخهٔ قالب‌ها ممکن نشد؛ workerهای دیگر تا کش بعدی قالب جدید را نمی‌بینند.")
+        logger.warning(cli_gettext("Writing the theme version stamp failed; other workers will not see the new theme until their next cache refresh."))
 
 
 # ------------------------------------------------------------------ نصب
@@ -274,7 +275,7 @@ def install_theme_zip(request, uploaded) -> InstallResult:
         _audit(request, gettext("Security rejection") if exc.security else gettext("Was rejected"), exc.message + extra)
         raise
     except Exception:  # noqa: BLE001
-        logger.exception("خطای غیرمنتظره در نصب قالب ZIP")
+        logger.exception(cli_gettext("Unexpected error while installing the theme ZIP"))
         _audit(request, gettext("Internal error"), gettext("The install stopped with an unexpected error; the details are only in the server log and no changes were applied."))
         raise ThemeInstallError(gettext("An unexpected error occurred and no changes were applied; the server administrator can see the details in the logs.")) from None
     _audit(request, gettext("Succeeded"), (gettext("Theme “%(slug)s” version %(value)s was installed (%(file_count)s files); it was not activated.") % {"slug": result.slug, "value": (result.version or '—'), "file_count": result.file_count}), ok=True)
