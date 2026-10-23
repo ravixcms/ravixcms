@@ -129,7 +129,7 @@ print(p.digital_file.path)
         sh([PY, "manage.py", "check"], env)
         check(True, "manage.py check پس از بازیابی سالم است")
         client = sh([PY, "manage.py", "shell", "-c",
-                     "from django.test import Client; c=Client(); r=c.get('/blog/bk-post/'); print('PAGE', r.status_code, 'متن مهم' in r.content.decode())"], env)
+                     "from django.test import Client; c=Client(); r=c.get('/fa/blog/bk-post/'); print('PAGE', r.status_code, 'متن مهم' in r.content.decode())"], env)
         check("PAGE 200 True" in client.stdout, "نوشتهٔ بازیابی‌شده در سایت عمومی نمایش داده می‌شود")
         print("۷) مسیر PostgreSQL در به‌روزرسان (apps.updater PostgresBackend: pg_dump/pg_restore)")
         code = f"""

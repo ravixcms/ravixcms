@@ -27,14 +27,26 @@ def systemd_unit_state(unit: str):
 class Command(BaseCommand):
     help = cli_gettext("Checks deployment readiness (configuration, security, migrations, paths). Exits with code 1 on errors.")
 
+    def add_arguments(self, parser):
+        parser.add_argument("--ci", action="store_true", default=False,
+                            help=cli_gettext("CI mode (also RAVIX_CI=1): checks that only make sense on a real production server (systemd timers, folder existence and permissions) are reported as warnings instead of errors. Security and configuration checks stay strict."))
+
     def handle(self, *args, **options):
         errors, warns, oks = [], [], []
+        ci = bool(options.get("ci")) or os.environ.get("RAVIX_CI", "").strip().lower() in {"1", "true", "yes", "on"}
 
         def need(cond, ok, bad):
             (oks if cond else errors).append(ok if cond else bad)
 
         def advise(cond, ok, bad):
             (oks if cond else warns).append(ok if cond else bad)
+
+        def server(cond, ok, bad):
+            """A check about the production server itself (systemd, folders and their ownership): an error on a real server, a warning in CI mode."""
+            (oks if cond else (warns if ci else errors)).append(ok if cond else bad)
+
+        if ci:
+            warns.append(cli_gettext("CI mode: server-only checks (systemd timers, folders and their permissions) are reported as warnings; never use this mode to approve a real server"))
 
         need(not settings.DEBUG, cli_gettext("DEBUG is off"), cli_gettext("DEBUG is on"))
         need(len(settings.SECRET_KEY) >= 32 and "insecure" not in settings.SECRET_KEY.lower(), cli_gettext("SECRET_KEY is strong"), cli_gettext("SECRET_KEY is weak or the default"))
@@ -53,7 +65,7 @@ class Command(BaseCommand):
         advise(not (n_pages or n_posts), cli_gettext("No page or post has a language code as its slug"),
                cli_gettext("%(n_pages)s pages and %(n_posts)s posts have a slug equal to a language code (for example /de/ is now the German home page). Run: python manage.py ravix_fix_slugs") % {"n_pages": n_pages, "n_posts": n_posts})
         media = str(settings.MEDIA_ROOT)
-        need(os.path.isdir(media) and os.access(media, os.W_OK), cli_gettext("The media folder is writable"), cli_gettext("The media folder (%(media)s) does not exist or is not writable (create it: mkdir -p %(media)s and give ownership to the service user)") % {"media": media})
+        server(os.path.isdir(media) and os.access(media, os.W_OK), cli_gettext("The media folder is writable"), cli_gettext("The media folder (%(media)s) does not exist or is not writable (create it: mkdir -p %(media)s and give ownership to the service user)") % {"media": media})
         advise(os.path.isdir(settings.STATIC_ROOT) and os.listdir(settings.STATIC_ROOT), cli_gettext("collectstatic has been run"), cli_gettext("collectstatic has not been run"))
         # --- کش (محدودسازی ورود از کش می‌خواند؛ کش خراب = خطای ۵۰۰ در ورود) ---
         from django.core.cache import caches
@@ -61,7 +73,7 @@ class Command(BaseCommand):
         cache_conf = settings.CACHES.get("default", {})
         if cache_conf.get("BACKEND", "").endswith("FileBasedCache"):
             cdir = str(cache_conf.get("LOCATION", ""))
-            need(os.path.isdir(cdir) and os.access(cdir, os.W_OK), cli_gettext("The cache folder (%(cdir)s) is writable") % {"cdir": cdir},
+            server(os.path.isdir(cdir) and os.access(cdir, os.W_OK), cli_gettext("The cache folder (%(cdir)s) is writable") % {"cdir": cdir},
                  cli_gettext("The cache folder (%(cdir)s) does not exist or is not writable for the service user (use CacheDirectory=ravix in ravix.service)") % {"cdir": cdir})
         try:
             probe = "ravix-preflight-probe"
@@ -101,7 +113,7 @@ class Command(BaseCommand):
             warns.append(cli_gettext("Old environment variables are in use: ") + cli_gettext(", ").join(sorted(LEGACY_ENV_USED))
                          + cli_gettext(" — rename them to RAVIX_* (they are removed in 2.0; docs/upgrade.md)"))
         static_root = str(settings.STATIC_ROOT)
-        need(os.path.isdir(static_root) and os.access(static_root, os.R_OK), cli_gettext("STATIC_ROOT exists and is readable"), cli_gettext("STATIC_ROOT (%(static_root)s) does not exist or is not readable; run collectstatic") % {"static_root": static_root})
+        server(os.path.isdir(static_root) and os.access(static_root, os.R_OK), cli_gettext("STATIC_ROOT exists and is readable"), cli_gettext("STATIC_ROOT (%(static_root)s) does not exist or is not readable; run collectstatic") % {"static_root": static_root})
         # --- تایمرهای systemd: بدون آن‌ها نوشتهٔ زمان‌بندی‌شده منتشر نمی‌شود و پشتیبان گرفته نمی‌شود ---
         timers = [("ravix-publish-scheduled.timer", cli_gettext("Publishing scheduled posts")), ("ravix-backup.timer", cli_gettext("Daily backup"))]
         if settings.SHOP_ENABLED:
@@ -119,7 +131,7 @@ class Command(BaseCommand):
                 unavailable = True
                 continue
             enabled, active = state
-            need(enabled in _ENABLED_OK and active == "active", cli_gettext("The timer %(unit)s (%(label)s) is active") % {"unit": unit, "label": label},
+            server(enabled in _ENABLED_OK and active == "active", cli_gettext("The timer %(unit)s (%(label)s) is active") % {"unit": unit, "label": label},
                  cli_gettext("The timer %(unit)s (%(label)s) is not active (enabled=%(enabled)s, active=%(active)s): sudo cp deploy/%(a5)s.{service,timer} /etc/systemd/system/ && sudo systemctl daemon-reload && sudo systemctl enable --now %(unit)s") % {"unit": unit, "label": label, "enabled": enabled, "active": active, "a5": unit[:-6]})
         if unavailable:
             warns.append(cli_gettext("The state of the systemd timers (scheduled publishing, backup, orders) could not be checked; run again on a server with systemd or look manually with “systemctl list-timers”"))
@@ -194,10 +206,10 @@ class Command(BaseCommand):
         need(not bad_keys, cli_gettext("Trusted keys (env) are valid"), cli_gettext("RAVIX_TRUSTED_PUBLIC_KEYS contains an invalid entry: %(bad_keys)s") % {"bad_keys": bad_keys})
         if settings.RAVIX_PLUGIN_WEB_INSTALL:
             warns.append(cli_gettext("Plugin installation from the web is on (RAVIX_PLUGIN_WEB_INSTALL); keep it on only if you need it, because a plugin is executable code"))
-            need(install_dir.is_dir() and os.access(str(install_dir), os.W_OK), cli_gettext("The plugin install folder is writable"),
+            server(install_dir.is_dir() and os.access(str(install_dir), os.W_OK), cli_gettext("The plugin install folder is writable"),
                  cli_gettext("The plugin install folder (%(install_dir)s) does not exist or is not writable") % {"install_dir": install_dir})
             backup_dir = Path(settings.RAVIX_PLUGIN_BACKUP_DIR)
-            need(backup_dir.is_dir() and os.access(str(backup_dir), os.W_OK), cli_gettext("The plugin backup folder is writable"),
+            server(backup_dir.is_dir() and os.access(str(backup_dir), os.W_OK), cli_gettext("The plugin backup folder is writable"),
                  cli_gettext("The plugin backup folder (%(backup_dir)s) does not exist or is not writable") % {"backup_dir": backup_dir})
             advise(bool(signing.trusted_keys()), cli_gettext("A trusted signing key is defined"), cli_gettext("No trusted key is defined; a signed package is not accepted"))
         advise(not settings.RAVIX_PLUGINS_ALLOW_UNSIGNED, cli_gettext("Unsigned packages are not accepted"), cli_gettext("RAVIX_PLUGINS_ALLOW_UNSIGNED is on; local upload without a signature is allowed"))

@@ -56,6 +56,9 @@ jobs:
       - uses: actions/setup-python@v5
         with: { python-version: "${{ matrix.python }}", cache: pip, cache-dependency-path: requirements.lock }
       - run: pip install -r requirements.lock
+      # پوشه‌هایی که برنامه روی سرور واقعی دارد (در مخزن نیستند چون در .gitignore‌اند)
+      - name: پوشه‌های اجرایی
+        run: mkdir -p plugins_installed plugin_backups media staticfiles
       - name: DATABASE_URL (PostgreSQL 16)
         if: matrix.db == 'postgres'
         run: echo "DATABASE_URL=postgres://ravix:ci-only-password@localhost:5432/ravix" >> "$GITHUB_ENV"
@@ -63,6 +66,19 @@ jobs:
         run: python manage.py shell -c "from django.db import connection as c; print(c.vendor, getattr(c, 'pg_version', ''))"
       - name: Tests (سریال؛ آزمون‌ها پایگاه‌داده و کش را مشترک می‌گیرند)
         run: python manage.py test --verbosity 1
+      # preflight با تنظیمات تولید، روی PostgreSQL واقعی. بررسی‌های مخصوص سرور (systemd، تایمرها، پوشه‌ها) در حالت --ci هشدارند؛
+      # بررسی‌های پیکربندی و امنیت (DEBUG، SECRET_KEY، HTTPS، HSTS، کوکی Secure، PostgreSQL، مهاجرت‌ها) همچنان خطا می‌دهند.
+      - name: preflight (حالت CI)
+        if: matrix.db == 'postgres' && matrix.shop == 'true'
+        env:
+          DJANGO_SETTINGS_MODULE: config.settings.production
+          DJANGO_ALLOWED_HOSTS: example.com
+          RAVIX_CI: "1"
+        run: |
+          mkdir -p plugins_installed plugin_backups media staticfiles
+          export RAVIX_CACHE_DIR="$RUNNER_TEMP/ravix-cache"; mkdir -p "$RAVIX_CACHE_DIR"
+          python manage.py migrate --noinput -v 0
+          python manage.py ravix_preflight --ci
 
   e2e-postgres:
     name: "E2E (PostgreSQL 16؛ پشتیبان/بازیابی و به‌روزرسانی)"

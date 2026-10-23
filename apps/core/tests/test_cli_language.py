@@ -158,3 +158,60 @@ class StartThemeTests(SimpleTestCase):
             self.assertEqual(info.description, "A new theme based on the theme “default”; edit this description.")
             for path in (Path(tmp) / "demo-gen" / "templates").rglob("*.html"):
                 self.assertNotRegex(path.read_text(encoding="utf-8"), "[؀-ۿ]", path.name)
+
+
+class PreflightCiModeTests(TestCase):
+    """--ci / RAVIX_CI=1: server-only checks (systemd, folders) are warnings; configuration and security checks stay errors."""
+
+    def run_pf(self, *args, env=None, **over):
+        import os
+        from unittest import mock
+
+        out = StringIO()
+        base = dict(RAVIX_CLI_LANG="", LANGUAGE_CODE="en", RAVIX_PLUGIN_WEB_INSTALL=True,
+                    RAVIX_PLUGIN_INSTALL_DIR="/nonexistent/ci-plugins", RAVIX_PLUGIN_BACKUP_DIR="/nonexistent/ci-backups")
+        base.update(over)
+        code = 0
+        with override_settings(**base), translation.override("en"), mock.patch.dict(os.environ, env or {}), \
+                mock.patch("apps.core.management.commands.ravix_preflight.systemd_unit_state", return_value=("not-found", "inactive")):
+            try:
+                call_command("ravix_preflight", *args, stdout=out, stderr=StringIO())
+            except SystemExit as exc:
+                code = exc.code
+        return out.getvalue(), code
+
+    def lines(self, out, mark):
+        return [line for line in out.splitlines() if line.strip().startswith(mark)]
+
+    def test_server_checks_are_errors_without_ci(self):
+        out, code = self.run_pf()
+        self.assertEqual(code, 1)
+        errors = "\n".join(self.lines(out, "✘"))
+        self.assertIn("is not active", errors)  # systemd timers
+        self.assertIn("plugin install folder", errors)
+        self.assertIn("plugin backup folder", errors)
+
+    def test_ci_flag_and_env_turn_server_checks_into_warnings(self):
+        for args, env in ((("--ci",), None), ((), {"RAVIX_CI": "1"})):
+            out, _ = self.run_pf(*args, env=env)
+            errors = "\n".join(self.lines(out, "✘"))
+            warnings = "\n".join(self.lines(out, "!"))
+            for text in ("is not active", "plugin install folder", "plugin backup folder", "STATIC_ROOT"):
+                self.assertNotIn(text, errors)
+            self.assertIn("is not active", warnings)
+            self.assertIn("plugin install folder", warnings)
+            self.assertIn("CI mode", warnings)
+
+    def test_ci_mode_keeps_configuration_and_security_checks_strict(self):
+        out, code = self.run_pf("--ci", DEBUG=True, SECRET_KEY="short", SESSION_COOKIE_SECURE=False)
+        errors = "\n".join(self.lines(out, "✘"))
+        self.assertEqual(code, 1)
+        for text in ("DEBUG is on", "SECRET_KEY is weak", "Cookies are not Secure", "SECURE_SSL_REDIRECT is off"):
+            self.assertIn(text, errors)
+
+    def test_ci_warnings_vanish_when_everything_is_in_place(self):
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as d:
+            out, _ = self.run_pf("--ci", RAVIX_PLUGIN_INSTALL_DIR=d, RAVIX_PLUGIN_BACKUP_DIR=d)
+        self.assertNotIn("plugin install folder", "\n".join(self.lines(out, "!")))

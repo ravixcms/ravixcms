@@ -116,8 +116,8 @@ def main():
         m = s7 / "apps/updater/models.py"
         m.write_text(m.read_text().replace("    restart_required = models.BooleanField(default=False)\n",
                                            "    restart_required = models.BooleanField(default=False)\n    e2e_note = models.CharField(max_length=20, blank=True)\n"), encoding="utf-8")
-        (s7 / "apps/updater/migrations/0002_e2e_note.py").write_text(
-            "from django.db import migrations, models\n\n\nclass Migration(migrations.Migration):\n    dependencies = [('updater', '0001_initial')]\n"
+        (s7 / "apps/updater/migrations/0003_e2e_note.py").write_text(
+            "from django.db import migrations, models\n\n\nclass Migration(migrations.Migration):\n    dependencies = [('updater', '0002_i18n_msgids')]\n"
             "    operations = [migrations.AddField('updaterun', 'e2e_note', models.CharField(max_length=20, blank=True))]\n", encoding="utf-8")
         run(["manage.py", "ravix_release", "core", "--source", str(s7), "--out", str(tmp / "dist"), "--key-file", str(tmp / "release.key")], site, env)
 
@@ -132,7 +132,7 @@ def main():
         check("0.7.0" in r.stdout, "ارتقا گزارش موفق داد")
         check(re.search(r'RAVIX_VERSION = "0.7.0"', (site / "apps/core/version.py").read_text()) is not None, "نسخهٔ روی دیسک 0.7.0 است")
         check("e2e_note" in columns(db), "مهاجرت واقعی دیتابیس اعمال شد")
-        check("0002_e2e_note" in applied(db), "مهاجرت در django_migrations ثبت شد")
+        check("0003_e2e_note" in applied(db), "مهاجرت در django_migrations ثبت شد")
         check(not list((site).glob(".ravix-old*")), "پوشهٔ موقت جایگزینی پاک شد")
         v7 = tree_hash(site, ["apps", "config", "templates", "static", "manage.py"])
         hist = run(["manage.py", "ravix_update", "history"], site, env).stdout
@@ -143,9 +143,9 @@ def main():
         s8 = tmp / "src080"
         shutil.copytree(s7, s8, ignore=shutil.ignore_patterns("__pycache__"))
         set_version(s8, "0.8.0")
-        (s8 / "apps/updater/migrations/0003_boom.py").write_text(
+        (s8 / "apps/updater/migrations/0004_boom.py").write_text(
             "from django.db import migrations, models\n\n\ndef boom(apps, schema_editor):\n    raise RuntimeError('migration exploded postgres://user:S3CR3TPASS@db/x')\n\n\n"
-            "class Migration(migrations.Migration):\n    dependencies = [('updater', '0002_e2e_note')]\n"
+            "class Migration(migrations.Migration):\n    dependencies = [('updater', '0003_e2e_note')]\n"
             "    operations = [migrations.AddField('updaterun', 'e2e_other', models.CharField(max_length=5, blank=True, default='')), migrations.RunPython(boom)]\n", encoding="utf-8")
         run(["manage.py", "ravix_release", "core", "--source", str(s8), "--out", str(tmp / "dist"), "--key-file", str(tmp / "release.key")], site, env)
         # برای این‌که 0.8.0 آخرین باشد (نه 0.7.0 دوباره): خودکار انتخاب می‌شود
@@ -154,7 +154,7 @@ def main():
         check("S3CR3TPASS" not in r.stdout + r.stderr, "رمز داخل خطا در خروجی دستور نیامد")
         check(re.search(r'RAVIX_VERSION = "0.7.0"', (site / "apps/core/version.py").read_text()) is not None, "نسخهٔ روی دیسک به 0.7.0 برگشت")
         check(tree_hash(site, ["apps", "config", "templates", "static", "manage.py"]) == v7, "همهٔ فایل‌ها بایت‌به‌بایت مثل قبل از تلاش ارتقا است")
-        check("0003_boom" not in applied(db) and "e2e_other" not in columns(db), "دیتابیس به وضعیت قبل از ارتقا برگشت (بدون ستون/مهاجرت نیمه‌کاره)")
+        check("0004_boom" not in applied(db) and "e2e_other" not in columns(db), "دیتابیس به وضعیت قبل از ارتقا برگشت (بدون ستون/مهاجرت نیمه‌کاره)")
         check("e2e_note" in columns(db), "داده/ساختار 0.7.0 سالم ماند")
         row = query(db, "select status, instr(error||recovery, 'S3CR3TPASS') from updater_updaterun order by id desc limit 1",
                     "select status, position('S3CR3TPASS' in error||recovery) from updater_updaterun order by id desc limit 1")[0]
@@ -172,7 +172,7 @@ def main():
         check(r.returncode != 0 and tree_hash(site, ["apps", "config", "templates", "static", "manage.py"]) == v7, "بدون تأیید صریح چیزی تغییر نکرد")
         run(["manage.py", "ravix_update", "rollback", "--run", up_id, "--yes-data-loss"], site, env)
         check(tree_hash(site, ["apps", "config", "templates", "static", "manage.py"]) == v0, "فایل‌ها دقیقاً به 0.6.0 برگشتند")
-        check("e2e_note" not in columns(db) and "0002_e2e_note" not in applied(db), "دیتابیس به 0.6.0 برگشت")
+        check("e2e_note" not in columns(db) and "0003_e2e_note" not in applied(db), "دیتابیس به 0.6.0 برگشت")
         hist = run(["manage.py", "ravix_update", "history"], site, env).stdout
         check("reverted" in hist and "rollback" not in hist.replace("rolled_back", ""), "تاریخچه: ارتقای اول reverted شد")
         run(["manage.py", "check"], site, env)

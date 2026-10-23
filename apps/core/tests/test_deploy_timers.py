@@ -7,8 +7,9 @@ import subprocess
 import tempfile
 from io import StringIO
 from pathlib import Path
-from unittest import mock
+from unittest import mock, skipUnless
 
+from django.apps import apps as django_apps
 from django.core.management import call_command
 from django.test import SimpleTestCase, TestCase, override_settings
 
@@ -114,6 +115,8 @@ class PreflightTimerTests(TestCase):
             run_preflight()
         self.assertEqual(calls, ["ravix-publish-scheduled.timer", "ravix-backup.timer"])
 
+    # The shop is an optional module (CI also runs with RAVIX_SHOP_ENABLED=false): without its app installed this check does not exist.
+    @skipUnless(django_apps.is_installed("apps.shop"), "the shop app is not installed (RAVIX_SHOP_ENABLED=false)")
     @override_settings(SHOP_ENABLED=True)
     def test_expire_orders_timer_checked_with_shop(self):
         calls = []

@@ -927,3 +927,9 @@ msgstr "زبان «%(a1)s» پشتیبانی نمی‌شود (یکی از این
 #, python-format
 msgid "message language: %(a1)s"
 msgstr "زبان پیام: %(a1)s"
+
+msgid "CI mode (also RAVIX_CI=1): checks that only make sense on a real production server (systemd timers, folder existence and permissions) are reported as warnings instead of errors. Security and configuration checks stay strict."
+msgstr "حالت CI (یا RAVIX_CI=1): بررسی‌هایی که فقط روی سرور تولید واقعی معنا دارند (تایمرهای systemd، وجود و دسترسی پوشه‌ها) خطا نیستند و هشدار حساب می‌شوند. بررسی‌های امنیتی و پیکربندی سخت‌گیر می‌مانند."
+
+msgid "CI mode: server-only checks (systemd timers, folders and their permissions) are reported as warnings; never use this mode to approve a real server"
+msgstr "حالت CI: بررسی‌های مخصوص سرور (تایمرهای systemd، پوشه‌ها و دسترسی‌هایشان) هشدار حساب می‌شوند؛ هرگز از این حالت برای تأیید یک سرور واقعی استفاده نکنید"
