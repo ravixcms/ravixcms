@@ -169,6 +169,13 @@ class PasswordResetRequestForm(StyledFormMixin, PasswordResetForm):
 
     email = forms.EmailField(label=gettext_lazy("Email"), max_length=254, widget=forms.EmailInput(attrs={"autocomplete": "email", "dir": "ltr", "autofocus": True}))
 
+    def send_mail(self, subject_template_name, email_template_name, context, from_email, to_email, html_email_template_name=None):
+        """The message is written in the recipient's language (profile, else the language the visitor is using now)."""
+        from apps.core.recipient import current_language, language_for_user, use_language
+
+        with use_language(language_for_user(context.get("user"), fallback=current_language())):
+            super().send_mail(subject_template_name, email_template_name, context, from_email, to_email, html_email_template_name)
+
     def save(self, *args, request=None, **kwargs):
         email = self.cleaned_data["email"]
         if request is not None and not throttle.allow_send(request, email, "reset"):

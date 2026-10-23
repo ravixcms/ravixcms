@@ -16,6 +16,8 @@ from django.conf import settings
 from django.db.models import Q
 from django.utils.translation import gettext
 
+from apps.core.recipient import site_default_language, use_language
+
 from apps.core.utils import RESERVED_PAGE_SLUGS, unique_slug
 
 
@@ -56,6 +58,7 @@ def count(page_model, post_model) -> tuple[int, int]:
 
 def fix(page_model, post_model, redirect_model, audit_model, *, dry_run: bool = False) -> list[Change]:
     changes: list[Change] = []
+    language = site_default_language()  # stored notes are read by the site's staff: the site language, not the terminal's
     for kind, obj in find(page_model, post_model):
         model = page_model if kind == "page" else post_model
         suffix = "page" if kind == "page" else "post"
@@ -69,13 +72,14 @@ def fix(page_model, post_model, redirect_model, audit_model, *, dry_run: bool = 
         model.objects.filter(pk=obj.pk).update(slug=new)  # not save(): no body re-render, no signals, nothing else changes
         redirect_model.objects.filter(old_path=new_path).delete()
         redirect_model.objects.filter(new_path=old_path).update(new_path=new_path)  # no redirect chains
-        redirect_model.objects.update_or_create(
-            old_path=old_path,
-            defaults={"new_path": new_path, "status_code": 301, "is_auto": True,
-                      "note": gettext("Automatic: the address was a language code")[:200]},
-        )
-        audit_model.objects.create(
-            action="update", object_type=str(model._meta.verbose_name)[:60], object_id=str(obj.pk), object_repr=str(obj.title)[:200],
-            message=(gettext("Address changed automatically because “%(slug)s” is a language prefix: %(old)s → %(new)s")
-                     % {"slug": old, "old": old_path, "new": new_path})[:400])
+        with use_language(language):
+            redirect_model.objects.update_or_create(
+                old_path=old_path,
+                defaults={"new_path": new_path, "status_code": 301, "is_auto": True,
+                          "note": gettext("Automatic: the address was a language code")[:200]},
+            )
+            audit_model.objects.create(
+                action="update", object_type=str(model._meta.verbose_name)[:60], object_id=str(obj.pk), object_repr=str(obj.title)[:200],
+                message=(gettext("Address changed automatically because “%(slug)s” is a language prefix: %(old)s → %(new)s")
+                         % {"slug": old, "old": old_path, "new": new_path})[:400])
     return changes

@@ -106,6 +106,32 @@ class ContactFormPluginTests(PluginTestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn("owner@example.com", mail.outbox[0].to)
 
+    def test_notification_is_written_in_the_owners_language(self):
+        """The owner's account language wins over the visitor's interface language; without an account: the site language."""
+        from django.core import mail
+        from django.utils import translation
+
+        from apps.accounts.models import User
+
+        PluginRecord.objects.filter(slug="contact_form").update(config={"notify_email": "owner@example.com"})
+        self.invalidate()
+        c = Client()
+        c.cookies["ravix_lang"] = "ru"
+        c.post(self.url, self.data)
+        with translation.override("fa"):
+            from django.utils.translation import gettext as fa_gettext
+            site_language_subject = fa_gettext("New contact form message: %(value)s").split("%")[0]
+        self.assertTrue(mail.outbox[-1].subject.startswith(site_language_subject))  # no account: the site language (fa), not ru
+        mail.outbox.clear()
+        owner = self.admin
+        User.objects.filter(pk=owner.pk).update(email="owner@example.com", language="de")
+        c.post(self.url, self.data)
+        with translation.override("de"):
+            from django.utils.translation import gettext as de_gettext
+            german = de_gettext("New contact form message: %(value)s").split("%")[0]
+        self.assertTrue(mail.outbox[-1].subject.startswith(german))
+        self.assertNotEqual(german, site_language_subject)
+
     def test_settings_page_for_contact_form(self):
         self.login(self.admin)
         url = reverse("plugins:settings", args=["contact_form"])
@@ -247,3 +273,4 @@ def crash(seo, api, **ctx):
         r = Client().get("/fa/about/")
         self.assertEqual(r.status_code, 200)
         self.assertTrue(PluginEvent.objects.filter(slug="crashy", kind="error").exists())
+

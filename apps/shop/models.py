@@ -136,6 +136,10 @@ class Order(models.Model):
     email = models.EmailField(gettext_lazy("Email"), blank=True)
     address = models.TextField(gettext_lazy("URL"), max_length=500, blank=True)  # فقط برای سفارش دارای کالای فیزیکی الزامی است
     note = models.CharField(gettext_lazy("Customer note"), max_length=300, blank=True)
+    # Interface language of the customer when the order was placed (guests included). Anything written for the customer later
+    # (order history messages, notifications) by a timer, a gateway callback or staff uses it. Empty on old orders: then the
+    # customer's profile language, then the site default.
+    language = models.CharField(gettext_lazy("Language"), max_length=10, blank=True, default="", editable=False)
     admin_note = models.CharField(gettext_lazy("Admin note"), max_length=500, blank=True)
     subtotal = models.PositiveBigIntegerField(gettext_lazy("Subtotal before discount"), default=0)
     discount_total = models.PositiveBigIntegerField(gettext_lazy("Total discount"), default=0)
