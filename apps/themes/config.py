@@ -42,6 +42,36 @@ DEFAULT_APPEARANCE = {
 }
 
 
+# Texts the default configuration is created with. They are stored in whatever language was active at that moment, so at render time
+# they are shown in the visitor's language (a menu saying "Home" must not stay English on the Persian page, or the reverse).
+# Text the owner wrote themselves is never touched: only an exact match of one of these words in some language is translated.
+DEFAULT_TEXTS = ("Home", "Posts", "View posts", "Latest posts")
+_default_text_index: dict | None = None
+
+
+def localize_default_text(text: str) -> str:
+    global _default_text_index
+    if not text or text not in _all_default_forms():
+        return text
+    return gettext(_default_text_index[text])
+
+
+def _all_default_forms() -> dict:
+    global _default_text_index
+    if _default_text_index is None:
+        from django.conf import settings
+        from django.utils import translation
+
+        index = {}
+        for msgid in DEFAULT_TEXTS:
+            index.setdefault(msgid, msgid)
+            for code, _name in settings.LANGUAGES:
+                with translation.override(code):
+                    index.setdefault(gettext(msgid), msgid)
+        _default_text_index = index
+    return _default_text_index
+
+
 def default_config() -> dict:
     return {
         "theme": DEFAULT_THEME,

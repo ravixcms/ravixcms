@@ -41,12 +41,11 @@ class SiteSettingsForm(StyledFormMixin, forms.ModelForm):
             bound = []
             for name in SiteSettings.TRANSLATABLE:
                 model_field = SiteSettings._meta.get_field(name)
-                widget = forms.Textarea(attrs={"rows": 3}) if name == "description" else forms.TextInput()
+                widget = forms.Textarea(attrs={"rows": 3, "class": "input"}) if name == "description" else forms.TextInput(attrs={"class": "input"})
                 key = self.translation_field_name(code, name)
                 self.fields[key] = forms.CharField(label=model_field.verbose_name, max_length=model_field.max_length or 1000,
                                                    required=False, widget=widget,
                                                    initial=(saved.get(code) or {}).get(name, ""))
-                widget.attrs["class"] = "input"
                 bound.append(key)
             self.translation_groups.append((code, native, bound))
 

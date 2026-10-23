@@ -36,3 +36,14 @@ class MarkdownSanitizingTests(SimpleTestCase):
     def test_empty(self):
         self.assertEqual(render_markdown(""), "")
         self.assertEqual(render_markdown(None), "")
+
+
+class AutoDirectionTests(SimpleTestCase):
+    def test_text_blocks_get_dir_auto(self):
+        html = render_markdown("## عنوان\n\nمتن فارسی\n\n- یک\n- دو\n\n> نقل\n\n| a | b |\n|---|---|\n| 1 | 2 |\n\n```\ncode\n```")
+        for tag in ("h2", "p", "ul", "blockquote", "table"):
+            self.assertIn(f'<{tag} dir="auto"', html, tag)
+        self.assertNotIn('<pre dir', html)  # code stays left-to-right (CSS)
+
+    def test_user_cannot_set_direction_themselves_to_break_layout(self):
+        self.assertNotIn('dir="rtl"', render_markdown('<p dir="rtl">x</p>'))

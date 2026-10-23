@@ -76,6 +76,15 @@
     });
   });
 
+  // ---- Text typed by people (titles, summaries, names) follows its own first strong character, so Persian text in an English
+  // panel (and English in a Persian one) is aligned and ordered correctly. Technical fields (slug, URL, email, keys …) stay as they are.
+  var TECHNICAL_FIELD = /slug|user(name)?$|e-?mail|url|link|phone|tel|key|token|secret|domain|path|host|port|code|color|ip$|regex|css|html|json|handler/i;
+  document.querySelectorAll("input[type=text], input:not([type]), input[type=search], textarea").forEach(function (el) {
+    if (el.hasAttribute("dir") || el.classList.contains("ltr") || el.readOnly) return;
+    if (TECHNICAL_FIELD.test(el.name || "") || TECHNICAL_FIELD.test(el.id || "")) return;
+    el.setAttribute("dir", "auto");
+  });
+
   // ---- File inputs: Ravix's own (translated) button and "no file chosen" text, keyboard accessible, with drag and drop.
   // The real <input type=file> stays in the page (transparent, covering the zone), so it is focusable, announced by screen
   // readers and works without any of this; the browser's own English "Choose File / No file chosen" is never shown.

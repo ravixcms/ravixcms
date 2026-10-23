@@ -128,3 +128,35 @@ class FileInputStringsTests(TestCase):
             catalog = gettext_module.translation("djangojs", settings.BASE_DIR / "locale", [to_locale(code)])
             for text in self.STRINGS:
                 self.assertNotEqual(catalog.gettext(text), text, f"{code}: {text}")
+
+
+class TranslationFieldStyleTests(TestCase):
+    def test_per_language_fields_use_the_panel_input_style(self):
+        """Without the class a textarea keeps its native width (cols=40) and overflows a phone screen."""
+        from apps.core.forms import SiteSettingsForm
+
+        form = SiteSettingsForm(instance=SiteSettings.load())
+        for key in form.fields:
+            if key.startswith("tr_"):
+                self.assertIn("input", form.fields[key].widget.attrs.get("class", ""), key)
+
+
+class DefaultMenuTextTests(TestCase):
+    """The default menu/section texts are stored in the language active when the site was set up; they follow the visitor."""
+
+    def test_default_labels_follow_the_visitor_language(self):
+        from apps.themes.config import localize_default_text
+
+        for lang, home in (("fa", "خانه"), ("de", "Startseite"), ("en", "Home")):
+            with translation.override(lang):
+                self.assertEqual(localize_default_text("Home"), home)
+                self.assertEqual(localize_default_text("خانه"), home)  # stored in Persian
+                self.assertEqual(localize_default_text("Startseite"), home)  # stored in German
+        with translation.override("de"):
+            self.assertEqual(localize_default_text("My own label"), "My own label")  # owner text is never touched
+            self.assertEqual(localize_default_text(""), "")
+
+    def test_public_header_menu_in_each_language(self):
+        for lang, home in (("fa", "خانه"), ("en", "Home"), ("ru", "Главная")):
+            html = self.client.get(f"/{lang}/").content.decode()
+            self.assertIn(f">{home}<", html, lang)

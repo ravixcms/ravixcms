@@ -8,7 +8,7 @@
 {% if page.show_title %}
 <div class="container">
   {% include "partials/breadcrumbs.html" %}
-  <header class="article-head"><h1>{{ page.title }}</h1></header>
+  <header class="article-head"><h1 dir="auto">{{ page.title }}</h1></header>
 </div>
 {% else %}<h1 class="sr-only">{{ page.title }}</h1>{% endif %}
 {{ page.body_html }}
@@ -16,7 +16,7 @@
 <div class="container">
   {% include "partials/breadcrumbs.html" %}
   <article class="article">
-    <header class="article-head"><h1>{{ page.title }}</h1></header>
+    <header class="article-head"><h1 dir="auto">{{ page.title }}</h1></header>
     <div class="prose">{{ page.body_html }}</div>
     <p class="muted updated">{% trans "Last updated:" %} <time datetime="{{ page.date_iso }}">{{ page.date_display }}</time></p>
   </article>

@@ -20,6 +20,8 @@ from django.utils.safestring import mark_safe
 
 from apps.content.models import Category, Page, Post, PublishStatus, Tag
 
+from apps.themes.config import localize_default_text
+
 from .dto import CategoryItem, CommentItem, CommentsSection, PageItem, PageLink, Pagination, PostItem, Section, TagItem
 from .formatting import date_display, date_iso, excerpt_from, reading_time
 
@@ -221,10 +223,10 @@ def build_sections(doc: dict, allowed: tuple, site: dict) -> list[Section]:
         kind, count = raw["type"], raw["count"]
         base = dict(
             type=kind,
-            title=raw["title"],
+            title=localize_default_text(raw["title"]),
             subtitle=raw["subtitle"],
             body_html=_plain_html(raw["body"]),
-            button_label=raw["button_label"] if raw["button_url"] else "",
+            button_label=localize_default_text(raw["button_label"]) if raw["button_url"] else "",
             button_url=localize_internal_url(raw["button_url"]),
         )
         if kind == "hero":

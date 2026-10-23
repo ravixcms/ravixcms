@@ -192,3 +192,24 @@ class PublicPrefixTests(TestCase):
         for code in LANGS:
             self.assertIn(f"Disallow: /{code}/search/", text)
         self.assertIn("Disallow: /panel/", text)
+
+
+class MixedDirectionContentTests(TestCase):
+    """A Persian post in an English page (and the reverse) is ordered and aligned by its own text, not by the page direction."""
+
+    @classmethod
+    def setUpTestData(cls):
+        Post.objects.create(title="عنوان فارسی", slug="fa-post", body="متن **فارسی**\n\n- یک\n- دو", excerpt="خلاصه",
+                            status=PublishStatus.PUBLISHED, publish_at="2020-01-01T00:00:00Z")
+
+    def test_title_excerpt_and_body_blocks_have_dir_auto(self):
+        html = self.client.get("/en/blog/fa-post/").content.decode()
+        self.assertIn('dir="ltr"', html)  # the page itself stays English/LTR
+        self.assertIn('<h1 itemprop="headline" dir="auto">', html)
+        self.assertIn('<p class="article-lead" dir="auto">', html)
+        self.assertIn('<p dir="auto">', html)
+        self.assertIn('<ul dir="auto">', html)
+
+    def test_listing_rows_have_dir_auto(self):
+        html = self.client.get("/en/blog/").content.decode()
+        self.assertRegex(html, r'<h2 class="row-title" dir="auto">')
