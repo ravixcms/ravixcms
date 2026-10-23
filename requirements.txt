@@ -1,5 +1,5 @@
 Django>=5.2,<6.0
-djangorestframework>=3.16
+djangorestframework>=3.18.3
 python-dotenv>=1.0
 psycopg[binary]>=3.2
 Pillow>=11.0
