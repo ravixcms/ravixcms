@@ -8,6 +8,7 @@ class CoreConfig(AppConfig):
     verbose_name = gettext_lazy("Ravix core")
 
     def ready(self):
+        self._activate_cli_language()
         from .navigation import NavItem, register_nav_item
 
         register_nav_item(
@@ -34,3 +35,23 @@ class CoreConfig(AppConfig):
                 active_urls=("core:site_health",),
             )
         )
+
+    @staticmethod
+    def _activate_cli_language():
+        """``manage.py <command>``: show translated (gettext) text in the operator's language, not the default one.
+
+        The language is RAVIX_CLI_LANG, else LANGUAGE_CODE (see apps/core/clilang.py). ``runserver`` and ``test`` keep their own
+        per-request / per-test language handling."""
+        import os
+        import sys
+
+        if os.path.basename(sys.argv[0] or "") not in ("manage.py", "django-admin") or len(sys.argv) < 2:
+            return
+        if sys.argv[1] in ("runserver", "test"):
+            return
+        from django.utils import translation
+
+        from .clilang import cli_language
+        from .regional import normalize_language
+
+        translation.activate(normalize_language(cli_language()) or "en")

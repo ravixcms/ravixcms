@@ -1,4 +1,5 @@
 """تنظیمات تولید: امنیت سخت‌گیرانه و الزام به متغیرهای محیطی."""
+from apps.core.clilang import cli_gettext
 import os
 
 from django.core.exceptions import ImproperlyConfigured
@@ -18,13 +19,13 @@ if not SECRET_KEY and env("RAVIX_SECRET_KEY_FILE"):  # مثل Docker secrets: ک
     except OSError:
         SECRET_KEY = ""
 if not SECRET_KEY or len(SECRET_KEY) < 32:
-    raise ImproperlyConfigured("DJANGO_SECRET_KEY باید تنظیم شده و حداقل ۳۲ کاراکتر باشد.")
+    raise ImproperlyConfigured(cli_gettext("DJANGO_SECRET_KEY must be set and at least 32 characters long."))
 
 if not env("DJANGO_ALLOWED_HOSTS"):
-    raise ImproperlyConfigured("DJANGO_ALLOWED_HOSTS باید در محیط تولید تنظیم شود.")
+    raise ImproperlyConfigured(cli_gettext("DJANGO_ALLOWED_HOSTS must be set in production."))
 
 if DATABASES["default"]["ENGINE"].endswith("sqlite3") and not env_bool("RAVIX_ALLOW_SQLITE_IN_PRODUCTION"):
-    raise ImproperlyConfigured("در محیط تولید باید DATABASE_URL به یک PostgreSQL اشاره کند.")
+    raise ImproperlyConfigured(cli_gettext("In production DATABASE_URL must point to a PostgreSQL database."))
 
 SECURE_SSL_REDIRECT = env_bool("DJANGO_SECURE_SSL_REDIRECT", True)
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
@@ -85,4 +86,4 @@ SESSION_COOKIE_AGE = int(env("RAVIX_SESSION_AGE", str(60 * 60 * 24 * 14)))
 if SHOP_ENABLED and SHOP_PAYMENT_GATEWAY == "sandbox" and not SHOP_ALLOW_SANDBOX_IN_PRODUCTION:
     import warnings
 
-    warnings.warn("فروشگاه روشن است ولی درگاه واقعی متصل نیست؛ ثبت سفارش تا اتصال درگاه غیرفعال می‌ماند.")
+    warnings.warn(cli_gettext("The shop is on but no real gateway is connected; ordering stays disabled until a gateway is connected."))

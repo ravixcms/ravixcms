@@ -1,3 +1,4 @@
+from apps.core.clilang import cli_gettext
 from django.utils.translation import gettext
 import logging
 
@@ -52,7 +53,7 @@ def install(request):
             except services.InstallError as exc:
                 form.add_error(None, str(exc))
             except Exception:  # noqa: BLE001
-                logger.exception("نصب ناموفق بود")
+                logger.exception(cli_gettext("Installation failed"))
                 form.add_error(None, gettext("The installation ran into an error; details are in the server log. Check the database and migrations."))
             else:
                 login(request, user, backend=settings.AUTHENTICATION_BACKENDS[0])

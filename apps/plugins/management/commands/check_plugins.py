@@ -1,10 +1,11 @@
+from apps.core.clilang import cli_gettext
 from django.core.management.base import BaseCommand, CommandError
 
 from apps.plugins import services
 
 
 class Command(BaseCommand):
-    help = "افزونه‌های موجود را بررسی می‌کند (manifest، سازگاری، اثرانگشت). هیچ کدی اجرا نمی‌شود."
+    help = cli_gettext("Checks the available plugins (manifest, compatibility, fingerprint). No code is run.")
 
     def add_arguments(self, parser):
         parser.add_argument("slugs", nargs="*")
@@ -14,7 +15,7 @@ class Command(BaseCommand):
         if slugs:
             rows = [r for r in rows if r.slug in slugs]
             if not rows:
-                raise CommandError("افزونه‌ای با این نام پیدا نشد.")
+                raise CommandError(cli_gettext("No plugin with this name was found."))
         bad = 0
         for r in rows:
             line = f"{r.slug:<20} {r.version or '-':<8} {r.status_label}"
@@ -26,4 +27,4 @@ class Command(BaseCommand):
             else:
                 self.stdout.write(self.style.SUCCESS(line))
         if bad:
-            raise CommandError(f"{bad} افزونه مشکل دارد.")
+            raise CommandError(cli_gettext("%(bad)s plugins have problems.") % {"bad": bad})

@@ -4,6 +4,7 @@
 هر عملیات تغییردهنده دوباره مجوز ``plugins.manage`` را بررسی می‌کند (دفاع در عمق؛ ویوها هم همین را اعمال می‌کنند) و در پایان
 رویداد ثبت می‌کند. «تأیید» یعنی مدیر اثرانگشت دقیق همان کدی را که دیده است می‌فرستد؛ اگر کد بین نمایش و تأیید تغییر کند، رد می‌شود.
 """
+from apps.core.clilang import cli_gettext
 from django.utils.translation import gettext, gettext_lazy
 import logging
 from dataclasses import dataclass
@@ -176,7 +177,7 @@ def _audit(request, message, slug):
     try:
         audit_log(request, AuditLog.Action.UPDATE, None, message, object_type=(gettext("Plugin %(slug)s") % {"slug": slug}))
     except Exception:  # noqa: BLE001
-        logger.exception("ثبت audit ناموفق بود")
+        logger.exception(cli_gettext("Recording the audit entry failed"))
 
 
 def _prepare(slug, approved_fp):

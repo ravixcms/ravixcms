@@ -9,6 +9,7 @@
 
 ارتقا: قفل ← پشتیبان zip (با SHA-256) ← جایگزینی اتمی ← افزونه تا تأیید مجدد غیرفعال می‌ماند. بازگشت: همان پشتیبان.
 """
+from apps.core.clilang import cli_gettext
 from django.utils.translation import gettext
 import hashlib
 import logging
@@ -96,7 +97,7 @@ def _logged(slug, user, kind):
         events.log_event(slug or "_installer", f"{kind}_failed", str(exc), level="error", actor=user)
         raise InstallError(str(exc))
     except Exception as exc:  # noqa: BLE001
-        logger.exception("خطای غیرمنتظره در %s افزونه %s", kind, slug)
+        logger.exception(cli_gettext("Unexpected error during %s of plugin %s"), kind, slug)
         events.log_event(slug or "_installer", f"{kind}_failed", gettext("Unexpected error"), level="error", detail=traceback.format_exc(), actor=user)
         raise InstallError(gettext("An unexpected error occurred and no change was applied; technical details were recorded in the “Plugin log”.")) from exc
 

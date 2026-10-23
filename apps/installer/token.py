@@ -3,6 +3,7 @@
 منبع توکن (به‌ترتیب): متغیر ``RAVIX_INSTALL_TOKEN`` ← فایل ``RAVIX_INSTALL_TOKEN_FILE`` (مجوز 600) ← ساخت تصادفی و ثبت در همان فایل
 و چاپ در لاگ (هشدار). در حالت DEBUG (توسعه) لازم نیست. پس از نصب فایل حذف می‌شود.
 """
+from apps.core.clilang import cli_gettext
 from django.utils.translation import gettext
 import hmac
 import logging
@@ -43,7 +44,7 @@ def expected_token() -> str:
         where = (gettext("Saved to %(path)s; or run: python manage.py ravix_install_token") % {"path": path})
     except OSError:
         where = gettext("Could not be saved (the folder is not writable); set RAVIX_INSTALL_TOKEN in the environment")
-    logger.warning("توکن نصب Ravix (برای صفحهٔ /install/): %s — %s", value, where)
+    logger.warning(cli_gettext("Ravix install token (for the /install/ page): %s — %s"), value, where)
     return value
 
 

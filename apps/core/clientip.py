@@ -8,6 +8,7 @@
 * اگر IP قابل‌تشخیص نبود ``None`` برمی‌گردد؛ تماس‌گیرنده نباید یک «IP مشترک» بسازد (محدودیت سراسری IP اعمال نمی‌شود).
 """
 from __future__ import annotations
+from apps.core.clilang import cli_gettext
 
 import ipaddress
 import logging
@@ -110,7 +111,7 @@ def _observe(state: str, remote: str) -> None:
     try:
         cache.add(f"clientip:obs:{state}", {"remote": remote[:64], "at": time.time()}, OBS_TTL)
     except Exception:  # noqa: BLE001 — ثبت مشاهده هرگز نباید درخواست را بشکند
-        logger.debug("ثبت مشاهدهٔ IP ناموفق بود", exc_info=True)
+        logger.debug(cli_gettext("Recording the IP observation failed"), exc_info=True)
 
 
 def observations() -> dict[str, dict]:

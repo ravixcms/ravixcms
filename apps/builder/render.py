@@ -5,6 +5,7 @@
 ``style`` درون‌خطی یا HTML آزاد تولید نمی‌شود و مقدارهای CSS فقط از فیلدهای اعتبارسنجی‌شده (عدد/انتخاب/رنگ هگز/شناسه‌ی رسانه)
 می‌آیند. سند پیش از رندر دوباره اعتبارسنجی می‌شود (دفاع در عمق؛ حتی اگر دیتابیس دستکاری شده باشد).
 """
+from apps.core.clilang import cli_gettext
 import logging
 from urllib.parse import quote
 
@@ -148,7 +149,7 @@ def render_document(doc: dict) -> str:
     try:
         doc = validate_document(doc)
     except DocumentInvalid as exc:
-        logger.warning("سند صفحه‌ساز هنگام رندر نامعتبر بود و نمایش داده نشد: %s", exc)
+        logger.warning(cli_gettext("The page-builder document was invalid at render time and was not displayed: %s"), exc)
         return mark_safe("")
     ids = media_ids(doc)
     media = {m.pk: m for m in Media.objects.filter(pk__in=ids)} if ids else {}

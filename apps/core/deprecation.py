@@ -5,6 +5,8 @@
 """
 import warnings
 
+from apps.core.clilang import cli_gettext
+
 REMOVAL_VERSION = "2.0"
 
 
@@ -14,7 +16,8 @@ class RavixDeprecationWarning(FutureWarning):
 
 def warn_legacy(old: str, new: str, *, stacklevel: int = 3) -> None:
     warnings.warn(
-        f"«{old}» منسوخ است و در Ravix {REMOVAL_VERSION} حذف می‌شود؛ به‌جای آن از «{new}» استفاده کنید (docs/upgrade.md).",
+        cli_gettext("“%(old)s” is deprecated and will be removed in Ravix %(version)s; use “%(new)s” instead (docs/upgrade.md).")
+        % {"old": old, "version": REMOVAL_VERSION, "new": new},
         RavixDeprecationWarning, stacklevel=stacklevel,
     )
 
@@ -44,7 +47,7 @@ def getenv(name: str):
 def upgrade_legacy_key(data: dict, where: str, new: str = "ravix", old: str = "ravin") -> dict:
     """manifest/فهرست قدیمی کلید «ravin» دارد. اگر «ravix» نبود، مقدار قدیمی به کلید جدید منتقل می‌شود (نسخهٔ کپی؛ ورودی تغییر نمی‌کند)."""
     if isinstance(data, dict) and new not in data and old in data:
-        warn_legacy(f"{where}: کلید «{old}»", f"کلید «{new}»", stacklevel=3)
+        warn_legacy(cli_gettext("%(where)s: key “%(key)s”") % {"where": where, "key": old}, cli_gettext("key “%(key)s”") % {"key": new}, stacklevel=3)
         data = dict(data)
         data[new] = data.pop(old)  # کلید قدیمی حذف می‌شود تا بررسی «کلید ناشناخته» نخورد
     return data

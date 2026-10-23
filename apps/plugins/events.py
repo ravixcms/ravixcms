@@ -1,4 +1,5 @@
 """ثبت رویداد/خطای افزونه‌ها و قطع‌کنندهٔ مدار (غیرفعال‌سازی خودکار). این توابع هرگز استثنا به بیرون نمی‌دهند."""
+from apps.core.clilang import cli_gettext
 from django.utils.translation import gettext
 import logging
 import traceback
@@ -17,7 +18,7 @@ def log_event(slug, kind, message, *, level="info", detail="", actor=None):
         return PluginEvent.objects.create(slug=slug[:40], level=level, kind=kind[:30], message=(message or "")[:400],
                                           detail=(detail or "")[:6000], actor=actor if getattr(actor, "pk", None) else None)
     except Exception:  # noqa: BLE001 - ثبت گزارش نباید خودش خطا بسازد
-        logger.exception("ثبت رویداد افزونه %s ناموفق بود", slug)
+        logger.exception(cli_gettext("Recording the plugin event %s failed"), slug)
         return None
 
 
@@ -28,7 +29,7 @@ def disable(slug, *, kind, message, level="error", detail="", auto=True):
     try:
         PluginRecord.objects.filter(slug=slug).update(is_active=False, auto_disabled=auto)
     except Exception:  # noqa: BLE001
-        logger.exception("غیرفعال‌سازی افزونه %s ناموفق بود", slug)
+        logger.exception(cli_gettext("Disabling the plugin %s failed"), slug)
     from . import state
 
     state.invalidate()
@@ -40,7 +41,7 @@ def record_error(slug, where, exc):
     from .models import PluginEvent
 
     detail = "".join(traceback.format_exception(type(exc), exc, exc.__traceback__))[-5500:]
-    logger.error("خطای افزونه %s (%s): %r", slug, where, exc)
+    logger.error(cli_gettext("Plugin error %s (%s): %r"), slug, where, exc)
     log_event(slug, "error", f"{where}: {type(exc).__name__}: {exc}"[:400], level="error", detail=detail)
     try:
         limit = int(getattr(settings, "RAVIX_PLUGIN_ERROR_LIMIT", 5))
@@ -51,5 +52,5 @@ def record_error(slug, where, exc):
             disable(slug, kind="auto_disable", message=(gettext("The plugin was automatically disabled because of %(recent)s errors within %(window)s seconds.") % {"recent": recent, "window": window}))
             return True
     except Exception:  # noqa: BLE001
-        logger.exception("بررسی قطع‌کنندهٔ مدار افزونه %s ناموفق بود", slug)
+        logger.exception(cli_gettext("Checking the circuit breaker of plugin %s failed"), slug)
     return False

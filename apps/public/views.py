@@ -1,4 +1,5 @@
 """ویوهای سایت عمومی. همگی فقط‌خواندنی‌اند و فقط محتوای منتشرشده را نشان می‌دهند."""
+from apps.core.clilang import cli_gettext
 from django.utils.translation import gettext
 import logging
 from xml.sax.saxutils import escape
@@ -378,5 +379,5 @@ def render_not_found(request):
     try:
         return render_page(request, "404.html", {"breadcrumbs": ()}, status=404, seo_factory=seo)
     except Exception:  # noqa: BLE001 - هر خطای قالب → صفحه خطای ساده پنل
-        logger.exception("رندر صفحه ۴۰۴ با قالب سایت ناموفق بود.")
+        logger.exception(cli_gettext("Rendering the 404 page with the site theme failed."))
         return None

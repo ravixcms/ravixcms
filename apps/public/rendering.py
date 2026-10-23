@@ -4,6 +4,7 @@
 مسئولیت‌ها: انتخاب قالب و پیکربندی (منتشرشده یا پیش‌نویس)، ساخت زمینه‌ی مشترک (سایت، منوها، متغیرهای رنگ/فونت،
 نوار مدیر)، هدرهای امنیتی و کش، و بازگشت خودکار به قالب پیش‌فرض اگر قالب فعال ناموجود یا خراب باشد.
 """
+from apps.core.clilang import cli_gettext
 import logging
 from dataclasses import dataclass
 
@@ -55,7 +56,7 @@ def resolve(request, *, force_draft: bool = False) -> Resolved:
     theme = themes.get(doc["theme"])
     fallback = False
     if theme is None or not theme.valid:
-        logger.warning("قالب «%s» در دسترس نیست؛ قالب پیش‌فرض جایگزین شد.", doc["theme"])
+        logger.warning(cli_gettext("The theme “%s” is not available; the default theme was used instead."), doc["theme"])
         theme, fallback = themes.get(DEFAULT_THEME), True
     if theme is None or not theme.valid:
         raise ThemeUnavailable()
@@ -225,7 +226,7 @@ def render_page(request, template: str, context: dict, *, status: int = 200, emb
         default = registry.get_theme(DEFAULT_THEME)
         if resolved.theme.slug == DEFAULT_THEME or default is None or not default.valid:
             raise
-        logger.exception("رندر قالب «%s» ناموفق بود؛ قالب پیش‌فرض جایگزین شد.", resolved.theme.slug)
+        logger.exception(cli_gettext("Rendering the theme “%s” failed; the default theme was used instead."), resolved.theme.slug)
         ctx["theme"] = {"slug": default.slug, "name": default.display_name, "version": default.version}
         html = engine.render(default, template, ctx)
     response = HttpResponse(html, status=status, content_type="text/html; charset=utf-8")

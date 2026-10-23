@@ -7,6 +7,7 @@
 * قفل سراسری (یکتایی در دیتابیس): دو ارتقای هم‌زمان ممکن نیست؛ قفل مانده پس از مدتی آزاد می‌شود و اجرای نیمه‌کاره «نیازمند بازیابی» علامت می‌خورد.
 * هیچ کلید/رمزی ثبت نمی‌شود: همهٔ متن‌های ذخیره‌شده از logs.sanitize می‌گذرند.
 """
+from apps.core.clilang import cli_gettext
 from django.utils.translation import gettext
 import logging
 import os
@@ -131,7 +132,7 @@ def step(run: UpdateRun, name: str, ok: bool = True, detail: str = ""):
     except DatabaseError:
         if ok:
             raise
-        logger.exception("ثبت مرحلهٔ شکست در تاریخچه ممکن نشد")
+        logger.exception(cli_gettext("Recording the failure step in the history was not possible"))
 
 
 def finish(run: UpdateRun, status: str, error: str = ""):
@@ -406,7 +407,7 @@ def apply_core(version: str | None = None, user=None, *, source=None, runner=Non
             finish(run, UpdateRun.Status.FAILED, str(exc))
         raise
     except Exception as exc:  # noqa: BLE001
-        logger.exception("ارتقای هسته با خطای غیرمنتظره شکست خورد")
+        logger.exception(cli_gettext("The core upgrade failed with an unexpected error"))
         if run.status == UpdateRun.Status.RUNNING:
             finish(run, UpdateRun.Status.FAILED, (gettext("Unexpected error: %(exc)s\n%(format_exc)s") % {"exc": exc, "format_exc": traceback.format_exc()}))
         raise UpdateError(gettext("An unexpected error occurred; the details were recorded in the update history.")) from exc
@@ -683,7 +684,7 @@ def apply_theme(slug: str, version: str | None = None, user=None, *, source=None
             finish(run, UpdateRun.Status.FAILED, "")
         raise
     except Exception as exc:  # noqa: BLE001
-        logger.exception("ارتقای قالب با خطای غیرمنتظره شکست خورد")
+        logger.exception(cli_gettext("The theme upgrade failed with an unexpected error"))
         if run.status == UpdateRun.Status.RUNNING:
             finish(run, UpdateRun.Status.FAILED, (gettext("Unexpected error: %(exc)s") % {"exc": exc}))
         raise UpdateError(gettext("An unexpected error occurred; the details were recorded in the history.")) from exc

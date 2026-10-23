@@ -1,4 +1,5 @@
 """کشف و نگهداری فهرست قالب‌های نصب‌شده (از پوشه‌های ``settings.RAVIX_THEME_DIRS``)."""
+from apps.core.clilang import cli_gettext
 from django.utils.translation import gettext
 import logging
 import os
@@ -37,11 +38,11 @@ def _discover() -> dict[str, ThemeInfo]:
             if not child.is_dir() or child.name.startswith((".", "_")):
                 continue
             if child.name in found:
-                logger.warning("قالب تکراری «%s» در %s نادیده گرفته شد.", child.name, base)
+                logger.warning(cli_gettext("Duplicate theme “%s” in %s was ignored."), child.name, base)
                 continue
             info = inspect_theme_dir(child)
             if not info.valid:
-                logger.warning("قالب «%s» نامعتبر است: %s", child.name, gettext("; ").join(info.errors))
+                logger.warning(cli_gettext("The theme “%s” is invalid: %s"), child.name, gettext("; ").join(info.errors))
             found[child.name] = info
     return found
 

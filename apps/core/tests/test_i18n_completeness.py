@@ -39,19 +39,20 @@ PERSIAN_DATA = {
     "apps/public/formatting.py": "Jalali month names (calendar data, used only while the language is Persian)",
     "apps/shop/forms.py": "Persian/Arabic-Indic digit tables used to normalise input",
     "apps/core/localefmt.py": "digit tables and the Persian thousands separator (formatting data)",
-    "apps/core/deprecation.py": "developer-facing deprecation warnings (never shown to site visitors)",
     "apps/shop/views.py": "values of the SHOP_CURRENCY_LABEL setting that are translated for display",
+    "config/settings/base.py": "language names are endonyms; currency labels are display data",
 }
 # Template text that is deliberately not translated: technical tokens and API names.
 TEMPLATE_LITERALS = {"(API )", "Authorization: Bearer ..."}
-# Directories whose Persian text is intentionally not translated (CLI / start-up errors for the server operator, tests).
-SKIP_PYTHON_DIRS = ("__pycache__", "/migrations", "/tests", "/management/commands", "config/settings")
+# Directories that are not scanned: migrations (historic verbose names) and tests. Management commands, settings and log lines ARE
+# scanned: they are written in English and marked with cli_gettext() (see CliCatalogTests).
+SKIP_PYTHON_DIRS = ("__pycache__", "/migrations", "/tests")
 
 # Technical-looking text: identifiers, paths, flags, domains, hash names, bare lowercase tokens (CSS classes, keywords).
 TECHNICAL = re.compile(r"[_/=\\]|--|\.py|\.json|\.md|\.html|\bhttps?://|\w\.\w+\.\w+|^[A-Z]+-\d+$|^[a-z0-9-]+$|^Ravix$")
 
 MARKERS = {"gettext", "gettext_lazy", "gettext_noop", "ngettext", "ngettext_lazy", "pgettext", "pgettext_lazy", "npgettext", "_"}
-LOG_METHODS = {"debug", "info", "warning", "warn", "error", "exception", "critical", "log"}
+CLI_MARKER = "cli_gettext"  # operator-facing text (apps/core/clilang.py): its own "cli" catalog
 
 
 def rel(path: Path) -> str:
@@ -239,8 +240,8 @@ def unmarked_persian_in_python():
             while up is not None:
                 if isinstance(up, ast.Call):
                     fn = getattr(up.func, "id", getattr(up.func, "attr", ""))
-                    if fn in MARKERS or (fn in LOG_METHODS and isinstance(up.func, ast.Attribute)):
-                        exempt = True  # marked for translation, or a log line (operator-facing, stays in one language)
+                    if fn in MARKERS or fn == CLI_MARKER:
+                        exempt = True  # marked for translation (a Persian msgid is caught by the msgid-language tests)
                         break
                 up = parent.get(id(up))
             if not exempt and rel(path) not in PERSIAN_DATA:
@@ -489,3 +490,63 @@ class TenLanguagesRenderingTests(TestCase):
             html = re.sub(r"<select\b.*?</select>", " ", self.get(path, "en").content.decode(), flags=re.S)  # the language switcher lists endonyms
             text = re.sub(r"<[^>]*>", " ", html)
             self.assertIsNone(ARABIC_SCRIPT.search(text), f"{path} contains Arabic-script text: {ARABIC_SCRIPT.findall(text)[:10]}")
+
+
+# --------------------------------------------------------------------------------------------------------------------
+# Operator-facing text (management commands, settings errors, preflight, logs): English msgids + the "cli" catalog
+# --------------------------------------------------------------------------------------------------------------------
+def cli_msgids_in_code():
+    found = {}
+    for base in ("apps", "config"):
+        for path in sorted((ROOT / base).rglob("*.py")):
+            posix = path.as_posix()
+            if any(part in posix for part in ("__pycache__", "/migrations", "/tests")):
+                continue
+            tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+            for node in ast.walk(tree):
+                if isinstance(node, ast.Call) and getattr(node.func, "id", getattr(node.func, "attr", "")) == CLI_MARKER and node.args:
+                    first = node.args[0]
+                    if isinstance(first, ast.Constant) and isinstance(first.value, str):
+                        found[first.value] = f"{rel(path)}:{node.lineno}"
+                    else:
+                        found[f"<not a literal> {rel(path)}:{node.lineno}"] = rel(path)
+    return found
+
+
+class CliCatalogTests(SimpleTestCase):
+    """Management commands, start-up errors, preflight and log lines are English and go through cli_gettext(); Persian is the
+    ``cli`` catalog, shown when RAVIX_CLI_LANG (or LANGUAGE_CODE) is ``fa``."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.in_code = cli_msgids_in_code()
+        cls.entries = {e["id"]: e for e in parse_po(LOCALE_DIR / "fa" / "LC_MESSAGES" / "cli.po")[0]}
+
+    def test_every_message_is_a_literal_in_english(self):
+        bad = [f"{where}: {msgid[:60]!r}" for msgid, where in self.in_code.items()
+               if msgid.startswith("<not a literal>") or ARABIC_SCRIPT.search(msgid)]
+        self.assertEqual(bad, [], "cli_gettext() needs a literal English msgid:\n" + "\n".join(bad))
+
+    def test_persian_catalog_covers_every_message(self):
+        missing = [f"{where}: {msgid[:60]!r}" for msgid, where in self.in_code.items()
+                   if msgid not in self.entries or not (self.entries[msgid]["str"] and self.entries[msgid]["str"][0])
+                   or self.entries[msgid]["fuzzy"]]
+        self.assertEqual(missing, [], "Add these to locale/fa/LC_MESSAGES/cli.po (and compile it):\n" + "\n".join(missing))
+
+    def test_catalog_has_no_unused_entries(self):
+        unused = [msgid[:60] for msgid in self.entries if msgid not in self.in_code]
+        self.assertEqual(unused, [], "cli.po entries that no code uses:\n" + "\n".join(unused))
+
+    def test_placeholders_match(self):
+        problems = []
+        for msgid, e in self.entries.items():
+            if collections.Counter(PLACEHOLDER.findall(msgid)) != collections.Counter(PLACEHOLDER.findall(e["str"][0])):
+                problems.append(msgid[:60])
+        self.assertEqual(problems, [])
+
+    def test_compiled_catalog_matches_the_po_file(self):
+        with (LOCALE_DIR / "fa" / "LC_MESSAGES" / "cli.mo").open("rb") as fh:
+            compiled = {k: v for k, v in pygettext.GNUTranslations(fh)._catalog.items() if k != ""}
+        expected = {msgid: e["str"][0] for msgid, e in self.entries.items() if e["str"] and e["str"][0] and not e["fuzzy"]}
+        self.assertEqual(compiled, expected, "cli.mo is out of date; run: msgfmt -o locale/fa/LC_MESSAGES/cli.mo locale/fa/LC_MESSAGES/cli.po")

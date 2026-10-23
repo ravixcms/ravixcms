@@ -1,31 +1,32 @@
+from apps.core.clilang import cli_gettext
 from django.core.management.base import BaseCommand, CommandError
 
 from apps.themes import registry
 
 
 class Command(BaseCommand):
-    help = "قالب‌های نصب‌شده را بر اساس قرارداد قالب (theme.json، فایل‌های الزامی، تگ‌های مجاز) بررسی می‌کند."
+    help = cli_gettext("Checks the installed themes against the theme contract (theme.json, required files, allowed tags).")
 
     def add_arguments(self, parser):
-        parser.add_argument("slugs", nargs="*", help="نامک قالب‌هایی که باید بررسی شوند (پیش‌فرض: همه)")
+        parser.add_argument("slugs", nargs="*", help=cli_gettext("Slugs of the themes to check (default: all)"))
 
     def handle(self, *args, **options):
         themes = registry.get_themes(refresh=True)
         slugs = options["slugs"] or list(themes)
         if not themes:
-            raise CommandError("هیچ قالبی در مسیرهای RAVIX_THEME_DIRS پیدا نشد.")
+            raise CommandError(cli_gettext("No theme was found in the RAVIX_THEME_DIRS paths."))
         bad = 0
         for slug in slugs:
             info = themes.get(slug)
             if info is None:
-                self.stderr.write(self.style.ERROR(f"✗ {slug}: قالبی با این نام پیدا نشد."))
+                self.stderr.write(self.style.ERROR(cli_gettext("✗ %(slug)s: no theme with this name was found.") % {"slug": slug}))
                 bad += 1
             elif info.valid:
-                self.stdout.write(self.style.SUCCESS(f"✓ {slug} (نسخه {info.version}) معتبر است."))
+                self.stdout.write(self.style.SUCCESS(cli_gettext("✓ %(slug)s (version %(a2)s) is valid.") % {"slug": slug, "a2": info.version}))
             else:
                 bad += 1
-                self.stderr.write(self.style.ERROR(f"✗ {slug} نامعتبر است:"))
+                self.stderr.write(self.style.ERROR(cli_gettext("✗ %(slug)s is invalid:") % {"slug": slug}))
                 for error in info.errors:
                     self.stderr.write(f"    - {error}")
         if bad:
-            raise CommandError(f"{bad} قالب نامعتبر یا ناموجود است.")
+            raise CommandError(cli_gettext("%(bad)s themes are invalid or missing.") % {"bad": bad})

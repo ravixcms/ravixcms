@@ -1,4 +1,5 @@
 """منطق نصب؛ مشترک بین صفحهٔ وب، دستور ``ravix_install`` و اسکریپت‌ها."""
+from apps.core.clilang import cli_gettext
 from django.utils.translation import gettext
 import logging
 
@@ -122,7 +123,7 @@ def perform_install(*, site_name: str, language: str, timezone_name: str, userna
 
         create_samples(author=user)
     except Exception:  # noqa: BLE001
-        logger.exception("ساخت محتوای نمونه ناموفق بود")
+        logger.exception(cli_gettext("Creating the sample content failed"))
     token.discard_token()
-    logger.info("نصب Ravix کامل شد؛ مدیرکل: %s", username)
+    logger.info(cli_gettext("Ravix installation complete; superadmin: %s"), username)
     return user
