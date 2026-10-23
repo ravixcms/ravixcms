@@ -19,7 +19,7 @@ class TimeStampedModel(models.Model):
 class SiteSettings(models.Model):
     """تنظیمات عمومی سایت؛ همیشه فقط یک رکورد (singleton) وجود دارد."""
 
-    site_name = models.CharField(gettext_lazy("Site name"), max_length=120, default="راویکس")
+    site_name = models.CharField(gettext_lazy("Site name"), max_length=120, default=gettext_lazy("Ravix"))
     tagline = models.CharField(gettext_lazy("Site tagline"), max_length=200, blank=True)
     description = models.TextField(gettext_lazy("Site description"), blank=True, max_length=1000)
     logo = models.ImageField(

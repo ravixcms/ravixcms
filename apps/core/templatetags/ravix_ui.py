@@ -9,6 +9,15 @@ from django.utils.safestring import mark_safe
 
 register = template.Library()
 
+from apps.core.i18n import tr as _tr
+
+
+@register.filter(name="tr")
+def tr_filter(value):
+    """Translate a dynamic text (plugin/theme manifest strings) with the active language."""
+    return _tr(value)
+
+
 # آیکون‌های خطی هم‌سبک (۲۴×۲۴، استایل Lucide)؛ محتوای path ها
 ICONS = {
     "undo": '<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>',

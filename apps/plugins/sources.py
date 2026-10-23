@@ -147,7 +147,7 @@ def pick_version(info: dict, version: str | None) -> dict:
             raise RegistryUnavailable(gettext("The registry has no version compatible with this Ravix."))
         entry = max(ok, key=lambda v: versions.parse(v["version"]) or (0, 0, 0))
     if not entry.get("compatibility", {}).get("compatible"):
-        raise RegistryUnavailable((gettext("This version is not compatible with the current Ravix: %(entry)s") % {"entry": "؛ ".join(entry.get("compatibility", {}).get("problems", []))}))
+        raise RegistryUnavailable((gettext("This version is not compatible with the current Ravix: %(entry)s") % {"entry": gettext("; ").join(entry.get("compatibility", {}).get("problems", []))}))
     return entry
 
 

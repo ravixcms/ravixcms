@@ -1,4 +1,5 @@
 """کشف و نگهداری فهرست قالب‌های نصب‌شده (از پوشه‌های ``settings.RAVIX_THEME_DIRS``)."""
+from django.utils.translation import gettext
 import logging
 import os
 import threading
@@ -40,7 +41,7 @@ def _discover() -> dict[str, ThemeInfo]:
                 continue
             info = inspect_theme_dir(child)
             if not info.valid:
-                logger.warning("قالب «%s» نامعتبر است: %s", child.name, "؛ ".join(info.errors))
+                logger.warning("قالب «%s» نامعتبر است: %s", child.name, gettext("; ").join(info.errors))
             found[child.name] = info
     return found
 

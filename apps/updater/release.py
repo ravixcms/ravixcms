@@ -79,7 +79,7 @@ def build_theme(theme_dir: Path, out_dir: Path, *, seed: str | None, requires: d
     theme_dir, out_dir = Path(theme_dir), Path(out_dir)
     info = inspect_theme_dir(theme_dir)
     if not info.valid:
-        raise UpdateError((gettext("Invalid format: %(items)s") % {"items": "؛ ".join(info.errors[:5])}))
+        raise UpdateError((gettext("Invalid format: %(items)s") % {"items": gettext("; ").join(info.errors[:5])}))
     out_dir.mkdir(parents=True, exist_ok=True)
     fname = f"ravix-theme-{info.slug}-{info.version}.zip"
     with zipfile.ZipFile(out_dir / fname, "w") as zf:

@@ -269,9 +269,9 @@ class UserManageView(CapabilityRequiredMixin, UpdateView):
         if old_role != self.object.role:
             changes.append((gettext("Role from “%(label)s” to “%(label2)s”") % {"label": Role(old_role).label, "label2": Role(self.object.role).label}))
         if old_active != self.object.is_active:
-            changes.append((gettext("Account %(value)s") % {"value": ("فعال شد" if self.object.is_active else "غیرفعال شد")}))
+            changes.append((gettext("Account %(value)s") % {"value": (gettext("was enabled") if self.object.is_active else gettext("was disabled"))}))
         if changes:
-            log_event(self.request, "update", self.object, (gettext("User “%(username)s”: %(changes)s.") % {"username": self.object.username, "changes": "؛ ".join(changes)}))
+            log_event(self.request, "update", self.object, (gettext("User “%(username)s”: %(changes)s.") % {"username": self.object.username, "changes": gettext("; ").join(changes)}))
         messages.success(self.request, (gettext("Changes to user “%(display_name)s” were saved.") % {"display_name": self.object.display_name}))
         return response
 

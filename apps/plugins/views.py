@@ -322,7 +322,7 @@ class InstallPackageView(PluginsAdminMixin, View):
         except PluginError as exc:
             messages.error(request, str(exc))
             return redirect("plugins:install_package")
-        services._audit(request, (gettext("Package of plugin “%(slug)s” (%(value)s) was placed via the installer") % {"slug": slug, "value": ('نصب' if kind == 'installed' else 'ارتقا')}), slug)
+        services._audit(request, (gettext("Package of plugin “%(slug)s” (%(value)s) was placed via the installer") % {"slug": slug, "value": (gettext("installed") if kind == 'installed' else gettext("upgraded"))}), slug)
         return _flash_result(request, kind, slug)
 
 
@@ -381,7 +381,7 @@ class TrustedKeysView(CapabilityRequiredMixin, View):
                 return self._render(request, 400)
             kid = signing.key_id(pub)
             _, created = TrustedKey.objects.get_or_create(key_id=kid, defaults={"public_key": pub, "label": label, "added_by": request.user})
-            events.log_event("_keys", "key_added" if created else "key_exists", (gettext("Key %(kid)s (%(label)s) %(value)s.") % {"kid": kid, "label": label, "value": ('افزوده شد' if created else 'از قبل بود')}), actor=request.user)
+            events.log_event("_keys", "key_added" if created else "key_exists", (gettext("Key %(kid)s (%(label)s) %(value)s.") % {"kid": kid, "label": label, "value": (gettext("was added") if created else gettext("already existed"))}), actor=request.user)
             messages.success(request, (gettext("Key %(kid)s was registered.") % {"kid": kid}) if created else gettext("This key was already registered."))
         elif op in ("toggle", "delete"):
             k = TrustedKey.objects.filter(pk=request.POST.get("pk")).first()

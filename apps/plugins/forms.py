@@ -1,5 +1,7 @@
 from django import forms
 
+from apps.core.i18n import tr
+
 from .settings_schema import SettingField
 
 
@@ -7,7 +9,7 @@ def build_settings_form(schema, data=None, initial=None):
     """از اسکیمای manifest فرم می‌سازد؛ اعتبارسنجی نهایی همیشه با SettingField.clean (یک منبع حقیقت) انجام می‌شود."""
     fields = {}
     for f in schema:
-        kw = {"label": f.label, "help_text": f.help, "required": False}
+        kw = {"label": tr(f.label), "help_text": tr(f.help), "required": False}
         if f.type == "bool":
             fields[f.key] = forms.BooleanField(widget=forms.CheckboxInput(attrs={"class": "check"}), **kw)
         elif f.type == "textarea":
@@ -15,7 +17,7 @@ def build_settings_form(schema, data=None, initial=None):
         elif f.type == "int":
             fields[f.key] = forms.CharField(widget=forms.NumberInput(attrs={"class": "input ltr", "min": f.min, "max": f.max}), **kw)
         elif f.type == "choice":
-            fields[f.key] = forms.ChoiceField(choices=list(f.choices), widget=forms.Select(attrs={"class": "input"}), **kw)
+            fields[f.key] = forms.ChoiceField(choices=[(v, tr(lbl)) for v, lbl in f.choices], widget=forms.Select(attrs={"class": "input"}), **kw)
         else:
             attrs = {"class": "input" + (" ltr" if f.type in ("email", "url") else ""), "maxlength": f.max_len}
             fields[f.key] = forms.CharField(widget=forms.TextInput(attrs=attrs), **kw)

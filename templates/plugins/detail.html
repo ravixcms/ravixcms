@@ -1,11 +1,11 @@
 {% extends "layouts/panel.html" %}
 {% load i18n %}
 {% load ravix_ui %}
-{% block title %}{{ row.name }}{% endblock %}
-{% block page_title %}{% blocktrans trimmed with name=row.name %}Plugin: {{ name }}{% endblocktrans %}{% endblock %}
+{% block title %}{{ row.name|tr }}{% endblock %}
+{% block page_title %}{% blocktrans trimmed with name=row.name|tr %}Plugin: {{ name }}{% endblocktrans %}{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>{{ row.name }} <span class="badge {% if row.status == 'active' %}badge-published{% elif row.status in 'invalid missing incompatible' %}badge-inactive{% elif row.status == 'update_pending' or row.status == 'auto_disabled' %}badge-warn{% else %}badge-draft{% endif %}">{{ row.status_label }}</span></h1>
-  <p>{{ row.description }}</p></div>
+<div class="page-head"><div><h1>{{ row.name|tr }} <span class="badge {% if row.status == 'active' %}badge-published{% elif row.status in 'invalid missing incompatible' %}badge-inactive{% elif row.status == 'update_pending' or row.status == 'auto_disabled' %}badge-warn{% else %}badge-draft{% endif %}">{{ row.status_label }}</span></h1>
+  <p>{{ row.description|tr }}</p></div>
   <a class="btn btn-light" href="{% url 'plugins:list' %}">{% trans "Back to the list" %}</a></div>
 {% if row.problems %}<div class="form-errors" role="alert"><ul>{% for p in row.problems %}<li>{{ p }}</li>{% endfor %}</ul></div>{% endif %}
 {% if integrity_error %}<div class="form-errors" role="alert"><p>{{ integrity_error }}</p></div>{% endif %}

@@ -123,7 +123,7 @@ class ApplyView(ManageMixin, View):
             last = UpdateRun.objects.first()
             return redirect("updater:run", pk=last.pk) if last and last.status != "running" else redirect("updater:home")
         _audit(request, (gettext("Updated %(component)s %(slug)s to %(to_version)s") % {"component": component, "slug": slug, "to_version": run.to_version}))
-        messages.success(request, (gettext("Update completed.%(value)s") % {"value": (" سرویس را راه‌اندازی مجدد کنید." if run.restart_required else "")}))
+        messages.success(request, (gettext("Update completed.%(value)s") % {"value": (gettext(" Restart the service.") if run.restart_required else "")}))
         return redirect("updater:run", pk=run.pk)
 
 

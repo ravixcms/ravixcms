@@ -193,7 +193,7 @@ def compat(new_version: str, requires: dict, *, component="core") -> tuple[list[
             if pl["ravix"] and not versions.satisfies(new_version, pl["ravix"]):
                 bad.append((gettext("Requires Ravix “%(pl)s”") % {"pl": pl['ravix']}))
             if bad:
-                msg = (gettext("Plugin “%(pl)s” is not compatible with the new version (%(bad)s).") % {"pl": pl['slug'], "bad": '؛ '.join(bad)})
+                msg = (gettext("Plugin “%(pl)s” is not compatible with the new version (%(bad)s).") % {"pl": pl['slug'], "bad": gettext("; ").join(bad)})
                 (problems if pl["active"] else warnings).append(msg + ("" if pl["active"] else gettext(" (it is disabled; it will not be enabled after the upgrade.)")))
         for th in versions.installed_themes():
             if th["slug"] == "default":
@@ -204,7 +204,7 @@ def compat(new_version: str, requires: dict, *, component="core") -> tuple[list[
             if th["ravix"] and not versions.satisfies(new_version, th["ravix"]):
                 bad.append((gettext("Requires Ravix “%(th)s”") % {"th": th['ravix']}))
             if bad:
-                warnings.append((gettext("Theme “%(th)s” may not be compatible with the new version (%(bad)s).") % {"th": th['slug'], "bad": '؛ '.join(bad)}))
+                warnings.append((gettext("Theme “%(th)s” may not be compatible with the new version (%(bad)s).") % {"th": th['slug'], "bad": gettext("; ").join(bad)}))
     return problems, warnings
 
 
@@ -377,7 +377,7 @@ def apply_core(version: str | None = None, user=None, *, source=None, runner=Non
             step(run, "index", True, (gettext("Target version %(entry)s") % {"entry": entry['version']}))
             problems, _w = compat(entry["version"], entry["requires"])
             if problems:
-                raise UpdateBlocked((gettext("Incompatible: %(problems)s") % {"problems": "؛ ".join(problems)}))
+                raise UpdateBlocked((gettext("Incompatible: %(problems)s") % {"problems": gettext("; ").join(problems)}))
             step(run, "compat_index", True)
             if core_blocked_by_plugins():
                 raise UpdateBlocked(gettext("A plugin install/upgrade is in progress; try again after it finishes."))
@@ -392,7 +392,7 @@ def apply_core(version: str | None = None, user=None, *, source=None, runner=Non
             req["packages"] = [*(req.get("packages") or []), *req_lines]
             problems, warnings = compat(entry["version"], req)
             if problems:
-                raise UpdateBlocked((gettext("Incompatible with the new package: %(problems)s") % {"problems": "؛ ".join(problems)}))
+                raise UpdateBlocked((gettext("Incompatible with the new package: %(problems)s") % {"problems": gettext("; ").join(problems)}))
             step(run, "compat", True, gettext("; ").join(warnings))
             if dry_run:
                 step(run, "dry_run", True, gettext("Dry run; no files were changed"))
@@ -620,7 +620,7 @@ def apply_theme(slug: str, version: str | None = None, user=None, *, source=None
                 raise UpdateBlocked((gettext("Version %(entry)s is not newer than the installed version (%(version)s).") % {"entry": entry['version'], "version": installed.version}))
             problems, _w = compat(entry["version"], entry["requires"], component="theme")
             if problems:
-                raise UpdateBlocked((gettext("Incompatible: %(problems)s") % {"problems": "؛ ".join(problems)}))
+                raise UpdateBlocked((gettext("Incompatible: %(problems)s") % {"problems": gettext("; ").join(problems)}))
             data = fetch_verified(src, "theme", slug, entry, run)
             work = _work_dir()
             tree = package.extract(data, work / "pkg")
@@ -653,7 +653,7 @@ def apply_theme(slug: str, version: str | None = None, user=None, *, source=None
                 registry.clear_cache()
                 info = inspect_theme_dir(target)
                 if not info.valid or info.version != entry["version"]:
-                    raise UpdateError((gettext("The theme could not be verified after replacement: %(items)s") % {"items": "؛ ".join(info.errors[:3])}))
+                    raise UpdateError((gettext("The theme could not be verified after replacement: %(items)s") % {"items": gettext("; ").join(info.errors[:3])}))
                 step(run, "verify", True)
             except BaseException as exc:  # noqa: BLE001
                 err = sanitize(exc)

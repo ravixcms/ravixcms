@@ -56,13 +56,13 @@
 <div class="theme-grid">
   {% for item in themes %}{% with t=item.info %}
   <article class="card theme-card{% if item.is_active %} is-active{% endif %}" aria-labelledby="theme-{{ t.slug }}">
-    {% if t.screenshot %}<img class="theme-shot" src="{% static t.screenshot_static_path %}" alt="{% blocktrans with name=t.display_name %}Preview of theme {{ name }}{% endblocktrans %}" loading="lazy" width="640" height="400">{% else %}<div class="theme-shot theme-shot-empty" aria-hidden="true">{% trans "No image" %}</div>{% endif %}
+    {% if t.screenshot %}<img class="theme-shot" src="{% static t.screenshot_static_path %}" alt="{% blocktrans with name=t.display_name|tr %}Preview of theme {{ name }}{% endblocktrans %}" loading="lazy" width="640" height="400">{% else %}<div class="theme-shot theme-shot-empty" aria-hidden="true">{% trans "No image" %}</div>{% endif %}
     <div class="card-body">
-      <h2 id="theme-{{ t.slug }}">{{ t.display_name }}
+      <h2 id="theme-{{ t.slug }}">{{ t.display_name|tr }}
         {% if item.is_active %}<span class="badge badge-published">{% trans "Active" %}</span>{% endif %}
         {% if not t.valid %}<span class="badge badge-inactive">{% trans "Invalid" %}</span>{% endif %}</h2>
       <p class="muted theme-meta"><span class="ltr">{{ t.slug }}</span>{% if t.version %} {% trans "· version" %} <span class="ltr">{{ t.version }}</span>{% endif %}{% if t.author %} · {{ t.author }}{% endif %}</p>
-      {% if t.description %}<p>{{ t.description }}</p>{% endif %}
+      {% if t.description %}<p>{{ t.description|tr }}</p>{% endif %}
       {% if not t.valid %}
         <ul class="theme-errors">{% for e in t.errors|slice:":5" %}<li>{{ e }}</li>{% endfor %}</ul>
       {% else %}

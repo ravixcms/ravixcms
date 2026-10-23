@@ -184,7 +184,7 @@ def _prepare(slug, approved_fp):
     if item is None:
         raise PluginError(gettext("Plugin not found."))
     if not item.valid:
-        raise PluginError((gettext("The plugin is not valid: %(errors)s") % {"errors": "؛ ".join(item.errors)}))
+        raise PluginError((gettext("The plugin is not valid: %(errors)s") % {"errors": gettext("; ").join(item.errors)}))
     try:
         fp = fingerprint(item.path)
     except IntegrityError as exc:
@@ -202,7 +202,7 @@ def install(slug, user, approved_fp, request=None):
     m = item.manifest
     problems = check_compat(m)
     if problems:
-        raise PluginError((gettext("Incompatible: %(problems)s") % {"problems": "؛ ".join(problems)}))
+        raise PluginError((gettext("Incompatible: %(problems)s") % {"problems": gettext("; ").join(problems)}))
     config, _ = clean_all(m.settings, {})
     rec = PluginRecord.objects.create(slug=slug, name=m.name, version=m.version, fingerprint=fp, manifest=m.to_json(), is_active=False,
                                       config=config, installed_by=user)
@@ -230,7 +230,7 @@ def activate(slug, user, request=None):
         raise PluginError(gettext("The plugin code has changed from the approved version; review and approve the changes first."))
     problems = check_compat(item.manifest)
     if problems:
-        raise PluginError((gettext("Incompatible: %(problems)s") % {"problems": "؛ ".join(problems)}))
+        raise PluginError((gettext("Incompatible: %(problems)s") % {"problems": gettext("; ").join(problems)}))
     rec.is_active, rec.auto_disabled = True, False
     rec.save(update_fields=["is_active", "auto_disabled", "updated_at"])
     state.invalidate()
@@ -250,7 +250,7 @@ def deactivate(slug, user, request=None):
         raise PluginError(gettext("The plugin is not installed."))
     dependents = [r.name for r in PluginRecord.objects.filter(is_active=True).exclude(slug=slug) if slug in (r.manifest.get("requires") or {})]
     if dependents:
-        raise PluginError((gettext("The following active plugins depend on it: %(dependents)s") % {"dependents": "، ".join(dependents)}))
+        raise PluginError((gettext("The following active plugins depend on it: %(dependents)s") % {"dependents": gettext(", ").join(dependents)}))
     rec.is_active = False
     rec.save(update_fields=["is_active", "updated_at"])
     registry.unload(slug)
@@ -275,7 +275,7 @@ def uninstall(slug, user, *, purge_data=False, remove_files=False, request=None)
         run_migrations(slug, item.path, rec.fingerprint, target="zero")
     rec.delete()
     registry.unload(slug)
-    events.log_event(slug, "uninstall", (gettext("Removed%(value)s") % {"value": (" (داده‌ها هم پاک شد)." if purge_data else " (داده‌ها نگه داشته شد).")}), actor=user)
+    events.log_event(slug, "uninstall", (gettext("Removed%(value)s") % {"value": (gettext(" (the data was deleted too).") if purge_data else gettext(" (the data was kept)."))}), actor=user)
     _audit(request, (gettext("Remove plugin “%(name)s”") % {"name": rec.name}), slug)
     if remove_files:
         from . import installer  # import تنبل: installer به services وابسته است
@@ -299,7 +299,7 @@ def approve_update(slug, user, approved_fp, request=None):
     registry.unload(slug)
     problems = check_compat(m)
     if problems:
-        raise PluginError((gettext("Incompatible: %(problems)s") % {"problems": "؛ ".join(problems)}))
+        raise PluginError((gettext("Incompatible: %(problems)s") % {"problems": gettext("; ").join(problems)}))
     old_version = rec.version
     config, _ = clean_all(m.settings, rec.config or {})
     rec.name, rec.version, rec.fingerprint, rec.manifest, rec.config = m.name, m.version, fp, m.to_json(), config

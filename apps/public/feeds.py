@@ -64,7 +64,7 @@ def feed_links(request, *, category=None, tag=None, site_name: str = "") -> tupl
     scopes = [(category, tag)] if (category is not None or tag is not None) else []
     scopes.append((None, None))
     for cat, tg in scopes:
-        label = name if cat is None and tg is None else (gettext("%(name)s — %(value)s") % {"name": name, "value": (cat.name if cat is not None else 'برچسب: ' + tg.name)})
+        label = name if cat is None and tg is None else (gettext("%(name)s — %(value)s") % {"name": name, "value": (cat.name if cat is not None else gettext("Tag: ") + tg.name)})
         rss, atom = _paths(cat, tg)
         links.append(FeedLink(title=f"{label} (RSS)", url=absolute_url(request, rss), type=RSS_TYPE))
         links.append(FeedLink(title=f"{label} (Atom)", url=absolute_url(request, atom), type=ATOM_TYPE))

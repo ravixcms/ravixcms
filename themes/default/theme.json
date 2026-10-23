@@ -1,10 +1,10 @@
 {
   "api_version": 1,
   "slug": "default",
-  "name": "پیش‌فرض راویکس",
+  "name": "Ravix default",
   "version": "1.1.0",
   "author": "Ravix",
-  "description": "قالب خوانا و سریع برای وبلاگ و سایت‌های محتوایی فارسی؛ بدون جاوااسکریپت، با نوشتهٔ شاخص و فهرست افقی نوشته‌ها.",
+  "description": "A readable, fast theme for blogs and content sites; no JavaScript, with a featured post and a horizontal post list.",
   "screenshot": "screenshot.png",
   "supports": {
     "home_sections": [

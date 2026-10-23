@@ -12,6 +12,12 @@ from .models import ContactMessage
 logger = logging.getLogger(__name__)
 
 
+
+def _translated(text):
+    """Translate the stored text (e.g. the manifest default); custom text is not in the catalog and stays as written."""
+    return gettext(text) if text else text
+
+
 def form(request, api):
     """صفحهٔ عمومی فرم تماس (GET نمایش، POST ثبت). CSRF و ... را هسته اعمال می‌کند."""
     sent = request.GET.get("sent") == "1"
@@ -38,7 +44,7 @@ def form(request, api):
             from django.shortcuts import redirect
 
             return redirect(api.public_url() + "?sent=1")
-    response = api.render_public(request, "form.html", {"form": f, "sent": sent, "intro": api.setting("intro", ""), "success": api.setting("success_message", "")},
+    response = api.render_public(request, "form.html", {"form": f, "sent": sent, "intro": api.setting("intro", ""), "success": _translated(api.setting("success_message", ""))},
                                  title=gettext("Contact us"), status=400 if request.method == "POST" else 200)
     response["Cache-Control"] = "private, no-store"
     return response

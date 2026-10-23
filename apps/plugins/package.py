@@ -126,7 +126,7 @@ def inspect(data: bytes) -> Inspected:
         try:
             manifest = parse_manifest(raw, expected_slug=root)
         except ManifestError as exc:
-            raise PackageError((gettext("Invalid plugin.json: %(errors)s") % {"errors": "؛ ".join(exc.errors)}))
+            raise PackageError((gettext("Invalid plugin.json: %(errors)s") % {"errors": gettext("; ").join(exc.errors)}))
         try:
             fp = fingerprint(pdir)
         except IntegrityError as exc:

@@ -1,8 +1,8 @@
 {
   "slug": "example_pay",
-  "name": "درگاه نمونه (الگوی ساخت درگاه)",
+  "name": "Sample gateway (gateway template)",
   "version": "1.0.0",
-  "description": "افزونهٔ نمونهٔ درگاه پرداخت برای آموزش و تست. به یک API فرضی (ExamplePay) وصل می‌شود و به هیچ سرویس واقعی متصل نیست؛ برای درگاه واقعی آدرس‌ها و قراردادها را مطابق مستندات رسمی همان ارائه‌دهنده تغییر دهید.",
+  "description": "A sample payment-gateway plugin for learning and testing. It connects to a hypothetical API (ExamplePay) and to no real service; for a real gateway change the addresses and contracts according to that provider’s official documentation.",
   "author": "Ravix",
   "api_version": 1,
   "ravix": ">=0.9,<2.0",

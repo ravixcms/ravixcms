@@ -5,13 +5,13 @@
 {% block page_title %}{% if mode == "update" %}{% trans "Approve plugin changes" %}{% else %}{% trans "Install plugin" %}{% endif %}{% endblock %}
 {% block content_class %}content-narrow{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>{% if mode == "update" %}{% trans "Approve changes" %}{% else %}{% trans "Install" %}{% endif %} «{{ row.name }}»</h1>
+<div class="page-head"><div><h1>{% if mode == "update" %}{% trans "Approve changes" %}{% else %}{% trans "Install" %}{% endif %} «{{ row.name|tr }}»</h1>
   <p>{% trans "Before continuing, review what this plugin declares." %}</p></div></div>
 <div class="form-errors warn" role="alert"><p>{% trans "<strong>Security warning:</strong> a plugin is Python code and runs with full server access; there is no sandbox. Approve only a plugin whose code you have reviewed or that comes from a trusted source. When you approve, only this exact code (the fingerprint below) is allowed to run; any later change to the files stops the plugin immediately." %}</p></div>
 {% if problems %}<div class="form-errors" role="alert"><p>{% trans "<strong>Cannot continue:</strong>" %}</p><ul>{% for p in problems %}<li>{{ p }}</li>{% endfor %}</ul></div>{% endif %}
 <div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>{% trans "Declared details" %}</h2></div><div class="card-body">
   {% if mode == "update" %}<p class="muted">{% trans "Installed version:" %} <span class="ltr">{{ row.record.version }}</span> {% trans "← version on disk:" %} <span class="ltr">{{ row.manifest.version }}</span></p>{% endif %}
-  <p>{{ row.manifest.description }}</p>
+  <p>{{ row.manifest.description|tr }}</p>
   {% include "plugins/_manifest_summary.html" with manifest=row.manifest %}
 </div></div>
 <div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>{% blocktrans trimmed with files=files|length|fa_digits %}Plugin files ({{ files }}){% endblocktrans %}</h2></div><div class="card-body">

@@ -1,11 +1,11 @@
 {% extends "layouts/panel.html" %}
 {% load i18n %}
 {% load ravix_ui %}
-{% block title %}{% blocktrans trimmed with name=rec.name %}{{ name }} settings{% endblocktrans %}{% endblock %}
-{% block page_title %}{% blocktrans trimmed with name=rec.name %}Plugin settings: {{ name }}{% endblocktrans %}{% endblock %}
+{% block title %}{% blocktrans trimmed with name=rec.name|tr %}{{ name }} settings{% endblocktrans %}{% endblock %}
+{% block page_title %}{% blocktrans trimmed with name=rec.name|tr %}Plugin settings: {{ name }}{% endblocktrans %}{% endblock %}
 {% block content_class %}content-narrow{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>{% blocktrans trimmed with name=rec.name %}“{{ name }}” settings{% endblocktrans %}</h1></div><a class="btn btn-light" href="{% url 'plugins:detail' rec.slug %}">{% trans "Back" %}</a></div>
+<div class="page-head"><div><h1>{% blocktrans trimmed with name=rec.name|tr %}“{{ name }}” settings{% endblocktrans %}</h1></div><a class="btn btn-light" href="{% url 'plugins:detail' rec.slug %}">{% trans "Back" %}</a></div>
 <form method="post" novalidate data-once>
   {% csrf_token %}
   {% include "partials/_form_errors.html" %}

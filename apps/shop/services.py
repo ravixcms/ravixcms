@@ -145,7 +145,7 @@ def create_order(site, lines, data: dict, user=None) -> Order:
     OrderItem.objects.bulk_create([
         OrderItem(order=order, product=p, name=p.name, kind=p.kind, list_price=p.price, unit_discount=p.discount_amount, unit_price=p.final_price,
                   quantity=q, line_total=p.final_price * q, tracked=p.track_stock) for p, q in reserved])
-    record_event(order, OrderEvent.Kind.CREATED, message=(gettext("Order placed (%(value)s).") % {"value": ('کاربر' if authed else 'مهمان')}), to_status=order.status, actor=user if authed else None)
+    record_event(order, OrderEvent.Kind.CREATED, message=(gettext("Order placed (%(value)s).") % {"value": (gettext("user") if authed else gettext("guest"))}), to_status=order.status, actor=user if authed else None)
     return order
 
 
@@ -319,7 +319,7 @@ def _apply(payment_id, result, gw, sec, kind):
         payment.verified_at = now
         if problems:
             payment.status = Payment.Status.REVIEW
-            msg = (gettext("The payment was reported successful by the gateway but has a mismatch (%(problems)s); manual review required.") % {"problems": "، ".join(problems)})
+            msg = (gettext("The payment was reported successful by the gateway but has a mismatch (%(problems)s); manual review required.") % {"problems": gettext(", ").join(problems)})
             logger.warning("مغایرت پرداخت %s: %s", payment.reference, problems)
         elif order.status != Order.Status.PENDING:
             payment.status = Payment.Status.REVIEW
