@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-23 18:55+0330\n"
+"POT-Creation-Date: 2026-10-23 19:10+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -2032,6 +2032,39 @@ msgstr "站点外观"
 msgid "System administration"
 msgstr "系统管理"
 
+#: apps/core/regional.py apps/plugins/manifest.py
+#, python-format
+msgid "%(key)s: required."
+msgstr "%(key)s：必填。"
+
+#: apps/core/regional.py apps/plugins/manifest.py
+#, python-format
+msgid "%(key)s: at most %(max_len)s characters."
+msgstr "%(key)s：最多 %(max_len)s 个字符。"
+
+#: apps/core/regional.py
+#, python-format
+#| msgid "requires: must be an object {slug: range}."
+msgid "%(key)s: must be text or an object {language code: text}."
+msgstr "%(key)s：必须是文本或 {语言代码: 文本} 对象。"
+
+#: apps/core/regional.py
+#, python-format
+msgid "%(key)s: unsupported language code “%(code)s”."
+msgstr "%(key)s：不支持的语言代码“%(code)s”。"
+
+#: apps/core/regional.py
+#, python-format
+#| msgid "%(key)s: must be text."
+msgid "%(key)s.%(code)s: must be non-empty text."
+msgstr "%(key)s.%(code)s：必须是非空文本。"
+
+#: apps/core/regional.py
+#, python-format
+#| msgid "%(key)s: at most %(max_len)s characters."
+msgid "%(key)s.%(code)s: at most %(max_len)s characters."
+msgstr "%(key)s.%(code)s：最多 %(max_len)s 个字符。"
+
 #: apps/core/sitehealth.py
 msgid "Good"
 msgstr "良好"
@@ -3770,16 +3803,6 @@ msgstr "插件超出了文件数量/大小限制。"
 #, python-format
 msgid "%(key)s: must be text."
 msgstr "%(key)s：必须是文本。"
-
-#: apps/plugins/manifest.py
-#, python-format
-msgid "%(key)s: required."
-msgstr "%(key)s：必填。"
-
-#: apps/plugins/manifest.py
-#, python-format
-msgid "%(key)s: at most %(max_len)s characters."
-msgstr "%(key)s：最多 %(max_len)s 个字符。"
 
 #: apps/plugins/manifest.py
 msgid "plugin.json must be a JSON object."

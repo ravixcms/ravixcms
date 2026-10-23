@@ -45,6 +45,8 @@ class ThemeInfo:
     version: str = ""
     author: str = ""
     description: str = ""
+    names: dict = field(default_factory=dict)  # {"fa": "…", "en": "…"} from a multilingual «name» (empty for a plain string)
+    descriptions: dict = field(default_factory=dict)
     screenshot: str = ""
     home_sections: tuple[str, ...] = tuple(HOME_SECTION_TYPES)
     ravix: str = ""  # بازهٔ سازگاری با هسته (اختیاری)، مثل ">=0.6,<1.0"
@@ -60,7 +62,16 @@ class ThemeInfo:
 
     @property
     def display_name(self) -> str:
-        return self.name or self.slug
+        """The name in the active language (falls back to the default text, then the slug)."""
+        from apps.core.regional import pick_localized
+
+        return pick_localized(self.name, self.names) or self.slug
+
+    @property
+    def display_description(self) -> str:
+        from apps.core.regional import pick_localized
+
+        return pick_localized(self.description, self.descriptions)
 
     @property
     def screenshot_static_path(self) -> str:
@@ -186,13 +197,17 @@ def inspect_theme_dir(theme_dir: Path) -> ThemeInfo:
             errors.append((gettext("theme.json is not valid: %(exc)s") % {"exc": exc}))
 
     name = version = author = description = screenshot = ravix = ""
+    names: dict = {}
+    descriptions: dict = {}
     home_sections = tuple(HOME_SECTION_TYPES)
     if data:
         if data.get("api_version") != API_VERSION:
             errors.append((gettext("api_version must be %(API_VERSION)s (the theme was built for another version of the contract).") % {"API_VERSION": API_VERSION}))
         if data.get("slug") != slug:
             errors.append(gettext("The “slug” value in theme.json must match the theme folder name exactly."))
-        name = _str_field(data, "name", errors, max_len=60)
+        from apps.core.regional import parse_localized_text
+
+        name, names = parse_localized_text(data.get("name"), "name", errors, max_len=60, required=True)
         version = _str_field(data, "version", errors, max_len=40)
         if version and not VERSION_RE.match(version):
             errors.append(gettext("“version” must be in semantic versioning form (e.g. 1.0.0)."))
@@ -205,7 +220,7 @@ def inspect_theme_dir(theme_dir: Path) -> ThemeInfo:
             if not is_valid_spec(ravix):
                 errors.append(gettext("“ravix” must be a version range (e.g. >=0.6,<1.0)."))
                 ravix = ""
-        description = _str_field(data, "description", errors, max_len=300, required=False)
+        description, descriptions = parse_localized_text(data.get("description"), "description", errors, max_len=300)
         screenshot = _str_field(data, "screenshot", errors, max_len=100, required=False)
         if screenshot:
             if ".." in screenshot or screenshot.startswith("/") or screenshot.lower().rsplit(".", 1)[-1] not in SCREENSHOT_EXTENSIONS:
@@ -235,6 +250,8 @@ def inspect_theme_dir(theme_dir: Path) -> ThemeInfo:
         version=version,
         author=author,
         description=description,
+        names=names,
+        descriptions=descriptions,
         screenshot=screenshot,
         home_sections=home_sections,
         ravix=ravix,

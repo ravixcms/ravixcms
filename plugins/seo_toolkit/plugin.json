@@ -1,8 +1,30 @@
 {
   "slug": "seo_toolkit",
-  "name": "SEO toolkit",
-  "version": "1.0.0",
-  "description": "Manages the title, meta description, noindex, canonical and sharing image of each page/post, and has a global title pattern.",
+  "name": {
+    "fa": "ابزار سئو",
+    "en": "SEO toolkit",
+    "ar": "أدوات تحسين محركات البحث",
+    "tr": "SEO araç seti",
+    "es": "Herramientas SEO",
+    "fr": "Boîte à outils SEO",
+    "de": "SEO-Werkzeuge",
+    "ru": "SEO-инструменты",
+    "pt-br": "Ferramentas de SEO",
+    "zh-hans": "SEO 工具包"
+  },
+  "version": "1.0.1",
+  "description": {
+    "fa": "عنوان، توضیحات متا، noindex، canonical و تصویر اشتراک‌گذاری هر برگه و نوشته را مدیریت می‌کند و الگوی عنوان سراسری دارد.",
+    "en": "Manages the title, meta description, noindex, canonical and sharing image of each page/post, and has a global title pattern.",
+    "ar": "يدير العنوان ووصف الميتا وnoindex والرابط الأساسي وصورة المشاركة لكل صفحة ومقال، ويوفّر نمط عنوان عامًا.",
+    "tr": "Her sayfa ve yazının başlığını, meta açıklamasını, noindex, canonical ve paylaşım görselini yönetir; genel bir başlık kalıbı sunar.",
+    "es": "Gestiona el título, la meta descripción, noindex, canonical y la imagen para compartir de cada página y entrada, y ofrece un patrón de título global.",
+    "fr": "Gère le titre, la méta-description, noindex, canonical et l’image de partage de chaque page et article, avec un modèle de titre global.",
+    "de": "Verwaltet Titel, Meta-Beschreibung, noindex, Canonical und Vorschaubild jeder Seite und jedes Beitrags und bietet ein globales Titelmuster.",
+    "ru": "Управляет заголовком, мета-описанием, noindex, canonical и изображением для соцсетей у каждой страницы и записи; есть общий шаблон заголовка.",
+    "pt-br": "Gerencia título, meta descrição, noindex, canonical e imagem de compartilhamento de cada página e post, com um padrão de título global.",
+    "zh-hans": "管理每个页面和文章的标题、元描述、noindex、canonical 和分享图片，并提供全站标题模板。"
+  },
   "author": "Ravix",
   "api_version": 1,
   "ravix": ">=0.9,<2.0",
@@ -11,15 +33,65 @@
     "seo_toolkit.manage": "Manage page SEO settings"
   },
   "settings": [
-    {"key": "title_pattern", "label": "Title pattern", "type": "text", "default": "{title} | {site}", "max_len": 100, "help": "Use {title} and {site}."},
-    {"key": "default_robots", "label": "Default robots", "type": "choice", "default": "", "choices": [["", "System default"], ["index,follow", "index,follow"], ["noindex,follow", "noindex,follow"]]},
-    {"key": "fallback_description", "label": "Default description (when a page has none)", "type": "textarea", "default": "", "max_len": 300}
+    {
+      "key": "title_pattern",
+      "label": "Title pattern",
+      "type": "text",
+      "default": "{title} | {site}",
+      "max_len": 100,
+      "help": "Use {title} and {site}."
+    },
+    {
+      "key": "default_robots",
+      "label": "Default robots",
+      "type": "choice",
+      "default": "",
+      "choices": [
+        [
+          "",
+          "System default"
+        ],
+        [
+          "index,follow",
+          "index,follow"
+        ],
+        [
+          "noindex,follow",
+          "noindex,follow"
+        ]
+      ]
+    },
+    {
+      "key": "fallback_description",
+      "label": "Default description (when a page has none)",
+      "type": "textarea",
+      "default": "",
+      "max_len": 300
+    }
   ],
   "admin_pages": [
-    {"key": "overview", "title": "Page SEO", "view": "views:overview", "capability": "seo_toolkit.manage", "icon": "search", "section": "content", "order": 80},
-    {"key": "edit", "title": "Edit SEO", "view": "views:edit", "capability": "seo_toolkit.manage", "menu": false}
+    {
+      "key": "overview",
+      "title": "Page SEO",
+      "view": "views:overview",
+      "capability": "seo_toolkit.manage",
+      "icon": "search",
+      "section": "content",
+      "order": 80
+    },
+    {
+      "key": "edit",
+      "title": "Edit SEO",
+      "view": "views:edit",
+      "capability": "seo_toolkit.manage",
+      "menu": false
+    }
   ],
   "hooks": [
-    {"name": "public.seo", "handler": "hooks:apply_seo", "priority": 50}
+    {
+      "name": "public.seo",
+      "handler": "hooks:apply_seo",
+      "priority": 50
+    }
   ]
 }

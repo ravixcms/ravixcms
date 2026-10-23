@@ -128,3 +128,60 @@ def set_language_cookie(response, code: str) -> None:
         settings.LANGUAGE_COOKIE_NAME, code, max_age=settings.LANGUAGE_COOKIE_AGE, path=settings.LANGUAGE_COOKIE_PATH,
         domain=settings.LANGUAGE_COOKIE_DOMAIN, secure=settings.LANGUAGE_COOKIE_SECURE, httponly=settings.LANGUAGE_COOKIE_HTTPONLY,
         samesite=settings.LANGUAGE_COOKIE_SAMESITE)
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Multilingual manifest text (theme.json / plugin.json «name» and «description»)
+# ---------------------------------------------------------------------------------------------------------------------
+def parse_localized_text(value, key, errors, *, max_len, required=False):
+    """Read a manifest text that is either a plain string or ``{"fa": "…", "en": "…"}``.
+
+    Returns ``(default, translations)``: ``default`` is the plain string (or the English text, else the first one) and is what
+    old code and any language without its own entry see; ``translations`` is ``{language code: text}`` (empty for a plain string).
+    Problems are appended to ``errors`` (as translated messages).
+    """
+    from django.utils.translation import gettext
+
+    if value is None or value == "":
+        if required:
+            errors.append(gettext("%(key)s: required.") % {"key": key})
+        return "", {}
+    if isinstance(value, str):
+        text = value.strip()
+        if len(text) > max_len:
+            errors.append(gettext("%(key)s: at most %(max_len)s characters.") % {"key": key, "max_len": max_len})
+        if required and not text:
+            errors.append(gettext("%(key)s: required.") % {"key": key})
+        return text, {}
+    if not isinstance(value, dict) or not value:
+        errors.append(gettext("%(key)s: must be text or an object {language code: text}.") % {"key": key})
+        return "", {}
+    translations: dict[str, str] = {}
+    for code, text in value.items():
+        lang = normalize_language(code)
+        if not lang:
+            errors.append(gettext("%(key)s: unsupported language code “%(code)s”.") % {"key": key, "code": code})
+            continue
+        if not isinstance(text, str) or not text.strip():
+            errors.append(gettext("%(key)s.%(code)s: must be non-empty text.") % {"key": key, "code": code})
+            continue
+        text = text.strip()
+        if len(text) > max_len:
+            errors.append(gettext("%(key)s.%(code)s: at most %(max_len)s characters.") % {"key": key, "code": code, "max_len": max_len})
+        translations[lang] = text
+    if not translations:
+        return "", {}
+    default = translations.get("en") or next(iter(translations.values()))
+    return default, translations
+
+
+def pick_localized(default: str, translations: dict, language: str | None = None) -> str:
+    """The text in ``language`` (default: the active one), else the default."""
+    if not translations:
+        return default
+    if language is None:
+        from django.utils.translation import get_language
+
+        language = get_language() or ""
+    language = normalize_language(language) or ""
+    return translations.get(language) or translations.get(language.split("-")[0]) or default

@@ -1,10 +1,32 @@
 {
   "api_version": 1,
   "slug": "default",
-  "name": "Ravix default",
-  "version": "1.1.0",
+  "name": {
+    "fa": "پیش‌فرض راویکس",
+    "en": "Ravix default",
+    "ar": "راويكس الافتراضي",
+    "tr": "Ravix varsayılan",
+    "es": "Ravix predeterminado",
+    "fr": "Ravix par défaut",
+    "de": "Ravix Standard",
+    "ru": "Ravix по умолчанию",
+    "pt-br": "Ravix padrão",
+    "zh-hans": "Ravix 默认主题"
+  },
+  "version": "1.1.1",
   "author": "Ravix",
-  "description": "A readable, fast theme for blogs and content sites; no JavaScript, with a featured post and a horizontal post list.",
+  "description": {
+    "fa": "قالبی خوانا و سریع برای وبلاگ‌ها و سایت‌های محتوایی؛ بدون جاوااسکریپت، با نوشتهٔ ویژه و فهرست افقی نوشته‌ها.",
+    "en": "A readable, fast theme for blogs and content sites; no JavaScript, with a featured post and a horizontal post list.",
+    "ar": "قالب سريع وسهل القراءة للمدونات ومواقع المحتوى؛ بدون جافاسكربت، مع مقال مميز وقائمة أفقية للمقالات.",
+    "tr": "Bloglar ve içerik siteleri için okunaklı, hızlı bir tema; JavaScript yok, öne çıkan yazı ve yatay yazı listesi içerir.",
+    "es": "Un tema legible y rápido para blogs y sitios de contenido; sin JavaScript, con una entrada destacada y una lista horizontal de entradas.",
+    "fr": "Un thème lisible et rapide pour les blogs et les sites de contenu ; sans JavaScript, avec un article à la une et une liste d’articles horizontale.",
+    "de": "Ein gut lesbares, schnelles Theme für Blogs und Inhaltsseiten; ohne JavaScript, mit hervorgehobenem Beitrag und horizontaler Beitragsliste.",
+    "ru": "Читаемая и быстрая тема для блогов и контентных сайтов: без JavaScript, с избранной записью и горизонтальным списком записей.",
+    "pt-br": "Um tema legível e rápido para blogs e sites de conteúdo; sem JavaScript, com um post em destaque e uma lista horizontal de posts.",
+    "zh-hans": "适用于博客和内容网站的易读、快速主题；无需 JavaScript，包含精选文章和横向文章列表。"
+  },
   "screenshot": "screenshot.png",
   "supports": {
     "home_sections": [

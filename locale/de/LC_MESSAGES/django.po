@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-23 18:55+0330\n"
+"POT-Creation-Date: 2026-10-23 19:10+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -2124,6 +2124,39 @@ msgstr "Website-Darstellung"
 msgid "System administration"
 msgstr "Systemverwaltung"
 
+#: apps/core/regional.py apps/plugins/manifest.py
+#, python-format
+msgid "%(key)s: required."
+msgstr "%(key)s: erforderlich."
+
+#: apps/core/regional.py apps/plugins/manifest.py
+#, python-format
+msgid "%(key)s: at most %(max_len)s characters."
+msgstr "%(key)s: höchstens %(max_len)s Zeichen."
+
+#: apps/core/regional.py
+#, python-format
+#| msgid "requires: must be an object {slug: range}."
+msgid "%(key)s: must be text or an object {language code: text}."
+msgstr "%(key)s: muss Text oder ein Objekt {Sprachcode: Text} sein."
+
+#: apps/core/regional.py
+#, python-format
+msgid "%(key)s: unsupported language code “%(code)s”."
+msgstr "%(key)s: nicht unterstützter Sprachcode „%(code)s“."
+
+#: apps/core/regional.py
+#, python-format
+#| msgid "%(key)s: must be text."
+msgid "%(key)s.%(code)s: must be non-empty text."
+msgstr "%(key)s.%(code)s: muss ein nicht leerer Text sein."
+
+#: apps/core/regional.py
+#, python-format
+#| msgid "%(key)s: at most %(max_len)s characters."
+msgid "%(key)s.%(code)s: at most %(max_len)s characters."
+msgstr "%(key)s.%(code)s: höchstens %(max_len)s Zeichen."
+
 #: apps/core/sitehealth.py
 msgid "Good"
 msgstr "Gut"
@@ -4003,16 +4036,6 @@ msgstr "Das Plugin überschreitet das Limit für Dateianzahl/-größe."
 #, python-format
 msgid "%(key)s: must be text."
 msgstr "%(key)s: muss Text sein."
-
-#: apps/plugins/manifest.py
-#, python-format
-msgid "%(key)s: required."
-msgstr "%(key)s: erforderlich."
-
-#: apps/plugins/manifest.py
-#, python-format
-msgid "%(key)s: at most %(max_len)s characters."
-msgstr "%(key)s: höchstens %(max_len)s Zeichen."
 
 #: apps/plugins/manifest.py
 msgid "plugin.json must be a JSON object."

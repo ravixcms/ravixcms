@@ -5,7 +5,7 @@
 from django.utils.translation import gettext
 import json
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from apps.accounts.permissions import CAPABILITIES
@@ -52,6 +52,8 @@ class Manifest:
     public_routes: tuple
     hooks: tuple
     models: bool
+    names: dict = field(default_factory=dict)  # multilingual «name»: {language code: text} (empty for a plain string)
+    descriptions: dict = field(default_factory=dict)
     category: str = ""  # نامک دستهٔ مخزن (اختیاری)
     license: str = ""
 
@@ -60,9 +62,23 @@ class Manifest:
         """برچسب اپ جنگو و پیشوند جدول‌ها: plugin_<slug>."""
         return f"plugin_{self.slug}"
 
+    @property
+    def display_name(self) -> str:
+        """The name in the active language (falls back to the default text)."""
+        from apps.core.regional import pick_localized
+
+        return pick_localized(self.name, self.names)
+
+    @property
+    def display_description(self) -> str:
+        from apps.core.regional import pick_localized
+
+        return pick_localized(self.description, self.descriptions)
+
     def to_json(self) -> dict:
         return {
-            "slug": self.slug, "name": self.name, "version": self.version, "description": self.description, "author": self.author,
+            "slug": self.slug, "name": dict(self.names) or self.name, "version": self.version,
+            "description": dict(self.descriptions) or self.description, "author": self.author,
             "homepage": self.homepage, "api_version": self.api_version, "ravix": self.ravix, "requires": dict(self.requires),
             "capabilities": dict(self.capabilities), "settings": [f.to_json() for f in self.settings],
             "admin_pages": [dict(p) for p in self.admin_pages], "public_routes": [dict(r) for r in self.public_routes],
@@ -115,11 +131,13 @@ def parse_manifest(raw, *, expected_slug: str | None = None) -> Manifest:
         errors.append((gettext("slug: “%(slug)s” is reserved.") % {"slug": slug}))
     if expected_slug is not None and slug and slug != expected_slug:
         errors.append((gettext("slug: must match the folder name (%(expected_slug)s).") % {"expected_slug": expected_slug}))
-    name = _str(raw, "name", errors, required=True, max_len=80)
+    from apps.core.regional import parse_localized_text
+
+    name, names = parse_localized_text(raw.get("name"), "name", errors, required=True, max_len=80)
     version = _str(raw, "version", errors, required=True, max_len=20)
     if version and not versions.is_valid_version(version):
         errors.append(gettext("version: must look like 1.2.3."))
-    description = _str(raw, "description", errors, max_len=500)
+    description, descriptions = parse_localized_text(raw.get("description"), "description", errors, max_len=500)
     author = _str(raw, "author", errors, max_len=100)
     homepage = _str(raw, "homepage", errors, max_len=200)
     if homepage and not re.match(r"^https?://[^\s<>\"']+$", homepage):
@@ -273,7 +291,7 @@ def parse_manifest(raw, *, expected_slug: str | None = None) -> Manifest:
         raise ManifestError(errors)
     return Manifest(slug=slug, name=name, version=version, description=description, author=author, homepage=homepage, api_version=api,
                     ravix=ravix, requires=dict(requires), capabilities={k: v.strip() for k, v in caps.items()}, settings=tuple(schema),
-                    admin_pages=tuple(pages), public_routes=tuple(routes), hooks=tuple(hooks), models=models, category=category, license=license_)
+                    admin_pages=tuple(pages), public_routes=tuple(routes), hooks=tuple(hooks), models=models, names=names, descriptions=descriptions, category=category, license=license_)
 
 
 def read_manifest(directory: Path, *, expected_slug: str | None = None) -> Manifest:
