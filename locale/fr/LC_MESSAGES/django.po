@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-23 18:03+0330\n"
+"POT-Creation-Date: 2026-10-23 18:06+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -80,6 +80,23 @@ msgstr "Un utilisateur avec cet e-mail est déjà inscrit."
 #: apps/accounts/forms.py apps/installer/forms.py
 msgid "This username is already taken."
 msgstr "Ce nom d’utilisateur est déjà pris."
+
+#: apps/accounts/forms.py
+#| msgid "System default"
+msgid "Site default"
+msgstr "Défaut du site"
+
+#: apps/accounts/forms.py apps/accounts/models.py apps/core/models.py
+#: apps/installer/forms.py apps/themes/templatetags/ravix_theme.py
+#: templates/partials/_language_switcher.html
+msgid "Language"
+msgstr "Langue"
+
+#: apps/accounts/forms.py apps/accounts/models.py
+msgid ""
+"Your preferred interface language. Leave empty to use the site default."
+msgstr ""
+"Votre langue d’interface préférée. Laissez vide pour utiliser celle du site."
 
 #: apps/accounts/forms.py
 msgid "The current password is incorrect."
@@ -1795,9 +1812,15 @@ msgstr ""
 msgid "%(label)s “%(text)s” was deleted."
 msgstr "%(label)s « %(text)s » supprimé."
 
-#: apps/core/forms.py apps/core/models.py apps/installer/forms.py
-msgid "Language"
-msgstr "Langue"
+#: apps/core/forms.py
+#| msgid "Default sharing image"
+msgid "Default language"
+msgstr "Langue par défaut"
+
+#: apps/core/forms.py
+msgid "Used for visitors and users who have not chosen a language themselves."
+msgstr ""
+"Utilisée pour les visiteurs et utilisateurs qui n’ont pas choisi de langue."
 
 #: apps/core/forms.py apps/core/models.py apps/installer/forms.py
 msgid "Time zone"
@@ -6998,6 +7021,11 @@ msgstr ""
 msgid "This theme is not active."
 msgstr "Ce thème n’est pas actif."
 
+#: apps/themes/templatetags/ravix_theme.py templates/layouts/panel.html
+#: templates/partials/_language_switcher.html
+msgid "Change"
+msgstr "Changer"
+
 #: apps/themes/templatetags/ravix_theme.py
 msgid "<a href=\"{}\">Edit this item</a>"
 msgstr "<a href=\"{}\">Modifier cet élément</a>"
@@ -9296,10 +9324,6 @@ msgstr "<strong>%(site_name)s</strong><small>Panneau d’administration</small>"
 #: templates/layouts/panel.html
 msgid "Active site"
 msgstr "Site actif"
-
-#: templates/layouts/panel.html
-msgid "Change"
-msgstr "Changer"
 
 #: templates/layouts/panel.html
 msgid "Sign out of account"

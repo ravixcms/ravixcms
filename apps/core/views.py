@@ -1,6 +1,11 @@
 from django.utils.translation import gettext
 from django.contrib import messages
+from django.contrib.auth import get_user_model
+from django.http import HttpResponseNotAllowed, HttpResponseRedirect
 from django.shortcuts import render
+from django.urls import translate_url
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse_lazy
 from django.core.cache import cache
 from django.shortcuts import redirect
@@ -117,3 +122,28 @@ def csrf_failure(request, reason=""):
         gettext("Session expired"),
         gettext("The form has expired or the request was not valid. Reload the page and try again."),
     )
+
+
+@csrf_exempt  # only changes the visitor's own UI-language preference; public pages carry no CSRF token (they may be cached)
+def set_language(request):
+    """POST ``language`` (+ optional ``next``): remember the UI language in a cookie and, for a signed-in user, in the
+    profile; then redirect back (with the URL translated to the new language prefix on the public site)."""
+    from .regional import normalize_language, set_language_cookie
+
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+    code = normalize_language(request.POST.get("language"))
+    next_url = request.POST.get("next", "")
+    if not url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
+        next_url = request.META.get("HTTP_REFERER", "")
+        if not url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
+            next_url = "/"
+    if code:
+        next_url = translate_url(next_url, code)
+    response = HttpResponseRedirect(next_url)
+    if code:
+        set_language_cookie(response, code)
+        user = getattr(request, "user", None)
+        if user is not None and user.is_authenticated and user.language != code:
+            get_user_model().objects.filter(pk=user.pk).update(language=code)  # no save(): no side effects, nothing else changes
+    return response

@@ -10,7 +10,7 @@ import re
 
 from django import template
 from django.templatetags.static import static
-from django.utils.html import format_html
+from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
 
 from apps.core import localefmt
@@ -79,6 +79,28 @@ def _css_vars(vars_: dict) -> str:
 
 def _json_ld(data) -> str:
     return json.dumps(data, ensure_ascii=False, separators=(",", ":")).translate(_JSON_ESCAPES)
+
+
+@register.simple_tag(takes_context=True)
+def language_switcher(context, css_class="rv-lang"):
+    """Language selector for the site footer: ``{% language_switcher %}``. Posts to the language view (cookie + profile) and
+    returns to the same page in the chosen language. Works without JavaScript."""
+    from django.conf import settings
+    from django.urls import reverse
+    from django.utils import translation
+
+    request = context.get("request")
+    current = (translation.get_language() or "").lower()
+    css_class = css_class if re.fullmatch(r"[A-Za-z0-9_\- ]{1,40}", str(css_class)) else "rv-lang"
+    options = format_html_join(
+        "", '<option value="{}" lang="{}"{}>{}</option>',
+        ((code, code, mark_safe(" selected") if code == current else "", name) for code, name in settings.LANGUAGES))
+    return format_html(
+        '<form method="post" action="{}" class="{}"><input type="hidden" name="next" value="{}">'
+        '<label class="rv-sr-only" for="rv-lang-select">{}</label>'
+        '<select id="rv-lang-select" name="language">{}</select> <button type="submit">{}</button></form>',
+        reverse("set_language"), css_class, request.get_full_path() if request is not None else "/", gettext("Language"), options,
+        gettext("Change"))
 
 
 @register.simple_tag(takes_context=True)

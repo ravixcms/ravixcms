@@ -107,6 +107,14 @@ class ProfileView(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         email_changed = "email" in form.changed_data
         response = super().form_valid(form)
+        if "language" in form.changed_data:  # the language cookie outranks the profile, so keep them in step
+            from apps.core.regional import normalize_language, set_language_cookie
+
+            code = normalize_language(self.object.language)
+            if code:
+                set_language_cookie(response, code)
+            else:
+                response.delete_cookie(settings.LANGUAGE_COOKIE_NAME, path=settings.LANGUAGE_COOKIE_PATH)
         if email_changed:
             user = self.object
             user.email_verified_at = None  # ایمیل تازه باید دوباره تأیید شود

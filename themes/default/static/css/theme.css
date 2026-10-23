@@ -176,7 +176,12 @@ ul,ol{padding-inline-start:1.4em}
 .site-footer a:hover{color:var(--rv-primary)}
 .site-footer li{padding-block:.1rem}
 .footer-credit{padding-block:1rem;border-top:1px solid var(--rv-border);color:var(--rv-muted);font-size:.82rem}
+.footer-credit{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.75rem}
 .footer-credit p{margin:0}
+.rv-lang{display:flex;align-items:center;gap:.4rem;margin:0}
+.rv-lang select,.rv-lang button{font:inherit;font-size:.85rem;padding:.25rem .5rem;border:1px solid var(--rv-border);border-radius:6px;background:var(--rv-bg);color:var(--rv-text)}
+.rv-lang button{cursor:pointer}
+.rv-sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* واکنش‌گرایی */
 @media (max-width:50rem){

@@ -23,7 +23,10 @@ class RandomUploadPath:
 # نامک‌هایی که صفحه ثابت نمی‌تواند داشته باشد (با مسیرهای سیستمی سایت تداخل دارند)
 RESERVED_PAGE_SLUGS = frozenset(
     {"panel", "accounts", "api", "django-admin", "blog", "category", "tag", "search", "static", "media",
-     "sitemap.xml", "robots.txt", "favicon.ico", "admin", "login", "logout", "ext", "shop", "healthz", "registry", "feed"}
+     "sitemap.xml", "robots.txt", "favicon.ico", "admin", "login", "logout", "ext", "shop", "healthz", "registry", "feed",
+     "install", "i18n", "jsi18n",
+     # language codes are public URL prefixes (/en/, /de/ …)
+     "fa", "en", "ar", "tr", "es", "fr", "de", "ru", "pt-br", "zh-hans"}
 )
 
 

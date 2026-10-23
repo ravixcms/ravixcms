@@ -1,0 +1,9 @@
+{% load i18n ravix_ui %}{% get_current_language as LANGUAGE_CODE %}{% ui_languages as LANGUAGES %}
+<form method="post" action="{% url 'set_language' %}" class="lang-switch">
+  <input type="hidden" name="next" value="{{ request.get_full_path }}">
+  <label for="lang-{{ id|default:'switch' }}" class="sr-only">{% trans "Language" %}</label>
+  <select id="lang-{{ id|default:'switch' }}" name="language" class="input" data-autosubmit lang="{{ LANGUAGE_CODE }}">
+    {% for code, name in LANGUAGES %}<option value="{{ code }}" lang="{{ code }}"{% if code == LANGUAGE_CODE %} selected{% endif %}>{{ name }}</option>{% endfor %}
+  </select>
+  <noscript><button type="submit" class="btn btn-light btn-sm">{% trans "Change" %}</button></noscript>
+</form>
