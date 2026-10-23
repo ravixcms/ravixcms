@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-23 19:10+0330\n"
+"POT-Creation-Date: 2026-10-23 19:21+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -1947,7 +1947,7 @@ msgstr "آخرین ویرایش"
 msgid "Site name"
 msgstr "نام سایت"
 
-#: apps/core/models.py
+#: apps/core/models.py apps/installer/services.py
 msgid "Ravix"
 msgstr "راویکس"
 
@@ -2068,7 +2068,6 @@ msgstr "%(key)s: حداکثر %(max_len)s نویسه."
 
 #: apps/core/regional.py
 #, python-format
-#| msgid "requires: must be an object {slug: range}."
 msgid "%(key)s: must be text or an object {language code: text}."
 msgstr "%(key)s: باید متن یا شیء {کد زبان: متن} باشد."
 
@@ -2079,13 +2078,11 @@ msgstr "%(key)s: کد زبان «%(code)s» پشتیبانی نمی‌شود."
 
 #: apps/core/regional.py
 #, python-format
-#| msgid "%(key)s: must be text."
 msgid "%(key)s.%(code)s: must be non-empty text."
 msgstr "%(key)s.%(code)s: باید متنی غیرخالی باشد."
 
 #: apps/core/regional.py
 #, python-format
-#| msgid "%(key)s: at most %(max_len)s characters."
 msgid "%(key)s.%(code)s: at most %(max_len)s characters."
 msgstr "%(key)s.%(code)s: حداکثر %(max_len)s نویسه."
 
@@ -8722,6 +8719,19 @@ msgstr "اطلاعات عمومی"
 #: templates/core/site_settings.html
 msgid "Contact information"
 msgstr "اطلاعات تماس"
+
+#: templates/core/site_settings.html
+#| msgid "Default language"
+msgid "Texts per language"
+msgstr "متن‌ها به‌ازای هر زبان"
+
+#: templates/core/site_settings.html
+msgid ""
+"Optional. The site name, tagline, description and footer text above are used "
+"for the default language and for every language that is left empty here."
+msgstr ""
+"اختیاری. نام، شعار، توضیح و متن پاورقیِ بالا برای زبان پیش‌فرض و برای هر زبانی "
+"که اینجا خالی بماند استفاده می‌شود."
 
 #: templates/core/site_settings.html
 msgid "User access"

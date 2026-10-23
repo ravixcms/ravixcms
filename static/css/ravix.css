@@ -421,3 +421,6 @@ input[type=color].input{height:2.6rem;padding:.2rem;cursor:pointer}
 .stack-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.25rem; min-width: 0; }
 .md-editor textarea.input { text-align: start; unicode-bidi: plaintext; }
 .md-toolbar button[data-md="ol"], .md-toolbar button[data-md="code"] { direction: ltr; unicode-bidi: isolate; }
+.lang-text { border: 1px solid var(--c-border); border-radius: var(--radius-sm); padding: .6rem .9rem; margin-top: .6rem; background: var(--c-surface); }
+.lang-text > summary { cursor: pointer; font-weight: 600; }
+.lang-text[hidden] { display: none; }

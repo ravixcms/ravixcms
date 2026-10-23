@@ -88,16 +88,16 @@ def _build_site(request, doc: dict) -> dict:
     logo = urls.get(a["logo_media"]) or (cfg.logo.url if cfg.logo else "")
     favicon = urls.get(a["favicon_media"]) or (cfg.favicon.url if cfg.favicon else "")
     return {
-        "name": cfg.site_name,
-        "tagline": cfg.tagline,
-        "description": cfg.description,
+        "name": cfg.localized("site_name"),
+        "tagline": cfg.localized("tagline"),
+        "description": cfg.localized("description"),
         "logo_url": logo,
         "favicon_url": favicon,
         "share_image_url": cfg.default_share_image.url if cfg.default_share_image else "",
         "email": cfg.admin_email,
         "phone": cfg.contact_phone,
         "address": cfg.address,
-        "footer_text": cfg.footer_text,
+        "footer_text": cfg.localized("footer_text"),
         "home_url": reverse("public:home"),
         "search_url": reverse("public:search"),
     }

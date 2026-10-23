@@ -84,10 +84,26 @@ def validate_regional(language: str, tz: str) -> None:
         raise InstallError(gettext("The time zone is invalid."))
 
 
+def default_site_name(language: str) -> str:
+    """The suggested site name ("Ravix") written in ``language``."""
+    from django.utils import translation
+
+    with translation.override(language):
+        return gettext("Ravix")
+
+
+def _all_default_names() -> set:
+    from apps.core.regional import language_choices
+
+    return {default_site_name(code) for code, _ in language_choices()}
+
+
 def perform_install(*, site_name: str, language: str, timezone_name: str, username: str, email: str, password: str) -> User:
     """ساخت مدیرکل و ثبت تنظیمات اولیه در یک تراکنش؛ نصب دوم (حتی هم‌زمان) AlreadyInstalled می‌دهد."""
     global _installed
     validate_regional(language, timezone_name)
+    if site_name.strip() in _all_default_names():  # the suggested name, written in another language than the chosen one
+        site_name = default_site_name(language)
     with transaction.atomic():
         SiteSettings.load()
         site = SiteSettings.objects.select_for_update().get(pk=1)

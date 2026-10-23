@@ -59,7 +59,7 @@ def _paths(category=None, tag=None):
 
 def feed_links(request, *, category=None, tag=None, site_name: str = "") -> tuple:
     """لینک‌های autodiscovery برای <head>: فید همین دسته/برچسب (اگر هست) و بعد فید کل سایت."""
-    name = site_name or SiteSettings.load().site_name
+    name = site_name or SiteSettings.load().localized("site_name")
     links = []
     scopes = [(category, tag)] if (category is not None or tag is not None) else []
     scopes.append((None, None))
@@ -78,7 +78,7 @@ class PostFeed(Feed):
 
     # ------------------------------------------------------------ شیء فید
     def get_object(self, request, slug=None):
-        target = FeedTarget(request=request, site=SiteSettings.load())
+        target = FeedTarget(request=request, site=SiteSettings.load().localized_copy())
         if self.scope == "category":
             target.category = get_object_or_404(Category, slug=slug)
         elif self.scope == "tag":
