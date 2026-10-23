@@ -17,7 +17,7 @@ import re
 from pathlib import Path
 
 from django.conf import settings
-from django.test import SimpleTestCase
+from django.test import Client, SimpleTestCase, TestCase
 from django.utils.translation import to_locale
 from django.utils.translation.template import templatize
 
@@ -391,3 +391,101 @@ class CatalogCompletenessTests(SimpleTestCase):
                 if stale or extra or len(compiled) != len(expected):
                     problems.append(f"{locale}/{domain}.mo is out of date (differs on {stale or extra}); run compilemessages")
         self.assertEqual(problems, [], "\n".join(problems))
+
+
+# --------------------------------------------------------------------------------------------------------------------
+# All ten languages, named explicitly (a language can never silently drop out)
+# --------------------------------------------------------------------------------------------------------------------
+EXPECTED_LANGUAGES = ["fa", "en", "ar", "tr", "es", "fr", "de", "ru", "pt-br", "zh-hans"]
+SCRIPT = {"fa": "[\u0600-\u06FF]", "ar": "[\u0600-\u06FF]", "ru": "[\u0400-\u04FF]", "zh-hans": "[\u4E00-\u9FFF]"}
+RTL = {"fa", "ar"}
+SAME_AS_ENGLISH_OK = 0.05  # Latin-script languages share many words with English (Status, Spam, Post …)
+SCRIPT_TOKENS_OK = {"Ravix", "RAVIX", "GATEWAY", "KEY", "Python", "URL", "SEO", "Email", "mail", "lt", "gt", "code", "amp"}  # names, env-var parts, HTML entities
+
+
+def translated_pairs(locale):
+    return [(e["id"], e["str"][0]) for domain in DOMAINS for e in load_po(locale, domain)[0] if e["str"]]
+
+
+class TenLanguagesTests(SimpleTestCase):
+    def test_exactly_these_ten_languages_are_supported(self):
+        self.assertEqual([code for code, _ in settings.LANGUAGES], EXPECTED_LANGUAGES)
+        self.assertEqual(len(EXPECTED_LANGUAGES), 10)
+
+    def test_every_language_but_english_has_a_complete_catalog(self):
+        for code in EXPECTED_LANGUAGES:
+            if code == "en":
+                continue
+            locale = to_locale(code)
+            for domain in DOMAINS:
+                entries, _ = load_po(locale, domain)
+                self.assertGreater(len(entries), 100 if domain == "djangojs" else 2000, f"{code}/{domain}")
+                self.assertTrue(catalog_path(locale, domain, "mo").is_file(), f"{code}/{domain}.mo")
+
+    def test_english_is_the_source_language_and_has_no_catalog(self):
+        """English strings are the msgids: a catalog for ``en`` would only add a second copy that can drift."""
+        self.assertFalse((LOCALE_DIR / "en").exists())
+        from django.utils import translation
+
+        with translation.override("en"):
+            for msgid, _ in translated_pairs("fa")[:200]:
+                if "%" not in msgid:
+                    self.assertEqual(translation.gettext(msgid), msgid)
+
+    def test_translations_are_not_copies_of_the_english_text(self):
+        for code in EXPECTED_LANGUAGES:
+            if code == "en":
+                continue
+            pairs = [(i, t) for i, t in translated_pairs(to_locale(code)) if len(i) > 3]
+            same = [i for i, t in pairs if i == t]
+            limit = 0.01 if code in SCRIPT else SAME_AS_ENGLISH_OK
+            self.assertLessEqual(len(same) / len(pairs), limit, f"{code}: too many untranslated copies, e.g. {same[:8]}")
+
+    def test_non_latin_languages_really_use_their_script(self):
+        for code, pattern in SCRIPT.items():
+            bad = []
+            for msgid, text in translated_pairs(to_locale(code)):
+                if re.search(pattern, text) or msgid == text:
+                    continue
+                words = [w for w in re.findall(r"[A-Za-z]{2,}", PLACEHOLDER.sub("", text)) if w not in SCRIPT_TOKENS_OK]
+                if words:
+                    bad.append((msgid[:40], text[:40]))
+            self.assertEqual(bad, [], f"{code}: Latin-only translations")
+
+
+class TenLanguagesRenderingTests(TestCase):
+    def get(self, path, code):
+        client = Client()
+        client.cookies[settings.LANGUAGE_COOKIE_NAME] = code
+        return client.get(path)
+
+    def test_every_language_renders_login_and_the_public_site(self):
+        english_login = self.get("/accounts/login/", "en").content.decode()
+        for code in EXPECTED_LANGUAGES:
+            for path in ("/accounts/login/", f"/{code}/"):
+                response = self.get(path, code)
+                self.assertEqual(response.status_code, 200, f"{code} {path}")
+                html = response.content.decode()
+                self.assertIn(f'lang="{code}"', html, f"{code} {path}")
+                self.assertIn(f'dir="{"rtl" if code in RTL else "ltr"}"', html, f"{code} {path}")
+            login = self.get("/accounts/login/", code).content.decode()
+            if code == "en":
+                continue
+            self.assertNotEqual(login, english_login, code)
+            if code in SCRIPT:
+                self.assertTrue(re.search(SCRIPT[code], re.sub(r"<[^>]*>", " ", login)), f"{code}: login page is not in its script")
+
+    def test_english_pages_contain_no_persian_or_arabic_text(self):
+        from apps.core.models import SiteSettings
+
+        # The site name is content the owner typed (the migration's default is Persian), not interface text.
+        site = SiteSettings.load()
+        site.site_name, site.tagline, site.description, site.footer_text = "Demo", "", "", ""
+        site.save()
+        from django.core.cache import cache
+
+        cache.clear()
+        for path in ("/accounts/login/", "/en/", "/en/blog/", "/en/search/"):
+            html = re.sub(r"<select\b.*?</select>", " ", self.get(path, "en").content.decode(), flags=re.S)  # the language switcher lists endonyms
+            text = re.sub(r"<[^>]*>", " ", html)
+            self.assertIsNone(ARABIC_SCRIPT.search(text), f"{path} contains Arabic-script text: {ARABIC_SCRIPT.findall(text)[:10]}")
