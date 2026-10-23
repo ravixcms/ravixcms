@@ -56,6 +56,9 @@ def get_themes(refresh: bool = False) -> dict[str, ThemeInfo]:
                 clear_engines()
             _cache_stamp = stamp
             _cache = _discover()
+            from apps.core import catalogs
+
+            catalogs.sync_themes(_cache.values())  # locale/<lang>.json of every valid theme
         return dict(_cache)
 
 

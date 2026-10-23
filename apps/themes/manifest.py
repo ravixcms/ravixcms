@@ -105,6 +105,13 @@ def _scan_tree(root: Path, errors: list) -> None:
                 errors.append((gettext("The file type of “%(rel)s” is not allowed in a theme (only files that cannot run on the server).") % {"rel": rel}))
             elif top == "templates" and ext != "html":
                 errors.append((gettext("The templates folder accepts only html files: “%(rel)s”.") % {"rel": rel}))
+            elif top == "locale":
+                from apps.core import catalogs
+
+                if len(rel.parts) != 2 or ext != "json" or not catalogs.theme_catalog_language(path.name):
+                    errors.append((gettext("The locale folder accepts only <language>.json files for the supported languages (for example fr.json or pt-br.json): “%(rel)s”.") % {"rel": rel}))
+                elif not catalogs.read_theme_catalog(path)[1]:
+                    errors.append((gettext("The translation file “%(rel)s” must be a JSON object that maps English text to its translation (text only, within the size limits).") % {"rel": rel}))
             elif top == "static" and ext == "html":
                 # فایل‌های static مستقیم از وب سرو می‌شوند؛ html در آن‌جا یک صفحه هم‌مبدأ بدون کنترل سایت می‌شد.
                 errors.append((gettext("html files are not allowed in the static folder: “%(rel)s” (html templates must be in templates).") % {"rel": rel}))

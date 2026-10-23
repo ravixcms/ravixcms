@@ -183,6 +183,11 @@ def _do_load(slug, info, root, fp) -> Loaded:
     if info.manifest.models:
         label = _register_app(slug, pkg).label
     api = PluginAPI(slug)
+    locale_dir = root / "locale"
+    if locale_dir.is_dir() and not locale_dir.is_symlink():  # the plugin's own translations (core strings always win)
+        from apps.core import catalogs
+
+        catalogs.register(f"plugin:{slug}", locale_dir)
     m = info.manifest
     loaded = Loaded(slug=slug, info=info, root=root, fingerprint=fp, api=api, verified_at=time.monotonic(), app_label=label)
     for p in m.admin_pages:
@@ -200,6 +205,9 @@ def get(slug) -> Loaded | None:
     """افزونهٔ بارگذاری‌شده و تأییدشده یا None. هرگز استثنا نمی‌دهد."""
     info = state.get_active(slug)
     if info is None:
+        from apps.core import catalogs
+
+        catalogs.unregister(f"plugin:{slug}")  # a disabled plugin contributes no translations
         return None
     cur = _loaded.get(slug)
     now = time.monotonic()
@@ -282,6 +290,9 @@ def app_config(slug):
 
 def unload(slug):
     """افزونه را از حافظهٔ این پردازه خارج می‌کند (کد بدون مدل کاملاً؛ افزونهٔ دارای مدل تا راه‌اندازی مجدد ماژول‌هایش می‌ماند)."""
+    from apps.core import catalogs
+
+    catalogs.unregister(f"plugin:{slug}")
     with _lock:
         _loaded.pop(slug, None)
         if app_config(slug) is None:
@@ -296,9 +307,12 @@ def loaded_slugs():
 def reset_for_tests():
     """فقط برای تست‌ها: همهٔ افزونه‌های بارگذاری‌شده را فراموش می‌کند (اپ‌های پویا از رجیستری جنگو حذف می‌شوند)."""
     with _lock:
+        from apps.core import catalogs
+
         for slug in list(_loaded) + list(_roots):
             _purge_modules(slug)
             _unregister_app(f"plugin_{slug}")
+            catalogs.unregister(f"plugin:{slug}")
         _loaded.clear()
         _roots.clear()
         _dev_slugs.clear()

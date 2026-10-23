@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-23 18:06+0330\n"
+"POT-Creation-Date: 2026-10-23 18:33+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -78,7 +78,6 @@ msgid "This username is already taken."
 msgstr "此用户名已被占用。"
 
 #: apps/accounts/forms.py
-#| msgid "System default"
 msgid "Site default"
 msgstr "站点默认"
 
@@ -1740,7 +1739,6 @@ msgid "%(label)s “%(text)s” was deleted."
 msgstr "已删除%(label)s“%(text)s”。"
 
 #: apps/core/forms.py
-#| msgid "Default sharing image"
 msgid "Default language"
 msgstr "默认语言"
 
@@ -6117,6 +6115,21 @@ msgstr "主题中不允许使用“%(rel)s”的文件类型（仅允许无法�
 #, python-format
 msgid "The templates folder accepts only html files: “%(rel)s”."
 msgstr "templates 文件夹只接受 html 文件：“%(rel)s”。"
+
+#: apps/themes/manifest.py
+#, python-format
+msgid ""
+"The locale folder accepts only <language>.json files for the supported "
+"languages (for example fr.json or pt-br.json): “%(rel)s”."
+msgstr ""
+"locale 文件夹仅接受受支持语言的 <language>.json 文件（例如 fr.json 或 pt-br.json）：“%(rel)s”。"
+
+#: apps/themes/manifest.py
+#, python-format
+msgid ""
+"The translation file “%(rel)s” must be a JSON object that maps English text "
+"to its translation (text only, within the size limits)."
+msgstr "翻译文件“%(rel)s”必须是将英文文本映射到其译文的 JSON 对象（仅限文本，且不超过大小限制）。"
 
 #: apps/themes/manifest.py
 #, python-format
