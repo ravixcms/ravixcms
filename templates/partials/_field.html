@@ -1,3 +1,4 @@
+{% load i18n %}
 {% load ravix_ui %}
 {% with kind=field|field_type %}
 {% if kind == "CheckboxInput" %}
@@ -11,15 +12,15 @@
     <span class="field-label">{{ field.label }}</span>
     {% if field.initial %}
       <div class="current-image">
-        <img src="{{ field.initial.url }}" alt="تصویر فعلی {{ field.label }}">
+        <img src="{{ field.initial.url }}" alt="{% blocktrans with label=field.label %}Current image of {{ label }}{% endblocktrans %}">
         {% if not field.field.required %}
-          <label class="clear-box"><input type="checkbox" class="check" name="{{ field.html_name }}-clear" id="{{ field.html_name }}-clear"> حذف تصویر فعلی</label>
+          <label class="clear-box"><input type="checkbox" class="check" name="{{ field.html_name }}-clear" id="{{ field.html_name }}-clear"> {% trans "Remove current image" %}</label>
         {% endif %}
       </div>
     {% endif %}
-    <div class="current-image"><img id="preview-{{ field.html_name }}" alt="پیش‌نمایش تصویر جدید" hidden></div>
+    <div class="current-image"><img id="preview-{{ field.html_name }}" alt="{% trans "New image preview" %}" hidden></div>
     <input type="file" class="file" name="{{ field.html_name }}" id="{{ field.id_for_label }}" accept="image/jpeg,image/png,image/gif,image/webp" data-preview="preview-{{ field.html_name }}">
-    {% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% else %}<p class="help">فرمت‌های مجاز: JPEG، PNG، GIF، WEBP — حداکثر ۲ مگابایت</p>{% endif %}
+    {% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% else %}<p class="help">{% trans "Allowed formats: JPEG, PNG, GIF, WEBP — at most 2 MB" %}</p>{% endif %}
     {% for error in field.errors %}<p class="error-text">{{ error }}</p>{% endfor %}
   </div>
 {% elif kind == "CheckboxSelectMultiple" or kind == "RadioSelect" %}
@@ -35,7 +36,7 @@
     {% if kind == "PasswordInput" %}
       <div class="password-wrap">
         {{ field }}
-        <button type="button" class="password-toggle" data-password-toggle aria-label="نمایش رمز عبور" aria-pressed="false">{% icon "eye" 18 %}</button>
+        <button type="button" class="password-toggle" data-password-toggle aria-label="{% trans "Show password" %}" aria-pressed="false">{% icon "eye" 18 %}</button>
       </div>
     {% else %}
       {{ field }}

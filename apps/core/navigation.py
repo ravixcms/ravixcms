@@ -5,6 +5,7 @@
 نیازی به ویرایش قالب اصلی نیست. این همان نقطه توسعه‌پذیری برای ماژول‌های
 آینده (محتوا، رسانه، دسته‌بندی، افزونه‌ها و ...) است.
 """
+from django.utils.translation import gettext_lazy
 from dataclasses import dataclass, field
 
 
@@ -23,9 +24,9 @@ class NavItem:
 
 SECTIONS = {
     "main": "",
-    "content": "محتوا",
-    "appearance": "ظاهر سایت",
-    "system": "مدیریت سامانه",
+    "content": gettext_lazy("Content"),
+    "appearance": gettext_lazy("Site appearance"),
+    "system": gettext_lazy("System administration"),
 }
 
 _registry: dict[str, NavItem] = {}

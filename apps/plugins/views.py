@@ -1,3 +1,4 @@
+from django.utils.translation import gettext, gettext_lazy
 import logging
 
 from django.conf import settings
@@ -11,6 +12,7 @@ from django.views import View
 from django.views.generic import TemplateView
 
 from apps.accounts.mixins import CapabilityRequiredMixin
+from apps.core.minimalhtml import section_error_page
 
 from . import events, installer, registry, services, signing, sources, state
 from .forms import build_settings_form, validate_form
@@ -118,16 +120,16 @@ class InstallView(PluginsAdminMixin, TemplateView):
 
     def post(self, request, slug):
         if request.POST.get("trust") != "on":
-            messages.error(request, "برای ادامه باید تأیید کنید که کد افزونه را بررسی کرده و به آن اعتماد دارید.")
+            messages.error(request, gettext("To continue you must confirm that you have reviewed the plugin code and trust it."))
             return redirect(request.path)
         fp = request.POST.get("fingerprint", "")
         try:
             if self.mode == "install":
                 services.install(slug, request.user, fp, request)
-                messages.success(request, "افزونه نصب شد. برای استفاده، آن را فعال کنید.")
+                messages.success(request, gettext("The plugin was installed. Enable it to use it."))
             else:
                 services.approve_update(slug, request.user, fp, request)
-                messages.success(request, "تغییرات تأیید شد. برای استفاده، افزونه را دوباره فعال کنید.")
+                messages.success(request, gettext("The changes were approved. Enable the plugin again to use it."))
         except PluginError as exc:
             messages.error(request, str(exc))
             return redirect(request.path)
@@ -139,21 +141,21 @@ class UpdateView(InstallView):
 
 
 class ActivateView(PluginAction):
-    success = "افزونه فعال شد."
+    success = gettext_lazy("The plugin was enabled.")
 
     def perform(self, request, slug):
         services.activate(slug, request.user, request)
 
 
 class DeactivateView(PluginAction):
-    success = "افزونه غیرفعال شد."
+    success = gettext_lazy("The plugin was disabled.")
 
     def perform(self, request, slug):
         services.deactivate(slug, request.user, request)
 
 
 class UninstallView(PluginAction):
-    success = "افزونه حذف شد."
+    success = gettext_lazy("The plugin was removed.")
 
     def perform(self, request, slug):
         services.uninstall(slug, request.user, purge_data=request.POST.get("purge") == "on", remove_files=request.POST.get("remove_files") == "on",
@@ -193,7 +195,7 @@ class SettingsView(PluginsAdminMixin, View):
             except (PluginError, SettingsInvalid) as exc:
                 messages.error(request, str(exc))
             else:
-                messages.success(request, "تنظیمات ذخیره شد.")
+                messages.success(request, gettext("The settings were saved."))
                 return redirect("plugins:settings", slug=slug)
         return render(request, "plugins/settings.html", {"rec": rec, "manifest": manifest, "form": form}, status=400 if errors else 200)
 
@@ -217,7 +219,7 @@ class EventsView(PluginsAdminMixin, TemplateView):
 
 
 # ------------------------------------------------------------------ توزیع‌کنندهٔ صفحات مدیریتی افزونه‌ها
-def _unavailable(request, slug, *, status=503, reason="افزونه در دسترس نیست."):
+def _unavailable(request, slug, *, status=503, reason=gettext_lazy("The plugin is not available.")):
     return render(request, "plugins/error.html", {"plugin_slug": slug, "reason": reason}, status=status)
 
 
@@ -239,12 +241,12 @@ def admin_page(request, slug, key):
     try:
         response = loaded.pages[key](request, loaded.api)
         if not isinstance(response, HttpResponseBase):
-            raise TypeError("ویو باید HttpResponse برگرداند.")
+            raise TypeError(gettext("The view must return an HttpResponse."))
     except (Http404, PermissionDenied):
         raise
     except Exception as exc:  # noqa: BLE001
         disabled = events.record_error(slug, f"admin:{key}", exc)
-        return _unavailable(request, slug, status=500, reason=("افزونه به‌دلیل خطاهای مکرر غیرفعال شد." if disabled else "در اجرای این صفحه خطایی رخ داد؛ سایر بخش‌های پنل سالم است."))
+        return _unavailable(request, slug, status=500, reason=(gettext("The plugin was disabled because of repeated errors.") if disabled else gettext("An error occurred while running this page; the other parts of the panel are fine.")))
     response["Cache-Control"] = "private, no-store"
     return response
 
@@ -265,12 +267,12 @@ def public_route(request, slug, path=""):
     try:
         response = loaded.routes[route["path"]](request, loaded.api)
         if not isinstance(response, HttpResponseBase):
-            raise TypeError("ویو باید HttpResponse برگرداند.")
+            raise TypeError(gettext("The view must return an HttpResponse."))
     except (Http404, PermissionDenied):
         raise
     except Exception as exc:  # noqa: BLE001
         events.record_error(slug, f"public:{path or '/'}", exc)
-        return HttpResponse("<!doctype html><html lang=\"fa\" dir=\"rtl\"><meta charset=\"utf-8\"><title>خطا</title><p>این بخش موقتاً در دسترس نیست.</p></html>",
+        return HttpResponse(section_error_page(),
                             status=500, content_type="text/html; charset=utf-8")
     if not response.has_header("Cache-Control"):
         response["Cache-Control"] = "private, no-store"
@@ -280,9 +282,9 @@ def public_route(request, slug, path=""):
 # ------------------------------------------------------------------ نصب از مخزن / فایل، ارتقا، بازگشت، کلیدها
 def _flash_result(request, kind, slug):
     if kind == "installed":
-        messages.success(request, "بسته دریافت، اعتبارسنجی و جایگذاری شد. اکنون مشخصات و فایل‌ها را بازبینی و نصب را تأیید کنید.")
+        messages.success(request, gettext("The package was fetched, validated and placed. Now review its details and files and confirm the installation."))
         return redirect("plugins:install", slug=slug)
-    messages.success(request, "نسخهٔ جدید جایگزین شد و نسخهٔ قبلی پشتیبان‌گیری شد. افزونه تا تأیید تغییرات غیرفعال است.")
+    messages.success(request, gettext("The new version was placed and the previous version was backed up. The plugin is disabled until the changes are approved."))
     return redirect("plugins:update", slug=slug)
 
 
@@ -305,14 +307,14 @@ class InstallPackageView(PluginsAdminMixin, View):
             if op == "registry":
                 slug = request.POST.get("slug", "").strip()[:40]
                 if not slug:
-                    raise PluginError("شناسهٔ افزونه را وارد کنید.")
+                    raise PluginError(gettext("Enter the plugin identifier."))
                 kind, slug = installer.install_from_registry(slug, request.POST.get("version", "").strip()[:20] or None, request.user)
             elif op == "local":
                 f = request.FILES.get("package")
                 if f is None:
-                    raise PluginError("فایل zip را انتخاب کنید.")
+                    raise PluginError(gettext("Choose a zip file."))
                 if f.size > settings.RAVIX_REGISTRY_MAX_PACKAGE_BYTES:
-                    raise PluginError("حجم فایل از سقف مجاز بیشتر است.")
+                    raise PluginError(gettext("The file is larger than the allowed limit."))
                 kind, slug = installer.install_from_file(f.read(), request.user, signature=request.POST.get("signature", "")[:200],
                                                          key_id=request.POST.get("key_id", "")[:16], upgrade_existing=request.POST.get("upgrade") == "on")
             else:
@@ -320,7 +322,7 @@ class InstallPackageView(PluginsAdminMixin, View):
         except PluginError as exc:
             messages.error(request, str(exc))
             return redirect("plugins:install_package")
-        services._audit(request, f"بسته افزونهٔ «{slug}» ({'نصب' if kind == 'installed' else 'ارتقا'}) از طریق نصب‌کننده جایگذاری شد", slug)
+        services._audit(request, (gettext("Package of plugin “%(slug)s” (%(value)s) was placed via the installer") % {"slug": slug, "value": ('نصب' if kind == 'installed' else 'ارتقا')}), slug)
         return _flash_result(request, kind, slug)
 
 
@@ -333,7 +335,7 @@ class UpgradeView(PluginsAdminMixin, View):
         except PluginError as exc:
             messages.error(request, str(exc))
             return redirect("plugins:detail", slug=slug)
-        services._audit(request, f"ارتقای افزونهٔ «{slug}» از مخزن", slug)
+        services._audit(request, (gettext("Upgrade plugin “%(slug)s” from the registry") % {"slug": slug}), slug)
         return _flash_result(request, kind, slug)
 
 
@@ -348,8 +350,8 @@ class RollbackView(PluginsAdminMixin, View):
         except PluginError as exc:
             messages.error(request, str(exc))
         else:
-            services._audit(request, f"بازگشت افزونهٔ «{slug}» از پشتیبان #{pk}", slug)
-            messages.success(request, "بازگشت انجام شد. افزونه غیرفعال است؛ پس از بررسی دوباره فعال کنید.")
+            services._audit(request, (gettext("Rollback plugin “%(slug)s” from backup #%(pk)s") % {"slug": slug, "pk": pk}), slug)
+            messages.success(request, gettext("The rollback is done. The plugin is disabled; enable it again after review."))
         return redirect("plugins:detail", slug=slug)
 
 
@@ -375,12 +377,12 @@ class TrustedKeysView(CapabilityRequiredMixin, View):
                 messages.error(request, str(exc))
                 return self._render(request, 400)
             if not label:
-                messages.error(request, "برچسب الزامی است.")
+                messages.error(request, gettext("A label is required."))
                 return self._render(request, 400)
             kid = signing.key_id(pub)
             _, created = TrustedKey.objects.get_or_create(key_id=kid, defaults={"public_key": pub, "label": label, "added_by": request.user})
-            events.log_event("_keys", "key_added" if created else "key_exists", f"کلید {kid} ({label}) {'افزوده شد' if created else 'از قبل بود'}.", actor=request.user)
-            messages.success(request, f"کلید {kid} ثبت شد." if created else "این کلید از قبل ثبت بوده است.")
+            events.log_event("_keys", "key_added" if created else "key_exists", (gettext("Key %(kid)s (%(label)s) %(value)s.") % {"kid": kid, "label": label, "value": ('افزوده شد' if created else 'از قبل بود')}), actor=request.user)
+            messages.success(request, (gettext("Key %(kid)s was registered.") % {"kid": kid}) if created else gettext("This key was already registered."))
         elif op in ("toggle", "delete"):
             k = TrustedKey.objects.filter(pk=request.POST.get("pk")).first()
             if k is None:
@@ -390,6 +392,6 @@ class TrustedKeysView(CapabilityRequiredMixin, View):
             else:
                 k.is_active = not k.is_active
                 k.save(update_fields=["is_active"])
-            events.log_event("_keys", f"key_{op}", f"کلید {k.key_id} ({k.label}) {op}.", actor=request.user)
-            messages.success(request, "انجام شد.")
+            events.log_event("_keys", f"key_{op}", (gettext("Key %(key_id)s (%(label)s) %(op)s.") % {"key_id": k.key_id, "label": k.label, "op": op}), actor=request.user)
+            messages.success(request, gettext("Done."))
         return redirect("plugins:trusted_keys")

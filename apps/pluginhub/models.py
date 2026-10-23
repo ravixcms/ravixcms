@@ -1,3 +1,4 @@
+from django.utils.translation import gettext_lazy
 import hashlib
 import secrets
 
@@ -11,15 +12,15 @@ class Publisher(models.Model):
     """ناشر مجاز. فقط کاربری که رکورد فعال Publisher دارد می‌تواند افزونه منتشر کند؛ اعطا/لغو فقط توسط مدیرکل."""
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="publisher")
-    display_name = models.CharField("نام ناشر", max_length=80)
-    website = models.URLField("وب‌سایت", blank=True)
-    is_active = models.BooleanField("فعال", default=True)
-    is_verified = models.BooleanField("تأییدشده", default=False)
+    display_name = models.CharField(gettext_lazy("Publisher name"), max_length=80)
+    website = models.URLField(gettext_lazy("Website"), blank=True)
+    is_active = models.BooleanField(gettext_lazy("Active"), default=True)
+    is_verified = models.BooleanField(gettext_lazy("Verified"), default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        verbose_name = "ناشر"
-        verbose_name_plural = "ناشران"
+        verbose_name = gettext_lazy("Publisher")
+        verbose_name_plural = gettext_lazy("Publishers")
         ordering = ["display_name"]
 
     def __str__(self):
@@ -27,13 +28,13 @@ class Publisher(models.Model):
 
 
 class Category(models.Model):
-    slug = models.SlugField("نامک", max_length=30, unique=True)
-    name = models.CharField("نام", max_length=60)
-    order = models.PositiveSmallIntegerField("ترتیب", default=100)
+    slug = models.SlugField(gettext_lazy("Slug"), max_length=30, unique=True)
+    name = models.CharField(gettext_lazy("Name"), max_length=60)
+    order = models.PositiveSmallIntegerField(gettext_lazy("Sort order"), default=100)
 
     class Meta:
-        verbose_name = "دسته"
-        verbose_name_plural = "دسته‌ها"
+        verbose_name = gettext_lazy("Category")
+        verbose_name_plural = gettext_lazy("Categories")
         ordering = ["order", "name"]
 
     def __str__(self):
@@ -43,21 +44,21 @@ class Category(models.Model):
 class HubPlugin(models.Model):
     """افزونه در مخزن. ``slug`` همان شناسهٔ یکتای manifest است و پس از ثبت، متعلق به همان ناشر می‌ماند (جلوگیری از ربودن نام)."""
 
-    slug = models.SlugField("شناسهٔ یکتا", max_length=40, unique=True)
-    name = models.CharField("نام", max_length=80)
-    summary = models.CharField("خلاصه", max_length=300, blank=True)
-    description = models.TextField("توضیحات", blank=True, max_length=10000)
+    slug = models.SlugField(gettext_lazy("Unique identifier"), max_length=40, unique=True)
+    name = models.CharField(gettext_lazy("Name"), max_length=80)
+    summary = models.CharField(gettext_lazy("Summary"), max_length=300, blank=True)
+    description = models.TextField(gettext_lazy("Description"), blank=True, max_length=10000)
     category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.SET_NULL, related_name="plugins")
     publisher = models.ForeignKey(Publisher, on_delete=models.PROTECT, related_name="plugins")
-    homepage = models.URLField("صفحهٔ افزونه", blank=True)
-    license = models.CharField("مجوز", max_length=40, blank=True)
-    is_listed = models.BooleanField("نمایش در فهرست", default=True)  # مدیر مخزن می‌تواند از فهرست خارج کند
+    homepage = models.URLField(gettext_lazy("Plugin page"), blank=True)
+    license = models.CharField(gettext_lazy("License"), max_length=40, blank=True)
+    is_listed = models.BooleanField(gettext_lazy("Show in listing"), default=True)  # مدیر مخزن می‌تواند از فهرست خارج کند
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = "افزونهٔ مخزن"
-        verbose_name_plural = "افزونه‌های مخزن"
+        verbose_name = gettext_lazy("Registry plugin")
+        verbose_name_plural = gettext_lazy("Registry plugins")
         ordering = ["name"]
 
     def __str__(self):
@@ -70,32 +71,32 @@ def _package_path(instance, filename):
 
 class HubVersion(models.Model):
     class Status(models.TextChoices):
-        DRAFT = "draft", "پیش‌نویس"
-        PUBLISHED = "published", "منتشرشده"
-        YANKED = "yanked", "پس‌گرفته‌شده"
+        DRAFT = "draft", gettext_lazy("Draft")
+        PUBLISHED = "published", gettext_lazy("Published")
+        YANKED = "yanked", gettext_lazy("Withdrawn")
 
     plugin = models.ForeignKey(HubPlugin, on_delete=models.CASCADE, related_name="versions")
-    version = models.CharField("نسخه", max_length=20)
-    status = models.CharField("وضعیت", max_length=10, choices=Status.choices, default=Status.DRAFT, db_index=True)
+    version = models.CharField(gettext_lazy("Version"), max_length=20)
+    status = models.CharField(gettext_lazy("Status"), max_length=10, choices=Status.choices, default=Status.DRAFT, db_index=True)
     manifest = models.JSONField("manifest", default=dict)
-    package = models.FileField("بسته", upload_to=_package_path, storage=package_storage, max_length=200)
-    sha256 = models.CharField("SHA-256 بسته", max_length=64)
-    fingerprint = models.CharField("اثرانگشت محتوا", max_length=64, help_text="همان اثرانگشتی که پنل افزونه‌ها هنگام نصب نشان می‌دهد.")
-    size = models.PositiveIntegerField("حجم (بایت)")
-    ravin_spec = models.CharField("سازگاری با Ravix", max_length=60)
-    api_version = models.PositiveSmallIntegerField("نسخهٔ قرارداد افزونه")
-    signature = models.CharField("امضای Ed25519 (base64)", max_length=120, blank=True)
-    signature_key_id = models.CharField("شناسهٔ کلید امضا", max_length=16, blank=True)
-    changelog = models.TextField("تغییرات", blank=True, max_length=5000)
-    yank_reason = models.CharField("دلیل پس‌گرفتن", max_length=200, blank=True)
+    package = models.FileField(gettext_lazy("Package"), upload_to=_package_path, storage=package_storage, max_length=200)
+    sha256 = models.CharField(gettext_lazy("Package SHA-256"), max_length=64)
+    fingerprint = models.CharField(gettext_lazy("Content fingerprint"), max_length=64, help_text=gettext_lazy("The same fingerprint that the plugins panel shows during installation."))
+    size = models.PositiveIntegerField(gettext_lazy("Size (bytes)"))
+    ravin_spec = models.CharField(gettext_lazy("Compatibility with Ravix"), max_length=60)
+    api_version = models.PositiveSmallIntegerField(gettext_lazy("Plugin contract version"))
+    signature = models.CharField(gettext_lazy("Ed25519 signature (base64)"), max_length=120, blank=True)
+    signature_key_id = models.CharField(gettext_lazy("Signing key ID"), max_length=16, blank=True)
+    changelog = models.TextField(gettext_lazy("Changes"), blank=True, max_length=5000)
+    yank_reason = models.CharField(gettext_lazy("Reason for withdrawal"), max_length=200, blank=True)
     uploaded_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, related_name="+")
     created_at = models.DateTimeField(auto_now_add=True)
     published_at = models.DateTimeField(null=True, blank=True)
     downloads = models.PositiveIntegerField(default=0)
 
     class Meta:
-        verbose_name = "نسخهٔ افزونه"
-        verbose_name_plural = "نسخه‌های افزونه"
+        verbose_name = gettext_lazy("Plugin version")
+        verbose_name_plural = gettext_lazy("Plugin versions")
         ordering = ["-created_at", "-id"]
         constraints = [models.UniqueConstraint(fields=["plugin", "version"], name="uniq_hub_plugin_version")]
 
@@ -112,7 +113,7 @@ class PublisherToken(models.Model):
     """توکن API ناشر. فقط SHA-256 توکن ذخیره می‌شود؛ مقدار اصلی یک‌بار هنگام ساخت نمایش داده می‌شود و قابل بازیابی نیست."""
 
     publisher = models.ForeignKey(Publisher, on_delete=models.CASCADE, related_name="tokens")
-    name = models.CharField("نام", max_length=60)
+    name = models.CharField(gettext_lazy("Name"), max_length=60)
     prefix = models.CharField(max_length=12, db_index=True)
     token_hash = models.CharField(max_length=64, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)

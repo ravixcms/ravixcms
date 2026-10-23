@@ -144,10 +144,10 @@ class ThemeAliasTests(ThemeDirMixin, TestCase):
 
         def edit(path):
             base = path / "templates" / "base.html"
-            base.write_text("{% load i18n %}" + base.read_text(encoding="utf-8"), encoding="utf-8")
+            base.write_text("{% load static %}" + base.read_text(encoding="utf-8"), encoding="utf-8")
 
         info = inspect_theme_dir(self.install_theme("badlib", edit=edit))
-        self.assertTrue(any("i18n" in e for e in info.errors))
+        self.assertTrue(any("static" in e for e in info.errors))
 
 
 class CommandAliasTests(TestCase):

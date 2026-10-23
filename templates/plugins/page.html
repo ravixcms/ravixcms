@@ -1,9 +1,10 @@
 {% extends "layouts/panel.html" %}
+{% load i18n %}
 {% load ravix_ui %}
 {# پایهٔ صفحات مدیریتی افزونه‌ها. قالب افزونه این را extends می‌کند و بلوک plugin_content را پر می‌کند. #}
 {% block title %}{{ plugin_title }}{% endblock %}
 {% block page_title %}{{ plugin_title }}{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>{{ plugin_title }}</h1><p class="muted">افزونه: {{ plugin_name }}</p></div></div>
+<div class="page-head"><div><h1>{{ plugin_title }}</h1><p class="muted">{% blocktrans trimmed with plugin_name=plugin_name %}Plugin: {{ plugin_name }}{% endblocktrans %}</p></div></div>
 {% block plugin_content %}{% endblock %}
 {% endblock %}

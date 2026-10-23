@@ -3,41 +3,15 @@
 همه با ``is_sample=True`` ساخته می‌شوند و با اولین ویرایش دستی دیگر نمونه حساب نمی‌شوند؛
 ``delete_samples`` فقط نمونه‌های ویرایش‌نشده را پاک می‌کند.
 """
+from django.utils.translation import gettext, gettext_lazy
 from django.db import transaction
 
 from .models import Page, Post, PublishStatus
 
-POST_TITLE = "به راویکس خوش آمدید"
-POST_BODY = """سلام و خوش آمدید! 👋
-
-این **نوشتهٔ نمونه** است تا ببینید یک نوشته در سایت شما چه شکلی دارد. می‌توانید آن را از پنل ویرایش کنید یا حذف کنید.
-
-## قدم بعدی چیست؟
-
-- از بخش **نوشته‌ها** اولین نوشتهٔ خودتان را بنویسید.
-- از **ظاهر** قالب و رنگ‌ها را انتخاب کنید.
-- از **تنظیمات** لوگو و نام سایت را کامل کنید.
-
-> نوشتن را شروع کنید؛ بقیهٔ کارها ساده‌تر از چیزی است که فکر می‌کنید.
-"""
-ABOUT_BODY = """این برگهٔ نمونه است. اینجا دربارهٔ خودتان، کسب‌وکار یا هدف سایتتان بنویسید.
-
-## ما که هستیم؟
-
-چند جمله دربارهٔ تیم یا ماجرای شروع کار.
-
-## چه می‌کنیم؟
-
-خدمات، محصولات یا موضوعاتی که در این سایت می‌خوانید.
-"""
-CONTACT_BODY = """این برگهٔ نمونه است. راه‌های ارتباط با خودتان را اینجا بنویسید.
-
-- ایمیل: `you@example.com`
-- تلفن: ۰۲۱-۰۰۰۰۰۰۰۰
-- نشانی: شهر، خیابان، پلاک
-
-ساعت پاسخگویی را هم اینجا بنویسید تا مخاطبان بدانند چه زمانی منتظر پاسخ باشند.
-"""
+POST_TITLE = gettext_lazy("Welcome to Ravix")
+POST_BODY = gettext_lazy("Hello and welcome! 👋\n\nThis is a **sample post** so you can see what a post looks like on your site. You can edit it from the panel or delete it.\n\n## What’s next?\n\n- Write your own first post in the **Posts** section.\n- Choose the theme and colors in **Appearance**.\n- Complete the logo and site name in **Settings**.\n\n> Start writing; the rest is simpler than you think.\n")
+ABOUT_BODY = gettext_lazy("This is a sample page. Write about yourself, your business or the purpose of your site here.\n\n## Who are we?\n\nA few sentences about the team or how it all started.\n\n## What do we do?\n\nThe services, products or topics you read about on this site.\n")
+CONTACT_BODY = gettext_lazy("This is a sample page. Write how people can reach you here.\n\n- Email: `you@example.com`\n- Phone: 555-0100\n- Address: city, street, number\n\nAlso write your response hours here so visitors know when to expect an answer.\n")
 
 
 def has_samples() -> bool:
@@ -49,11 +23,11 @@ def create_samples(author=None) -> dict:
     """نمونه‌ها را می‌سازد (idempotent: اگر نمونه‌ای هست، دوباره نمی‌سازد). منوی سربرگ را هم با دو برگه تکمیل می‌کند."""
     if has_samples():
         return {"created": False}
-    post = Post.objects.create(title=POST_TITLE, body=POST_BODY, excerpt="نوشتهٔ نمونه برای آشنایی با راویکس.",
+    post = Post.objects.create(title=POST_TITLE, body=POST_BODY, excerpt=gettext("A sample post to get to know Ravix."),
                                status=PublishStatus.PUBLISHED, author=author, is_sample=True)
-    about = Page.objects.create(title="درباره ما", slug="about", body=ABOUT_BODY, status=PublishStatus.PUBLISHED,
+    about = Page.objects.create(title=gettext("About us"), slug="about", body=ABOUT_BODY, status=PublishStatus.PUBLISHED,
                                 author=author, is_sample=True)
-    contact = Page.objects.create(title="تماس با ما", slug="contact", body=CONTACT_BODY, status=PublishStatus.PUBLISHED,
+    contact = Page.objects.create(title=gettext("Contact us"), slug="contact", body=CONTACT_BODY, status=PublishStatus.PUBLISHED,
                                   author=author, is_sample=True)
     _add_menu(about, contact)
     return {"created": True, "post": post.pk, "pages": [about.pk, contact.pk]}

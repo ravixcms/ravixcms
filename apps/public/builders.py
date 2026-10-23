@@ -3,6 +3,7 @@
 
 هیچ‌یک از این توابع داده‌ای نمی‌نویسند. قالب‌ها فقط خروجی این ماژول (``dto.py``) را می‌بینند.
 """
+from django.utils.translation import gettext
 import re
 from urllib.parse import urlencode
 
@@ -162,7 +163,7 @@ def paginate(request, queryset, *, base_url: str, extra: dict | None = None, per
     try:
         page_obj = paginator.page(raw)
     except (PageNotAnInteger, EmptyPage):
-        raise Http404("صفحه وجود ندارد")
+        raise Http404(gettext("Page does not exist"))
 
     def link(n: int) -> str:
         params = dict(extra or {})
@@ -227,7 +228,7 @@ def build_sections(doc: dict, allowed: tuple, site: dict) -> list[Section]:
             base["posts"] = tuple(post_item(p) for p in posts)
             base["title"] = raw["title"] or category.name
             base["button_url"] = base["button_url"] or category_url(category)
-            base["button_label"] = base["button_label"] or "مشاهده همه"
+            base["button_label"] = base["button_label"] or gettext("View all")
             if not base["posts"]:
                 continue
         elif kind == "categories":

@@ -1,5 +1,7 @@
 /* Ravix — رفتارهای رابط کاربری (بدون وابستگی) */
 (function () {
+  var gettext = window.gettext || function (s) { return s; };
+  var interpolate = window.interpolate || function (s, o) { return s.replace(/%\((\w+)\)s/g, function (m, k) { return o[k]; }); };
   "use strict";
 
   // ---- منوی کناری در موبایل
@@ -39,7 +41,7 @@
       if (!input) return;
       var show = input.type === "password";
       input.type = show ? "text" : "password";
-      btn.setAttribute("aria-label", show ? "پنهان کردن رمز عبور" : "نمایش رمز عبور");
+      btn.setAttribute("aria-label", show ? gettext("Hide password") : gettext("Show password"));
       btn.setAttribute("aria-pressed", show ? "true" : "false");
     });
   });
@@ -67,7 +69,7 @@
       var max = input && parseInt(input.dataset.maxBytes, 10);
       if (input && input.files && input.files[0] && max && input.files[0].size > max) {
         e.preventDefault();
-        if (status) { status.hidden = false; status.textContent = "حجم فایل بیشتر از حد مجاز است."; }
+        if (status) { status.hidden = false; status.textContent = gettext("The file is larger than the allowed limit."); }
         return;
       }
       if (status) { status.hidden = false; }
@@ -117,15 +119,15 @@
       ta.focus();
     }
     var actions = {
-      bold: function () { wrap("**", "**", "متن پررنگ"); },
-      italic: function () { wrap("*", "*", "متن کج"); },
+      bold: function () { wrap("**", "**", gettext("bold text")); },
+      italic: function () { wrap("*", "*", gettext("italic text")); },
       heading: function () { linePrefix("## "); },
       quote: function () { linePrefix("> "); },
       ul: function () { linePrefix("- "); },
       ol: function () { linePrefix("1. "); },
-      code: function () { wrap("`", "`", "کد"); },
-      link: function () { wrap("[", "](https://)", "متن پیوند"); },
-      image: function () { wrap("![", "](https://)", "توضیح تصویر"); }
+      code: function () { wrap("`", "`", gettext("code")); },
+      link: function () { wrap("[", "](https://)", gettext("link text")); },
+      image: function () { wrap("![", "](https://)", gettext("image description")); }
     };
     root.querySelectorAll("[data-md]").forEach(function (btn) {
       btn.addEventListener("click", function () { var a = actions[btn.dataset.md]; if (a) a(); });
@@ -138,12 +140,12 @@
         ta.hidden = showPreview;
         preview.hidden = !showPreview;
         if (!showPreview) return;
-        preview.textContent = "در حال بارگذاری…";
+        preview.textContent = gettext("Loading…");
         var body = new URLSearchParams({ text: ta.value });
         fetch(url, { method: "POST", headers: { "X-CSRFToken": csrfToken(), "Content-Type": "application/x-www-form-urlencoded" }, body: body, credentials: "same-origin" })
           .then(function (r) { return r.json(); })
-          .then(function (d) { preview.innerHTML = d.html || "<p class='muted'>چیزی برای نمایش نیست.</p>"; })
-          .catch(function () { preview.textContent = "پیش‌نمایش در دسترس نیست."; });
+          .then(function (d) { preview.innerHTML = d.html || "<p class='muted'>" + gettext("Nothing to preview.") + "</p>"; })
+          .catch(function () { preview.textContent = gettext("Preview is not available."); });
       });
     });
   });
@@ -156,7 +158,7 @@
     input.insertAdjacentElement("afterend", note);
     function update() {
       var n = input.value.length;
-      note.textContent = n + " از " + max + " کاراکتر";
+      note.textContent = interpolate(gettext("%(n)s of %(max)s characters"), {n: n, max: max}, true);
       note.style.color = n > max ? "var(--c-danger)" : "";
     }
     input.addEventListener("input", update);
@@ -169,7 +171,7 @@
     if (!btn) return;
     var value = btn.dataset.copy;
     if (value.charAt(0) === "/") value = location.origin + value;
-    var done = function () { var old = btn.innerHTML; btn.textContent = "کپی شد ✓"; setTimeout(function () { btn.innerHTML = old; }, 1500); };
+    var done = function () { var old = btn.innerHTML; btn.textContent = gettext("Copied ✓"); setTimeout(function () { btn.innerHTML = old; }, 1500); };
     if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(value).then(done); }
     else { var t = document.createElement("textarea"); t.value = value; document.body.appendChild(t); t.select(); document.execCommand("copy"); t.remove(); done(); }
   });

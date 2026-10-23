@@ -1,3 +1,4 @@
+from django.utils.translation import gettext, gettext_lazy
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
@@ -10,15 +11,15 @@ from apps.core.validators import validate_image_file
 
 
 class Category(TimeStampedModel):
-    name = models.CharField("نام", max_length=100, unique=True)
-    slug = models.SlugField("نامک", max_length=120, unique=True, allow_unicode=True, blank=True,
-                            help_text="در صورت خالی بودن، خودکار از نام ساخته می‌شود.")
-    description = models.TextField("توضیحات", blank=True, max_length=500)
-    parent = models.ForeignKey("self", null=True, blank=True, on_delete=models.SET_NULL, related_name="children", verbose_name="دسته والد")
+    name = models.CharField(gettext_lazy("Name"), max_length=100, unique=True)
+    slug = models.SlugField(gettext_lazy("Slug"), max_length=120, unique=True, allow_unicode=True, blank=True,
+                            help_text=gettext_lazy("If left empty, it is generated automatically from the name."))
+    description = models.TextField(gettext_lazy("Description"), blank=True, max_length=500)
+    parent = models.ForeignKey("self", null=True, blank=True, on_delete=models.SET_NULL, related_name="children", verbose_name=gettext_lazy("Parent category"))
 
     class Meta:
-        verbose_name = "دسته‌بندی"
-        verbose_name_plural = "دسته‌بندی‌ها"
+        verbose_name = gettext_lazy("Content category")
+        verbose_name_plural = gettext_lazy("Content categories")
         ordering = ["name"]
 
     def __str__(self):
@@ -39,13 +40,13 @@ class Category(TimeStampedModel):
 
 
 class Tag(TimeStampedModel):
-    name = models.CharField("نام", max_length=60, unique=True)
-    slug = models.SlugField("نامک", max_length=80, unique=True, allow_unicode=True, blank=True,
-                            help_text="در صورت خالی بودن، خودکار از نام ساخته می‌شود.")
+    name = models.CharField(gettext_lazy("Name"), max_length=60, unique=True)
+    slug = models.SlugField(gettext_lazy("Slug"), max_length=80, unique=True, allow_unicode=True, blank=True,
+                            help_text=gettext_lazy("If left empty, it is generated automatically from the name."))
 
     class Meta:
-        verbose_name = "برچسب"
-        verbose_name_plural = "برچسب‌ها"
+        verbose_name = gettext_lazy("Tag")
+        verbose_name_plural = gettext_lazy("Tags")
         ordering = ["name"]
 
     def __str__(self):
@@ -58,9 +59,9 @@ class Tag(TimeStampedModel):
 
 
 class PublishStatus(models.TextChoices):
-    DRAFT = "draft", "پیش‌نویس"
-    PUBLISHED = "published", "منتشرشده"
-    SCHEDULED = "scheduled", "زمان‌بندی‌شده"
+    DRAFT = "draft", gettext_lazy("Draft")
+    PUBLISHED = "published", gettext_lazy("Published")
+    SCHEDULED = "scheduled", gettext_lazy("Scheduled")
 
 
 class PostQuerySet(models.QuerySet):
@@ -76,34 +77,34 @@ class PostQuerySet(models.QuerySet):
 
 
 class Post(TimeStampedModel):
-    title = models.CharField("عنوان", max_length=200)
-    slug = models.SlugField("نامک (Slug)", max_length=220, unique=True, allow_unicode=True, blank=True,
-                            help_text="بخش انتهای نشانی نوشته. در صورت خالی بودن، خودکار از عنوان ساخته می‌شود.")
-    excerpt = models.TextField("خلاصه", blank=True, max_length=500)
-    body = models.TextField("متن (Markdown)")
+    title = models.CharField(gettext_lazy("Title"), max_length=200)
+    slug = models.SlugField(gettext_lazy("Slug (URL name)"), max_length=220, unique=True, allow_unicode=True, blank=True,
+                            help_text=gettext_lazy("The last part of the post URL. If left empty, it is generated automatically from the title."))
+    excerpt = models.TextField(gettext_lazy("Summary"), blank=True, max_length=500)
+    body = models.TextField(gettext_lazy("Body (Markdown)"))
     body_html = models.TextField(editable=False, blank=True)  # خروجی پاک‌سازی‌شده؛ هنگام ذخیره ساخته می‌شود
-    featured_image = models.ImageField("تصویر شاخص", upload_to=RandomUploadPath("posts"), blank=True, validators=[validate_image_file])
-    status = models.CharField("وضعیت", max_length=12, choices=PublishStatus.choices, default=PublishStatus.DRAFT, db_index=True)
-    publish_at = models.DateTimeField("زمان انتشار", null=True, blank=True, db_index=True)
+    featured_image = models.ImageField(gettext_lazy("Featured image"), upload_to=RandomUploadPath("posts"), blank=True, validators=[validate_image_file])
+    status = models.CharField(gettext_lazy("Status"), max_length=12, choices=PublishStatus.choices, default=PublishStatus.DRAFT, db_index=True)
+    publish_at = models.DateTimeField(gettext_lazy("Publish time"), null=True, blank=True, db_index=True)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL,
-                               related_name="posts", verbose_name="نویسنده")
-    categories = models.ManyToManyField(Category, blank=True, related_name="posts", verbose_name="دسته‌بندی‌ها")
-    tags = models.ManyToManyField(Tag, blank=True, related_name="posts", verbose_name="برچسب‌ها")
-    seo_title = models.CharField("عنوان سئو", max_length=70, blank=True, help_text="ترجیحاً تا ۶۰ کاراکتر. در صورت خالی بودن از عنوان نوشته استفاده می‌شود.")
-    seo_description = models.CharField("توضیحات سئو (Meta Description)", max_length=160, blank=True,
-                                       help_text="ترجیحاً ۱۲۰ تا ۱۶۰ کاراکتر. در صورت خالی بودن از خلاصه نوشته استفاده می‌شود.")
-    comments_open = models.BooleanField("دیدگاه‌ها باز باشد", default=True,
-                                        help_text="با برداشتن تیک، ارسال دیدگاه جدید برای این نوشته بسته می‌شود (دیدگاه‌های قبلی نمایش داده می‌شوند).")
-    noindex = models.BooleanField("عدم نمایش در موتورهای جستجو (noindex)", default=False,
-                                  help_text="نوشته در نتایج گوگل و ... فهرست نمی‌شود و در نقشه سایت (sitemap) نمی‌آید.")
-    is_sample = models.BooleanField("محتوای نمونه", default=False, editable=False, db_index=True,
-                                    help_text="نوشتهٔ نمونهٔ ساخته‌شده هنگام نصب؛ با اولین ویرایش دیگر نمونه حساب نمی‌شود.")
+                               related_name="posts", verbose_name=gettext_lazy("Author"))
+    categories = models.ManyToManyField(Category, blank=True, related_name="posts", verbose_name=gettext_lazy("Content categories"))
+    tags = models.ManyToManyField(Tag, blank=True, related_name="posts", verbose_name=gettext_lazy("Tags"))
+    seo_title = models.CharField(gettext_lazy("SEO title"), max_length=70, blank=True, help_text=gettext_lazy("Preferably up to 60 characters. If left empty, the post title is used."))
+    seo_description = models.CharField(gettext_lazy("SEO description (meta description)"), max_length=160, blank=True,
+                                       help_text=gettext_lazy("Preferably 120 to 160 characters. If left empty, the post excerpt is used."))
+    comments_open = models.BooleanField(gettext_lazy("Comments are open"), default=True,
+                                        help_text=gettext_lazy("Unchecking this closes new comments on this post (existing comments remain visible)."))
+    noindex = models.BooleanField(gettext_lazy("Hide from search engines (noindex)"), default=False,
+                                  help_text=gettext_lazy("The post will not be listed in Google results and the like, and will not appear in the sitemap."))
+    is_sample = models.BooleanField(gettext_lazy("Sample content"), default=False, editable=False, db_index=True,
+                                    help_text=gettext_lazy("A sample post created during installation; after its first edit it no longer counts as a sample."))
 
     objects = PostQuerySet.as_manager()
 
     class Meta:
-        verbose_name = "نوشته"
-        verbose_name_plural = "نوشته‌ها"
+        verbose_name = gettext_lazy("Post")
+        verbose_name_plural = gettext_lazy("Posts")
         ordering = ["-created_at", "-id"]
 
     def __str__(self):
@@ -163,23 +164,23 @@ class Post(TimeStampedModel):
 
 
 class Page(TimeStampedModel):
-    title = models.CharField("عنوان", max_length=200)
-    slug = models.SlugField("نامک (Slug)", max_length=220, unique=True, allow_unicode=True, blank=True,
-                            help_text="مثلاً about-us یا درباره-ما. در صورت خالی بودن، خودکار ساخته می‌شود.")
-    body = models.TextField("محتوا (Markdown)")
+    title = models.CharField(gettext_lazy("Title"), max_length=200)
+    slug = models.SlugField(gettext_lazy("Slug (URL name)"), max_length=220, unique=True, allow_unicode=True, blank=True,
+                            help_text=gettext_lazy("For example about-us. If left empty, it is generated automatically."))
+    body = models.TextField(gettext_lazy("Content (Markdown)"))
     body_html = models.TextField(editable=False, blank=True)
-    status = models.CharField("وضعیت", max_length=12, choices=[(PublishStatus.DRAFT, "پیش‌نویس"), (PublishStatus.PUBLISHED, "منتشرشده")],
+    status = models.CharField(gettext_lazy("Status"), max_length=12, choices=[(PublishStatus.DRAFT, gettext_lazy("Draft")), (PublishStatus.PUBLISHED, gettext_lazy("Published"))],
                               default=PublishStatus.DRAFT, db_index=True)
-    seo_title = models.CharField("عنوان سئو", max_length=70, blank=True, help_text="ترجیحاً تا ۶۰ کاراکتر. در صورت خالی بودن از عنوان صفحه استفاده می‌شود.")
-    seo_description = models.CharField("توضیحات سئو (Meta Description)", max_length=160, blank=True, help_text="ترجیحاً ۱۲۰ تا ۱۶۰ کاراکتر.")
+    seo_title = models.CharField(gettext_lazy("SEO title"), max_length=70, blank=True, help_text=gettext_lazy("Preferably up to 60 characters. If left empty, the page title is used."))
+    seo_description = models.CharField(gettext_lazy("SEO description (meta description)"), max_length=160, blank=True, help_text=gettext_lazy("Preferably 120 to 160 characters."))
     author = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL,
-                               related_name="pages", verbose_name="نویسنده")
-    is_sample = models.BooleanField("محتوای نمونه", default=False, editable=False, db_index=True,
-                                    help_text="برگهٔ نمونهٔ ساخته‌شده هنگام نصب؛ با اولین ویرایش دیگر نمونه حساب نمی‌شود.")
+                               related_name="pages", verbose_name=gettext_lazy("Author"))
+    is_sample = models.BooleanField(gettext_lazy("Sample content"), default=False, editable=False, db_index=True,
+                                    help_text=gettext_lazy("A sample page created during installation; after its first edit it no longer counts as a sample."))
 
     class Meta:
-        verbose_name = "صفحه"
-        verbose_name_plural = "صفحات"
+        verbose_name = gettext_lazy("Page")
+        verbose_name_plural = gettext_lazy("Pages")
         ordering = ["title"]
 
     def __str__(self):
@@ -214,21 +215,21 @@ def normalize_redirect_path(value: str) -> str:
 
 class Redirect(TimeStampedModel):
     class Status(models.IntegerChoices):
-        PERMANENT = 301, "۳۰۱ — دائمی"
-        TEMPORARY = 302, "۳۰۲ — موقت"
+        PERMANENT = 301, gettext_lazy("301 — permanent")
+        TEMPORARY = 302, gettext_lazy("302 — temporary")
 
-    old_path = models.CharField("مسیر قدیم", max_length=500, unique=True,
-                                help_text="مسیر داخلی سایت، مثلاً /blog/نامک-قدیم/ (بدون دامنه و بدون ?query).")
-    new_path = models.CharField("مسیر جدید", max_length=500,
-                                help_text="مسیر داخلی (مثلاً /blog/نامک-جدید/) یا نشانی کامل http(s)://…")
-    status_code = models.PositiveSmallIntegerField("کد وضعیت", choices=Status.choices, default=Status.PERMANENT)
-    is_auto = models.BooleanField("ساخته‌شده خودکار", default=False, editable=False,
-                                  help_text="با تغییر نامک نوشته/صفحه ساخته شده است.")
-    note = models.CharField("یادداشت", max_length=200, blank=True)
+    old_path = models.CharField(gettext_lazy("Old path"), max_length=500, unique=True,
+                                help_text=gettext_lazy("An internal site path, e.g. /blog/old-slug/ (without domain and without ?query)."))
+    new_path = models.CharField(gettext_lazy("New path"), max_length=500,
+                                help_text=gettext_lazy("An internal path (e.g. /blog/new-slug/) or a full http(s):// URL"))
+    status_code = models.PositiveSmallIntegerField(gettext_lazy("Status code"), choices=Status.choices, default=Status.PERMANENT)
+    is_auto = models.BooleanField(gettext_lazy("Created automatically"), default=False, editable=False,
+                                  help_text=gettext_lazy("Created when a post/page slug was changed."))
+    note = models.CharField(gettext_lazy("Note"), max_length=200, blank=True)
 
     class Meta:
-        verbose_name = "ریدایرکت"
-        verbose_name_plural = "ریدایرکت‌ها"
+        verbose_name = gettext_lazy("Redirect")
+        verbose_name_plural = gettext_lazy("Redirects")
         ordering = ["-updated_at", "-id"]
 
     def __str__(self):
@@ -241,30 +242,30 @@ class Redirect(TimeStampedModel):
 
         old = normalize_redirect_path(self.old_path)
         if not old.startswith("/") or old.startswith("//"):
-            raise ValidationError({"old_path": "مسیر قدیم باید با «/» شروع شود (مثلاً /about/)."})
+            raise ValidationError({"old_path": gettext("The old path must start with “/” (e.g. /about/).")})
         if any(c in old for c in "?#") or any(ord(c) < 32 for c in old):
-            raise ValidationError({"old_path": "مسیر قدیم نباید شامل ? یا # یا نویسهٔ کنترلی باشد."})
+            raise ValidationError({"old_path": gettext("The old path must not contain ?, # or control characters.")})
         if old == "/":
-            raise ValidationError({"old_path": "ریدایرکت صفحهٔ اصلی مجاز نیست."})
+            raise ValidationError({"old_path": gettext("Redirecting the home page is not allowed.")})
         if old.startswith(RESERVED_REDIRECT_PREFIXES):
-            raise ValidationError({"old_path": "این مسیر متعلق به بخش‌های سیستمی است و ریدایرکت‌پذیر نیست."})
+            raise ValidationError({"old_path": gettext("This path belongs to system sections and cannot be redirected.")})
         self.old_path = old
 
         new = (self.new_path or "").strip()
         if any(ord(c) < 32 for c in new) or "\\" in new:
-            raise ValidationError({"new_path": "مسیر جدید نامعتبر است."})
+            raise ValidationError({"new_path": gettext("The new path is invalid.")})
         if new.startswith("/") and not new.startswith("//"):
             self.new_path = new
         elif new.lower().startswith(("http://", "https://")) and urlsplit(new).netloc:
             self.new_path = new
         else:
-            raise ValidationError({"new_path": "مسیر جدید باید با «/» شروع شود یا نشانی کامل http(s) باشد."})
+            raise ValidationError({"new_path": gettext("The new path must start with “/” or be a full http(s) URL.")})
         target = self.new_path.split("?", 1)[0].split("#", 1)[0]
         if self.new_path.startswith("/") and normalize_redirect_path(target).rstrip("/") == old.rstrip("/"):
-            raise ValidationError({"new_path": "مسیر جدید نباید با مسیر قدیم یکی باشد (حلقه)."})
+            raise ValidationError({"new_path": gettext("The new path must not be the same as the old path (loop).")})
         # حلقهٔ مستقیم: مقصد خودش به مسیر قدیم ریدایرکت شود
         if self.new_path.startswith("/"):
             back = Redirect.objects.filter(old_path__in=[normalize_redirect_path(target), normalize_redirect_path(target).rstrip("/") or "/",
                                                          normalize_redirect_path(target).rstrip("/") + "/"]).exclude(pk=self.pk).first()
             if back is not None and normalize_redirect_path(back.new_path.split("?", 1)[0]).rstrip("/") == old.rstrip("/"):
-                raise ValidationError({"new_path": "این ریدایرکت با ریدایرکت دیگری حلقه می‌سازد."})
+                raise ValidationError({"new_path": gettext("This redirect forms a loop with another redirect.")})

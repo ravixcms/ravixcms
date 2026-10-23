@@ -1,21 +1,22 @@
 {% extends "layouts/panel.html" %}
+{% load i18n %}
 {% load ravix_ui %}
-{% block title %}رسانه‌ها{% endblock %}
-{% block page_title %}رسانه‌ها{% endblock %}
+{% block title %}{% trans "Media files" %}{% endblock %}
+{% block page_title %}{% trans "Media files" %}{% endblock %}
 {% block content %}
 <div class="page-head">
-  <div><h1>کتابخانه رسانه</h1><p>تصاویر و فایل‌های بارگذاری‌شده</p></div>
-  <a href="{% url 'media_library:media_upload' %}" class="btn">{% icon "upload" 18 %} بارگذاری فایل</a>
+  <div><h1>{% trans "Media library" %}</h1><p>{% trans "Uploaded images and files" %}</p></div>
+  <a href="{% url 'media_library:media_upload' %}" class="btn">{% icon "upload" 18 %} {% trans "Upload file" %}</a>
 </div>
 <div class="card">
   <form method="get" class="toolbar" role="search">
-    <input type="search" name="q" value="{{ q }}" class="input grow" placeholder="جستجوی عنوان، نام فایل یا متن جایگزین" aria-label="جستجو">
-    <select name="kind" class="input" aria-label="نوع">
-      <option value="">همه انواع</option>
+    <input type="search" name="q" value="{{ q }}" class="input grow" placeholder="{% trans "Search by title, file name or alt text" %}" aria-label="{% trans "Search" %}">
+    <select name="kind" class="input" aria-label="{% trans "Type" %}">
+      <option value="">{% trans "All types" %}</option>
       {% for value, label in kinds %}<option value="{{ value }}" {% if value == selected_kind %}selected{% endif %}>{{ label }}</option>{% endfor %}
     </select>
-    <label class="field-check" style="margin:0"><input type="checkbox" class="check" name="mine" value="1" {% if mine %}checked{% endif %}><span>فقط فایل‌های من</span></label>
-    <button type="submit" class="btn">{% icon "search" 18 %} اعمال</button>
+    <label class="field-check" style="margin:0"><input type="checkbox" class="check" name="mine" value="1" {% if mine %}checked{% endif %}><span>{% trans "Only my files" %}</span></label>
+    <button type="submit" class="btn">{% icon "search" 18 %} {% trans "Actions" %}</button>
   </form>
   {% if items %}
   <div class="media-grid">
@@ -28,17 +29,17 @@
         <div class="media-info">
           <strong title="{{ m.display_title }}">{{ m.display_title }}</strong>
           <span class="muted">{{ m.get_kind_display }} · {{ m.size|filesizeformat }}</span>
-          {% if m.is_image and not m.alt_text %}<span class="badge badge-warn">بدون Alt</span>{% endif %}
+          {% if m.is_image and not m.alt_text %}<span class="badge badge-warn">{% trans "No alt text" %}</span>{% endif %}
         </div>
         <div class="media-actions">
-          <button type="button" class="btn btn-light btn-sm" data-copy="{{ m.file.url }}" title="کپی نشانی فایل">{% icon "copy" 16 %}</button>
-          <a class="btn btn-light btn-sm" href="{% url 'media_library:media_update' m.pk %}" title="جزئیات">{% icon "edit" 16 %}</a>
-          {% if m.pk in manageable_ids %}<a class="btn btn-light btn-sm" href="{% url 'media_library:media_delete' m.pk %}" title="حذف">{% icon "trash" 16 %}</a>{% endif %}
+          <button type="button" class="btn btn-light btn-sm" data-copy="{{ m.file.url }}" title="{% trans "Copy file address" %}">{% icon "copy" 16 %}</button>
+          <a class="btn btn-light btn-sm" href="{% url 'media_library:media_update' m.pk %}" title="{% trans "Details" %}">{% icon "edit" 16 %}</a>
+          {% if m.pk in manageable_ids %}<a class="btn btn-light btn-sm" href="{% url 'media_library:media_delete' m.pk %}" title="{% trans "Delete" %}">{% icon "trash" 16 %}</a>{% endif %}
         </div>
       </div>
     {% endfor %}
   </div>
   {% include "partials/_pagination.html" %}
-  {% else %}<div class="empty">فایلی پیدا نشد.</div>{% endif %}
+  {% else %}<div class="empty">{% trans "No file was found." %}</div>{% endif %}
 </div>
 {% endblock %}

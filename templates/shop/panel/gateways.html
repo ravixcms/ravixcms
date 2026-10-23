@@ -1,18 +1,19 @@
 {% extends "layouts/panel.html" %}
-{% block title %}درگاه‌های پرداخت{% endblock %}
-{% block page_title %}درگاه‌های پرداخت{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Payment gateways" %}{% endblock %}
+{% block page_title %}{% trans "Payment gateways" %}{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>درگاه‌های پرداخت</h1><p>سایت: {{ site_obj.name }}. هر درگاه یک افزونهٔ مستقل است؛ هیچ درگاه واقعی‌ای به‌صورت پیش‌فرض متصل نیست.</p></div></div>
-{% if not key_configured %}<div class="alert alert-warn" role="alert">کلید رمزنگاری <code>RAVIX_SECRETS_KEY</code> تنظیم نشده است؛ در تولید ذخیرهٔ کلیدهای درگاه بدون آن ممکن نیست.</div>{% endif %}
-<div class="card">{% if items %}<div class="table-wrap"><table class="table"><thead><tr><th>درگاه</th><th>نوع</th><th>وضعیت</th><th>تنظیمات</th><th></th></tr></thead><tbody>
+<div class="page-head"><div><h1>{% trans "Payment gateways" %}</h1><p>{% blocktrans trimmed with name=site_obj.name %}Site: {{ name }}. Each gateway is an independent plugin; no real gateway is connected by default.{% endblocktrans %}</p></div></div>
+{% if not key_configured %}<div class="alert alert-warn" role="alert">{% trans "The encryption key <code>RAVIX_SECRETS_KEY</code> is not set; in production, storing gateway keys is not possible without it." %}</div>{% endif %}
+<div class="card">{% if items %}<div class="table-wrap"><table class="table"><thead><tr><th>{% trans "Gateway" %}</th><th>{% trans "Type" %}</th><th>{% trans "Status" %}</th><th>{% trans "Settings" %}</th><th></th></tr></thead><tbody>
 {% for g in items %}<tr>
   <td><strong>{{ g.label }}</strong><br><span class="ltr muted">{{ g.name }}</span>{% if g.description %}<br><span class="muted">{{ g.description }}</span>{% endif %}</td>
-  <td>{% if g.is_test %}آزمایشی (شبیه‌ساز){% elif g.builtin %}داخلی{% else %}افزونه{% endif %}</td>
-  <td><span class="badge {% if g.enabled %}badge-published{% else %}badge-inactive{% endif %}">{% if g.enabled %}فعال{% else %}غیرفعال{% endif %}</span>
-      {% if g.enabled and g.test_mode and not g.is_test %}<span class="badge badge-warn">حالت آزمایشی</span>{% endif %}</td>
-  <td>{% if g.error %}<span class="errors">{{ g.error }}</span>{% elif g.configured %}کامل{% else %}ناقص{% endif %}</td>
-  <td><a class="btn btn-light btn-sm" href="{% url 'shop_panel:gateway_edit' g.name %}">تنظیمات</a>
+  <td>{% if g.is_test %}{% trans "Test (simulator)" %}{% elif g.builtin %}{% trans "Built-in" %}{% else %}{% trans "Plugin" %}{% endif %}</td>
+  <td><span class="badge {% if g.enabled %}badge-published{% else %}badge-inactive{% endif %}">{% if g.enabled %}{% trans "Active" %}{% else %}{% trans "Inactive" %}{% endif %}</span>
+      {% if g.enabled and g.test_mode and not g.is_test %}<span class="badge badge-warn">{% trans "Test mode" %}</span>{% endif %}</td>
+  <td>{% if g.error %}<span class="errors">{{ g.error }}</span>{% elif g.configured %}{% trans "Complete" %}{% else %}{% trans "Incomplete" %}{% endif %}</td>
+  <td><a class="btn btn-light btn-sm" href="{% url 'shop_panel:gateway_edit' g.name %}">{% trans "Settings" %}</a>
     <form method="post" action="{% url 'shop_panel:gateway_toggle' g.name %}" style="display:inline">{% csrf_token %}<input type="hidden" name="enable" value="{% if g.enabled %}0{% else %}1{% endif %}">
-      <button class="btn btn-sm {% if g.enabled %}btn-danger{% endif %}" type="submit">{% if g.enabled %}غیرفعال‌سازی{% else %}فعال‌سازی{% endif %}</button></form></td></tr>{% endfor %}
-</tbody></table></div>{% else %}<div class="empty">درگاهی نصب نشده است.</div>{% endif %}</div>
+      <button class="btn btn-sm {% if g.enabled %}btn-danger{% endif %}" type="submit">{% if g.enabled %}{% trans "Deactivate" %}{% else %}{% trans "Activate" %}{% endif %}</button></form></td></tr>{% endfor %}
+</tbody></table></div>{% else %}<div class="empty">{% trans "No gateway is installed." %}</div>{% endif %}</div>
 {% endblock %}

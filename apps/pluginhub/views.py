@@ -1,4 +1,5 @@
 """پنل مخزن: Plugin Directory (برای مدیر سایت)، انتشار (برای ناشر مجاز)، مدیریت مخزن (مدیرکل)."""
+from django.utils.translation import gettext
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
@@ -86,8 +87,8 @@ class UploadView(PublisherMixin, View):
             except services.HubError as exc:
                 form.add_error(None, str(exc))
             else:
-                _audit(request, v.plugin, f"نسخهٔ {v.version} افزونهٔ «{v.plugin.slug}» در مخزن بارگذاری شد ({v.get_status_display()})")
-                messages.success(request, f"نسخهٔ {v.version} ثبت شد ({v.get_status_display()}).")
+                _audit(request, v.plugin, (gettext("Version %(version)s of plugin “%(slug)s” was uploaded to the registry (%(status)s)") % {"version": v.version, "slug": v.plugin.slug, "status": v.get_status_display()}))
+                messages.success(request, (gettext("Version %(version)s was registered (%(status)s).") % {"version": v.version, "status": v.get_status_display()}))
                 return redirect("pluginhub:my_plugin", slug=v.plugin.slug)
         return render(request, "pluginhub/upload.html", {"form": form}, status=400)
 
@@ -104,8 +105,8 @@ class MyPluginView(PublisherMixin, View):
         form = PluginMetaForm(request.POST, instance=p)
         if form.is_valid():
             form.save()
-            _audit(request, p, f"مشخصات افزونهٔ «{p.slug}» در مخزن ویرایش شد")
-            messages.success(request, "ذخیره شد.")
+            _audit(request, p, (gettext("The details of plugin “%(slug)s” in the registry were edited") % {"slug": p.slug}))
+            messages.success(request, gettext("Saved."))
             return redirect("pluginhub:my_plugin", slug=slug)
         return render(request, "pluginhub/my_plugin.html", self._ctx(p, form), status=400)
 
@@ -117,20 +118,20 @@ class VersionActionView(PublisherMixin, View):
         try:
             if action == "publish":
                 services.publish_version(v, self.publisher)
-                msg = "منتشر شد."
+                msg = gettext("Published.")
             elif action == "yank":
                 services.yank_version(v, self.publisher, request.POST.get("reason", ""))
-                msg = "پس گرفته شد."
+                msg = gettext("Withdrawn.")
             elif action == "delete":
                 services.delete_draft(v, self.publisher)
-                msg = "پیش‌نویس حذف شد."
+                msg = gettext("Draft deleted.")
             else:
                 raise PermissionDenied
         except services.HubError as exc:
             messages.error(request, str(exc))
         else:
-            _audit(request, p, f"نسخهٔ {version} افزونهٔ «{slug}»: {msg}")
-            messages.success(request, f"نسخهٔ {version} {msg}")
+            _audit(request, p, (gettext("Version %(version)s of plugin “%(slug)s”: %(msg)s") % {"version": version, "slug": slug, "msg": msg}))
+            messages.success(request, (gettext("Version %(version)s %(msg)s") % {"version": version, "msg": msg}))
         return redirect("pluginhub:my_plugin", slug=slug)
 
 
@@ -146,7 +147,7 @@ class TokensView(PublisherMixin, View):
         if not form.is_valid():
             return self._render(request, form, status=400)
         tok, raw = PublisherToken.issue(self.publisher, form.cleaned_data["name"])
-        _audit(request, self.publisher, f"توکن انتشار «{tok.name}» ساخته شد")
+        _audit(request, self.publisher, (gettext("Publishing token “%(name)s” was created") % {"name": tok.name}))
         resp = self._render(request, raw=raw)  # مقدار اصلی فقط در همین پاسخ؛ هرگز ذخیره/لاگ نمی‌شود
         resp["Cache-Control"] = "no-store"
         return resp
@@ -158,8 +159,8 @@ class TokenRevokeView(PublisherMixin, View):
         tok = get_object_or_404(PublisherToken, pk=pk, publisher=self.publisher)
         tok.revoked_at = tok.revoked_at or timezone.now()
         tok.save(update_fields=["revoked_at"])
-        _audit(request, self.publisher, f"توکن «{tok.name}» ابطال شد")
-        messages.success(request, "توکن ابطال شد.")
+        _audit(request, self.publisher, (gettext("Token “%(name)s” was revoked") % {"name": tok.name}))
+        messages.success(request, gettext("Token revoked."))
         return redirect("pluginhub:tokens")
 
 
@@ -185,15 +186,15 @@ class AdminPublishersView(RegistryAdminMixin, View):
             if not created:
                 pub.is_active = True
                 pub.save(update_fields=["is_active"])
-            _audit(request, pub, f"ناشر «{pub.display_name}» مجاز شد")
-            messages.success(request, "ناشر مجاز شد.")
+            _audit(request, pub, (gettext("Publisher “%(display_name)s” was authorized") % {"display_name": pub.display_name}))
+            messages.success(request, gettext("Publisher authorized."))
         elif op in ("toggle_active", "toggle_verified"):
             pub = get_object_or_404(Publisher, pk=request.POST.get("pk"))
             field = "is_active" if op == "toggle_active" else "is_verified"
             setattr(pub, field, not getattr(pub, field))
             pub.save(update_fields=[field])
-            _audit(request, pub, f"ناشر «{pub.display_name}»: {field}={getattr(pub, field)}")
-            messages.success(request, "ذخیره شد.")
+            _audit(request, pub, (gettext("Publisher “%(display_name)s”: %(field)s=%(pub)s") % {"display_name": pub.display_name, "field": field, "pub": getattr(pub, field)}))
+            messages.success(request, gettext("Saved."))
         return redirect("pluginhub:admin_publishers")
 
 
@@ -207,13 +208,13 @@ class AdminCategoriesView(RegistryAdminMixin, View):
     def post(self, request):
         if request.POST.get("op") == "delete":
             Category.objects.filter(pk=request.POST.get("pk")).delete()
-            messages.success(request, "حذف شد.")
+            messages.success(request, gettext("Deleted."))
             return redirect("pluginhub:admin_categories")
         form = CategoryForm(request.POST)
         if not form.is_valid():
             return self._render(request, form, 400)
         form.save()
-        messages.success(request, "دسته افزوده شد.")
+        messages.success(request, gettext("Category added."))
         return redirect("pluginhub:admin_categories")
 
 
@@ -227,10 +228,10 @@ class AdminPluginsView(RegistryAdminMixin, View):
             p = get_object_or_404(HubPlugin, pk=request.POST.get("pk"))
             p.is_listed = not p.is_listed
             p.save(update_fields=["is_listed", "updated_at"])
-            _audit(request, p, f"افزونهٔ «{p.slug}» {'در فهرست' if p.is_listed else 'از فهرست خارج'} شد")
+            _audit(request, p, (gettext("Plugin “%(slug)s” was %(value)s") % {"slug": p.slug, "value": ('در فهرست' if p.is_listed else 'از فهرست خارج')}))
         elif op == "yank":
             v = get_object_or_404(HubVersion, pk=request.POST.get("pk"))
-            services.yank_version(v, None, request.POST.get("reason", "توسط مدیر مخزن"), is_admin=True)
-            _audit(request, v.plugin, f"نسخهٔ {v.version} افزونهٔ «{v.plugin.slug}» توسط مدیر مخزن پس گرفته شد")
-        messages.success(request, "انجام شد.")
+            services.yank_version(v, None, request.POST.get("reason", gettext("by the registry administrator")), is_admin=True)
+            _audit(request, v.plugin, (gettext("Version %(version)s of plugin “%(slug)s” was withdrawn by the registry administrator") % {"version": v.version, "slug": v.plugin.slug}))
+        messages.success(request, gettext("Done."))
         return redirect("pluginhub:admin_plugins")

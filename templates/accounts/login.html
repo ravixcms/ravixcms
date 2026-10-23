@@ -1,17 +1,18 @@
 {% extends "layouts/auth.html" %}
+{% load i18n %}
 {% load ravix_ui %}
-{% block title %}ورود{% endblock %}
+{% block title %}{% trans "Sign in" %}{% endblock %}
 {% block auth_content %}
-<h2 style="margin-bottom:1.25rem">ورود به حساب</h2>
+<h2 style="margin-bottom:1.25rem">{% trans "Sign in to your account" %}</h2>
 <form method="post" novalidate data-once>
   {% csrf_token %}
   {% include "partials/_form_errors.html" %}
   {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
   {% for field in form %}{% include "partials/_field.html" %}{% endfor %}
-  <button type="submit" class="btn btn-block">{% icon "login" 18 %} ورود</button>
+  <button type="submit" class="btn btn-block">{% icon "login" 18 %} {% trans "Sign in" %}</button>
 </form>
-<p class="auth-switch" style="margin-top:.75rem"><a href="{% url 'accounts:password_reset' %}">رمز عبور را فراموش کرده‌اید؟</a></p>
+<p class="auth-switch" style="margin-top:.75rem"><a href="{% url 'accounts:password_reset' %}">{% trans "Forgot your password?" %}</a></p>
 {% if site.registration_open %}
-  <p class="auth-switch">حساب ندارید؟ <a href="{% url 'accounts:register' %}">ثبت‌نام کنید</a></p>
+  <p class="auth-switch">{% trans "Don’t have an account?" %} <a href="{% url 'accounts:register' %}">{% trans "Sign up now" %}</a></p>
 {% endif %}
 {% endblock %}

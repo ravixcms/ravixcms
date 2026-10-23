@@ -1,28 +1,29 @@
 {% extends "layouts/panel.html" %}
+{% load i18n %}
 {% load ravix_ui %}
-{% block title %}سلامت سایت{% endblock %}
-{% block page_title %}سلامت سایت{% endblock %}
+{% block title %}{% trans "Site health" %}{% endblock %}
+{% block page_title %}{% trans "Site health" %}{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>سلامت سایت</h1><p>بررسی خودکار تنظیمات و سرویس‌هایی که سایت به آن‌ها وابسته است.</p></div></div>
+<div class="page-head"><div><h1>{% trans "Site health" %}</h1><p>{% trans "Automatic check of the settings and services the site depends on." %}</p></div></div>
 
 <section class="card" style="margin-bottom:1.25rem" aria-labelledby="health-verdict">
   <div class="card-body" style="display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap">
-    <div style="font-size:2.2rem;font-weight:800" aria-label="امتیاز سلامت">{{ summary.score|fa_digits }}٪</div>
+    <div style="font-size:2.2rem;font-weight:800" aria-label="{% trans "Health score" %}">{% blocktrans trimmed with score=summary.score|fa_digits %}{{ score }}%{% endblocktrans %}</div>
     <div style="flex:1;min-width:14rem">
       <h2 id="health-verdict" style="margin:0">{{ summary.verdict }}</h2>
       <p class="help" style="margin:.25rem 0 0">
-        {{ summary.counts.critical|fa_digits }} بحرانی · {{ summary.counts.recommended|fa_digits }} پیشنهادی · {{ summary.counts.unknown|fa_digits }} نامشخص · {{ summary.counts.good|fa_digits }} خوب
+        {% blocktrans trimmed with critical=summary.counts.critical|fa_digits recommended=summary.counts.recommended|fa_digits unknown=summary.counts.unknown|fa_digits good=summary.counts.good|fa_digits %}{{ critical }} critical · {{ recommended }} recommended · {{ unknown }} unknown · {{ good }} good{% endblocktrans %}
       </p>
     </div>
     <form method="post" action="{% url 'core:site_health_test_email' %}">{% csrf_token %}
-      <button class="btn btn-light btn-sm" type="submit"{% if not test_email_to %} disabled{% endif %}>ارسال ایمیل آزمایشی{% if test_email_to %} به {{ test_email_to }}{% endif %}</button>
+      <button class="btn btn-light btn-sm" type="submit"{% if not test_email_to %} disabled{% endif %}>{% trans "Send test email" %}{% if test_email_to %} {% blocktrans trimmed with test_email_to=test_email_to %}to {{ test_email_to }}{% endblocktrans %}{% endif %}</button>
     </form>
   </div>
 </section>
 
 {% if problems %}
-<section class="card" style="margin-bottom:1.25rem" aria-label="مواردی که نیاز به توجه دارند">
-  <div class="card-header"><h2>نیازمند توجه ({{ problems|length|fa_digits }})</h2></div>
+<section class="card" style="margin-bottom:1.25rem" aria-label="{% trans "Items that need attention" %}">
+  <div class="card-header"><h2>{% blocktrans trimmed with problems=problems|length|fa_digits %}Needs attention ({{ problems }}){% endblocktrans %}</h2></div>
   <div class="card-body" style="display:grid;gap:1rem">
     {% for c in problems %}
     <article class="health-item health-{{ c.status }}">
@@ -30,20 +31,20 @@
         <span class="badge">{{ c.label }}</span><strong>{{ c.title }}</strong><span class="help">{{ c.group }}</span>
       </header>
       <p style="margin:.4rem 0 0">{{ c.detail }}</p>
-      {% if c.fix %}<p class="help" style="margin:.25rem 0 0"><b>راه‌حل:</b> <span dir="auto">{{ c.fix }}</span></p>{% endif %}
+      {% if c.fix %}<p class="help" style="margin:.25rem 0 0">{% trans "<b>Fix:</b>" %} <span dir="auto">{{ c.fix }}</span></p>{% endif %}
     </article>
     {% endfor %}
   </div>
 </section>
 {% endif %}
 
-<section class="card" aria-label="بررسی‌های موفق">
+<section class="card" aria-label="{% trans "Passed checks" %}">
   <details{% if not problems %} open{% endif %}>
-    <summary class="card-header" style="cursor:pointer"><h2 style="display:inline">بررسی‌های موفق ({{ passed|length|fa_digits }})</h2></summary>
+    <summary class="card-header" style="cursor:pointer"><h2 style="display:inline">{% blocktrans trimmed with passed=passed|length|fa_digits %}Passed checks ({{ passed }}){% endblocktrans %}</h2></summary>
     <div class="card-body" style="display:grid;gap:.6rem">
       {% for c in passed %}
       <div><span aria-hidden="true">✅</span> <strong>{{ c.title }}</strong> <span class="help">— {{ c.detail }}</span></div>
-      {% empty %}<p class="help">هنوز مورد موفقی نیست.</p>{% endfor %}
+      {% empty %}<p class="help">{% trans "No check has passed yet." %}</p>{% endfor %}
     </div>
   </details>
 </section>

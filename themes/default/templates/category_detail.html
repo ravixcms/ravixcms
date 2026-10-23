@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% load ravix_theme %}
 {% block body_class %}page-list{% endblock %}
 {% block content %}
@@ -7,10 +8,10 @@
   <header class="page-head">
     <h1>{{ category.name }}</h1>
     {% if category.description %}<p class="page-lead">{{ category.description }}</p>{% endif %}
-    <p class="muted">{{ category.post_count|fa_digits }} نوشته</p>
+    <p class="muted">{% blocktrans trimmed with post_count=category.post_count|fa_digits %}{{ post_count }} posts{% endblocktrans %}</p>
   </header>
   {% if children %}
-  <nav class="cat-nav" aria-label="زیردسته‌ها">
+  <nav class="cat-nav" aria-label="{% trans "Subcategories" %}">
     <ul class="chips">{% for c in children %}<li><a href="{{ c.url }}">{{ c.name }} ({{ c.post_count|fa_digits }})</a></li>{% endfor %}</ul>
   </nav>
   {% endif %}
@@ -18,7 +19,7 @@
   <div class="river">{% for post in posts %}{% include "partials/post_row.html" with post=post hlevel=2 %}{% endfor %}</div>
   {% include "partials/pagination.html" %}
   {% else %}
-  <div class="empty-state"><p>در این دسته‌بندی هنوز نوشته‌ای منتشر نشده است.</p></div>
+  <div class="empty-state"><p>{% trans "No post has been published in this category yet." %}</p></div>
   {% endif %}
 </div>
 {% endblock %}

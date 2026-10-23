@@ -1,13 +1,14 @@
+{% load i18n %}
 {% load ravix_theme %}
 {% if pagination and pagination.num_pages > 1 %}
-<nav class="pager" aria-label="صفحه‌بندی">
-  {% if pagination.has_prev %}<a class="pager-step" rel="prev" href="{{ pagination.prev_url }}">صفحهٔ قبل</a>{% endif %}
+<nav class="pager" aria-label="{% trans "Pagination" %}">
+  {% if pagination.has_prev %}<a class="pager-step" rel="prev" href="{{ pagination.prev_url }}">{% trans "Previous page" %}</a>{% endif %}
   <ul>
     {% for p in pagination.pages %}
       {% if p.number == 0 %}<li class="gap" aria-hidden="true">…</li>
-      {% else %}<li>{% if p.current %}<span aria-current="page">{{ p.number|fa_digits }}</span>{% else %}<a href="{{ p.url }}" aria-label="صفحهٔ {{ p.number|fa_digits }}">{{ p.number|fa_digits }}</a>{% endif %}</li>{% endif %}
+      {% else %}<li>{% if p.current %}<span aria-current="page">{{ p.number|fa_digits }}</span>{% else %}<a href="{{ p.url }}" aria-label="{% blocktrans with n=p.number|fa_digits %}Page {{ n }}{% endblocktrans %}">{{ p.number|fa_digits }}</a>{% endif %}</li>{% endif %}
     {% endfor %}
   </ul>
-  {% if pagination.has_next %}<a class="pager-step" rel="next" href="{{ pagination.next_url }}">صفحهٔ بعد</a>{% endif %}
+  {% if pagination.has_next %}<a class="pager-step" rel="next" href="{{ pagination.next_url }}">{% trans "Next page" %}</a>{% endif %}
 </nav>
 {% endif %}

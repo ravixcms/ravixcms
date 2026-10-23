@@ -1,29 +1,30 @@
 {% extends "layouts/panel.html" %}
+{% load i18n %}
 {% load ravix_ui %}
-{% block title %}اجرای به‌روزرسانی #{{ run.pk }}{% endblock %}
-{% block page_title %}اجرای #{{ run.pk }}{% endblock %}
+{% block title %}{% blocktrans trimmed with pk=run.pk %}Update run #{{ pk }}{% endblocktrans %}{% endblock %}
+{% block page_title %}{% blocktrans trimmed with pk=run.pk %}Run #{{ pk }}{% endblocktrans %}{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>اجرای #{{ run.pk }} — {{ run.get_component_display }}{% if run.slug %} <span class="ltr">{{ run.slug }}</span>{% endif %}
+<div class="page-head"><div><h1>{% blocktrans trimmed with pk=run.pk get_component_display=run.get_component_display %}Run #{{ pk }} — {{ get_component_display }}{% endblocktrans %}{% if run.slug %} <span class="ltr">{{ run.slug }}</span>{% endif %}
   <span class="badge {% if run.status == 'succeeded' %}badge-published{% elif run.status == 'rolled_back' or run.status == 'reverted' or run.status == 'running' %}badge-warn{% else %}badge-inactive{% endif %}">{{ run.get_status_display }}</span></h1>
-  <p class="ltr">{{ run.from_version }} → {{ run.to_version }}</p></div><a class="btn btn-light" href="{% url 'updater:home' %}">بازگشت</a></div>
-{% if run.error %}<div class="form-errors" role="alert"><p><strong>خطا:</strong></p><pre class="ltr" style="white-space:pre-wrap;font-size:.85rem">{{ run.error }}</pre></div>{% endif %}
-{% if run.recovery %}<div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>بازیابی / گام بعدی</h2></div><div class="card-body"><pre style="white-space:pre-wrap">{{ run.recovery }}</pre></div></div>{% endif %}
-<div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>مشخصات</h2></div><div class="card-body">
-  <p>شروع: {{ run.started_at|jalali_datetime }}{% if run.finished_at %} — پایان: {{ run.finished_at|jalali_datetime }}{% endif %}{% if run.started_by %} — توسط {{ run.started_by }}{% endif %}</p>
-  {% if run.sha256 %}<p>SHA-256 بسته: <span class="ltr">{{ run.sha256 }}</span></p>{% endif %}
-  {% if run.signer_key_id %}<p>امضاکننده: <span class="ltr">{{ run.signer_key_id }}</span> ({{ run.signer_label }}) — امضا اصالت بسته را تأیید می‌کند، نه بی‌خطر بودن کد.</p>{% endif %}
-  {% if run.backup.dir %}<p>پشتیبان: <span class="ltr">{{ run.backup.dir }}</span></p>{% endif %}
-  {% if run.parent %}<p>مربوط به <a href="{% url 'updater:run' run.parent.pk %}">اجرای #{{ run.parent.pk }}</a></p>{% endif %}
-  {% if run.migrations_applied %}<p>مهاجرت‌های اعمال‌شده:</p><ul class="ltr">{% for m in run.migrations_applied %}<li>{{ m }}</li>{% endfor %}</ul>{% endif %}
+  <p class="ltr">{{ run.from_version }} → {{ run.to_version }}</p></div><a class="btn btn-light" href="{% url 'updater:home' %}">{% trans "Back" %}</a></div>
+{% if run.error %}<div class="form-errors" role="alert"><p>{% trans "<strong>Error:</strong>" %}</p><pre class="ltr" style="white-space:pre-wrap;font-size:.85rem">{{ run.error }}</pre></div>{% endif %}
+{% if run.recovery %}<div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>{% trans "Recovery / next step" %}</h2></div><div class="card-body"><pre style="white-space:pre-wrap">{{ run.recovery }}</pre></div></div>{% endif %}
+<div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>{% trans "Specifications" %}</h2></div><div class="card-body">
+  <p>{% blocktrans trimmed with started_at=run.started_at|jalali_datetime %}Started: {{ started_at }}{% endblocktrans %}{% if run.finished_at %} {% blocktrans trimmed with finished_at=run.finished_at|jalali_datetime %}— Finished: {{ finished_at }}{% endblocktrans %}{% endif %}{% if run.started_by %} {% blocktrans trimmed with started_by=run.started_by %}— By {{ started_by }}{% endblocktrans %}{% endif %}</p>
+  {% if run.sha256 %}<p>{% trans "Package SHA-256:" %} <span class="ltr">{{ run.sha256 }}</span></p>{% endif %}
+  {% if run.signer_key_id %}<p>{% trans "Signer:" %} <span class="ltr">{{ run.signer_key_id }}</span> {% blocktrans trimmed with signer_label=run.signer_label %}({{ signer_label }}) — the signature confirms the package’s authenticity, not that the code is harmless.{% endblocktrans %}</p>{% endif %}
+  {% if run.backup.dir %}<p>{% trans "Backup:" %} <span class="ltr">{{ run.backup.dir }}</span></p>{% endif %}
+  {% if run.parent %}<p>{% trans "Related to" %} <a href="{% url 'updater:run' run.parent.pk %}">{% blocktrans trimmed with pk=run.parent.pk %}Run #{{ pk }}{% endblocktrans %}</a></p>{% endif %}
+  {% if run.migrations_applied %}<p>{% trans "Applied migrations:" %}</p><ul class="ltr">{% for m in run.migrations_applied %}<li>{{ m }}</li>{% endfor %}</ul>{% endif %}
 </div></div>
-<div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>مراحل</h2></div>
-  <div class="table-wrap"><table class="table"><thead><tr><th>مرحله</th><th>نتیجه</th><th>زمان</th><th>جزئیات</th></tr></thead><tbody>
-  {% for s in run.steps %}<tr><td class="ltr">{{ s.name }}</td><td>{% if s.ok %}<span class="badge badge-published">موفق</span>{% else %}<span class="badge badge-inactive">ناموفق</span>{% endif %}</td><td class="ltr">{{ s.at }}</td><td style="white-space:normal">{{ s.detail }}</td></tr>{% empty %}<tr><td colspan="4">—</td></tr>{% endfor %}
+<div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>{% trans "Steps" %}</h2></div>
+  <div class="table-wrap"><table class="table"><thead><tr><th>{% trans "Step" %}</th><th>{% trans "Result" %}</th><th>{% trans "Time" %}</th><th>{% trans "Details" %}</th></tr></thead><tbody>
+  {% for s in run.steps %}<tr><td class="ltr">{{ s.name }}</td><td>{% if s.ok %}<span class="badge badge-published">{% trans "Succeeded" %}</span>{% else %}<span class="badge badge-inactive">{% trans "Failed" %}</span>{% endif %}</td><td class="ltr">{{ s.at }}</td><td style="white-space:normal">{{ s.detail }}</td></tr>{% empty %}<tr><td colspan="4">—</td></tr>{% endfor %}
   </tbody></table></div></div>
-{% if run.migration_output %}<details class="card" style="margin-bottom:1.25rem"><summary class="card-header">خروجی مهاجرت</summary><pre class="ltr" style="white-space:pre-wrap;font-size:.8rem;padding:1rem">{{ run.migration_output }}</pre></details>{% endif %}
+{% if run.migration_output %}<details class="card" style="margin-bottom:1.25rem"><summary class="card-header">{% trans "Migration output" %}</summary><pre class="ltr" style="white-space:pre-wrap;font-size:.8rem;padding:1rem">{{ run.migration_output }}</pre></details>{% endif %}
 {% if can_rollback and can_manage and web_apply %}
-<div class="card"><div class="card-header"><h2>بازگشت به نسخهٔ قبل</h2></div><div class="card-body">
-  <p>فایل‌ها و دیتابیس به لحظهٔ پیش از این ارتقا برمی‌گردند؛ <strong>داده‌های ثبت‌شده پس از ارتقا از بین می‌رود</strong>. پیش از بازگشت از وضعیت فعلی هم پشتیبان گرفته می‌شود.</p>
-  <form method="post" action="{% url 'updater:rollback' run.pk %}">{% csrf_token %}<label><input type="checkbox" name="confirm_data_loss"> متوجه‌ام و تأیید می‌کنم</label> <button class="btn btn-light" type="submit">بازگشت</button></form></div></div>
+<div class="card"><div class="card-header"><h2>{% trans "Roll back to previous version" %}</h2></div><div class="card-body">
+  <p>{% trans "Files and database return to the moment before this upgrade; <strong>data recorded after the upgrade will be lost</strong>. A backup of the current state is taken before rolling back." %}</p>
+  <form method="post" action="{% url 'updater:rollback' run.pk %}">{% csrf_token %}<label><input type="checkbox" name="confirm_data_loss"> {% trans "I understand and confirm" %}</label> <button class="btn btn-light" type="submit">{% trans "Back" %}</button></form></div></div>
 {% endif %}
 {% endblock %}

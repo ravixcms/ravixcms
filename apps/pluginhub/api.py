@@ -1,4 +1,5 @@
 """API مخزن افزونه‌ها (``/registry/v1/``). خواندنی‌ها عمومی‌اند؛ انتشار فقط با توکن ناشر. همهٔ پاسخ‌ها JSON هستند."""
+from django.utils.translation import gettext
 import hashlib
 from functools import wraps
 
@@ -36,7 +37,7 @@ def hub_enabled(view):
     @wraps(view)
     def wrapper(request, *a, **kw):
         if not settings.RAVIX_REGISTRY_ENABLED:
-            return _err("مخزن غیرفعال است.", 404)
+            return _err(gettext("The registry is disabled."), 404)
         return view(request, *a, **kw)
     return wrapper
 
@@ -96,7 +97,7 @@ def meta(request):
         "integrity": {"algorithm": "sha256", "header": "X-Checksum-SHA256"},
         "max_package_bytes": settings.RAVIX_REGISTRY_MAX_PACKAGE_BYTES,
         "signature": {"algorithm": "ed25519", "message": "ravin-plugin-v1\\n<slug>\\n<version>\\n<sha256>\\n<fingerprint>",
-                      "note": "کلید عمومی را از کانال مستقل بگیرید و دستی در کلیدهای مورد اعتماد ثبت کنید؛ به این پاسخ برای اعتماد تکیه نکنید."},
+                      "note": gettext("Get the public key through an independent channel and add it to the trusted keys manually; do not rely on this response for trust.")},
     })
 
 
@@ -115,7 +116,7 @@ def plugin_list(request):
         page = max(1, int(request.GET.get("page", 1)))
         size = min(MAX_PAGE_SIZE, max(1, int(request.GET.get("page_size", PAGE_SIZE))))
     except ValueError:
-        return _err("پارامتر صفحه‌بندی نامعتبر است.", 400)
+        return _err(gettext("The pagination parameter is invalid."), 400)
     items = services.search(q, cat, compatible)
     chunk = items[(page - 1) * size: page * size]
     return _json({"count": len(items), "page": page, "page_size": size, "results": [ser_plugin(request, p, l, c) for p, l, c in chunk]})
@@ -134,10 +135,10 @@ def plugin_detail(request, slug):
     try:
         p = _public_plugin(slug)
     except Http404:
-        return _err("افزونه پیدا نشد.", 404)
+        return _err(gettext("Plugin not found."), 404)
     vs = sorted([v for v in p.versions.all() if v.status != HubVersion.Status.DRAFT], key=lambda v: v.parsed, reverse=True)
     if not any(v.status == HubVersion.Status.PUBLISHED for v in vs):
-        return _err("افزونه پیدا نشد.", 404)
+        return _err(gettext("Plugin not found."), 404)
     return _json(ser_plugin(request, p, services.latest_published(p), services.latest_published(p, compatible_only=True), versions=vs))
 
 
@@ -154,7 +155,7 @@ def _version_or_none(slug, version, *, statuses):
 def version_detail(request, slug, version):
     v = _version_or_none(slug, version, statuses=[HubVersion.Status.PUBLISHED, HubVersion.Status.YANKED])
     if v is None:
-        return _err("نسخه پیدا نشد.", 404)
+        return _err(gettext("Version not found."), 404)
     return _json(ser_version(request, v))
 
 
@@ -162,19 +163,19 @@ def version_detail(request, slug, version):
 @hub_enabled
 def download(request, slug, version):
     if not _https_ok(request):
-        return _err("دریافت بسته فقط از طریق HTTPS مجاز است.", 403)
+        return _err(gettext("Downloading packages is only allowed over HTTPS."), 403)
     v = _version_or_none(slug, version, statuses=[HubVersion.Status.PUBLISHED])
     if v is None:
-        return _err("نسخه پیدا نشد یا پس گرفته شده است.", 404)
+        return _err(gettext("Version not found or it has been withdrawn."), 404)
     try:
         v.package.open("rb")
         data = v.package.read()
     except (FileNotFoundError, ValueError, OSError):
-        return _err("فایل بسته در دسترس نیست.", 500)
+        return _err(gettext("The package file is not available."), 500)
     finally:
         v.package.close()
     if hashlib.sha256(data).hexdigest() != v.sha256:  # فایل روی دیسک دست‌کاری شده؛ هرگز سرو نمی‌شود
-        return _err("تمامیت فایل تأیید نشد؛ بسته سرو نمی‌شود.", 500)
+        return _err(gettext("File integrity could not be verified; the package will not be served."), 500)
     HubVersion.objects.filter(pk=v.pk).update(downloads=F("downloads") + 1)
     import io
     resp = FileResponse(io.BytesIO(data), content_type="application/zip", as_attachment=True, filename=f"{slug}-{version}.zip")
@@ -203,20 +204,20 @@ def _throttled(request, bucket, limit, window):
 @hub_enabled
 def publish(request):
     if not _https_ok(request):
-        return _err("انتشار فقط از طریق HTTPS مجاز است.", 403)
+        return _err(gettext("Publishing is only allowed over HTTPS."), 403)
     if _throttled(request, "publish", 30, 600):
-        return _err("تعداد درخواست زیاد است؛ بعداً تلاش کنید.", 429)
+        return _err(gettext("Too many requests; please try again later."), 429)
     auth = request.headers.get("Authorization", "")
     if not auth.lower().startswith("bearer "):
-        return _err("توکن ناشر الزامی است.", 401)
+        return _err(gettext("A publisher token is required."), 401)
     publisher = services.authenticate_token(auth[7:].strip())
     if publisher is None:
-        return _err("توکن نامعتبر یا ناشر غیرمجاز.", 401)
+        return _err(gettext("Invalid token or unauthorized publisher."), 401)
     f = request.FILES.get("package")
     if f is None:
-        return _err("فایل «package» الزامی است.", 400)
+        return _err(gettext("The “package” file is required."), 400)
     if f.size > settings.RAVIX_REGISTRY_MAX_PACKAGE_BYTES:
-        return _err("حجم بسته از سقف مجاز بیشتر است.", 400)
+        return _err(gettext("The package size exceeds the allowed limit."), 400)
     try:
         v = services.upload_version(publisher, publisher.user, f.read(), changelog=request.POST.get("changelog", ""),
                                     publish=request.POST.get("publish") in ("1", "true"))

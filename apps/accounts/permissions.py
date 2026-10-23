@@ -5,14 +5,15 @@
 قابلیت‌های جدید را اینجا اضافه کنند و با ``user.has_cap("...")`` یا
 ``CapabilityRequiredMixin`` از آن‌ها استفاده کنند.
 """
+from django.utils.translation import gettext_lazy
 from django.db import models
 
 
 class Role(models.TextChoices):
-    SUPER_ADMIN = "super_admin", "مدیرکل"
-    ADMIN = "admin", "مدیر"
-    AUTHOR = "author", "نویسنده"
-    USER = "user", "کاربر عادی"
+    SUPER_ADMIN = "super_admin", gettext_lazy("Superadmin")
+    ADMIN = "admin", gettext_lazy("Manager")
+    AUTHOR = "author", gettext_lazy("Author")
+    USER = "user", gettext_lazy("Regular user")
 
 
 ROLE_LEVEL = {
@@ -23,36 +24,36 @@ ROLE_LEVEL = {
 }
 
 CAPABILITIES = {
-    "dashboard.view": "مشاهده داشبورد",
-    "dashboard.stats": "مشاهده آمار کل سایت",
-    "profile.manage": "مدیریت پروفایل شخصی",
-    "users.view": "مشاهده فهرست کاربران",
-    "users.manage": "مدیریت نقش و وضعیت کاربران",
-    "settings.manage": "مدیریت تنظیمات سایت",
-    "health.view": "مشاهدهٔ «سلامت سایت» و ارسال ایمیل آزمایشی",
+    "dashboard.view": gettext_lazy("View the dashboard"),
+    "dashboard.stats": gettext_lazy("View site-wide statistics"),
+    "profile.manage": gettext_lazy("Manage own profile"),
+    "users.view": gettext_lazy("View the user list"),
+    "users.manage": gettext_lazy("Manage user roles and status"),
+    "settings.manage": gettext_lazy("Manage site settings"),
+    "health.view": gettext_lazy("View “Site health” and send a test email"),
     # قابلیت‌های آماده برای مرحله‌های بعد (ماژول محتوا)
-    "content.write": "نوشتن محتوا",
-    "content.publish": "انتشار و مدیریت نوشته‌های همه",
-    "pages.manage": "مدیریت صفحات ثابت",
-    "taxonomy.manage": "مدیریت دسته‌بندی‌ها و برچسب‌ها",
-    "redirects.manage": "مدیریت ریدایرکت‌ها (انتقال نشانی‌های قدیمی)",
-    "comments.moderate": "مدیریت و تأیید دیدگاه‌ها",
-    "media.upload": "بارگذاری و مشاهده کتابخانه رسانه",
-    "media.manage": "ویرایش و حذف رسانه‌های همه",
-    "audit.view": "مشاهده گزارش رویدادهای مدیریتی",
-    "themes.manage": "مدیریت قالب و ظاهر سایت",
-    "themes.install": "بارگذاری و نصب قالب از فایل ZIP (فقط مدیرکل)",
-    "builder.edit": "طراحی صفحات با صفحه‌ساز تصویری",
-    "builder.publish": "تأیید و انتشار طرح صفحه‌ساز",
-    "plugins.manage": "مدیریت افزونه‌ها (نصب، فعال‌سازی، تنظیمات)",
-    "plugins.trust": "مدیریت کلیدهای مورد اعتماد امضای افزونه (ریشهٔ اعتماد؛ فقط مدیرکل)",
-    "registry.manage": "مدیریت مخزن افزونه‌ها: ناشران، دسته‌ها، حذف از فهرست (فقط مدیرکل)",
-    "sites.manage": "مدیریت سایت‌ها، دامنه‌ها و اعضا (فقط مدیرکل)",
-    "shop.manage": "مدیریت محصولات فروشگاه",
-    "shop.orders": "مشاهده و پردازش سفارش‌های فروشگاه",
-    "shop.gateways": "مدیریت درگاه‌های پرداخت فروشگاه (فعال/غیرفعال و کلیدهای اتصال)",
-    "updates.view": "مشاهدهٔ نسخه‌ها، به‌روزرسانی‌های موجود و تاریخچهٔ ارتقا",
-    "updates.manage": "اعمال/بازگردانی به‌روزرسانی هسته و قالب‌ها (فقط مدیرکل؛ کد برنامه را جایگزین می‌کند)",
+    "content.write": gettext_lazy("Write content"),
+    "content.publish": gettext_lazy("Publish and manage everyone’s posts"),
+    "pages.manage": gettext_lazy("Manage static pages"),
+    "taxonomy.manage": gettext_lazy("Manage categories and tags"),
+    "redirects.manage": gettext_lazy("Manage redirects (moving old URLs)"),
+    "comments.moderate": gettext_lazy("Manage and approve comments"),
+    "media.upload": gettext_lazy("Upload and view the media library"),
+    "media.manage": gettext_lazy("Edit and delete everyone’s media"),
+    "audit.view": gettext_lazy("View the admin event log"),
+    "themes.manage": gettext_lazy("Manage the theme and site appearance"),
+    "themes.install": gettext_lazy("Upload and install a theme from a ZIP file (superadmin only)"),
+    "builder.edit": gettext_lazy("Design pages with the visual page builder"),
+    "builder.publish": gettext_lazy("Approve and publish page builder layouts"),
+    "plugins.manage": gettext_lazy("Manage plugins (install, activate, settings)"),
+    "plugins.trust": gettext_lazy("Manage trusted plugin signing keys (root of trust; superadmin only)"),
+    "registry.manage": gettext_lazy("Manage the plugin registry: publishers, categories, delisting (superadmin only)"),
+    "sites.manage": gettext_lazy("Manage sites, domains and members (superadmin only)"),
+    "shop.manage": gettext_lazy("Manage shop products"),
+    "shop.orders": gettext_lazy("View and process shop orders"),
+    "shop.gateways": gettext_lazy("Manage shop payment gateways (enable/disable and connection keys)"),
+    "updates.view": gettext_lazy("View versions, available updates and the upgrade history"),
+    "updates.manage": gettext_lazy("Apply/roll back core and theme updates (superadmin only; replaces the application code)"),
 }
 
 _BASIC = {"dashboard.view", "profile.manage"}

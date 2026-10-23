@@ -1,20 +1,21 @@
 {% extends "layouts/panel.html" %}
+{% load i18n %}
 {% load ravix_ui %}
-{% block title %}کلیدهای مورد اعتماد{% endblock %}
-{% block page_title %}کلیدهای مورد اعتماد{% endblock %}
+{% block title %}{% trans "Trusted keys" %}{% endblock %}
+{% block page_title %}{% trans "Trusted keys" %}{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>کلیدهای مورد اعتماد امضا</h1><p>فقط بسته‌هایی که با یکی از این کلیدها امضا شده‌اند «اصالت‌سنجی‌شده» حساب می‌شوند. فقط <strong>کلید عمومی</strong> را وارد کنید، و آن را از کانال مستقل (نه از خود مخزن) گرفته باشید.</p></div>
-  <a class="btn btn-light" href="{% url 'plugins:list' %}">بازگشت</a></div>
+<div class="page-head"><div><h1>{% trans "Trusted signing keys" %}</h1><p>{% trans "Only packages signed with one of these keys count as “authenticated”. Enter only the <strong>public key</strong>, and obtain it from an independent channel (not from the registry itself)." %}</p></div>
+  <a class="btn btn-light" href="{% url 'plugins:list' %}">{% trans "Back" %}</a></div>
 <form method="post">{% csrf_token %}<input type="hidden" name="op" value="add"><div class="card" style="margin-bottom:1.25rem"><div class="card-body">
-  <div class="field"><label for="label">برچسب</label><input class="input" id="label" name="label" maxlength="80" required></div>
-  <div class="field"><label for="public_key">کلید عمومی (base64، ۳۲ بایت)</label><input class="input ltr" id="public_key" name="public_key" required autocomplete="off"></div>
-  <button class="btn">ثبت کلید</button></div></div></form>
-<div class="card"><div class="table-wrap"><table class="table"><thead><tr><th>برچسب</th><th>شناسه</th><th>منبع</th><th>وضعیت</th><th></th></tr></thead><tbody>
-{% for k in env_keys %}<tr><td>{{ k.label }}</td><td class="ltr">{{ k.key_id }}</td><td>{% if k.source == "builtin" %}کد برنامه (رسمی){% else %}تنظیم سرور{% endif %}</td><td><span class="badge badge-published">فعال</span></td><td></td></tr>{% endfor %}
-{% for k in db_keys %}<tr><td>{{ k.label }}</td><td class="ltr">{{ k.key_id }}</td><td>ثبت‌شده در پنل</td>
-<td>{% if k.key_id in revoked %}<span class="badge badge-inactive">ابطال‌شده</span>{% elif k.is_active %}<span class="badge badge-published">فعال</span>{% else %}<span class="badge badge-inactive">غیرفعال</span>{% endif %}</td>
-<td style="display:flex;gap:.4rem"><form method="post">{% csrf_token %}<input type="hidden" name="op" value="toggle"><input type="hidden" name="pk" value="{{ k.pk }}"><button class="btn btn-light btn-sm">{% if k.is_active %}غیرفعال{% else %}فعال{% endif %}</button></form>
-<form method="post">{% csrf_token %}<input type="hidden" name="op" value="delete"><input type="hidden" name="pk" value="{{ k.pk }}"><button class="btn btn-danger btn-sm">حذف</button></form></td></tr>{% endfor %}
-{% for kid in revoked %}<tr><td>—</td><td class="ltr">{{ kid }}</td><td>فهرست ابطال (کد/تنظیم سرور)</td><td><span class="badge badge-inactive">ابطال‌شده</span></td><td></td></tr>{% endfor %}
-{% if not env_keys and not db_keys and not revoked %}<tr><td colspan="5"><div class="empty">کلیدی ثبت نشده است.</div></td></tr>{% endif %}
+  <div class="field"><label for="label">{% trans "Tag" %}</label><input class="input" id="label" name="label" maxlength="80" required></div>
+  <div class="field"><label for="public_key">{% trans "Public key (base64, 32 bytes)" %}</label><input class="input ltr" id="public_key" name="public_key" required autocomplete="off"></div>
+  <button class="btn">{% trans "Register key" %}</button></div></div></form>
+<div class="card"><div class="table-wrap"><table class="table"><thead><tr><th>{% trans "Tag" %}</th><th>{% trans "Identifier" %}</th><th>{% trans "Source" %}</th><th>{% trans "Status" %}</th><th></th></tr></thead><tbody>
+{% for k in env_keys %}<tr><td>{{ k.label }}</td><td class="ltr">{{ k.key_id }}</td><td>{% if k.source == "builtin" %}{% trans "Application code (official)" %}{% else %}{% trans "Server setting" %}{% endif %}</td><td><span class="badge badge-published">{% trans "Active" %}</span></td><td></td></tr>{% endfor %}
+{% for k in db_keys %}<tr><td>{{ k.label }}</td><td class="ltr">{{ k.key_id }}</td><td>{% trans "Registered in the panel" %}</td>
+<td>{% if k.key_id in revoked %}<span class="badge badge-inactive">{% trans "Revoked" %}</span>{% elif k.is_active %}<span class="badge badge-published">{% trans "Active" %}</span>{% else %}<span class="badge badge-inactive">{% trans "Inactive" %}</span>{% endif %}</td>
+<td style="display:flex;gap:.4rem"><form method="post">{% csrf_token %}<input type="hidden" name="op" value="toggle"><input type="hidden" name="pk" value="{{ k.pk }}"><button class="btn btn-light btn-sm">{% if k.is_active %}{% trans "Inactive" %}{% else %}{% trans "Active" %}{% endif %}</button></form>
+<form method="post">{% csrf_token %}<input type="hidden" name="op" value="delete"><input type="hidden" name="pk" value="{{ k.pk }}"><button class="btn btn-danger btn-sm">{% trans "Delete" %}</button></form></td></tr>{% endfor %}
+{% for kid in revoked %}<tr><td>—</td><td class="ltr">{{ kid }}</td><td>{% trans "Revocation list (code/server setting)" %}</td><td><span class="badge badge-inactive">{% trans "Revoked" %}</span></td><td></td></tr>{% endfor %}
+{% if not env_keys and not db_keys and not revoked %}<tr><td colspan="5"><div class="empty">{% trans "No key has been registered." %}</div></td></tr>{% endif %}
 </tbody></table></div></div>{% endblock %}

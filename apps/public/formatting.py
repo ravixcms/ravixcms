@@ -1,4 +1,5 @@
 """قالب‌بندی تاریخ شمسی، زمان مطالعه و خلاصه‌سازی متن (توابع خالص)."""
+from django.utils.translation import gettext
 import html
 import re
 
@@ -45,4 +46,4 @@ def excerpt_from(excerpt: str, html_fragment: str, length: int = 180) -> str:
 def reading_time(html_body: str) -> str:
     words = len(plain_text(html_body).split())
     minutes = max(1, round(words / 200))
-    return fa_digits(f"{minutes} دقیقه مطالعه")
+    return fa_digits((gettext("%(minutes)s min read") % {"minutes": minutes}))

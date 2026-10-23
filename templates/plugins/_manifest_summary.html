@@ -1,16 +1,17 @@
+{% load i18n %}
 {% load ravix_ui %}
 {% with m=manifest %}
 <dl class="kv">
-  <dt>نامک</dt><dd class="ltr">{{ m.slug }}</dd>
-  <dt>نسخه</dt><dd class="ltr">{{ m.version }}</dd>
-  <dt>سازنده</dt><dd>{{ m.author|default:"—" }}</dd>
-  <dt>سازگاری با Ravix</dt><dd class="ltr">{{ m.ravix }} (API {{ m.api_version }})</dd>
-  {% if m.requires %}<dt>وابستگی‌ها</dt><dd class="ltr">{% for k, v in m.requires.items %}{{ k }} {{ v }}{% if not forloop.last %}، {% endif %}{% endfor %}</dd>{% endif %}
-  <dt>جدول در دیتابیس</dt><dd>{% if m.models %}بله — جدول‌هایی با پیشوند <span class="ltr">plugin_{{ m.slug }}_</span> ساخته می‌شود{% else %}خیر{% endif %}</dd>
-  <dt>صفحات مدیریتی</dt><dd>{% for p in m.admin_pages %}{{ p.title }} (مجوز: <span class="ltr">{{ p.capability }}</span>){% if not forloop.last %}<br>{% endif %}{% empty %}—{% endfor %}</dd>
-  <dt>مسیرهای عمومی</dt><dd>{% for r in m.public_routes %}<span class="ltr">/ext/{{ m.slug }}/{{ r.path }}</span> ({{ r.methods|join:", " }}){% if not forloop.last %}<br>{% endif %}{% empty %}—{% endfor %}</dd>
-  <dt>Hookها</dt><dd>{% for h in m.hooks %}<span class="ltr">{{ h.name }}</span>{% if not forloop.last %}، {% endif %}{% empty %}—{% endfor %}</dd>
-  <dt>مجوزهای جدید</dt><dd>{% for k, v in m.capabilities.items %}<span class="ltr">{{ k }}</span> — {{ v }}{% if not forloop.last %}<br>{% endif %}{% empty %}—{% endfor %}{% if m.capabilities %}<br><span class="muted">(فقط به نقش مدیر و مدیرکل داده می‌شود)</span>{% endif %}</dd>
-  <dt>تنظیمات</dt><dd>{{ m.settings|length|fa_digits }} مورد</dd>
+  <dt>{% trans "Slug" %}</dt><dd class="ltr">{{ m.slug }}</dd>
+  <dt>{% trans "Version" %}</dt><dd class="ltr">{{ m.version }}</dd>
+  <dt>{% trans "Creator" %}</dt><dd>{{ m.author|default:"—" }}</dd>
+  <dt>{% trans "Compatibility with Ravix" %}</dt><dd class="ltr">{{ m.ravix }} (API {{ m.api_version }})</dd>
+  {% if m.requires %}<dt>{% trans "Dependencies" %}</dt><dd class="ltr">{% for k, v in m.requires.items %}{{ k }} {{ v }}{% if not forloop.last %}{% trans "," %} {% endif %}{% endfor %}</dd>{% endif %}
+  <dt>{% trans "Database tables" %}</dt><dd>{% if m.models %}{% trans "Yes — tables with the prefix" %} <span class="ltr">plugin_{{ m.slug }}_</span> {% trans "will be created" %}{% else %}{% trans "No" %}{% endif %}</dd>
+  <dt>{% trans "Admin pages" %}</dt><dd>{% for p in m.admin_pages %}{% blocktrans trimmed with title=p.title %}{{ title }} (permission:{% endblocktrans %} <span class="ltr">{{ p.capability }}</span>){% if not forloop.last %}<br>{% endif %}{% empty %}—{% endfor %}</dd>
+  <dt>{% trans "Public routes" %}</dt><dd>{% for r in m.public_routes %}<span class="ltr">/ext/{{ m.slug }}/{{ r.path }}</span> ({{ r.methods|join:", " }}){% if not forloop.last %}<br>{% endif %}{% empty %}—{% endfor %}</dd>
+  <dt>{% trans "Hooks" %}</dt><dd>{% for h in m.hooks %}<span class="ltr">{{ h.name }}</span>{% if not forloop.last %}{% trans "," %} {% endif %}{% empty %}—{% endfor %}</dd>
+  <dt>{% trans "New permissions" %}</dt><dd>{% for k, v in m.capabilities.items %}<span class="ltr">{{ k }}</span> — {{ v }}{% if not forloop.last %}<br>{% endif %}{% empty %}—{% endfor %}{% if m.capabilities %}<br><span class="muted">{% trans "(granted only to the admin and superadmin roles)" %}</span>{% endif %}</dd>
+  <dt>{% trans "Settings" %}</dt><dd>{% blocktrans trimmed with settings=m.settings|length|fa_digits %}{{ settings }} items{% endblocktrans %}</dd>
 </dl>
 {% endwith %}

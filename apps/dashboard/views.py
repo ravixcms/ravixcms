@@ -1,3 +1,4 @@
+from django.utils.translation import gettext
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
@@ -39,7 +40,7 @@ class OnboardingDismissView(CapabilityRequiredMixin, View):
 
     def post(self, request):
         SiteSettings.objects.filter(pk=SiteSettings.load().pk).update(onboarding_dismissed=True)
-        messages.success(request, "راهنمای شروع بسته شد.")
+        messages.success(request, gettext("The getting-started guide was closed."))
         return redirect("dashboard:home")
 
 
@@ -53,7 +54,7 @@ class DeleteSamplesView(CapabilityRequiredMixin, View):
 
             raise PermissionDenied
         result = samples.delete_samples()
-        log_event(request, AuditLog.Action.DELETE, None, f"محتوای نمونه حذف شد ({result['posts']} نوشته و {result['pages']} برگه).",
+        log_event(request, AuditLog.Action.DELETE, None, (gettext("Sample content was deleted (%(result)s posts and %(result2)s pages).") % {"result": result['posts'], "result2": result['pages']}),
                   object_type="sample_content")
-        messages.success(request, "محتوای نمونه حذف شد. (آنچه ویرایش کرده بودید نگه داشته شد.)")
+        messages.success(request, gettext("Sample content was deleted. (What you had edited was kept.)"))
         return redirect("dashboard:home")

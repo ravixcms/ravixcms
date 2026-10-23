@@ -2,6 +2,7 @@
 
 صفحات عمومی CSP اختصاصی خودشان را می‌گذارند (apps/public/rendering.py) و بازنویسی نمی‌شود.
 """
+from django.utils.translation import gettext
 from django.conf import settings
 
 DEFAULT_CSP = (
@@ -70,4 +71,4 @@ class NumericOverflowMiddleware:
             return None
         from .errorpages import standalone_response
 
-        return standalone_response(request, 400, "درخواست نامعتبر", "یکی از مقدارهای عددی درخواست خیلی بزرگ است. صفحه را بدون آن مقدار باز کنید.", icon="⚠️")
+        return standalone_response(request, 400, gettext("Invalid request"), gettext("One of the numeric values in the request is too large. Open the page without that value."), icon="⚠️")

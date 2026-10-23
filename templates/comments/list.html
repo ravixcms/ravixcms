@@ -1,38 +1,39 @@
 {% extends "layouts/panel.html" %}
+{% load i18n %}
 {% load ravix_ui %}
-{% block title %}دیدگاه‌ها{% endblock %}
-{% block page_title %}دیدگاه‌ها{% endblock %}
+{% block title %}{% trans "Comments" %}{% endblock %}
+{% block page_title %}{% trans "Comments" %}{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>دیدگاه‌ها</h1><p>دیدگاه‌های بازدیدکنندگان را تأیید، اسپم یا حذف کنید. تنظیم «نیاز به تأیید» و کلمات مسدود در تنظیمات سایت است.</p></div></div>
+<div class="page-head"><div><h1>{% trans "Comments" %}</h1><p>{% trans "Approve, mark as spam or delete visitor comments. The “requires approval” setting and blocked words are in the site settings." %}</p></div></div>
 <div class="card">
-  <nav class="toolbar" aria-label="وضعیت">
+  <nav class="toolbar" aria-label="{% trans "Status" %}">
     {% for value, label, n in tabs %}<a class="btn {% if value == status %}{% else %}btn-light{% endif %} btn-sm" href="?{% if value %}status={{ value }}{% endif %}">{{ label }} ({{ n|fa_digits }})</a>{% endfor %}
   </nav>
   <form method="get" class="toolbar" role="search">
     {% if status %}<input type="hidden" name="status" value="{{ status }}">{% endif %}
-    <input type="search" name="q" value="{{ q }}" class="input grow" placeholder="جستجو در متن، نام، ایمیل یا عنوان نوشته" aria-label="جستجو">
-    <button type="submit" class="btn">{% icon "search" 18 %} جستجو</button>
+    <input type="search" name="q" value="{{ q }}" class="input grow" placeholder="{% trans "Search by text, name, email or post title" %}" aria-label="{% trans "Search" %}">
+    <button type="submit" class="btn">{% icon "search" 18 %} {% trans "Search" %}</button>
   </form>
   {% if comments %}
   <form method="post" action="{% url 'comments:bulk' %}">
     {% csrf_token %}
     <input type="hidden" name="next" value="{{ request.get_full_path }}">
     <div class="toolbar">
-      <select name="action" class="input" aria-label="عملیات گروهی">
-        <option value="">عملیات گروهی…</option>
+      <select name="action" class="input" aria-label="{% trans "Bulk actions" %}">
+        <option value="">{% trans "Bulk actions…" %}</option>
         {% for key, label in actions.items %}<option value="{{ key }}">{{ label }}</option>{% endfor %}
-        {% if status == "spam" or status == "trash" %}<option value="delete">حذف برای همیشه</option>{% endif %}
+        {% if status == "spam" or status == "trash" %}<option value="delete">{% trans "Delete permanently" %}</option>{% endif %}
       </select>
-      <button type="submit" class="btn">اعمال</button>
-      {% if status == "trash" %}<button type="submit" name="action" value="empty_trash" class="btn btn-light">خالی‌کردن زباله</button>{% endif %}
+      <button type="submit" class="btn">{% trans "Actions" %}</button>
+      {% if status == "trash" %}<button type="submit" name="action" value="empty_trash" class="btn btn-light">{% trans "Empty trash" %}</button>{% endif %}
     </div>
     <div class="table-wrap"><table class="table">
-      <thead><tr><th><input type="checkbox" aria-label="انتخاب همه" data-check-all></th><th>نویسنده</th><th>دیدگاه</th><th>نوشته</th><th>وضعیت</th><th>زمان</th></tr></thead>
+      <thead><tr><th><input type="checkbox" aria-label="{% trans "Select all" %}" data-check-all></th><th>{% trans "Author" %}</th><th>{% trans "Comment" %}</th><th>{% trans "Post" %}</th><th>{% trans "Status" %}</th><th>{% trans "Time" %}</th></tr></thead>
       <tbody>
       {% for c in comments %}
         <tr>
-          <td><input type="checkbox" name="ids" value="{{ c.pk }}" aria-label="انتخاب"></td>
-          <td><strong>{{ c.author_name }}</strong><br><span class="muted ltr">{{ c.author_email }}</span>{% if c.parent_id %}<br><span class="muted">پاسخ</span>{% endif %}</td>
+          <td><input type="checkbox" name="ids" value="{{ c.pk }}" aria-label="{% trans "Select" %}"></td>
+          <td><strong>{{ c.author_name }}</strong><br><span class="muted ltr">{{ c.author_email }}</span>{% if c.parent_id %}<br><span class="muted">{% trans "Reply" %}</span>{% endif %}</td>
           <td style="max-width:28rem">{{ c.body_html|safe }}</td>
           <td><a href="{% url 'content:post_update' c.post_id %}">{{ c.post.title }}</a></td>
           <td>{{ c.get_status_display }}</td>
@@ -42,6 +43,6 @@
       </tbody></table></div>
   </form>
   {% include "partials/_pagination.html" %}
-  {% else %}<div class="empty">دیدگاهی پیدا نشد.</div>{% endif %}
+  {% else %}<div class="empty">{% trans "No comment was found." %}</div>{% endif %}
 </div>
 {% endblock %}

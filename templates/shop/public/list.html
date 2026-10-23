@@ -1,29 +1,30 @@
+{% load i18n %}
 {% load ravix_ui %}
-<form method="get" class="shop-filters" role="search" aria-label="جست‌وجو در محصولات">
-  <label class="sr-only" for="shop-q">جست‌وجو</label><input id="shop-q" type="search" name="q" value="{{ q }}" maxlength="80" placeholder="جست‌وجوی محصول">
-  <label class="sr-only" for="shop-cat">دسته</label><select id="shop-cat" name="category"><option value="">همهٔ دسته‌ها</option>
+<form method="get" class="shop-filters" role="search" aria-label="{% trans "Search products" %}">
+  <label class="sr-only" for="shop-q">{% trans "Find" %}</label><input id="shop-q" type="search" name="q" value="{{ q }}" maxlength="80" placeholder="{% trans "Product search" %}">
+  <label class="sr-only" for="shop-cat">{% trans "Category" %}</label><select id="shop-cat" name="category"><option value="">{% trans "All categories" %}</option>
     {% for c in categories %}<option value="{{ c.slug }}"{% if c.slug == cat %} selected{% endif %}>{{ c.name }}</option>{% endfor %}</select>
-  <label class="sr-only" for="shop-kind">نوع</label><select id="shop-kind" name="kind"><option value="">فیزیکی و دیجیتال</option>
-    <option value="physical"{% if kind == "physical" %} selected{% endif %}>فیزیکی</option><option value="digital"{% if kind == "digital" %} selected{% endif %}>دیجیتال</option></select>
-  <label class="sr-only" for="shop-sort">مرتب‌سازی</label><select id="shop-sort" name="sort"><option value="">جدیدترین</option>
-    <option value="price_asc"{% if sort == "price_asc" %} selected{% endif %}>ارزان‌ترین</option><option value="price_desc"{% if sort == "price_desc" %} selected{% endif %}>گران‌ترین</option>
-    <option value="name"{% if sort == "name" %} selected{% endif %}>نام</option></select>
-  <button class="btn" type="submit">اعمال</button>
+  <label class="sr-only" for="shop-kind">{% trans "Type" %}</label><select id="shop-kind" name="kind"><option value="">{% trans "Physical and digital" %}</option>
+    <option value="physical"{% if kind == "physical" %} selected{% endif %}>{% trans "Physical" %}</option><option value="digital"{% if kind == "digital" %} selected{% endif %}>{% trans "Digital" %}</option></select>
+  <label class="sr-only" for="shop-sort">{% trans "Sort" %}</label><select id="shop-sort" name="sort"><option value="">{% trans "Newest" %}</option>
+    <option value="price_asc"{% if sort == "price_asc" %} selected{% endif %}>{% trans "Cheapest" %}</option><option value="price_desc"{% if sort == "price_desc" %} selected{% endif %}>{% trans "Most expensive" %}</option>
+    <option value="name"{% if sort == "name" %} selected{% endif %}>{% trans "Name" %}</option></select>
+  <button class="btn" type="submit">{% trans "Actions" %}</button>
 </form>
 {% if page.object_list %}
 <ul class="grid">
 {% for p in page.object_list %}
   <li class="card"><a href="{{ p.get_absolute_url }}">
-    {% if p.image %}<img src="{{ p.image.url }}" alt="{{ p.name }}" loading="lazy" width="400" height="300">{% else %}<div class="ph" role="img" aria-label="بدون تصویر"></div>{% endif %}
+    {% if p.image %}<img src="{{ p.image.url }}" alt="{{ p.name }}" loading="lazy" width="400" height="300">{% else %}<div class="ph" role="img" aria-label="{% trans "No image" %}"></div>{% endif %}
     <div class="card-body"><h2 style="font-size:1.05rem;margin:.2rem 0">{{ p.name }}</h2>
     {% if p.category %}<p class="muted">{{ p.category.name }}</p>{% endif %}
-    <p class="price">{% if p.has_discount %}<del>{{ p.price|money }}</del> <span class="badge">{{ p.discount_percent|fa_digits }}٪ تخفیف</span> {% endif %}{{ p.final_price|money }} {{ currency }}</p>
-    {% if p.is_digital %}<span class="badge">دیجیتال</span>{% endif %}{% if not p.in_stock %}<span class="badge">ناموجود</span>{% endif %}</div></a></li>
+    <p class="price">{% if p.has_discount %}<del>{{ p.price|money }}</del> <span class="badge">{% blocktrans trimmed with discount_percent=p.discount_percent|fa_digits %}{{ discount_percent }}% off{% endblocktrans %}</span> {% endif %}{{ p.final_price|money }} {{ currency }}</p>
+    {% if p.is_digital %}<span class="badge">{% trans "Digital" %}</span>{% endif %}{% if not p.in_stock %}<span class="badge">{% trans "Out of stock" %}</span>{% endif %}</div></a></li>
 {% endfor %}
 </ul>
-{% if page.has_other_pages %}<nav class="pager" aria-label="صفحه‌بندی محصولات">
-  {% if page.has_previous %}<a class="btn" rel="prev" href="?{% if qs %}{{ qs }}&amp;{% endif %}page={{ page.previous_page_number }}">قبلی</a>{% endif %}
-  <span>صفحه {{ page.number|fa_digits }} از {{ page.paginator.num_pages|fa_digits }}</span>
-  {% if page.has_next %}<a class="btn" rel="next" href="?{% if qs %}{{ qs }}&amp;{% endif %}page={{ page.next_page_number }}">بعدی</a>{% endif %}</nav>{% endif %}
-{% else %}<p>{% if q or cat or kind %}محصولی با این مشخصات پیدا نشد.{% else %}هنوز محصولی ثبت نشده است.{% endif %}</p>{% endif %}
-<p><a href="{% url 'shop:cart' %}">سبد خرید ({{ cart_count|fa_digits }})</a>{% if user.is_authenticated %} · <a href="{% url 'shop:my_orders' %}">سفارش‌های من</a>{% endif %}</p>
+{% if page.has_other_pages %}<nav class="pager" aria-label="{% trans "Product pagination" %}">
+  {% if page.has_previous %}<a class="btn" rel="prev" href="?{% if qs %}{{ qs }}&amp;{% endif %}page={{ page.previous_page_number }}">{% trans "Previous" %}</a>{% endif %}
+  <span>{% blocktrans trimmed with number=page.number|fa_digits num_pages=page.paginator.num_pages|fa_digits %}Page {{ number }} of {{ num_pages }}{% endblocktrans %}</span>
+  {% if page.has_next %}<a class="btn" rel="next" href="?{% if qs %}{{ qs }}&amp;{% endif %}page={{ page.next_page_number }}">{% trans "Next" %}</a>{% endif %}</nav>{% endif %}
+{% else %}<p>{% if q or cat or kind %}{% trans "No product matched these criteria." %}{% else %}{% trans "No product has been registered yet." %}{% endif %}</p>{% endif %}
+<p><a href="{% url 'shop:cart' %}">{% blocktrans trimmed with cart_count=cart_count|fa_digits %}Cart ({{ cart_count }}){% endblocktrans %}</a>{% if user.is_authenticated %} · <a href="{% url 'shop:my_orders' %}">{% trans "My orders" %}</a>{% endif %}</p>

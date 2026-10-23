@@ -1,3 +1,4 @@
+from django.utils.translation import gettext, gettext_lazy
 from django.core.exceptions import PermissionDenied
 from apps.core.params import safe_id
 from django.db.models import Count, Q
@@ -97,7 +98,7 @@ class PostDetailView(CapabilityRequiredMixin, DetailView):
 class PostFormMixin:
     model = Post
     form_class = PostForm
-    object_label = "نوشته"
+    object_label = gettext_lazy("Post")
     list_url_name = "content:post_list"
     required_capability = "content.write"
     pass_user_to_form = True
@@ -107,7 +108,7 @@ class PostFormMixin:
         post = self.object
         if post.status in (PublishStatus.PUBLISHED, PublishStatus.SCHEDULED) and before_status != post.status:
             label = post.get_status_display()
-            self.audit("publish", post, f"وضعیت نوشته «{post}» به «{label}» تغییر کرد.")
+            self.audit("publish", post, (gettext("The status of post “%(post)s” was changed to “%(label)s”.") % {"post": post, "label": label}))
 
 
 class PostCreateView(PostFormMixin, AuditedCreateView):
@@ -130,7 +131,7 @@ class PostUpdateView(PostFormMixin, AuditedUpdateView):
 
 class PostDeleteView(AuditedDeleteView):
     model = Post
-    object_label = "نوشته"
+    object_label = gettext_lazy("Post")
     list_url_name = "content:post_list"
     required_capability = "content.write"
 
@@ -172,7 +173,7 @@ class PageDetailView(CapabilityRequiredMixin, DetailView):
 class PageFormMixin:
     model = Page
     form_class = PageForm
-    object_label = "صفحه"
+    object_label = gettext_lazy("Page")
     list_url_name = "content:page_list"
     required_capability = "pages.manage"
     pass_user_to_form = True
@@ -189,7 +190,7 @@ class PageUpdateView(PageFormMixin, AuditedUpdateView):
 
 class PageDeleteView(AuditedDeleteView):
     model = Page
-    object_label = "صفحه"
+    object_label = gettext_lazy("Page")
     list_url_name = "content:page_list"
     required_capability = "pages.manage"
 
@@ -208,7 +209,7 @@ class CategoryListView(CapabilityRequiredMixin, ListView):
 class CategoryFormMixin:
     model = Category
     form_class = CategoryForm
-    object_label = "دسته‌بندی"
+    object_label = gettext_lazy("Content category")
     list_url_name = "content:category_list"
     required_capability = "taxonomy.manage"
 
@@ -223,7 +224,7 @@ class CategoryUpdateView(CategoryFormMixin, AuditedUpdateView):
 
 class CategoryDeleteView(AuditedDeleteView):
     model = Category
-    object_label = "دسته‌بندی"
+    object_label = gettext_lazy("Content category")
     list_url_name = "content:category_list"
     required_capability = "taxonomy.manage"
 
@@ -250,7 +251,7 @@ class TagListView(CapabilityRequiredMixin, QueryStringMixin, ListView):
 class TagFormMixin:
     model = Tag
     form_class = TagForm
-    object_label = "برچسب"
+    object_label = gettext_lazy("Tag")
     list_url_name = "content:tag_list"
     required_capability = "taxonomy.manage"
 
@@ -265,7 +266,7 @@ class TagUpdateView(TagFormMixin, AuditedUpdateView):
 
 class TagDeleteView(AuditedDeleteView):
     model = Tag
-    object_label = "برچسب"
+    object_label = gettext_lazy("Tag")
     list_url_name = "content:tag_list"
     required_capability = "taxonomy.manage"
 
@@ -293,7 +294,7 @@ class RedirectListView(CapabilityRequiredMixin, QueryStringMixin, ListView):
 class RedirectFormMixin:
     model = Redirect
     form_class = RedirectForm
-    object_label = "ریدایرکت"
+    object_label = gettext_lazy("Redirect")
     list_url_name = "content:redirect_list"
     required_capability = "redirects.manage"
 
@@ -308,7 +309,7 @@ class RedirectUpdateView(RedirectFormMixin, AuditedUpdateView):
 
 class RedirectDeleteView(AuditedDeleteView):
     model = Redirect
-    object_label = "ریدایرکت"
+    object_label = gettext_lazy("Redirect")
     list_url_name = "content:redirect_list"
     required_capability = "redirects.manage"
 
@@ -324,5 +325,5 @@ class MarkdownPreviewView(CapabilityRequiredMixin, View):
     def post(self, request):
         text = request.POST.get("text", "")
         if len(text) > self.max_length:
-            return JsonResponse({"error": "متن بیش از حد طولانی است."}, status=413)
+            return JsonResponse({"error": gettext("The text is too long.")}, status=413)
         return JsonResponse({"html": render_markdown(text)})

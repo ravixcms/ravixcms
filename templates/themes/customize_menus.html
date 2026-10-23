@@ -1,9 +1,10 @@
 {% extends "themes/customize_base.html" %}
+{% load i18n %}
 {% load ravix_ui %}
 {% block tab_content %}
 <form method="post" novalidate data-once>
   {% csrf_token %}
-  <p class="help">ترتیب را با عدد «ردیف» تعیین کنید (عدد کوچک‌تر بالاتر). ردیف‌های بدون نوع پیوند نادیده گرفته می‌شوند. فقط فیلدهای مربوط به نوع پیوند انتخاب‌شده استفاده می‌شوند.</p>
+  <p class="help">{% trans "Set the order with the “Row” number (a smaller number goes higher). Rows without a link type are ignored. Only the fields for the selected link type are used." %}</p>
   {% for title, location, fs in menu_formsets %}
   <section class="card formset" aria-labelledby="menu-{{ location }}">
     <div class="card-header"><h2 id="menu-{{ location }}">{{ title }}</h2></div>
@@ -12,7 +13,7 @@
       {% for e in fs.non_form_errors %}<div class="form-errors" role="alert"><p>{{ e }}</p></div>{% endfor %}
       {% for f in fs %}
       <fieldset class="formset-row{% if f.errors %} has-errors{% endif %}">
-        <legend class="sr-only">آیتم {{ forloop.counter }} از {{ title }}</legend>
+        <legend class="sr-only">{% blocktrans trimmed with counter=forloop.counter title=title %}Item {{ counter }} of {{ title }}{% endblocktrans %}</legend>
         {% for e in f.non_field_errors %}<p class="error-text">{{ e }}</p>{% endfor %}
         <div class="row-grid">
           {% include "partials/_field.html" with field=f.label %}
@@ -31,7 +32,7 @@
     </div>
   </section>
   {% endfor %}
-  <div class="form-actions"><button type="submit" class="btn">{% icon "check" 18 %} ذخیره در پیش‌نویس</button></div>
+  <div class="form-actions"><button type="submit" class="btn">{% icon "check" 18 %} {% trans "Save to draft" %}</button></div>
 </form>
 {% include "themes/_preview_frame.html" %}
 {% endblock %}

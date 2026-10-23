@@ -1,35 +1,36 @@
 {% extends "layouts/panel.html" %}
+{% load i18n %}
 {% load ravix_ui %}
-{% block title %}افزونه‌ها{% endblock %}
-{% block page_title %}افزونه‌ها{% endblock %}
+{% block title %}{% trans "Plugins" %}{% endblock %}
+{% block page_title %}{% trans "Plugins" %}{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>افزونه‌ها</h1><p>قابلیت‌های جدید را بدون تغییر هسته اضافه کنید. افزونه‌ها کد سمت سرور دارند؛ فقط افزونه‌هایی را نصب کنید که به آن‌ها اعتماد دارید.</p></div>
-  <div style="display:flex;gap:.5rem;flex-wrap:wrap"><a class="btn" href="{% url 'plugins:install_package' %}">{% icon "plus" 18 %} نصب از بسته</a>
+<div class="page-head"><div><h1>{% trans "Plugins" %}</h1><p>{% trans "Add new features without changing the core. Plugins run server-side code; install only plugins you trust." %}</p></div>
+  <div style="display:flex;gap:.5rem;flex-wrap:wrap"><a class="btn" href="{% url 'plugins:install_package' %}">{% icon "plus" 18 %} {% trans "Install from package" %}</a>
     <a class="btn btn-light" href="{% url 'pluginhub:directory' %}">Plugin Directory</a>
-    {% if request.user.role == "super_admin" %}<a class="btn btn-light" href="{% url 'plugins:trusted_keys' %}">کلیدهای مورد اعتماد</a>{% endif %}
-    <a class="btn btn-light" href="{% url 'plugins:events' %}">{% icon "list" 18 %} گزارش افزونه‌ها</a></div></div>
-{% if not plugins_enabled %}<div class="form-errors" role="alert"><p>سیستم افزونه‌ها با تنظیم <span class="ltr">RAVIX_PLUGINS_ENABLED=false</span> خاموش است.</p></div>{% endif %}
-{% if safe_mode %}<div class="form-errors warn" role="status"><p>حالت امن فعال است (<span class="ltr">RAVIX_PLUGINS_SAFE_MODE</span>): کد هیچ افزونه‌ای اجرا نمی‌شود. فقط مدیریت (نصب/حذف/گزارش) در دسترس است.</p></div>{% endif %}
+    {% if request.user.role == "super_admin" %}<a class="btn btn-light" href="{% url 'plugins:trusted_keys' %}">{% trans "Trusted keys" %}</a>{% endif %}
+    <a class="btn btn-light" href="{% url 'plugins:events' %}">{% icon "list" 18 %} {% trans "Plugin log" %}</a></div></div>
+{% if not plugins_enabled %}<div class="form-errors" role="alert"><p>{% trans "The plugin system is disabled by the setting" %} <span class="ltr">RAVIX_PLUGINS_ENABLED=false</span> {% trans "." %}</p></div>{% endif %}
+{% if safe_mode %}<div class="form-errors warn" role="status"><p>{% trans "Safe mode is on (" %}<span class="ltr">RAVIX_PLUGINS_SAFE_MODE</span>{% trans "): no plugin code runs. Only management (install/remove/log) is available." %}</p></div>{% endif %}
 {% if recent_errors %}
-<div class="form-errors warn" role="status"><p><strong>آخرین خطاها:</strong></p><ul>
+<div class="form-errors warn" role="status"><p>{% trans "<strong>Latest errors:</strong>" %}</p><ul>
   {% for e in recent_errors %}<li><span class="ltr">{{ e.slug }}</span> — {{ e.message }} ({{ e.created_at|jalali_datetime }})</li>{% endfor %}</ul></div>
 {% endif %}
 <div class="card">
   {% if rows %}
   <div class="table-wrap"><table class="table">
-    <thead><tr><th>افزونه</th><th>نسخه</th><th>وضعیت</th><th>توضیح</th><th></th></tr></thead>
+    <thead><tr><th>{% trans "Plugin" %}</th><th>{% trans "Version" %}</th><th>{% trans "Status" %}</th><th>{% trans "Explanation" %}</th><th></th></tr></thead>
     <tbody>
     {% for r in rows %}
       <tr>
         <td><strong>{{ r.name }}</strong><br><span class="muted ltr">{{ r.slug }}</span></td>
-        <td class="ltr">{{ r.version|default:"—" }}{% if r.new_version %}<br><span class="badge badge-warn">نسخهٔ جدید {{ r.new_version }}</span>{% endif %}</td>
+        <td class="ltr">{{ r.version|default:"—" }}{% if r.new_version %}<br><span class="badge badge-warn">{% blocktrans trimmed with new_version=r.new_version %}New version {{ new_version }}{% endblocktrans %}</span>{% endif %}</td>
         <td><span class="badge {% if r.status == 'active' %}badge-published{% elif r.status == 'invalid' or r.status == 'missing' or r.status == 'incompatible' %}badge-inactive{% elif r.status == 'update_pending' or r.status == 'auto_disabled' %}badge-warn{% else %}badge-draft{% endif %}">{{ r.status_label }}</span></td>
         <td style="white-space:normal;min-width:240px">{{ r.description|default:"—" }}
           {% if r.problems %}<ul class="theme-errors">{% for p in r.problems|slice:":3" %}<li>{{ p }}</li>{% endfor %}</ul>{% endif %}</td>
-        <td><a class="btn btn-light btn-sm" href="{% url 'plugins:detail' r.slug %}">جزئیات</a></td>
+        <td><a class="btn btn-light btn-sm" href="{% url 'plugins:detail' r.slug %}">{% trans "Details" %}</a></td>
       </tr>
     {% endfor %}
     </tbody></table></div>
-  {% else %}<div class="empty">هیچ افزونه‌ای در پوشه‌های افزونه پیدا نشد. برای ساخت: <span class="ltr">python manage.py startplugin my_plugin</span></div>{% endif %}
+  {% else %}<div class="empty">{% trans "No plugin was found in the plugin folders. To create one:" %} <span class="ltr">python manage.py startplugin my_plugin</span></div>{% endif %}
 </div>
 {% endblock %}

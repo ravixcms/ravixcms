@@ -1,21 +1,22 @@
 {% extends "layouts/auth.html" %}
+{% load i18n %}
 {% load ravix_ui %}
-{% block title %}نصب{% endblock %}
+{% block title %}{% trans "Install" %}{% endblock %}
 {% block auth_content %}
-<h2 style="margin-bottom:.5rem">نصب Ravix</h2>
-<p class="help" style="margin-bottom:1rem">چند مشخصهٔ ساده؛ بعد از ثبت، مدیرکل ساخته می‌شود، این صفحه برای همیشه بسته می‌شود و وارد پنل می‌شوید.</p>
+<h2 style="margin-bottom:.5rem">{% trans "Install Ravix" %}</h2>
+<p class="help" style="margin-bottom:1rem">{% trans "A few simple details; after submitting, the superadmin is created, this page is closed for good and you are signed in to the panel." %}</p>
 {% if checks.db_error %}
-  <div class="form-errors" role="alert"><p>اتصال به دیتابیس برقرار نیست ({{ checks.db_error }}). <code>DATABASE_URL</code> را بررسی کنید؛ تا آن زمان نصب ممکن نیست.</p></div>
+  <div class="form-errors" role="alert"><p>{% blocktrans trimmed with db_error=checks.db_error %}The database connection is not available ({{ db_error }}). Check <code>DATABASE_URL</code>; installation is not possible until then.{% endblocktrans %}</p></div>
 {% elif checks.pending %}
-  <p class="help">دیتابیس خالی/قدیمی است؛ مهاجرت‌ها هنگام ثبت این فرم اجرا می‌شوند ({{ checks.pending|length }} مورد).</p>
+  <p class="help">{% blocktrans trimmed with pending=checks.pending|length %}The database is empty/outdated; migrations will run when you submit this form ({{ pending }} items).{% endblocktrans %}</p>
 {% endif %}
 {% if not checks.media_ok %}
-  <div class="form-errors" role="alert"><p>پوشهٔ media (<code class="ltr">{{ checks.media_dir }}</code>) وجود ندارد یا قابل‌نوشتن نیست؛ بارگذاری فایل کار نخواهد کرد.</p></div>
+  <div class="form-errors" role="alert"><p>{% trans "The media folder (" %}<code class="ltr">{% blocktrans trimmed with media_dir=checks.media_dir %}{{ media_dir }}</code>) does not exist or is not writable; file upload will not work.{% endblocktrans %}</p></div>
 {% endif %}
 <form method="post" novalidate data-once>
   {% csrf_token %}
   {% include "partials/_form_errors.html" %}
   {% for field in form %}{% include "partials/_field.html" %}{% endfor %}
-  <button type="submit" class="btn btn-block"{% if checks.db_error %} disabled{% endif %}>{% icon "check" 18 %} نصب</button>
+  <button type="submit" class="btn btn-block"{% if checks.db_error %} disabled{% endif %}>{% icon "check" 18 %} {% trans "Install" %}</button>
 </form>
 {% endblock %}

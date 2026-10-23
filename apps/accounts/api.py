@@ -1,4 +1,5 @@
 """API نسخه ۱ حساب‌های کاربری (Django REST Framework)."""
+from django.utils.translation import gettext, gettext_lazy
 from django.contrib.auth import get_user_model
 from rest_framework import generics, serializers
 from rest_framework.permissions import BasePermission
@@ -9,7 +10,7 @@ User = get_user_model()
 class HasCapability(BasePermission):
     """دسترسی را به یک capability محدود می‌کند: ``required_capability`` روی View."""
 
-    message = "شما اجازه دسترسی به این بخش را ندارید."
+    message = gettext_lazy("You do not have permission to access this section.")
 
     def has_permission(self, request, view):
         capability = getattr(view, "required_capability", None)
@@ -30,7 +31,7 @@ class UserSerializer(serializers.ModelSerializer):
         if self.instance is not None:
             qs = qs.exclude(pk=self.instance.pk)
         if qs.exists():
-            raise serializers.ValidationError("این ایمیل متعلق به کاربر دیگری است.")
+            raise serializers.ValidationError(gettext("This email belongs to another user."))
         return value
 
 

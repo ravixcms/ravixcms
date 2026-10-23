@@ -10,6 +10,7 @@
 
 کلید خصوصی هرگز در کد/مخزن نیست: از فایل با مجوز محدود یا متغیر محیطی خوانده می‌شود. اینجا فقط کلید عمومی نگهداری می‌شود.
 """
+from django.utils.translation import gettext
 import base64
 import binascii
 import hashlib
@@ -43,9 +44,9 @@ def _b64decode(value: str, expected_len: int | None = None) -> bytes:
     try:
         raw = base64.b64decode((value or "").strip(), validate=True)
     except (binascii.Error, ValueError):
-        raise SigningError("مقدار base64 نامعتبر است.")
+        raise SigningError(gettext("The base64 value is invalid."))
     if expected_len is not None and len(raw) != expected_len:
-        raise SigningError(f"طول کلید باید {expected_len} بایت باشد.")
+        raise SigningError((gettext("The key length must be %(expected_len)s bytes.") % {"expected_len": expected_len}))
     return raw
 
 
@@ -55,7 +56,7 @@ def normalize_public_key(value: str) -> str:
     try:
         Ed25519PublicKey.from_public_bytes(raw)
     except ValueError:
-        raise SigningError("کلید عمومی Ed25519 معتبر نیست.")
+        raise SigningError(gettext("The Ed25519 public key is not valid."))
     return base64.b64encode(raw).decode()
 
 
@@ -78,10 +79,10 @@ def read_key_file(path) -> str:
     try:
         mode = p.stat().st_mode
         if os.name == "posix" and mode & (stat.S_IRWXG | stat.S_IRWXO):
-            raise SigningError(f"مجوز فایل کلید خصوصی ({p}) باید 600 باشد.")
+            raise SigningError((gettext("The private key file (%(p)s) must have permission 600.") % {"p": p}))
         return p.read_text(encoding="utf-8").strip()
     except OSError as exc:
-        raise SigningError(f"خواندن فایل کلید ناموفق بود: {exc}")
+        raise SigningError((gettext("Reading the key file failed: %(exc)s") % {"exc": exc}))
 
 
 def sign(seed_b64: str, slug: str, version: str, sha256: str, fingerprint: str) -> tuple[str, str]:
@@ -154,17 +155,17 @@ class Verification:
 
 def verify(slug: str, version: str, sha256: str, fingerprint: str, signature_b64: str, claimed_key_id: str = "") -> Verification:
     if not signature_b64:
-        return Verification("unsigned", reason="بسته امضا ندارد.")
+        return Verification("unsigned", reason=gettext("The package has no signature."))
     keys = trusted_keys()
     if not keys:
-        return Verification("invalid", reason="هیچ کلید مورد اعتمادی تنظیم نشده است.")
+        return Verification("invalid", reason=gettext("No trusted key is configured."))
     try:
         sig = _b64decode(signature_b64, 64)
     except SigningError:
-        return Verification("invalid", reason="قالب امضا نامعتبر است.")
+        return Verification("invalid", reason=gettext("The signature format is invalid."))
     candidates = [keys[claimed_key_id]] if claimed_key_id in keys else ([] if claimed_key_id else list(keys.values()))
     if claimed_key_id and not candidates:
-        return Verification("invalid", key_id=claimed_key_id, reason="کلید امضاکننده در فهرست کلیدهای مورد اعتماد نیست (یا غیرفعال شده).")
+        return Verification("invalid", key_id=claimed_key_id, reason=gettext("The signing key is not in the list of trusted keys (or it has been disabled)."))
     msg = message(slug, version, sha256, fingerprint)
     for k in candidates:
         try:
@@ -172,4 +173,4 @@ def verify(slug: str, version: str, sha256: str, fingerprint: str, signature_b64
             return Verification("verified", key_id=k.key_id, label=k.label)
         except InvalidSignature:
             continue
-    return Verification("invalid", key_id=claimed_key_id, reason="امضا با محتوای بسته مطابقت ندارد (بسته تغییر کرده یا امضا از کلید دیگری است).")
+    return Verification("invalid", key_id=claimed_key_id, reason=gettext("The signature does not match the package contents (the package was modified or signed with a different key)."))

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% load ravix_ui %}
 {% block body %}
 <main class="auth-page">
@@ -9,7 +10,7 @@
       {% if site.tagline %}<p>{{ site.tagline }}</p>{% endif %}
     </div>
     <div class="card"><div class="card-body">{% block auth_content %}{% endblock %}</div></div>
-    <p class="auth-footer">{% if site.footer_text %}{{ site.footer_text }}{% else %}قدرت‌گرفته از Ravix{% endif %}</p>
+    <p class="auth-footer">{% if site.footer_text %}{{ site.footer_text }}{% else %}{% trans "Powered by Ravix" %}{% endif %}</p>
   </div>
 </main>
 {% endblock %}

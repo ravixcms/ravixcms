@@ -4,6 +4,7 @@
 هر ویو/hook افزونه یک نمونه از این کلاس را می‌گیرد. این رابط **تنها** راه رسمی تعامل با هسته است: خواندن تنظیمات همین افزونه،
 ثبت گزارش، رندر در قالب پنل/سایت و بررسی مجوز با همان سیستم هسته (افزونه راهی برای دور زدن مجوزها ندارد).
 """
+from django.utils.translation import gettext
 import hashlib
 
 from django.core.cache import cache
@@ -60,7 +61,7 @@ class PluginAPI:
         from apps.audit.models import AuditLog
         from apps.audit.services import log_event
 
-        log_event(request, AuditLog.Action.UPDATE, obj, f"[{self.slug}] {message}"[:400], object_type=f"افزونه {self.slug}")
+        log_event(request, AuditLog.Action.UPDATE, obj, f"[{self.slug}] {message}"[:400], object_type=(gettext("Plugin %(slug)s") % {"slug": self.slug}))
 
     # --- مجوز (همان سیستم هسته)
     def has_cap(self, user, capability: str) -> bool:
@@ -105,7 +106,7 @@ class PluginAPI:
         def seo(site):
             return make_seo(request, site, title=title, description=description, path=request.path, robots="noindex,follow")
 
-        return render_page(request, "page_detail.html", {"page": item, "breadcrumbs": _crumbs(("خانه", "/"), (title, ""))},
+        return render_page(request, "page_detail.html", {"page": item, "breadcrumbs": _crumbs((gettext("Home"), "/"), (title, ""))},
                            status=status, seo_factory=seo)
 
     # --- ابزار امنیتی

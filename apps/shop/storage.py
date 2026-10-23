@@ -1,4 +1,5 @@
 """ذخیره‌گاه خصوصی فایل‌های محصول دیجیتال: خارج از MEDIA_ROOT/STATIC_ROOT و بدون نشانی عمومی؛ فقط از طریق view دانلود (پس از پرداخت)."""
+from django.utils.translation import gettext
 import os
 
 from django.conf import settings
@@ -15,7 +16,7 @@ class PrivateStorage(FileSystemStorage):
         return os.path.abspath(self.base_location)
 
     def url(self, name):
-        raise ValueError("فایل‌های دیجیتال نشانی عمومی ندارند.")
+        raise ValueError(gettext("Digital files do not have a public URL."))
 
 
 def private_storage():

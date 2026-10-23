@@ -5,7 +5,7 @@
 
 - فقط پوشه ``templates/`` همان قالب بارگذاری می‌شود؛ ``{% include %}`` و ``{% extends %}`` نمی‌توانند به قالب‌های پنل،
   قالب‌های قالب دیگر یا فایل‌های سیستم دسترسی پیدا کنند.
-- فقط کتابخانه تگ ``ravix_theme`` قابل ``{% load %}`` است؛ ``static``، ``i18n`` و کتابخانه‌های دیگر بارگذاری نمی‌شوند.
+- فقط کتابخانه‌های ``ravix_theme`` و ``i18n`` (ترجمهٔ متن) قابل ``{% load %}`` هستند؛ ``static`` و کتابخانه‌های دیگر بارگذاری نمی‌شوند.
 - Context Processor ندارد و به ``request``، ``user``، ``settings`` یا ORM دسترسی نمی‌دهد. قالب فقط داده‌های
   ساده‌ای را می‌بیند که ویوی عمومی آگاهانه در اختیارش گذاشته است (``apps/public/dto.py``).
 - کد پایتون در پوشه قالب هرگز import یا اجرا نمی‌شود.
@@ -20,6 +20,8 @@ _engines: dict[str, Engine] = {}
 
 TEMPLATE_LIBRARIES = {
     "ravix_theme": "apps.themes.templatetags.ravix_theme",
+    # فقط ترجمهٔ متن رابط (trans/blocktrans)؛ بدون دسترسی به داده یا ORM.
+    "i18n": "django.templatetags.i18n",
     # نام منسوخ؛ تا نسخهٔ 2.0 همان کتابخانه است و هنگام بارگذاری هشدار می‌دهد.
     "ravin_theme": "apps.themes.legacy.ravin_theme",
 }

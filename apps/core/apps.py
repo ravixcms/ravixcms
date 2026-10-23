@@ -1,10 +1,11 @@
+from django.utils.translation import gettext_lazy
 from django.apps import AppConfig
 
 
 class CoreConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "apps.core"
-    verbose_name = "هسته Ravix"
+    verbose_name = gettext_lazy("Ravix core")
 
     def ready(self):
         from .navigation import NavItem, register_nav_item
@@ -12,7 +13,7 @@ class CoreConfig(AppConfig):
         register_nav_item(
             NavItem(
                 key="core.settings",
-                label="تنظیمات سایت",
+                label=gettext_lazy("Site settings"),
                 url_name="core:site_settings",
                 icon="settings",
                 section="system",
@@ -24,7 +25,7 @@ class CoreConfig(AppConfig):
         register_nav_item(
             NavItem(
                 key="core.health",
-                label="سلامت سایت",
+                label=gettext_lazy("Site health"),
                 url_name="core:site_health",
                 icon="shield",
                 section="system",

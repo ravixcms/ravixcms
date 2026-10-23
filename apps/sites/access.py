@@ -5,6 +5,7 @@
 دسترسی به سایت: مدیرکل همه‌جا؛ در حالت تک‌سایتی (پیش‌فرض) هر کاربر دارای قابلیت به سایت پیش‌فرض؛
 در حالت چندسایتی فقط اعضای همان سایت (یا مالک آن).
 """
+from django.utils.translation import gettext
 from django.conf import settings
 
 from apps.accounts.permissions import Role
@@ -15,7 +16,7 @@ from .models import Site, SiteMember
 def default_site() -> Site:
     site = Site.objects.filter(is_default=True).first()
     if site is None:  # پایگاه‌دادهٔ تازه/تست
-        site, _ = Site.objects.get_or_create(slug="main", defaults={"name": "سایت اصلی", "is_default": True})
+        site, _ = Site.objects.get_or_create(slug="main", defaults={"name": gettext("Main site"), "is_default": True})
     return site
 
 

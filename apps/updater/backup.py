@@ -3,6 +3,7 @@
 SQLite با API رسمی backup (سازگار با WAL)؛ PostgreSQL با pg_dump/pg_restore (رمز فقط از طریق متغیر محیطی PGPASSWORD، نه آرگومان).
 فایل‌های ``.env``، media و دیتابیس هرگز داخل آرشیو فایل‌ها نیستند.
 """
+from django.utils.translation import gettext
 import hashlib
 import os
 import shutil
@@ -45,7 +46,7 @@ class SqliteBackend:
 
     def backup(self, dest: Path):
         if str(self.path) == ":memory:":
-            raise UpdateError("پشتیبان‌گیری از دیتابیس درون‌حافظه ممکن نیست.")
+            raise UpdateError(gettext("Backing up an in-memory database is not possible."))
         src = sqlite3.connect(f"file:{self.path}?mode=ro", uri=True)
         try:
             dst = sqlite3.connect(str(dest))
@@ -77,17 +78,17 @@ class PostgresBackend:
 
     def _run(self, cmd, what):
         if shutil.which(cmd[0]) is None:
-            raise UpdateError(f"ابزار {cmd[0]} روی سرور نصب نیست؛ {what} ممکن نشد.")
+            raise UpdateError((gettext("The %(cmd)s tool is not installed on the server; %(what)s was not possible.") % {"cmd": cmd[0], "what": what}))
         r = subprocess.run(cmd, env=self.env, capture_output=True, text=True, timeout=3600)
         if r.returncode != 0:
-            raise UpdateError(f"{what} ناموفق بود: {sanitize(r.stderr, 500)}")
+            raise UpdateError((gettext("%(what)s failed: %(sanitize)s") % {"what": what, "sanitize": sanitize(r.stderr, 500)}))
 
     def backup(self, dest: Path):
-        self._run(["pg_dump", "-Fc", "-f", str(dest), *self.args], "پشتیبان‌گیری دیتابیس")
+        self._run(["pg_dump", "-Fc", "-f", str(dest), *self.args], gettext("Database backup"))
 
     def restore(self, src: Path):
         connection.close()
-        self._run(["pg_restore", "--clean", "--if-exists", "--no-owner", *self.args, str(src)], "بازیابی دیتابیس")
+        self._run(["pg_restore", "--clean", "--if-exists", "--no-owner", *self.args, str(src)], gettext("Database restore"))
 
 
 def default_db_backend():
@@ -96,7 +97,7 @@ def default_db_backend():
         return SqliteBackend()
     if vendor == "postgresql":
         return PostgresBackend()
-    raise UpdateError(f"پشتیبان‌گیری خودکار برای دیتابیس «{vendor}» پشتیبانی نمی‌شود.")
+    raise UpdateError((gettext("Automatic backup is not supported for the “%(vendor)s” database.") % {"vendor": vendor}))
 
 
 # ------------------------------------------------------------------ فایل‌ها
@@ -130,7 +131,7 @@ def extract_archive(archive: Path, dest: Path) -> Path:
         for m in tar.getmembers():
             tgt = (base / m.name).resolve()
             if not (tgt == base or base in tgt.parents) or m.issym() or m.islnk() or m.isdev():
-                raise UpdateError("آرشیو پشتیبان ناامن است؛ بازیابی انجام نشد.")
+                raise UpdateError(gettext("The backup archive is unsafe; the restore was not performed."))
         tar.extractall(dest)  # noqa: S202  # nosec B202
     return base
 
@@ -171,7 +172,7 @@ def create_backup(label: str, root: Path, db_backend=None, extra: tuple = ()) ->
     db_file = d / ("db.sqlite3" if backend.name == "sqlite" else "db.dump")
     backend.backup(db_file)
     if not db_file.is_file() or db_file.stat().st_size == 0:
-        raise UpdateError("فایل پشتیبان دیتابیس ساخته نشد.")
+        raise UpdateError(gettext("The database backup file was not created."))
     arch = d / "files.tar.gz"
     make_files_archive(root, arch, extra)
     for f in (db_file,):
@@ -188,7 +189,7 @@ def verify_backup(info: dict) -> Path:
             continue
         f = d / info[key]
         if not f.is_file() or sha256_file(f) != info[sha]:
-            raise UpdateError(f"پشتیبان خراب یا ناقص است ({info[key]}); بازیابی خودکار انجام نمی‌شود.")
+            raise UpdateError((gettext("The backup is corrupted or incomplete (%(info)s); automatic restore will not be performed.") % {"info": info[key]}))
     return d
 
 

@@ -1,3 +1,4 @@
+from django.utils.translation import gettext
 import logging
 
 from django.conf import settings
@@ -17,15 +18,15 @@ def notify_admin(request, comment) -> bool:
     cfg = SiteSettings.load()
     if not (cfg.comments_notify_admin and cfg.admin_email):
         return False
-    state = "منتظر تأیید شماست" if comment.status == comment.Status.PENDING else "منتشر شد"
-    subject = f"دیدگاه جدید در «{cfg.site_name}»"[:150].replace("\n", " ")
+    state = gettext("is awaiting your approval") if comment.status == comment.Status.PENDING else gettext("has been published")
+    subject = (gettext("New comment on “%(site_name)s”") % {"site_name": cfg.site_name})[:150].replace("\n", " ")
     lines = [
-        f"یک دیدگاه جدید روی نوشتهٔ «{comment.post.title}» ثبت شد و {state}.",
+        (gettext("A new comment was posted on the post “%(title)s” and %(state)s.") % {"title": comment.post.title, "state": state}),
         "",
-        f"نام: {comment.author_name}",
-        f"متن: {plain_text(comment.body_html)[:300]}",
+        (gettext("Name: %(author_name)s") % {"author_name": comment.author_name}),
+        (gettext("Text: %(value)s") % {"value": plain_text(comment.body_html)[:300]}),
         "",
-        "مدیریت دیدگاه‌ها: " + absolute_url(request, reverse("comments:list") + f"?status={comment.status}"),
+        (gettext("Manage comments: %(absolute_url)s") % {"absolute_url": absolute_url(request, reverse("comments:list") + f"?status={comment.status}")}),
     ]
     try:
         EmailMessage(subject, "\n".join(lines), settings.DEFAULT_FROM_EMAIL, [cfg.admin_email]).send()

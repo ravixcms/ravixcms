@@ -1,17 +1,18 @@
+{% load i18n %}
 {% load ravix_ui %}
 <div class="detail">
   <div>{% if p.image %}<img src="{{ p.image.url }}" alt="{{ p.name }}" width="800" height="600" style="width:100%;height:auto;border-radius:.6rem">{% endif %}
     {% if gallery %}<ul class="thumbs">{% for g in gallery %}<li><img src="{{ g.image.url }}" alt="{{ g.alt|default:p.name }}" loading="lazy" width="200" height="150"></li>{% endfor %}</ul>{% endif %}</div>
   <div>
-    {% if p.category %}<p class="muted">دسته: <a href="{% url 'shop:list' %}?category={{ p.category.slug }}">{{ p.category.name }}</a></p>{% endif %}
-    <p class="price" style="font-size:1.4rem">{% if p.has_discount %}<del>{{ p.price|money }}</del> <span class="badge">{{ p.discount_percent|fa_digits }}٪ تخفیف</span><br>{% endif %}{{ p.final_price|money }} {{ currency }}</p>
-    {% if p.is_digital %}<p class="muted">محصول دیجیتال — پس از پرداخت موفق، پیوند دانلود در صفحهٔ سفارش نمایش داده می‌شود.</p>{% endif %}
-    {% if p.in_stock %}{% if p.track_stock %}<p class="muted">موجودی: {{ p.stock|fa_digits }} عدد</p>{% endif %}
+    {% if p.category %}<p class="muted">{% trans "Category:" %} <a href="{% url 'shop:list' %}?category={{ p.category.slug }}">{{ p.category.name }}</a></p>{% endif %}
+    <p class="price" style="font-size:1.4rem">{% if p.has_discount %}<del>{{ p.price|money }}</del> <span class="badge">{% blocktrans trimmed with discount_percent=p.discount_percent|fa_digits %}{{ discount_percent }}% off{% endblocktrans %}</span><br>{% endif %}{{ p.final_price|money }} {{ currency }}</p>
+    {% if p.is_digital %}<p class="muted">{% trans "Digital product — after a successful payment, the download link appears on the order page." %}</p>{% endif %}
+    {% if p.in_stock %}{% if p.track_stock %}<p class="muted">{% blocktrans trimmed with stock=p.stock|fa_digits %}In stock: {{ stock }}{% endblocktrans %}</p>{% endif %}
     <form method="post" action="{% url 'shop:cart_add' %}">{% csrf_token %}<input type="hidden" name="product" value="{{ p.pk }}">
-      {% if not p.is_digital %}<p><label for="qty">تعداد</label> <input id="qty" type="number" name="qty" value="1" min="1"{% if p.track_stock %} max="{{ p.stock }}"{% endif %}></p>{% endif %}
-      <button class="btn btn-primary" type="submit">افزودن به سبد</button></form>
-    {% else %}<p><span class="badge">ناموجود</span></p>{% endif %}
+      {% if not p.is_digital %}<p><label for="qty">{% trans "Count" %}</label> <input id="qty" type="number" name="qty" value="1" min="1"{% if p.track_stock %} max="{{ p.stock }}"{% endif %}></p>{% endif %}
+      <button class="btn btn-primary" type="submit">{% trans "Add to cart" %}</button></form>
+    {% else %}<p><span class="badge">{% trans "Out of stock" %}</span></p>{% endif %}
     {% if p.description %}<div style="margin-top:1rem">{{ p.description|linebreaks }}</div>{% endif %}
   </div>
 </div>
-<p><a href="{% url 'shop:cart' %}">سبد خرید ({{ cart_count|fa_digits }})</a> · <a href="{% url 'shop:list' %}">ادامهٔ خرید</a></p>
+<p><a href="{% url 'shop:cart' %}">{% blocktrans trimmed with cart_count=cart_count|fa_digits %}Cart ({{ cart_count }}){% endblocktrans %}</a> · <a href="{% url 'shop:list' %}">{% trans "Continue shopping" %}</a></p>

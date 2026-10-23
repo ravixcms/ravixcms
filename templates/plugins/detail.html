@@ -1,58 +1,59 @@
 {% extends "layouts/panel.html" %}
+{% load i18n %}
 {% load ravix_ui %}
 {% block title %}{{ row.name }}{% endblock %}
-{% block page_title %}افزونه: {{ row.name }}{% endblock %}
+{% block page_title %}{% blocktrans trimmed with name=row.name %}Plugin: {{ name }}{% endblocktrans %}{% endblock %}
 {% block content %}
 <div class="page-head"><div><h1>{{ row.name }} <span class="badge {% if row.status == 'active' %}badge-published{% elif row.status in 'invalid missing incompatible' %}badge-inactive{% elif row.status == 'update_pending' or row.status == 'auto_disabled' %}badge-warn{% else %}badge-draft{% endif %}">{{ row.status_label }}</span></h1>
   <p>{{ row.description }}</p></div>
-  <a class="btn btn-light" href="{% url 'plugins:list' %}">بازگشت به فهرست</a></div>
+  <a class="btn btn-light" href="{% url 'plugins:list' %}">{% trans "Back to the list" %}</a></div>
 {% if row.problems %}<div class="form-errors" role="alert"><ul>{% for p in row.problems %}<li>{{ p }}</li>{% endfor %}</ul></div>{% endif %}
 {% if integrity_error %}<div class="form-errors" role="alert"><p>{{ integrity_error }}</p></div>{% endif %}
-{% if row.status == "update_pending" %}<div class="form-errors warn" role="alert"><p>کد این افزونه با نسخهٔ تأییدشده تفاوت دارد، بنابراین اجرا نمی‌شود. اگر این تغییر را انتظار داشتید، آن را بررسی و تأیید کنید.</p>
-  <p><a class="btn" href="{% url 'plugins:update' row.slug %}">بررسی و تأیید تغییرات</a></p></div>{% endif %}
-<div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>عملیات</h2></div><div class="card-body" style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:center">
+{% if row.status == "update_pending" %}<div class="form-errors warn" role="alert"><p>{% trans "The code of this plugin differs from the approved version, so it is not running. If you expected this change, review and approve it." %}</p>
+  <p><a class="btn" href="{% url 'plugins:update' row.slug %}">{% trans "Review and approve changes" %}</a></p></div>{% endif %}
+<div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>{% trans "Action" %}</h2></div><div class="card-body" style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:center">
   {% if not row.record %}
-    {% if row.status == "available" %}<a class="btn" href="{% url 'plugins:install' row.slug %}">بررسی و نصب</a>{% endif %}
+    {% if row.status == "available" %}<a class="btn" href="{% url 'plugins:install' row.slug %}">{% trans "Review and install" %}</a>{% endif %}
   {% else %}
     {% if row.status == "active" %}
-      <form method="post" action="{% url 'plugins:deactivate' row.slug %}">{% csrf_token %}<button class="btn btn-light" type="submit">غیرفعال‌سازی</button></form>
+      <form method="post" action="{% url 'plugins:deactivate' row.slug %}">{% csrf_token %}<button class="btn btn-light" type="submit">{% trans "Deactivate" %}</button></form>
     {% elif row.status == "inactive" or row.status == "auto_disabled" %}
-      <form method="post" action="{% url 'plugins:activate' row.slug %}">{% csrf_token %}<button class="btn" type="submit">فعال‌سازی</button></form>
+      <form method="post" action="{% url 'plugins:activate' row.slug %}">{% csrf_token %}<button class="btn" type="submit">{% trans "Activate" %}</button></form>
     {% endif %}
-    {% if has_settings %}<a class="btn btn-light" href="{% url 'plugins:settings' row.slug %}">تنظیمات</a>{% endif %}
+    {% if has_settings %}<a class="btn btn-light" href="{% url 'plugins:settings' row.slug %}">{% trans "Settings" %}</a>{% endif %}
     {% if row.status != "active" %}
     <form method="post" action="{% url 'plugins:uninstall' row.slug %}" style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap">{% csrf_token %}
-      {% if row.record.manifest.models %}<label class="clear-box"><input type="checkbox" class="check" name="purge"> پاک‌کردن داده‌های افزونه</label>{% endif %}
-      {% if managed %}<label class="clear-box"><input type="checkbox" class="check" name="remove_files"> حذف فایل‌ها (با پشتیبان)</label>{% endif %}
-      <button class="btn btn-danger" type="submit">حذف افزونه</button></form>
+      {% if row.record.manifest.models %}<label class="clear-box"><input type="checkbox" class="check" name="purge"> {% trans "Clear plugin data" %}</label>{% endif %}
+      {% if managed %}<label class="clear-box"><input type="checkbox" class="check" name="remove_files"> {% trans "Delete files (with backup)" %}</label>{% endif %}
+      <button class="btn btn-danger" type="submit">{% trans "Remove plugin" %}</button></form>
     {% endif %}
   {% endif %}
 </div></div>
 {% if row.record %}
-<div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>نسخه و ارتقا</h2></div><div class="card-body">
-  <p>نسخهٔ نصب‌شده: <strong class="ltr">{{ row.record.version }}</strong>
-  {% if new_version %} — نسخهٔ جدید در مخزن: <strong class="ltr">{{ new_version }}</strong>{% else %} — نسخهٔ جدیدی در مخزن نیست (یا مخزن در دسترس نیست){% endif %}</p>
+<div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>{% trans "Version and upgrade" %}</h2></div><div class="card-body">
+  <p>{% trans "Installed version:" %} <strong class="ltr">{{ row.record.version }}</strong>
+  {% if new_version %} {% trans "— New version in the registry:" %} <strong class="ltr">{{ new_version }}</strong>{% else %} {% trans "— No newer version in the registry (or the registry is unavailable)" %}{% endif %}</p>
   {% if new_version %}{% if managed and web_install %}
     <form method="post" action="{% url 'plugins:upgrade' row.slug %}" data-once>{% csrf_token %}<input type="hidden" name="version" value="{{ new_version }}">
-      <button class="btn" type="submit">ارتقا به {{ new_version }} (با پشتیبان‌گیری)</button></form>
-    <p class="muted">پیش از جایگزینی، نسخهٔ فعلی پشتیبان‌گیری می‌شود و افزونه تا تأیید تغییرات غیرفعال می‌ماند.</p>
-  {% else %}<p class="muted">ارتقای خودکار فقط برای افزونه‌های نصب‌شده با نصب‌کننده و در صورت روشن‌بودن نصب از وب ممکن است.</p>{% endif %}{% endif %}
-  {% if packages %}<h3>سابقهٔ بسته‌ها</h3><div class="table-wrap"><table class="table"><thead><tr><th>نسخه</th><th>منبع</th><th>امضا</th><th>زمان</th></tr></thead><tbody>
-    {% for p in packages %}<tr><td class="ltr">{{ p.version }}</td><td>{{ p.get_source_display }}</td><td>{% if p.signature_state == 'verified' %}<span class="badge badge-published">معتبر</span> {{ p.signer_label }}{% else %}<span class="badge badge-warn">بدون امضا</span>{% endif %}</td><td>{{ p.created_at|jalali_datetime }}</td></tr>{% endfor %}</tbody></table></div>{% endif %}
-  {% if backups %}<h3>پشتیبان‌ها و بازگشت</h3><div class="table-wrap"><table class="table"><thead><tr><th>نسخه</th><th>دلیل</th><th>زمان</th><th></th></tr></thead><tbody>
+      <button class="btn" type="submit">{% blocktrans trimmed with new_version=new_version %}Upgrade to {{ new_version }} (with backup){% endblocktrans %}</button></form>
+    <p class="muted">{% trans "Before replacement the current version is backed up and the plugin stays disabled until the changes are approved." %}</p>
+  {% else %}<p class="muted">{% trans "Automatic upgrade is possible only for plugins installed with the installer and when web installation is on." %}</p>{% endif %}{% endif %}
+  {% if packages %}<h3>{% trans "Package history" %}</h3><div class="table-wrap"><table class="table"><thead><tr><th>{% trans "Version" %}</th><th>{% trans "Source" %}</th><th>{% trans "Signature" %}</th><th>{% trans "Time" %}</th></tr></thead><tbody>
+    {% for p in packages %}<tr><td class="ltr">{{ p.version }}</td><td>{{ p.get_source_display }}</td><td>{% if p.signature_state == 'verified' %}<span class="badge badge-published">{% trans "Valid" %}</span> {{ p.signer_label }}{% else %}<span class="badge badge-warn">{% trans "Unsigned" %}</span>{% endif %}</td><td>{{ p.created_at|jalali_datetime }}</td></tr>{% endfor %}</tbody></table></div>{% endif %}
+  {% if backups %}<h3>{% trans "Backups and rollback" %}</h3><div class="table-wrap"><table class="table"><thead><tr><th>{% trans "Version" %}</th><th>{% trans "Reason" %}</th><th>{% trans "Time" %}</th><th></th></tr></thead><tbody>
     {% for b in backups %}<tr><td class="ltr">{{ b.version }}</td><td>{{ b.get_reason_display }}</td><td>{{ b.created_at|jalali_datetime }}</td>
-      <td>{% if b.restored_at %}<span class="muted">استفاده شده</span>{% elif web_install %}<form method="post" action="{% url 'plugins:rollback' row.slug b.pk %}" style="display:flex;gap:.4rem;align-items:center;flex-wrap:wrap">{% csrf_token %}
-        {% if b.had_migrations %}<label class="clear-box"><input type="checkbox" class="check" name="confirm_data_loss"> می‌دانم داده‌های مهاجرت جدید پاک می‌شود</label>{% endif %}
-        <button class="btn btn-light btn-sm">بازگشت به {{ b.version }}</button></form>{% endif %}</td></tr>{% endfor %}</tbody></table></div>{% endif %}
+      <td>{% if b.restored_at %}<span class="muted">{% trans "Used" %}</span>{% elif web_install %}<form method="post" action="{% url 'plugins:rollback' row.slug b.pk %}" style="display:flex;gap:.4rem;align-items:center;flex-wrap:wrap">{% csrf_token %}
+        {% if b.had_migrations %}<label class="clear-box"><input type="checkbox" class="check" name="confirm_data_loss"> {% trans "I know the data of the new migrations will be deleted" %}</label>{% endif %}
+        <button class="btn btn-light btn-sm">{% blocktrans trimmed with version=b.version %}Roll back to {{ version }}{% endblocktrans %}</button></form>{% endif %}</td></tr>{% endfor %}</tbody></table></div>{% endif %}
 </div></div>
 {% endif %}
 {% if row.manifest %}
-<div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>مشخصات</h2></div><div class="card-body">{% include "plugins/_manifest_summary.html" with manifest=row.manifest %}
-  {% if fingerprint %}<p>اثرانگشت روی دیسک: <code class="ltr" style="word-break:break-all">{{ fingerprint }}</code></p>{% endif %}
-  {% if row.record %}<p>اثرانگشت تأییدشده: <code class="ltr" style="word-break:break-all">{{ row.record.fingerprint }}</code></p>{% endif %}</div></div>
+<div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>{% trans "Specifications" %}</h2></div><div class="card-body">{% include "plugins/_manifest_summary.html" with manifest=row.manifest %}
+  {% if fingerprint %}<p>{% trans "Fingerprint on disk:" %} <code class="ltr" style="word-break:break-all">{{ fingerprint }}</code></p>{% endif %}
+  {% if row.record %}<p>{% trans "Approved fingerprint:" %} <code class="ltr" style="word-break:break-all">{{ row.record.fingerprint }}</code></p>{% endif %}</div></div>
 {% endif %}
-<div class="card"><div class="card-header"><h2>رویدادهای اخیر</h2></div>
-  {% if events %}<div class="table-wrap"><table class="table"><thead><tr><th>زمان</th><th>نوع</th><th>پیام</th></tr></thead><tbody>
+<div class="card"><div class="card-header"><h2>{% trans "Recent events" %}</h2></div>
+  {% if events %}<div class="table-wrap"><table class="table"><thead><tr><th>{% trans "Time" %}</th><th>{% trans "Type" %}</th><th>{% trans "Message" %}</th></tr></thead><tbody>
     {% for e in events %}<tr><td>{{ e.created_at|jalali_datetime }}</td><td><span class="badge {% if e.level == 'error' %}badge-act-delete{% elif e.level == 'warning' %}badge-warn{% else %}badge-act-update{% endif %}">{{ e.kind }}</span></td><td style="white-space:normal">{{ e.message }}</td></tr>{% endfor %}
-  </tbody></table></div>{% else %}<div class="empty">رویدادی ثبت نشده است.</div>{% endif %}</div>
+  </tbody></table></div>{% else %}<div class="empty">{% trans "No event has been recorded." %}</div>{% endif %}</div>
 {% endblock %}

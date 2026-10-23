@@ -1,3 +1,4 @@
+{% load i18n %}
 {% load ravix_theme %}<!doctype html>
 <html lang="fa" dir="rtl" data-theme="{{ theme.slug }}">
 <head>
@@ -8,7 +9,7 @@
 </head>
 <body class="{% block body_class %}{% endblock %}">
 {% theme_toolbar %}
-<a class="skip-link" href="#main">پرش به محتوای اصلی</a>
+<a class="skip-link" href="#main">{% trans "Skip to main content" %}</a>
 
 <header class="site-header{% if header.sticky %} is-sticky{% endif %}">
   <div class="container header-inner">
@@ -18,7 +19,7 @@
     {% if header.show_tagline and site.tagline %}<span class="brand-tagline">{{ site.tagline }}</span>{% endif %}
 
     {% if menus.header %}
-    <nav class="site-nav" aria-label="منوی اصلی">
+    <nav class="site-nav" aria-label="{% trans "Main menu" %}">
       <ul>
         {% for link in menus.header %}
         <li><a href="{{ link.url }}"{% if link.active %} aria-current="page"{% endif %}{% if link.new_tab %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ link.label }}</a></li>
@@ -30,9 +31,9 @@
     <div class="header-tools">
       {% if header.show_search %}
       <form class="search-form" role="search" action="{{ site.search_url }}" method="get">
-        <label class="sr-only" for="header-q">جستجو در سایت</label>
-        <input id="header-q" type="search" name="q" placeholder="جستجو…" maxlength="100" autocomplete="off">
-        <button type="submit" class="btn btn-quiet">جستجو</button>
+        <label class="sr-only" for="header-q">{% trans "Search the site" %}</label>
+        <input id="header-q" type="search" name="q" placeholder="{% trans "Search…" %}" maxlength="100" autocomplete="off">
+        <button type="submit" class="btn btn-quiet">{% trans "Search" %}</button>
       </form>
       {% endif %}
       {% if header.cta %}<a class="btn" href="{{ header.cta.url }}">{{ header.cta.label }}</a>{% endif %}
@@ -51,8 +52,8 @@
       {% if footer.text %}<p>{{ footer.text }}</p>{% elif site.description %}<p>{{ site.description }}</p>{% endif %}
     </div>
     {% if footer.show_menu and menus.footer %}
-    <nav aria-label="پیوندهای پانویس">
-      <p class="footer-head">پیوندها</p>
+    <nav aria-label="{% trans "Footer links" %}">
+      <p class="footer-head">{% trans "Links" %}</p>
       <ul class="plain">
         {% for link in menus.footer %}
         <li><a href="{{ link.url }}"{% if link.active %} aria-current="page"{% endif %}{% if link.new_tab %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ link.label }}</a></li>
@@ -62,7 +63,7 @@
     {% endif %}
     {% if footer.show_contact %}{% if site.email or site.phone or site.address %}
     <address class="footer-contact">
-      <p class="footer-head">تماس</p>
+      <p class="footer-head">{% trans "Contact" %}</p>
       <ul class="plain">
         {% if site.email %}<li><a href="mailto:{{ site.email }}" dir="ltr">{{ site.email }}</a></li>{% endif %}
         {% if site.phone %}<li><a href="tel:{{ site.phone }}" dir="ltr">{{ site.phone }}</a></li>{% endif %}
@@ -72,7 +73,7 @@
     {% endif %}{% endif %}
     {% if footer.social %}
     <div>
-      <p class="footer-head">شبکه‌های اجتماعی</p>
+      <p class="footer-head">{% trans "Social networks" %}</p>
       <ul class="plain">
         {% for link in footer.social %}
         <li><a href="{{ link.url }}" target="_blank" rel="noopener noreferrer me">{{ link.label }}</a></li>
@@ -81,7 +82,7 @@
     </div>
     {% endif %}
   </div>
-  <div class="container footer-credit"><p>ساخته‌شده با Ravix</p></div>
+  <div class="container footer-credit"><p>{% trans "Built with Ravix" %}</p></div>
 </footer>
 </body>
 </html>

@@ -1,25 +1,26 @@
 {% extends "themes/customize_base.html" %}
+{% load i18n %}
 {% load ravix_ui %}
 {% block tab_content %}
 <div class="customize-grid">
-  <div class="card"><div class="card-header"><h2>سربرگ و پانویس</h2></div><div class="card-body">
+  <div class="card"><div class="card-header"><h2>{% trans "Header and footer" %}</h2></div><div class="card-body">
     <form method="post" novalidate data-once>
       {% csrf_token %}
       {% include "partials/_form_errors.html" %}
-      <fieldset class="group"><legend>سربرگ</legend>
+      <fieldset class="group"><legend>{% trans "Header" %}</legend>
         {% include "partials/_field.html" with field=form.header_show_tagline %}
         {% include "partials/_field.html" with field=form.header_sticky %}
         {% include "partials/_field.html" with field=form.header_show_search %}
         {% include "partials/_field.html" with field=form.header_cta_label %}
         {% include "partials/_field.html" with field=form.header_cta_url %}
       </fieldset>
-      <fieldset class="group"><legend>پانویس</legend>
+      <fieldset class="group"><legend>{% trans "Footer" %}</legend>
         {% include "partials/_field.html" with field=form.footer_text %}
         {% include "partials/_field.html" with field=form.footer_show_menu %}
         {% include "partials/_field.html" with field=form.footer_show_contact %}
         {% include "partials/_field.html" with field=form.footer_social %}
       </fieldset>
-      <div class="form-actions"><button type="submit" class="btn">{% icon "check" 18 %} ذخیره در پیش‌نویس</button></div>
+      <div class="form-actions"><button type="submit" class="btn">{% icon "check" 18 %} {% trans "Save to draft" %}</button></div>
     </form>
   </div></div>
   {% include "themes/_preview_frame.html" %}

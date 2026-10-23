@@ -210,7 +210,20 @@ LOGOUT_REDIRECT_URL = "accounts:login"
 # بین‌المللی‌سازی (فارسی)
 # ---------------------------------------------------------------------------
 LANGUAGE_CODE = "fa"
-LANGUAGES = [("fa", "فارسی")]
+# Language names are endonyms (each in its own language) and are intentionally not translated.
+LANGUAGES = [
+    ("fa", "فارسی"),
+    ("en", "English"),
+    ("ar", "العربية"),
+    ("tr", "Türkçe"),
+    ("es", "Español"),
+    ("fr", "Français"),
+    ("de", "Deutsch"),
+    ("ru", "Русский"),
+    ("pt-br", "Português (Brasil)"),
+    ("zh-hans", "简体中文"),
+]
+LOCALE_PATHS = [BASE_DIR / "locale"]
 TIME_ZONE = "Asia/Tehran"
 USE_I18N = True
 USE_TZ = True

@@ -1,4 +1,5 @@
 """صفحات عمومی فروشگاه. همهٔ داده‌ها محدود به سایتی است که از دامنهٔ درخواست تشخیص داده می‌شود."""
+from django.utils.translation import gettext
 import hashlib
 from urllib.parse import urlsplit
 from urllib.parse import urlencode
@@ -46,7 +47,7 @@ class ShopView(View):
         body = mark_safe('<link rel="stylesheet" href="' + static("shop/shop.css") + '"><div class="container shop">'
                          + render_to_string(f"shop/public/{template}", ctx, request=request) + "</div>")
         item = PageItem(title=title, url=request.path, body_html=body, date_display="", date_iso="", builder=True, show_title=True)
-        breadcrumbs = _crumbs(("خانه", "/"), ("فروشگاه", reverse("shop:list")), *crumbs, (title, "")) if crumbs is not None else _crumbs(("خانه", "/"), (title, ""))
+        breadcrumbs = _crumbs((gettext("Home"), "/"), (gettext("Shop"), reverse("shop:list")), *crumbs, (title, "")) if crumbs is not None else _crumbs((gettext("Home"), "/"), (title, ""))
 
         def seo(site):
             return make_seo(request, site, title=title, description=description, path=path or request.path, robots=robots, og_image=og_image,
@@ -88,7 +89,7 @@ def gateway_response(view, request, redirect):
         resp = HttpResponseRedirect(redirect.url)
         resp["Cache-Control"] = "private, no-store"
         return resp
-    resp = view.render(request, "gateway_redirect.html", {"redirect": redirect}, title="انتقال به درگاه پرداخت", robots="noindex,nofollow", crumbs=())
+    resp = view.render(request, "gateway_redirect.html", {"redirect": redirect}, title=gettext("Redirect to payment gateway"), robots="noindex,nofollow", crumbs=())
     host = urlsplit(redirect.url).hostname
     if host:
         resp["Content-Security-Policy"] = resp["Content-Security-Policy"].replace("form-action 'self'", f"form-action 'self' https://{host}")
@@ -103,10 +104,10 @@ class ProductListView(ShopView):
         page = Paginator(qs, settings.SHOP_PAGE_SIZE).get_page(request.GET.get("page"))
         categories = list(ProductCategory.objects.filter(site=self.site))
         filtered = bool(q.strip() or cat or kind or sort)
-        suffix = f" — صفحه {page.number}" if page.number > 1 else ""
+        suffix = (gettext(" — page %(number)s") % {"number": page.number}) if page.number > 1 else ""
         return self.render(request, "list.html", {"page": page, "categories": categories, "q": q[:80], "cat": cat, "kind": kind, "sort": sort,
                                                   "qs": urlencode({k: v for k, v in (("q", q[:80]), ("category", cat), ("kind", kind), ("sort", sort)) if v})},
-                           title="فروشگاه" + suffix, description="فهرست محصولات فروشگاه", crumbs=None, robots="noindex,follow" if filtered else "",
+                           title=(gettext("Shop%(suffix)s") % {"suffix": suffix}), description=gettext("Shop product list"), crumbs=None, robots="noindex,follow" if filtered else "",
                            path=reverse("shop:list") + (f"?page={page.number}" if page.number > 1 and not filtered else ""))
 
 
@@ -128,7 +129,7 @@ class ProductDetailView(ShopView):
 class CartView(ShopView):
     def get(self, request):
         lines, total = services.cart_lines(request, self.site)
-        return self.render(request, "cart.html", {"lines": lines, "total": total, "summary": services.cart_summary(lines)}, title="سبد خرید", robots="noindex,follow")
+        return self.render(request, "cart.html", {"lines": lines, "total": total, "summary": services.cart_summary(lines)}, title=gettext("Cart"), robots="noindex,follow")
 
 
 class CartAddView(ShopView):
@@ -170,7 +171,7 @@ class CheckoutView(ShopView):
         try:
             if not gateways.enabled_gateway_names(self.site):
                 gateways.get_gateway(None, site=self.site)  # پیام دقیق (مثلاً آزمایشی در تولید) را می‌دهد
-                return "درگاه پرداخت فعال نیست؛ ثبت سفارش فعلاً ممکن نیست."
+                return gettext("The payment gateway is not active; placing orders is not possible right now.")
             gateways.get_gateway(None, site=self.site)
         except gateways.GatewayError as exc:
             return str(exc)
@@ -181,7 +182,7 @@ class CheckoutView(ShopView):
 
     def _guest_block(self, request):
         if not request.user.is_authenticated and not settings.SHOP_ALLOW_GUEST_CHECKOUT:
-            return "برای ثبت سفارش ابتدا وارد حساب کاربری شوید."
+            return gettext("Please sign in before placing an order.")
         return ""
 
     def get(self, request):
@@ -195,7 +196,7 @@ class CheckoutView(ShopView):
         error = self._guard(request) or self._guest_block(request)
         return self.render(request, "checkout.html", {"form": CheckoutForm(initial=initial, needs_shipping=services.cart_summary(lines)["needs_shipping"], gateway_choices=self._choices()), "lines": lines, "total": total,
                                                       "summary": services.cart_summary(lines), "gateway_error": error},
-                           title="ثبت سفارش", robots="noindex,follow")
+                           title=gettext("Order placed"), robots="noindex,follow")
 
     def post(self, request):
         lines, total = services.cart_lines(request, self.site)
@@ -204,7 +205,7 @@ class CheckoutView(ShopView):
         summary = services.cart_summary(lines)
         form, error = CheckoutForm(request.POST, needs_shipping=summary["needs_shipping"], gateway_choices=self._choices()), self._guard(request) or self._guest_block(request)
         if not error and _limited(request, "checkout", 10, 3600):
-            error = "تعداد تلاش‌های شما زیاد بوده است؛ کمی بعد دوباره امتحان کنید."
+            error = gettext("You have made too many attempts; try again a little later.")
         if not error and form.is_valid():
             try:
                 order = services.create_order(self.site, lines, {k: v for k, v in form.cleaned_data.items() if k != "gateway"}, request.user)
@@ -214,13 +215,13 @@ class CheckoutView(ShopView):
                 try:
                     redirect_to = services.start_payment(order, request, form.cleaned_data.get("gateway") or None)
                 except services.ShopError as exc:
-                    services.change_status(order, Order.Status.CANCELLED, note="آغاز پرداخت ناموفق بود.")
+                    services.change_status(order, Order.Status.CANCELLED, note=gettext("Starting the payment failed."))
                     error = str(exc)
                 else:
                     services.cart_clear(request, self.site)
                     return gateway_response(self, request, redirect_to)
         return self.render(request, "checkout.html", {"form": form, "lines": lines, "total": total, "summary": summary, "gateway_error": error},
-                           title="ثبت سفارش", robots="noindex,follow", status=400)
+                           title=gettext("Order placed"), robots="noindex,follow", status=400)
 
 
 def _order_or_404(site, number, token):
@@ -235,7 +236,7 @@ class OrderView(ShopView):
         order = _order_or_404(self.site, number, token)
         return self.render(request, "order.html", {"order": order, "items": order.items.all(), "can_pay": order.status == Order.Status.PENDING,
                                                  "can_download": order.is_paid_state, "gateway_choices": gateway_choices(self.site) if order.status == Order.Status.PENDING else [], "events": order.events.exclude(kind="note")},
-                           title=f"سفارش {order.number}", robots="noindex,nofollow", crumbs=())
+                           title=(gettext("Order %(number)s") % {"number": order.number}), robots="noindex,nofollow", crumbs=())
 
 
 class OrderPayView(ShopView):
@@ -289,7 +290,7 @@ class SandboxPayView(ShopView):
 
     def get(self, request, reference):
         payment, tx = self._tx(reference)
-        return self.render(request, "sandbox.html", {"payment": payment, "tx": tx}, title="درگاه پرداخت آزمایشی", robots="noindex,nofollow", crumbs=())
+        return self.render(request, "sandbox.html", {"payment": payment, "tx": tx}, title=gettext("Test payment gateway"), robots="noindex,nofollow", crumbs=())
 
     def post(self, request, reference):
         payment, tx = self._tx(reference)
@@ -326,4 +327,4 @@ class MyOrdersView(ShopView):
         if not request.user.is_authenticated:
             return redirect_to_login(request.get_full_path())
         orders = Order.objects.filter(site=self.site, user=request.user).order_by("-created_at", "-id")[:100]
-        return self.render(request, "my_orders.html", {"orders": orders}, title="سفارش‌های من", robots="noindex,nofollow", crumbs=())
+        return self.render(request, "my_orders.html", {"orders": orders}, title=gettext("My orders"), robots="noindex,nofollow", crumbs=())

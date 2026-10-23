@@ -5,6 +5,7 @@
 هرگز برای هسته/قالب معتبر نیست و فهرست (index) نمی‌تواند بستهٔ دیگری را جای بسته‌ای امضاشده بنشاند.
 **امضا اصالت و تمامیت را می‌رساند، نه بی‌خطر بودن کد.** کلید خصوصی هرگز اینجا ذخیره نمی‌شود.
 """
+from django.utils.translation import gettext
 import base64
 import hashlib
 
@@ -40,16 +41,16 @@ def sign_index(seed_b64: str, data: bytes) -> tuple[str, str]:
 
 def _verify(msg: bytes, signature_b64: str, claimed_key_id: str = "") -> Verification:
     if not signature_b64:
-        return Verification("unsigned", reason="بسته امضا ندارد.")
+        return Verification("unsigned", reason=gettext("The package has no signature."))
     keys = trusted_keys()
     if not keys:
-        return Verification("invalid", reason="هیچ کلید مورد اعتمادی تنظیم نشده است.")
+        return Verification("invalid", reason=gettext("No trusted key is configured."))
     try:
         sig = plugin_signing._b64decode(signature_b64, 64)
     except SigningError:
-        return Verification("invalid", reason="قالب امضا نامعتبر است.")
+        return Verification("invalid", reason=gettext("The signature format is invalid."))
     if claimed_key_id and claimed_key_id not in keys:
-        return Verification("invalid", key_id=claimed_key_id, reason="کلید امضاکننده در فهرست کلیدهای مورد اعتماد نیست (یا غیرفعال شده).")
+        return Verification("invalid", key_id=claimed_key_id, reason=gettext("The signing key is not in the list of trusted keys (or it has been disabled)."))
     candidates = [keys[claimed_key_id]] if claimed_key_id else list(keys.values())
     for k in candidates:
         try:
@@ -57,7 +58,7 @@ def _verify(msg: bytes, signature_b64: str, claimed_key_id: str = "") -> Verific
             return Verification("verified", key_id=k.key_id, label=k.label)
         except InvalidSignature:
             continue
-    return Verification("invalid", key_id=claimed_key_id, reason="امضا با محتوای بسته مطابقت ندارد (بسته تغییر کرده یا امضا از کلید دیگری است).")
+    return Verification("invalid", key_id=claimed_key_id, reason=gettext("The signature does not match the package contents (the package was modified or signed with a different key)."))
 
 
 def verify(kind: str, slug: str, version: str, sha256: str, signature_b64: str, claimed_key_id: str = "") -> Verification:

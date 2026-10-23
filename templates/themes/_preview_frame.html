@@ -1,7 +1,8 @@
+{% load i18n %}
 <section class="card preview-card" aria-labelledby="preview-title">
-  <div class="card-header"><h2 id="preview-title">پیش‌نمایش پیش‌نویس</h2><a class="btn btn-light btn-sm" href="{{ frame_url }}" target="_blank" rel="noopener">باز کردن در پنجره جدید</a></div>
+  <div class="card-header"><h2 id="preview-title">{% trans "Draft preview" %}</h2><a class="btn btn-light btn-sm" href="{{ frame_url }}" target="_blank" rel="noopener">{% trans "Open in a new window" %}</a></div>
   <div class="card-body">
-    <iframe class="preview-frame" src="{{ frame_url }}" title="پیش‌نمایش سایت با تغییرات ذخیره‌شده" loading="lazy" sandbox="allow-same-origin"></iframe>
-    <p class="help">پیش‌نمایش، آخرین تغییرات ذخیره‌شده در پیش‌نویس را نشان می‌دهد. پس از ذخیره، صفحه را تازه کنید.</p>
+    <iframe class="preview-frame" src="{{ frame_url }}" title="{% trans "Site preview with the saved changes" %}" loading="lazy" sandbox="allow-same-origin"></iframe>
+    <p class="help">{% trans "The preview shows the latest changes saved to the draft. After saving, refresh the page." %}</p>
   </div>
 </section>

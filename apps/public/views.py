@@ -1,4 +1,5 @@
 """ویوهای سایت عمومی. همگی فقط‌خواندنی‌اند و فقط محتوای منتشرشده را نشان می‌دهند."""
+from django.utils.translation import gettext
 import logging
 from xml.sax.saxutils import escape
 
@@ -47,7 +48,7 @@ def _crumbs(*items) -> tuple:
 
 
 def _page_suffix(pagination) -> str:
-    return f" (صفحه {pagination.page})" if pagination.page > 1 else ""
+    return (gettext(" (page %(page)s)") % {"page": pagination.page}) if pagination.page > 1 else ""
 
 
 def _paging_seo(pagination):
@@ -103,11 +104,11 @@ class PostListView(PublicView):
 
         def seo(site):
             return make_seo(
-                request, site, title="نوشته‌ها" + _page_suffix(pagination), path=request.path + (f"?page={pagination.page}" if pagination.page > 1 else ""),
+                request, site, title=(gettext("Posts%(page_suffix)s") % {"page_suffix": _page_suffix(pagination)}), path=request.path + (f"?page={pagination.page}" if pagination.page > 1 else ""),
                 prev=prev, next_=nxt,
             )
 
-        ctx = {"posts": posts, "pagination": pagination, "categories": categories, "breadcrumbs": _crumbs(("خانه", "/"), ("نوشته‌ها", ""))}
+        ctx = {"posts": posts, "pagination": pagination, "categories": categories, "breadcrumbs": _crumbs((gettext("Home"), "/"), (gettext("Posts"), ""))}
         return self.respond(request, ctx, seo=seo)
 
 
@@ -128,7 +129,7 @@ class PostDetailView(PublicView):
         if category_ids:
             qs = b.live_posts().filter(categories__in=category_ids).exclude(pk=post.pk).distinct()[:3]
             related = tuple(b.post_item(p) for p in qs)
-        crumbs = [("خانه", "/"), ("نوشته‌ها", reverse("public:post_list"))]
+        crumbs = [(gettext("Home"), "/"), (gettext("Posts"), reverse("public:post_list"))]
         first = next(iter(post.categories.all()), None)
         if first:
             crumbs.append((first.name, b.category_url(first)))
@@ -199,7 +200,7 @@ class CategoryDetailView(PublicView):
         posts = tuple(b.post_item(p) for p in page_obj.object_list)
         children = tuple(b.category_item(c) for c in b.categories_with_counts().filter(parent=category, live_count__gt=0))
         prev, nxt = _paging_seo(pagination)
-        crumbs = _crumbs(("خانه", "/"), ("نوشته‌ها", reverse("public:post_list")), (category.name, ""))
+        crumbs = _crumbs((gettext("Home"), "/"), (gettext("Posts"), reverse("public:post_list")), (category.name, ""))
 
         def seo(site):
             return make_seo(
@@ -221,11 +222,11 @@ class TagDetailView(PublicView):
         page_obj, pagination = b.paginate(request, b.live_posts().filter(tags=tag), base_url=url)
         posts = tuple(b.post_item(p) for p in page_obj.object_list)
         prev, nxt = _paging_seo(pagination)
-        crumbs = _crumbs(("خانه", "/"), ("نوشته‌ها", reverse("public:post_list")), (f"برچسب: {tag.name}", ""))
+        crumbs = _crumbs((gettext("Home"), "/"), (gettext("Posts"), reverse("public:post_list")), ((gettext("Tag: %(name)s") % {"name": tag.name}), ""))
 
         def seo(site):
             return make_seo(
-                request, site, title=f"برچسب: {tag.name}" + _page_suffix(pagination), path=url + (f"?page={pagination.page}" if pagination.page > 1 else ""),
+                request, site, title=(gettext("Tag: %(name)s%(page_suffix)s") % {"name": tag.name, "page_suffix": _page_suffix(pagination)}), path=url + (f"?page={pagination.page}" if pagination.page > 1 else ""),
                 prev=prev, next_=nxt, robots="" if pagination.total else "noindex,follow",
             )
 
@@ -248,7 +249,7 @@ class PageDetailView(PublicView):
             data = make_seo(request, site, title=page.effective_title_tag, description=page.seo_description or item.excerpt, path=item.url)
             return finish_seo(request, apply_filter("public.seo", data, kind="page", obj_id=page.pk, site=site, request=request))
 
-        ctx = {"page": item, "breadcrumbs": _crumbs(("خانه", "/"), (page.title, ""))}
+        ctx = {"page": item, "breadcrumbs": _crumbs((gettext("Home"), "/"), (page.title, ""))}
         return self.respond(request, ctx, seo=seo, edit_url=reverse("content:page_update", args=[page.pk]))
 
 
@@ -270,10 +271,10 @@ class SearchView(PublicView):
                 pages = tuple(Link(label=p.title, url=b.page_url(p)) for p in found)
 
         def seo(site):
-            return make_seo(request, site, title=f"جستجو: {query}" if query else "جستجو", path=reverse("public:search"), robots="noindex,follow")
+            return make_seo(request, site, title=(gettext("Search: %(query)s") % {"query": query}) if query else gettext("Search"), path=reverse("public:search"), robots="noindex,follow")
 
         ctx = {"query": query, "searched": searched, "posts": posts, "pages": pages, "pagination": pagination,
-               "total": (pagination.total if pagination else 0) + len(pages), "breadcrumbs": _crumbs(("خانه", "/"), ("جستجو", ""))}
+               "total": (pagination.total if pagination else 0) + len(pages), "breadcrumbs": _crumbs((gettext("Home"), "/"), (gettext("Search"), ""))}
         return self.respond(request, ctx, seo=seo)
 
 
@@ -342,7 +343,7 @@ def render_not_found(request):
         return None
 
     def seo(site):
-        return {"title": f"صفحه پیدا نشد | {site['name']}", "robots": "noindex,follow", "description": "", "canonical": ""}
+        return {"title": (gettext("Page not found | %(site)s") % {"site": site['name']}), "robots": "noindex,follow", "description": "", "canonical": ""}
 
     try:
         return render_page(request, "404.html", {"breadcrumbs": ()}, status=404, seo_factory=seo)

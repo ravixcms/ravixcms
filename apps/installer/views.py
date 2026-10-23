@@ -1,3 +1,4 @@
+from django.utils.translation import gettext
 import logging
 
 from django.conf import settings
@@ -52,10 +53,10 @@ def install(request):
                 form.add_error(None, str(exc))
             except Exception:  # noqa: BLE001
                 logger.exception("نصب ناموفق بود")
-                form.add_error(None, "نصب با خطا روبه‌رو شد؛ جزئیات در لاگ سرور است. دیتابیس و مهاجرت‌ها را بررسی کنید.")
+                form.add_error(None, gettext("The installation ran into an error; details are in the server log. Check the database and migrations."))
             else:
                 login(request, user, backend=settings.AUTHENTICATION_BACKENDS[0])
-                messages.success(request, "نصب کامل شد. به Ravix خوش آمدید.")
+                messages.success(request, gettext("Installation complete. Welcome to Ravix."))
                 return redirect("dashboard:home")
     else:
         form = InstallForm(db_ready=db_ready)

@@ -1,4 +1,5 @@
-<nav class="tabs" aria-label="بخش‌های حساب کاربری">
-  <a class="tab {% if tab == 'profile' %}active{% endif %}" href="{% url 'accounts:profile' %}">اطلاعات پروفایل</a>
-  <a class="tab {% if tab == 'password' %}active{% endif %}" href="{% url 'accounts:password_change' %}">تغییر رمز عبور</a>
+{% load i18n %}
+<nav class="tabs" aria-label="{% trans "Account sections" %}">
+  <a class="tab {% if tab == 'profile' %}active{% endif %}" href="{% url 'accounts:profile' %}">{% trans "Profile information" %}</a>
+  <a class="tab {% if tab == 'password' %}active{% endif %}" href="{% url 'accounts:password_change' %}">{% trans "Change password" %}</a>
 </nav>

@@ -1,10 +1,11 @@
+from django.utils.translation import gettext_lazy
 from django.apps import AppConfig
 
 
 class AuditConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "apps.audit"
-    verbose_name = "گزارش رویدادها"
+    verbose_name = gettext_lazy("Event log")
 
     def ready(self):
         from apps.core.navigation import NavItem, register_nav_item
@@ -14,7 +15,7 @@ class AuditConfig(AppConfig):
         register_nav_item(
             NavItem(
                 key="audit.log",
-                label="گزارش رویدادها",
+                label=gettext_lazy("Event log"),
                 url_name="audit:log_list",
                 icon="list",
                 section="system",

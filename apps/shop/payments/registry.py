@@ -1,4 +1,5 @@
 """ثبت و دسترسی به درگاه‌ها: درگاه‌های کد + درگاه‌های افزونه‌های فعال/تأییدشده (hook ‎«shop.gateways»‎). فعال‌بودن هر درگاه برای هر سایت در GatewayConfig است."""
+from django.utils.translation import gettext
 import logging
 import os
 import re
@@ -19,9 +20,9 @@ NAME_RE = re.compile(r"^[a-z][a-z0-9_]{2,29}$")
 def register_gateway(name: str, cls) -> None:
     """ثبت درگاه از کد. نام یکتا؛ کلاس باید زیرکلاس PaymentGateway باشد؛ بازنویسی ممنوع."""
     if not NAME_RE.match(name or "") or not (isinstance(cls, type) and issubclass(cls, PaymentGateway)):
-        raise ValueError("نام یا کلاس درگاه نامعتبر است.")
+        raise ValueError(gettext("The gateway name or class is invalid."))
     if name in GATEWAYS and GATEWAYS[name] is not cls:
-        raise ValueError(f"درگاه «{name}» قبلاً ثبت شده است.")
+        raise ValueError((gettext("Gateway “%(name)s” is already registered.") % {"name": name}))
     cls.name = name
     GATEWAYS[name] = cls
 
@@ -101,16 +102,16 @@ def get_gateway(name: str | None = None, site=None, require_enabled: bool = True
         name = settings.SHOP_PAYMENT_GATEWAY if settings.SHOP_PAYMENT_GATEWAY in enabled else (enabled[0] if enabled else settings.SHOP_PAYMENT_GATEWAY)
     cls = available_gateways().get(name)
     if cls is not None and cls.is_test and not sandbox_allowed():
-        raise GatewayUnavailable("درگاه آزمایشی در محیط تولید مجاز نیست؛ ابتدا یک درگاه واقعی متصل کنید.")
+        raise GatewayUnavailable(gettext("The test gateway is not allowed in production; first connect a real gateway."))
     if cls is None or (require_enabled and not is_enabled(site, name)):
-        raise GatewayUnavailable("درگاه پرداخت فعال نیست.")
+        raise GatewayUnavailable(gettext("The payment gateway is not active."))
     row = get_config_row(site, name)
     try:
         cfg = load_config(cls, row)
     except vault.SecretsError as exc:
         raise GatewayUnavailable(str(exc))
     if missing_fields(cls, cfg):
-        raise GatewayUnavailable("تنظیمات درگاه کامل نیست.")
+        raise GatewayUnavailable(gettext("The gateway settings are incomplete."))
     inst = cls(cfg, test_mode=True if row is None else row.test_mode)
     inst.name = name  # نام ثبت‌شده مرجع است (نه ویژگی کلاس)
     return inst

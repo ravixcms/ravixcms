@@ -1,4 +1,5 @@
 """منطق دیدگاه: پاک‌سازی، ضداسپم (honeypot خارج از اینجا، نرخ، کلمات مسدود، تکراری)، ثبت و تغییر وضعیت."""
+from django.utils.translation import gettext
 import hashlib
 import logging
 import re
@@ -78,15 +79,15 @@ def validate_fields(name, email, body, parent_id, post):
     email = (email or "").strip()
     body = (body or "").strip()
     if not 2 <= len(name) <= 80:
-        errors["name"] = "نام را وارد کنید (۲ تا ۸۰ نویسه)."
+        errors["name"] = gettext("Enter your name (2 to 80 characters).")
     try:
         validate_email(email)
     except ValidationError:
-        errors["email"] = "ایمیل معتبر وارد کنید. ایمیل شما نمایش داده نمی‌شود."
+        errors["email"] = gettext("Enter a valid email. Your email will not be shown.")
     if len(body) > settings.RAVIX_COMMENT_MAX_LENGTH:
-        errors["body"] = f"متن دیدگاه حداکثر {settings.RAVIX_COMMENT_MAX_LENGTH} نویسه می‌تواند باشد."
+        errors["body"] = (gettext("The comment can be at most %(RAVIX_COMMENT_MAX_LENGTH)s characters.") % {"RAVIX_COMMENT_MAX_LENGTH": settings.RAVIX_COMMENT_MAX_LENGTH})
     elif len(plain_text(clean_body(body))) < 2:
-        errors["body"] = "متن دیدگاه را بنویسید."
+        errors["body"] = gettext("Write the comment text.")
     parent = None
     if parent_id not in (None, ""):
         try:
@@ -94,7 +95,7 @@ def validate_fields(name, email, body, parent_id, post):
         except (TypeError, ValueError):
             parent = None
         if parent is None or parent.depth >= settings.RAVIX_COMMENT_MAX_DEPTH:
-            errors["form"] = "امکان پاسخ به این دیدگاه وجود ندارد."
+            errors["form"] = gettext("It is not possible to reply to this comment.")
     return name, email, body, parent, errors
 
 
@@ -107,14 +108,14 @@ def submit(request, post, data) -> Comment | None:
         logger.info("honeypot دیدگاه پر شده بود؛ نادیده گرفته شد.")
         return None
     if rate_limited(request):
-        raise CommentRejected({"form": "تعداد دیدگاه‌های ارسالی شما زیاد است؛ چند دقیقه بعد دوباره تلاش کنید."}, status=429)
+        raise CommentRejected({"form": gettext("You have submitted too many comments; try again in a few minutes.")}, status=429)
     if not post.comments_open:
-        raise CommentRejected({"form": "ارسال دیدگاه برای این نوشته بسته شده است."}, status=403)
+        raise CommentRejected({"form": gettext("Comments are closed for this post.")}, status=403)
     name, email, body, parent, errors = validate_fields(data.get("name"), data.get("email"), data.get("body"), data.get("parent"), post)
     if errors:
         raise CommentRejected(errors)
     if Comment.objects.filter(post=post, author_email__iexact=email, body=body).exclude(status=Comment.Status.TRASH).exists():
-        raise CommentRejected({"form": "این دیدگاه قبلاً ثبت شده است."})
+        raise CommentRejected({"form": gettext("This comment has already been submitted.")})
     cfg = SiteSettings.load()
     status = Comment.Status.PENDING if cfg.comments_require_approval else Comment.Status.APPROVED
     if contains_blocked(blocked_words(cfg), name, email, body):

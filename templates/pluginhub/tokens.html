@@ -1,11 +1,12 @@
 {% extends "layouts/panel.html" %}
-{% block title %}توکن‌های API{% endblock %}
-{% block page_title %}توکن‌های API{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "API tokens" %}{% endblock %}
+{% block page_title %}{% trans "API tokens" %}{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>توکن‌های انتشار</h1><p>برای انتشار خودکار (CI) از <span class="ltr">POST /registry/v1/publish/</span> با هدر <span class="ltr">Authorization: Bearer ...</span>. فقط هش توکن ذخیره می‌شود.</p></div></div>
-{% if raw %}<div class="form-errors warn" role="status"><p><strong>توکن را همین حالا کپی کنید؛ دوباره نمایش داده نمی‌شود:</strong></p><pre class="ltr" dir="ltr" style="user-select:all">{{ raw }}</pre></div>{% endif %}
-<form method="post">{% csrf_token %}<div class="card" style="margin-bottom:1.25rem"><div class="card-body">{% for field in form %}{% include "partials/_field.html" with field=field %}{% endfor %}<button class="btn">ساخت توکن</button></div></div></form>
-<div class="card"><div class="table-wrap"><table class="table"><thead><tr><th>نام</th><th>پیشوند</th><th>آخرین استفاده</th><th></th></tr></thead><tbody>
+<div class="page-head"><div><h1>{% trans "Publishing tokens" %}</h1><p>{% trans "For automatic publishing (CI) use" %} <span class="ltr">POST /registry/v1/publish/</span> {% trans "with the header" %} <span class="ltr">Authorization: Bearer ...</span>{% trans ". Only the token hash is stored." %}</p></div></div>
+{% if raw %}<div class="form-errors warn" role="status"><p>{% trans "<strong>Copy the token now; it will not be shown again:</strong>" %}</p><pre class="ltr" dir="ltr" style="user-select:all">{{ raw }}</pre></div>{% endif %}
+<form method="post">{% csrf_token %}<div class="card" style="margin-bottom:1.25rem"><div class="card-body">{% for field in form %}{% include "partials/_field.html" with field=field %}{% endfor %}<button class="btn">{% trans "Create token" %}</button></div></div></form>
+<div class="card"><div class="table-wrap"><table class="table"><thead><tr><th>{% trans "Name" %}</th><th>{% trans "Prefix" %}</th><th>{% trans "Last used" %}</th><th></th></tr></thead><tbody>
 {% for t in tokens %}<tr><td>{{ t.name }}</td><td class="ltr">{{ t.prefix }}…</td><td>{{ t.last_used_at|default:"—" }}</td>
-<td>{% if t.revoked_at %}<span class="badge badge-inactive">ابطال‌شده</span>{% else %}<form method="post" action="{% url 'pluginhub:token_revoke' t.pk %}">{% csrf_token %}<button class="btn btn-danger btn-sm">ابطال</button></form>{% endif %}</td></tr>{% endfor %}
+<td>{% if t.revoked_at %}<span class="badge badge-inactive">{% trans "Revoked" %}</span>{% else %}<form method="post" action="{% url 'pluginhub:token_revoke' t.pk %}">{% csrf_token %}<button class="btn btn-danger btn-sm">{% trans "Revoke" %}</button></form>{% endif %}</td></tr>{% endfor %}
 </tbody></table></div></div>{% endblock %}

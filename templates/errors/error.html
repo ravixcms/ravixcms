@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% load ravix_ui %}
 {% block title %}{{ title }}{% endblock %}
 {% block body %}
@@ -7,7 +8,7 @@
     <div class="error-code">{{ status|fa_digits }}</div>
     <h1>{{ title }}</h1>
     <p class="muted">{{ message }}</p>
-    <p><a class="btn" href="{% url 'public:home' %}">بازگشت به صفحه اصلی</a></p>
+    <p><a class="btn" href="{% url 'public:home' %}">{% trans "Back to the main page" %}</a></p>
   </div>
 </main>
 {% endblock %}

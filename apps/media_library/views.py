@@ -1,3 +1,4 @@
+from django.utils.translation import gettext, gettext_lazy
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
@@ -48,22 +49,22 @@ class MediaUploadView(CapabilityRequiredMixin, FormView):
     def form_valid(self, form):
         created = form.save(self.request.user)
         for media in created:
-            log_event(self.request, "create", media, f"فایل «{media.original_name}» بارگذاری شد.")
-        messages.success(self.request, f"{len(created)} فایل با موفقیت بارگذاری شد.")
+            log_event(self.request, "create", media, (gettext("The file “%(original_name)s” was uploaded.") % {"original_name": media.original_name}))
+        messages.success(self.request, (gettext("%(created_count)s files were uploaded successfully.") % {"created_count": len(created)}))
         if len(created) == 1 and created[0].is_image and not created[0].alt_text:
-            messages.info(self.request, "برای بهتر شدن دسترس‌پذیری، متن جایگزین (Alt) تصویر را ثبت کنید.")
+            messages.info(self.request, gettext("To improve accessibility, add alternative (Alt) text for the image."))
             return redirect("media_library:media_update", pk=created[0].pk)
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, "بارگذاری انجام نشد. لطفاً خطاها را بررسی کنید.")
+        messages.error(self.request, gettext("The upload did not complete. Please check the errors."))
         return super().form_invalid(form)
 
 
 class MediaUpdateView(AuditedUpdateView):
     model = Media
     form_class = MediaEditForm
-    object_label = "رسانه"
+    object_label = gettext_lazy("Media")
     list_url_name = "media_library:media_list"
     required_capability = "media.upload"
     template_name = "media_library/media_detail.html"
@@ -83,7 +84,7 @@ class MediaUpdateView(AuditedUpdateView):
 
 class MediaDeleteView(AuditedDeleteView):
     model = Media
-    object_label = "رسانه"
+    object_label = gettext_lazy("Media")
     list_url_name = "media_library:media_list"
     required_capability = "media.upload"
 

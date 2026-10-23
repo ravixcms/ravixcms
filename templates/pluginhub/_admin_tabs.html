@@ -1,3 +1,4 @@
-<div class="toolbar" style="margin-bottom:1rem"><a class="btn {% if active == 'publishers' %}{% else %}btn-light{% endif %}" href="{% url 'pluginhub:admin_publishers' %}">ناشران</a>
-<a class="btn {% if active == 'categories' %}{% else %}btn-light{% endif %}" href="{% url 'pluginhub:admin_categories' %}">دسته‌ها</a>
-<a class="btn {% if active == 'plugins' %}{% else %}btn-light{% endif %}" href="{% url 'pluginhub:admin_plugins' %}">افزونه‌ها و نسخه‌ها</a></div>
+{% load i18n %}
+<div class="toolbar" style="margin-bottom:1rem"><a class="btn {% if active == 'publishers' %}{% else %}btn-light{% endif %}" href="{% url 'pluginhub:admin_publishers' %}">{% trans "Publishers" %}</a>
+<a class="btn {% if active == 'categories' %}{% else %}btn-light{% endif %}" href="{% url 'pluginhub:admin_categories' %}">{% trans "Categories" %}</a>
+<a class="btn {% if active == 'plugins' %}{% else %}btn-light{% endif %}" href="{% url 'pluginhub:admin_plugins' %}">{% trans "Plugins and versions" %}</a></div>

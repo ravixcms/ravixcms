@@ -4,6 +4,7 @@
 هیچ اعتمادی به منبع نیست: SHA-256 و امضای هر بسته را خود به‌روزرسان می‌سنجد (امضا نوع/شناسه/نسخه/هش را می‌پوشاند)، پس فهرست دست‌کاری‌شده
 نمی‌تواند بستهٔ دیگری را جایگزین کند. فهرست اختیاراً امضا هم می‌شود (RAVIX_UPDATE_REQUIRE_SIGNED_INDEX).
 """
+from django.utils.translation import gettext
 import hashlib
 import json
 import logging
@@ -38,7 +39,7 @@ def _http_get(url: str, max_bytes: int, timeout: int = DOWNLOAD_TIMEOUT):
     try:
         return http_get(url, max_bytes, timeout=timeout)
     except Exception as exc:  # noqa: BLE001 - RegistryUnavailable و خطاهای شبکه
-        raise UpdateError(f"دریافت از منبع به‌روزرسانی ممکن نشد: {exc}")
+        raise UpdateError((gettext("Could not fetch from the update source: %(exc)s") % {"exc": exc}))
 
 
 def normalize_entry(raw, kind: str) -> dict | None:
@@ -67,17 +68,17 @@ def normalize_entry(raw, kind: str) -> dict | None:
 
 def parse_index(data: bytes, signature: str = "", key_id: str = "") -> dict:
     if settings.RAVIX_UPDATE_REQUIRE_SIGNED_INDEX and not signature:
-        raise UpdateError("فهرست به‌روزرسانی امضا ندارد و سیاست این سایت امضای فهرست را الزامی کرده است.")
+        raise UpdateError(gettext("The update index has no signature and this site’s policy requires a signed index."))
     if signature:
         ver = signing.verify_index(data, signature, key_id)
         if not ver.ok:
-            raise UpdateError(f"امضای فهرست به‌روزرسانی نامعتبر است: {ver.reason}")
+            raise UpdateError((gettext("The update index signature is invalid: %(reason)s") % {"reason": ver.reason}))
     try:
         doc = json.loads(data)
     except ValueError:
-        raise UpdateError("فهرست به‌روزرسانی JSON معتبر نیست.")
+        raise UpdateError(gettext("The update index is not valid JSON."))
     if not isinstance(doc, dict) or doc.get("schema") != UPDATE_SCHEMA_VERSION:
-        raise UpdateError("قالب فهرست به‌روزرسانی پشتیبانی نمی‌شود.")
+        raise UpdateError(gettext("The update index format is not supported."))
     core = [e for e in (normalize_entry(x, "core") for x in doc.get("core", [])[:200]) if e]
     themes = {}
     raw_themes = doc.get("themes") if isinstance(doc.get("themes"), dict) else {}
@@ -111,7 +112,7 @@ class HttpSource:
         url = urllib.parse.urljoin(f"{self.base}/updates/v1/", raw_url) if raw_url else ""
         parsed, base = urllib.parse.urlparse(url), urllib.parse.urlparse(self.base)
         if not url or parsed.scheme != "https" or parsed.netloc != base.netloc:
-            raise UpdateError("نشانی دریافت روی دامنهٔ دیگری است؛ برای امنیت رد شد.")
+            raise UpdateError(gettext("The download URL is on a different domain; rejected for security."))
         data, _ = _http_get(url, settings.RAVIX_UPDATE_MAX_PACKAGE_BYTES)
         return data
 
@@ -129,7 +130,7 @@ class DirSource:
         try:
             data = (self.dir / "index.json").read_bytes()
         except OSError:
-            raise UpdateError("index.json در پوشهٔ منبع به‌روزرسانی پیدا نشد.")
+            raise UpdateError(gettext("index.json was not found in the update source folder."))
         sig, kid = "", ""
         sig_path = self.dir / "index.json.sig"
         if sig_path.is_file():
@@ -137,20 +138,20 @@ class DirSource:
                 doc = json.loads(sig_path.read_text(encoding="utf-8"))
                 sig, kid = str(doc.get("signature", "")), str(doc.get("key_id", ""))
             except ValueError:
-                raise UpdateError("index.json.sig معتبر نیست.")
+                raise UpdateError(gettext("index.json.sig is not valid."))
         return parse_index(data[:MAX_INDEX], sig, kid)
 
     def download(self, entry: dict) -> bytes:
         name = Path(entry.get("download_url") or "").name
         path = (self.dir / name).resolve()
         if not name or self.dir.resolve() not in path.parents:
-            raise UpdateError("نام فایل بسته نامعتبر است.")
+            raise UpdateError(gettext("The package file name is invalid."))
         try:
             if path.stat().st_size > settings.RAVIX_UPDATE_MAX_PACKAGE_BYTES:
-                raise UpdateError("بسته از سقف حجم بزرگ‌تر است.")
+                raise UpdateError(gettext("The package is larger than the size limit."))
             return path.read_bytes()
         except OSError:
-            raise UpdateError("فایل بسته در منبع پیدا نشد.")
+            raise UpdateError(gettext("The package file was not found in the source."))
 
 
 def get_source():
@@ -158,7 +159,7 @@ def get_source():
         return DirSource(settings.RAVIX_UPDATE_DIR)
     if settings.RAVIX_UPDATE_URL:
         return HttpSource(settings.RAVIX_UPDATE_URL)
-    raise UpdateError("منبع رسمی به‌روزرسانی تنظیم نشده است (RAVIX_UPDATE_URL).")
+    raise UpdateError(gettext("The official update source is not configured (RAVIX_UPDATE_URL)."))
 
 
 def has_source() -> bool:

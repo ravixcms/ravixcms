@@ -9,6 +9,7 @@
 
 اعتبارسنجی سخت‌گیرانه (با پیام خطا برای کاربر) در فرم‌های پنل انجام می‌شود.
 """
+from django.utils.translation import gettext
 import copy
 import re
 
@@ -49,8 +50,8 @@ def default_config() -> dict:
         "footer": {"text": "", "show_menu": True, "show_contact": True, "social": []},
         "menus": {
             "header": [
-                {"label": "خانه", "kind": "home", "target": None, "url": "", "new_tab": False},
-                {"label": "نوشته‌ها", "kind": "blog", "target": None, "url": "", "new_tab": False},
+                {"label": gettext("Home"), "kind": "home", "target": None, "url": "", "new_tab": False},
+                {"label": gettext("Posts"), "kind": "blog", "target": None, "url": "", "new_tab": False},
             ],
             "footer": [],
         },
@@ -58,10 +59,10 @@ def default_config() -> dict:
             "sections": [
                 {
                     "type": "hero", "enabled": True, "title": "", "subtitle": "", "body": "",
-                    "button_label": "مشاهده نوشته‌ها", "button_url": "/blog/", "category": None, "page": None, "count": 6,
+                    "button_label": gettext("View posts"), "button_url": "/blog/", "category": None, "page": None, "count": 6,
                 },
                 {
-                    "type": "latest_posts", "enabled": True, "title": "آخرین نوشته‌ها", "subtitle": "", "body": "",
+                    "type": "latest_posts", "enabled": True, "title": gettext("Latest posts"), "subtitle": "", "body": "",
                     "button_label": "", "button_url": "", "category": None, "page": None, "count": 6,
                 },
             ]

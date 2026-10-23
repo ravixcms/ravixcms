@@ -1,3 +1,4 @@
+from django.utils.translation import gettext
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model, login
@@ -61,7 +62,7 @@ class LogoutView(DjangoLogoutView):
 
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
-        messages.info(request, "با موفقیت از حساب خود خارج شدید.")
+        messages.info(request, gettext("You have been signed out successfully."))
         return response
 
 
@@ -76,22 +77,22 @@ class RegisterView(RedirectAuthenticatedMixin, FormView):
         return super().dispatch(request, *args, **kwargs)
 
     def registration_closed(self, request):
-        messages.warning(request, "ثبت‌نام عمومی در حال حاضر غیرفعال است.")
+        messages.warning(request, gettext("Public registration is currently disabled."))
         return redirect("accounts:login")
 
     def form_valid(self, form):
         user = form.save()
-        log_event(self.request, "create", user, f"کاربر جدید «{user.username}» ثبت‌نام کرد.", actor=user)
+        log_event(self.request, "create", user, (gettext("New user “%(username)s” registered.") % {"username": user.username}), actor=user)
         emailing.send_verification_email(self.request, user)
         if settings.RAVIX_REQUIRE_EMAIL_VERIFICATION:
-            messages.success(self.request, "حساب شما ساخته شد. برای ورود، پیوند تأییدی را که به ایمیل شما فرستادیم باز کنید.")
+            messages.success(self.request, gettext("Your account was created. To sign in, open the verification link we sent to your email."))
             return redirect("accounts:login")
         login(self.request, user, backend="apps.accounts.backends.EmailOrUsernameBackend")
-        messages.success(self.request, "حساب شما با موفقیت ساخته شد. خوش آمدید! برای تأیید ایمیل، پیوند ارسال‌شده به صندوق ایمیل خود را باز کنید.")
+        messages.success(self.request, gettext("Your account was created successfully. Welcome! To verify your email, open the link sent to your inbox."))
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, "ثبت‌نام انجام نشد. لطفاً خطاهای فرم را بررسی کنید.")
+        messages.error(self.request, gettext("Registration did not complete. Please check the form errors."))
         return super().form_invalid(form)
 
 
@@ -110,14 +111,14 @@ class ProfileView(LoginRequiredMixin, UpdateView):
             user = self.object
             user.email_verified_at = None  # ایمیل تازه باید دوباره تأیید شود
             user.save(update_fields=["email_verified_at"])
-            log_event(self.request, "update", user, "ایمیل حساب تغییر کرد؛ تأیید دوباره لازم است.")
+            log_event(self.request, "update", user, gettext("The account email was changed; verification is required again."))
             emailing.send_verification_email(self.request, user)
-            messages.info(self.request, "ایمیل تازه ثبت شد. پیوند تأیید به آن فرستاده شد.")
-        messages.success(self.request, "پروفایل شما با موفقیت به‌روزرسانی شد.")
+            messages.info(self.request, gettext("The new email was saved. A verification link was sent to it."))
+        messages.success(self.request, gettext("Your profile was updated successfully."))
         return response
 
     def form_invalid(self, form):
-        messages.error(self.request, "ذخیره انجام نشد. لطفاً خطاهای فرم را بررسی کنید.")
+        messages.error(self.request, gettext("Could not save. Please check the form errors."))
         return super().form_invalid(form)
 
 
@@ -145,7 +146,7 @@ class PasswordResetConfirmView(DjangoPasswordResetConfirmView):
         if user.email_verified_at is None:  # رسیدن به این صفحه یعنی صندوق ایمیل در اختیار اوست
             user.email_verified_at = timezone.now()
             user.save(update_fields=["email_verified_at"])
-        log_event(self.request, "update", user, "رمز عبور با پیوند ایمیلی بازیابی شد.", actor=user)
+        log_event(self.request, "update", user, gettext("The password was reset with the emailed link."), actor=user)
         return response
 
 
@@ -168,7 +169,7 @@ class VerifyEmailView(View):
         if state == "ok":
             user.email_verified_at = timezone.now()
             user.save(update_fields=["email_verified_at"])
-            log_event(request, "update", user, "ایمیل حساب تأیید شد.", actor=user)
+            log_event(request, "update", user, gettext("The account email was verified."), actor=user)
             state = "verified"
         return render(request, self.template_name, {"state": state})
 
@@ -202,11 +203,11 @@ class PasswordChangeView(LoginRequiredMixin, DjangoPasswordChangeView):
     success_url = reverse_lazy("accounts:password_change")
 
     def form_valid(self, form):
-        messages.success(self.request, "رمز عبور شما با موفقیت تغییر کرد.")
+        messages.success(self.request, gettext("Your password was changed successfully."))
         return super().form_valid(form)  # نشست فعلی با update_session_auth_hash حفظ می‌شود
 
     def form_invalid(self, form):
-        messages.error(self.request, "رمز عبور تغییر نکرد. لطفاً خطاها را بررسی کنید.")
+        messages.error(self.request, gettext("The password was not changed. Please check the errors."))
         return super().form_invalid(form)
 
 
@@ -266,14 +267,14 @@ class UserManageView(CapabilityRequiredMixin, UpdateView):
         response = super().form_valid(form)
         changes = []
         if old_role != self.object.role:
-            changes.append(f"نقش از «{Role(old_role).label}» به «{Role(self.object.role).label}»")
+            changes.append((gettext("Role from “%(label)s” to “%(label2)s”") % {"label": Role(old_role).label, "label2": Role(self.object.role).label}))
         if old_active != self.object.is_active:
-            changes.append("حساب " + ("فعال شد" if self.object.is_active else "غیرفعال شد"))
+            changes.append((gettext("Account %(value)s") % {"value": ("فعال شد" if self.object.is_active else "غیرفعال شد")}))
         if changes:
-            log_event(self.request, "update", self.object, f"کاربر «{self.object.username}»: " + "؛ ".join(changes) + ".")
-        messages.success(self.request, f"تغییرات کاربر «{self.object.display_name}» ذخیره شد.")
+            log_event(self.request, "update", self.object, (gettext("User “%(username)s”: %(changes)s.") % {"username": self.object.username, "changes": "؛ ".join(changes)}))
+        messages.success(self.request, (gettext("Changes to user “%(display_name)s” were saved.") % {"display_name": self.object.display_name}))
         return response
 
     def form_invalid(self, form):
-        messages.error(self.request, "ذخیره انجام نشد. لطفاً خطاها را بررسی کنید.")
+        messages.error(self.request, gettext("Could not save. Please check the errors."))
         return super().form_invalid(form)

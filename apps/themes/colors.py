@@ -1,4 +1,5 @@
 """محاسبات رنگ: کنتراست WCAG و ساخت رنگ‌های مشتق (سطح، حاشیه، متن کم‌رنگ) با تضمین خوانایی."""
+from django.utils.translation import gettext
 from .constants import MIN_CONTRAST
 
 
@@ -65,12 +66,11 @@ def palette_errors(primary: str, background: str, text: str) -> list[str]:
     surface = mix(background, text, 0.045)
     if contrast(text, background) < MIN_CONTRAST:
         errors.append(
-            f"کنتراست «رنگ متن» و «رنگ پس‌زمینه» کافی نیست ({contrast(text, background):.1f} از حداقل {MIN_CONTRAST}). "
-            "رنگ متن را تیره‌تر یا پس‌زمینه را روشن‌تر کنید."
+            (gettext("The contrast of “text color” and “background color” is not sufficient (%(contrast)s of the minimum %(MIN_CONTRAST)s). Make the text color darker or the background lighter.") % {"contrast": format(contrast(text, background), '.1f'), "MIN_CONTRAST": MIN_CONTRAST})
         )
     worst = min(contrast(primary, background), contrast(primary, surface))
     if worst < MIN_CONTRAST:
         errors.append(
-            f"کنتراست «رنگ اصلی» با پس‌زمینه کافی نیست ({worst:.1f} از حداقل {MIN_CONTRAST}). پیوندها با این رنگ خوانا نمی‌شوند؛ رنگ اصلی را پررنگ‌تر کنید."
+            (gettext("The contrast of “primary color” with the background is not sufficient (%(worst)s of the minimum %(MIN_CONTRAST)s). Links in this color will not be readable; make the primary color stronger.") % {"worst": format(worst, '.1f'), "MIN_CONTRAST": MIN_CONTRAST})
         )
     return errors

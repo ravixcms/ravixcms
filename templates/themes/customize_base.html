@@ -1,10 +1,11 @@
 {% extends "layouts/panel.html" %}
+{% load i18n %}
 {% load ravix_ui %}
-{% block title %}سفارشی‌سازی ظاهر{% endblock %}
-{% block page_title %}سفارشی‌سازی ظاهر{% endblock %}
+{% block title %}{% trans "Customize appearance" %}{% endblock %}
+{% block page_title %}{% trans "Customize appearance" %}{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>سفارشی‌سازی ظاهر سایت</h1><p>تغییرات ابتدا در پیش‌نویس ذخیره می‌شوند و تا انتشار، روی سایت اعمال نمی‌شوند.</p></div>
-  <a class="btn btn-light" href="{% url 'themes:list' %}">{% icon "palette" 18 %} قالب‌ها</a></div>
+<div class="page-head"><div><h1>{% trans "Customize site appearance" %}</h1><p>{% trans "Changes are saved to a draft first and are not applied to the site until published." %}</p></div>
+  <a class="btn btn-light" href="{% url 'themes:list' %}">{% icon "palette" 18 %} {% trans "Themes" %}</a></div>
 {% include "themes/_status.html" %}
 {% block tab_content %}{% endblock %}
 {% endblock %}

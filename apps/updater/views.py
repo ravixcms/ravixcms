@@ -1,3 +1,4 @@
+from django.utils.translation import gettext
 import logging
 
 from django.conf import settings
@@ -22,7 +23,7 @@ logger = logging.getLogger("ravix.updater")
 
 def _audit(request, message):
     try:
-        audit_log(request, AuditLog.Action.UPDATE, None, message, object_type="به‌روزرسانی")
+        audit_log(request, AuditLog.Action.UPDATE, None, message, object_type=gettext("Update"))
     except Exception:  # noqa: BLE001
         logger.exception("ثبت audit ناموفق بود")
 
@@ -39,8 +40,7 @@ class ManageMixin(CapabilityRequiredMixin):
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated and request.user.has_cap("updates.manage") and not settings.RAVIX_UPDATE_WEB_APPLY:
-            messages.error(request, "اعمال به‌روزرسانی از وب خاموش است. با دستور «python manage.py ravix_update apply ...» انجام دهید "
-                                    "یا RAVIX_UPDATE_WEB_APPLY=true را در تنظیمات سرور بگذارید.")
+            messages.error(request, gettext("Applying updates from the web is turned off. Run it with the command “python manage.py ravix_update apply ...” or set RAVIX_UPDATE_WEB_APPLY=true in the server settings."))
             return redirect("updater:home")
         return super().dispatch(request, *args, **kwargs)
 
@@ -87,7 +87,7 @@ class CheckView(ViewMixin, View):
     def post(self, request):
         try:
             sources.cached_index(force=True)
-            messages.success(request, "فهرست نسخه‌ها از منبع رسمی دریافت و اعتبارسنجی شد.")
+            messages.success(request, gettext("The version list was fetched from the official source and validated."))
         except UpdateError as exc:
             messages.error(request, sanitize(exc))
         return redirect("updater:home")
@@ -119,11 +119,11 @@ class ApplyView(ManageMixin, View):
                 raise Http404
         except UpdateError as exc:
             messages.error(request, sanitize(exc))
-            _audit(request, f"به‌روزرسانی {component} {slug} ناموفق بود")
+            _audit(request, (gettext("Updating %(component)s %(slug)s failed") % {"component": component, "slug": slug}))
             last = UpdateRun.objects.first()
             return redirect("updater:run", pk=last.pk) if last and last.status != "running" else redirect("updater:home")
-        _audit(request, f"به‌روزرسانی {component} {slug} به {run.to_version} انجام شد")
-        messages.success(request, "به‌روزرسانی انجام شد." + (" سرویس را راه‌اندازی مجدد کنید." if run.restart_required else ""))
+        _audit(request, (gettext("Updated %(component)s %(slug)s to %(to_version)s") % {"component": component, "slug": slug, "to_version": run.to_version}))
+        messages.success(request, (gettext("Update completed.%(value)s") % {"value": (" سرویس را راه‌اندازی مجدد کنید." if run.restart_required else "")}))
         return redirect("updater:run", pk=run.pk)
 
 
@@ -134,6 +134,6 @@ class RollbackView(ManageMixin, View):
         except UpdateError as exc:
             messages.error(request, sanitize(exc))
             return redirect("updater:run", pk=pk)
-        _audit(request, f"بازگشت به نسخهٔ قبل از اجرای #{pk}")
-        messages.success(request, "بازگشت انجام شد. سرویس را راه‌اندازی مجدد کنید.")
+        _audit(request, (gettext("Rollback to the version before run #%(pk)s") % {"pk": pk}))
+        messages.success(request, gettext("Rollback completed. Restart the service."))
         return redirect("updater:run", pk=run.pk)

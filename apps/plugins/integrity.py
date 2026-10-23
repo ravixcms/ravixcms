@@ -1,4 +1,5 @@
 """اثرانگشت (SHA-256) محتوای پوشهٔ افزونه. نصب، همین اثرانگشت را «تأیید» می‌کند؛ هر تغییر بعدی کد، بارگذاری را متوقف می‌کند."""
+from django.utils.translation import gettext
 import hashlib
 import os
 from pathlib import Path
@@ -19,13 +20,13 @@ def iter_files(root: Path):
         dirnames[:] = sorted(d for d in dirnames if d not in _SKIP_DIRS)
         for d in dirnames:
             if (Path(dirpath) / d).is_symlink():
-                raise IntegrityError(f"پیوند نمادین (symlink) مجاز نیست: {d}")
+                raise IntegrityError((gettext("Symbolic links (symlinks) are not allowed: %(d)s") % {"d": d}))
         for name in sorted(filenames):
             if name in _SKIP_FILES or name.endswith(".pyc"):
                 continue
             path = Path(dirpath) / name
             if path.is_symlink() or not path.is_file():
-                raise IntegrityError(f"فایل غیرعادی/پیوند نمادین مجاز نیست: {path.relative_to(root)}")
+                raise IntegrityError((gettext("Unusual files/symbolic links are not allowed: %(relative_to)s") % {"relative_to": path.relative_to(root)}))
             yield path
 
 
@@ -38,7 +39,7 @@ def fingerprint(root) -> str:
         size = path.stat().st_size
         total += size
         if count > MAX_FILES or total > MAX_TOTAL_BYTES:
-            raise IntegrityError("افزونه از سقف تعداد/حجم فایل بزرگ‌تر است.")
+            raise IntegrityError(gettext("The plugin exceeds the file count/size limit."))
         digest.update(path.relative_to(root).as_posix().encode("utf-8") + b"\0" + str(size).encode() + b"\0")
         with path.open("rb") as fh:
             for chunk in iter(lambda: fh.read(65536), b""):

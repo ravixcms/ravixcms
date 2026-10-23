@@ -2,6 +2,7 @@
 
 درگاه واقعی = افزونهٔ مستقل (docs/payment-gateways.md). هیچ درگاه واقعی‌ای متصل نیست.
 """
+from django.utils.translation import gettext_lazy
 from django.urls import reverse
 
 from .payments import *  # noqa: F401,F403
@@ -16,8 +17,8 @@ class SandboxGateway(PaymentGateway):
     """شبیه‌ساز بانک برای توسعه و تست. وضعیت فقط توسط صفحهٔ آزمایشی تغییر می‌کند و تأیید همان را از دیتابیس می‌خواند."""
 
     name = "sandbox"
-    label = "درگاه آزمایشی (شبیه‌ساز)"
-    description = "فقط برای توسعه و دمو؛ پول واقعی جابه‌جا نمی‌شود."
+    label = gettext_lazy("Test gateway (simulator)")
+    description = gettext_lazy("For development and demos only; no real money is moved.")
     is_test = True
     reports_currency = False
 

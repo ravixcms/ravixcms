@@ -1,3 +1,4 @@
+from django.utils.translation import gettext, gettext_lazy
 import logging
 
 from django import forms
@@ -15,21 +16,21 @@ User = get_user_model()
 
 class LoginForm(StyledFormMixin, AuthenticationForm):
     username = forms.CharField(
-        label="نام کاربری یا ایمیل",
+        label=gettext_lazy("Username or email"),
         widget=forms.TextInput(attrs={"autofocus": True, "autocomplete": "username", "dir": "ltr"}),
     )
     password = forms.CharField(
-        label="رمز عبور",
+        label=gettext_lazy("Password"),
         strip=False,
         widget=forms.PasswordInput(attrs={"autocomplete": "current-password", "dir": "ltr"}),
     )
-    remember_me = forms.BooleanField(label="مرا به خاطر بسپار", required=False)
+    remember_me = forms.BooleanField(label=gettext_lazy("Remember me"), required=False)
 
     error_messages = {
-        "invalid_login": "نام کاربری/ایمیل یا رمز عبور نادرست است.",
-        "inactive": "این حساب کاربری غیرفعال است.",
-        "unverified": "ایمیل این حساب هنوز تأیید نشده است. پیوند تأیید را از صندوق ایمیل خود باز کنید یا ارسال دوبارهٔ آن را بخواهید.",
-        "locked": "تعداد تلاش‌های ناموفق زیاد بود. لطفاً چند دقیقه دیگر دوباره تلاش کنید.",
+        "invalid_login": gettext_lazy("The username/email or password is incorrect."),
+        "inactive": gettext_lazy("This account is inactive."),
+        "unverified": gettext_lazy("This account’s email has not been verified yet. Open the verification link in your inbox or ask for it to be sent again."),
+        "locked": gettext_lazy("Too many failed attempts. Please try again in a few minutes."),
     }
 
     def confirm_login_allowed(self, user):
@@ -67,18 +68,18 @@ class RegisterForm(StyledFormMixin, UserCreationForm):
         self.fields["first_name"].required = True
         self.fields["password1"].widget.attrs.update({"dir": "ltr", "autocomplete": "new-password"})
         self.fields["password2"].widget.attrs.update({"dir": "ltr", "autocomplete": "new-password"})
-        self.fields["username"].help_text = "حروف، اعداد و نمادهای @ . + - _ مجاز است."
+        self.fields["username"].help_text = gettext("Letters, digits and the symbols @ . + - _ are allowed.")
 
     def clean_email(self):
         email = self.cleaned_data["email"].strip().lower()
         if User.objects.filter(email__iexact=email).exists():
-            raise forms.ValidationError("کاربری با این ایمیل قبلاً ثبت‌نام کرده است.")
+            raise forms.ValidationError(gettext("A user with this email has already registered."))
         return email
 
     def clean_username(self):
         username = self.cleaned_data["username"]
         if User.objects.filter(username__iexact=username).exists():
-            raise forms.ValidationError("این نام کاربری قبلاً استفاده شده است.")
+            raise forms.ValidationError(gettext("This username is already taken."))
         return username
 
     def save(self, commit=True):
@@ -102,15 +103,15 @@ class ProfileForm(StyledFormMixin, forms.ModelForm):
     def clean_email(self):
         email = self.cleaned_data["email"].strip().lower()
         if User.objects.filter(email__iexact=email).exclude(pk=self.instance.pk).exists():
-            raise forms.ValidationError("این ایمیل متعلق به کاربر دیگری است.")
+            raise forms.ValidationError(gettext("This email belongs to another user."))
         return email
 
 
 class StyledPasswordChangeForm(StyledFormMixin, PasswordChangeForm):
     error_messages = {
         **PasswordChangeForm.error_messages,
-        "password_incorrect": "رمز عبور فعلی نادرست است.",
-        "password_mismatch": "دو رمز عبور جدید با هم مطابقت ندارند.",
+        "password_incorrect": gettext_lazy("The current password is incorrect."),
+        "password_mismatch": gettext_lazy("The two new passwords do not match."),
     }
 
     def __init__(self, *args, **kwargs):
@@ -128,7 +129,7 @@ class UserManageForm(StyledFormMixin, forms.ModelForm):
     class Meta:
         model = User
         fields = ("role", "is_active")
-        labels = {"is_active": "حساب فعال باشد"}
+        labels = {"is_active": gettext_lazy("Account is active")}
 
     def __init__(self, *args, actor, **kwargs):
         super().__init__(*args, **kwargs)
@@ -139,7 +140,7 @@ class UserManageForm(StyledFormMixin, forms.ModelForm):
     def clean_role(self):
         role = self.cleaned_data["role"]
         if role not in self.actor.assignable_roles():
-            raise forms.ValidationError("شما اجازه اعطای این نقش را ندارید.")
+            raise forms.ValidationError(gettext("You do not have permission to grant this role."))
         return role
 
     def clean(self):
@@ -151,7 +152,7 @@ class UserManageForm(StyledFormMixin, forms.ModelForm):
             if demoting or deactivating:
                 others = User.objects.filter(role=Role.SUPER_ADMIN, is_active=True).exclude(pk=self.instance.pk)
                 if not others.exists():
-                    raise forms.ValidationError("حداقل یک مدیرکل فعال باید در سامانه وجود داشته باشد.")
+                    raise forms.ValidationError(gettext("At least one active superadmin must exist in the system."))
         return cleaned
 
 
@@ -159,7 +160,7 @@ class PasswordResetRequestForm(StyledFormMixin, PasswordResetForm):
     """درخواست بازیابی رمز. پاسخ برای ایمیل موجود و ناموجود دقیقاً یکی است (کاربران قابل‌شناسایی نیستند)؛
     خطای ارسال و محدودیت نرخ هم فقط لاگ می‌شوند، نه نمایش."""
 
-    email = forms.EmailField(label="ایمیل", max_length=254, widget=forms.EmailInput(attrs={"autocomplete": "email", "dir": "ltr", "autofocus": True}))
+    email = forms.EmailField(label=gettext_lazy("Email"), max_length=254, widget=forms.EmailInput(attrs={"autocomplete": "email", "dir": "ltr", "autofocus": True}))
 
     def save(self, *args, request=None, **kwargs):
         email = self.cleaned_data["email"]
@@ -169,19 +170,19 @@ class PasswordResetRequestForm(StyledFormMixin, PasswordResetForm):
         try:
             super().save(*args, request=request, **kwargs)
         except Exception:  # noqa: BLE001 - SMTP خراب نباید فاش کند ایمیل ثبت شده است یا نه
-            logging.getLogger(__name__).exception("ارسال ایمیل بازیابی رمز ناموفق بود.")
+            logging.getLogger(__name__).exception(gettext("Sending the password reset email failed."))
 
 
 class StyledSetPasswordForm(StyledFormMixin, SetPasswordForm):
-    error_messages = {"password_mismatch": "دو رمز عبور با هم مطابقت ندارند."}
+    error_messages = {"password_mismatch": gettext_lazy("The passwords entered do not match.")}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["new_password1"].label = "رمز عبور جدید"
-        self.fields["new_password2"].label = "تکرار رمز عبور جدید"
+        self.fields["new_password1"].label = gettext("New password")
+        self.fields["new_password2"].label = gettext("Repeat new password")
         for name in self.fields:
             self.fields[name].widget.attrs.update({"dir": "ltr", "autocomplete": "new-password"})
 
 
 class ResendVerificationForm(StyledFormMixin, forms.Form):
-    email = forms.EmailField(label="ایمیل حساب", max_length=254, widget=forms.EmailInput(attrs={"autocomplete": "email", "dir": "ltr", "autofocus": True}))
+    email = forms.EmailField(label=gettext_lazy("Account email"), max_length=254, widget=forms.EmailInput(attrs={"autocomplete": "email", "dir": "ltr", "autofocus": True}))

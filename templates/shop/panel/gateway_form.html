@@ -1,12 +1,13 @@
 {% extends "layouts/panel.html" %}
-{% block title %}درگاه {{ cls.label }}{% endblock %}
-{% block page_title %}تنظیمات درگاه {{ cls.label }}{% endblock %}
+{% load i18n %}
+{% block title %}{% blocktrans trimmed with label=cls.label %}{{ label }} gateway{% endblocktrans %}{% endblock %}
+{% block page_title %}{% blocktrans trimmed with label=cls.label %}{{ label }} gateway settings{% endblocktrans %}{% endblock %}
 {% block content_class %}content-narrow{% endblock %}
 {% block content %}
-<p class="muted">کلیدها رمزنگاری‌شده ذخیره می‌شوند و هرگز دوباره نمایش داده نمی‌شوند. فیلد محرمانه را خالی بگذارید تا مقدار فعلی حفظ شود. برای نگهداری کلیدها خارج از دیتابیس می‌توانید از متغیر محیطی <code class="ltr">RAVIX_GATEWAY_{{ cls.name|upper }}_&lt;KEY&gt;</code> استفاده کنید.</p>
+<p class="muted">{% trans "Keys are stored encrypted and are never shown again. Leave the secret field empty to keep the current value. To keep keys outside the database you can use the environment variable" %} <code class="ltr">{% blocktrans trimmed with name=cls.name|upper %}RAVIX_GATEWAY_{{ name }}_&lt;KEY&gt;</code>.{% endblocktrans %}</p>
 <form method="post" novalidate data-once autocomplete="off">{% csrf_token %}
   {% include "partials/_form_errors.html" %}
   <div class="card" style="margin-bottom:1.25rem"><div class="card-body">{% for field in form %}{% include "partials/_field.html" with field=field %}{% endfor %}</div></div>
-  <button class="btn" type="submit">ذخیره</button> <a class="btn btn-light" href="{% url 'shop_panel:gateways' %}">انصراف</a>
+  <button class="btn" type="submit">{% trans "Save" %}</button> <a class="btn btn-light" href="{% url 'shop_panel:gateways' %}">{% trans "Cancel" %}</a>
 </form>
 {% endblock %}

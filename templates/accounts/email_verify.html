@@ -1,22 +1,23 @@
 {% extends "layouts/auth.html" %}
+{% load i18n %}
 {% load ravix_ui %}
-{% block title %}تأیید ایمیل{% endblock %}
+{% block title %}{% trans "Email verification" %}{% endblock %}
 {% block auth_content %}
 {% if state == "ok" %}
-  <h2 style="margin-bottom:.75rem">تأیید ایمیل</h2>
-  <p>برای تکمیل تأیید ایمیل حساب خود، دکمهٔ زیر را بزنید.</p>
-  <form method="post" data-once>{% csrf_token %}<button type="submit" class="btn btn-block">{% icon "check" 18 %} تأیید ایمیل</button></form>
+  <h2 style="margin-bottom:.75rem">{% trans "Email verification" %}</h2>
+  <p>{% trans "To complete your account email verification, press the button below." %}</p>
+  <form method="post" data-once>{% csrf_token %}<button type="submit" class="btn btn-block">{% icon "check" 18 %} {% trans "Email verification" %}</button></form>
 {% elif state == "verified" %}
-  <h2 style="margin-bottom:.75rem">ایمیل تأیید شد</h2>
-  <p>ایمیل حساب شما با موفقیت تأیید شد.</p>
-  <p class="auth-switch"><a class="btn btn-block" href="{% url 'accounts:login' %}">ادامه</a></p>
+  <h2 style="margin-bottom:.75rem">{% trans "Email verified" %}</h2>
+  <p>{% trans "Your account email was verified successfully." %}</p>
+  <p class="auth-switch"><a class="btn btn-block" href="{% url 'accounts:login' %}">{% trans "Continue" %}</a></p>
 {% elif state == "done" %}
-  <h2 style="margin-bottom:.75rem">قبلاً تأیید شده است</h2>
-  <p>ایمیل این حساب پیش‌تر تأیید شده است و نیازی به کار دیگری نیست.</p>
-  <p class="auth-switch"><a href="{% url 'accounts:login' %}">ورود</a></p>
+  <h2 style="margin-bottom:.75rem">{% trans "Already verified" %}</h2>
+  <p>{% trans "This account’s email was verified earlier and nothing more is needed." %}</p>
+  <p class="auth-switch"><a href="{% url 'accounts:login' %}">{% trans "Sign in" %}</a></p>
 {% else %}
-  <h2 style="margin-bottom:.75rem">پیوند معتبر نیست</h2>
-  <p>این پیوند نامعتبر است یا منقضی شده است. می‌توانید پیوند تازه بخواهید.</p>
-  <p class="auth-switch"><a href="{% url 'accounts:verify_resend' %}">دریافت پیوند تازه</a></p>
+  <h2 style="margin-bottom:.75rem">{% trans "The link is not valid" %}</h2>
+  <p>{% trans "This link is invalid or has expired. You can request a fresh link." %}</p>
+  <p class="auth-switch"><a href="{% url 'accounts:verify_resend' %}">{% trans "Get a fresh link" %}</a></p>
 {% endif %}
 {% endblock %}

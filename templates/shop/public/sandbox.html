@@ -1,8 +1,9 @@
+{% load i18n %}
 {% load ravix_ui %}
-<div class="alert" role="note" style="border-color:#8a5a10;color:inherit">⚠ این صفحهٔ <strong>درگاه پرداخت آزمایشی</strong> است و هیچ پولی جابه‌جا نمی‌شود.</div>
-<p>سفارش {{ payment.order.number }} — مبلغ: <strong>{{ tx.amount|money }} {{ currency }}</strong></p>
+<div class="alert" role="note" style="border-color:#8a5a10;color:inherit">{% trans "⚠ This is a <strong>test payment gateway</strong> page and no money is moved." %}</div>
+<p>{% blocktrans trimmed with number=payment.order.number amount=tx.amount|money currency=currency %}Order {{ number }} — amount: <strong>{{ amount }} {{ currency }}</strong>{% endblocktrans %}</p>
 {% if tx.state == 'pending' %}
 <form method="post">{% csrf_token %}
-<button class="btn btn-primary" name="action" value="pay" type="submit">شبیه‌سازی پرداخت موفق</button>
-<button class="btn" name="action" value="fail" type="submit">شبیه‌سازی پرداخت ناموفق</button></form>
-{% else %}<p>این تراکنش قبلاً نهایی شده است. <a href="{% url 'shop:callback' payment.reference %}">ادامه</a></p>{% endif %}
+<button class="btn btn-primary" name="action" value="pay" type="submit">{% trans "Simulate successful payment" %}</button>
+<button class="btn" name="action" value="fail" type="submit">{% trans "Simulate failed payment" %}</button></form>
+{% else %}<p>{% trans "This transaction has already been finalized." %} <a href="{% url 'shop:callback' payment.reference %}">{% trans "Continue" %}</a></p>{% endif %}

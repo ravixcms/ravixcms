@@ -22,6 +22,7 @@ from apps.themes.colors import derived_palette
 from apps.themes.constants import DEFAULT_THEME, FONT_SIZES, FONTS
 from apps.themes.models import ThemeConfig
 
+from apps.core.minimalhtml import unavailable_page
 from .builders import category_url, page_url
 from .dto import Link
 from .feeds import feed_links
@@ -180,8 +181,7 @@ def base_context(request, resolved: Resolved, *, embedded: bool = False, edit_ur
 # ------------------------------------------------------------------ رندر نهایی
 def _unavailable() -> HttpResponse:
     return HttpResponse(
-        "<!doctype html><html lang=\"fa\" dir=\"rtl\"><meta charset=\"utf-8\"><title>سایت در دسترس نیست</title>"
-        "<p>قالب سایت در دسترس نیست. لطفاً بعداً دوباره تلاش کنید.</p></html>",
+        unavailable_page(),
         status=503,
         content_type="text/html; charset=utf-8",
     )

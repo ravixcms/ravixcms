@@ -1,16 +1,17 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% load ravix_ui %}
 {% block body %}
 <div class="panel">
-  <aside class="sidebar" id="sidebar" aria-label="منوی اصلی">
+  <aside class="sidebar" id="sidebar" aria-label="{% trans "Main menu" %}">
     <div class="sidebar-brand">
       <div class="brand-mark">{% include "partials/_brand_mark.html" %}</div>
-      <div><strong>{{ site.site_name }}</strong><small>پنل مدیریت</small></div>
+      <div>{% blocktrans trimmed with site_name=site.site_name %}<strong>{{ site_name }}</strong><small>Admin panel</small>{% endblocktrans %}</div>
     </div>
     {% if panel_sites %}<form method="post" action="{% url 'sites:switch' %}" class="site-switch" style="padding:.5rem 1rem">{% csrf_token %}
-      <label for="site-switch" class="sr-only">سایت فعال</label>
+      <label for="site-switch" class="sr-only">{% trans "Active site" %}</label>
       <select id="site-switch" name="site" class="input" data-autosubmit>{% for s in panel_sites %}<option value="{{ s.pk }}" {% if active_site and s.pk == active_site.pk %}selected{% endif %}>{{ s.name }}</option>{% endfor %}</select>
-      <noscript><button class="btn btn-light btn-sm">تغییر</button></noscript></form>{% endif %}
+      <noscript><button class="btn btn-light btn-sm">{% trans "Change" %}</button></noscript></form>{% endif %}
     <nav class="sidebar-nav">
       {% for section in sidebar %}
         {% if section.title %}<div class="nav-title">{{ section.title }}</div>{% endif %}
@@ -24,7 +25,7 @@
     <div class="sidebar-foot">
       <form method="post" action="{% url 'accounts:logout' %}">
         {% csrf_token %}
-        <button type="submit" class="nav-link">{% icon "logout" 20 %}<span>خروج از حساب</span></button>
+        <button type="submit" class="nav-link">{% icon "logout" 20 %}<span>{% trans "Sign out of account" %}</span></button>
       </form>
     </div>
   </aside>
@@ -33,10 +34,10 @@
   <div class="main">
     <header class="topbar">
       <div class="topbar-start">
-        <button type="button" class="menu-btn" data-sidebar-toggle aria-controls="sidebar" aria-expanded="false" aria-label="باز و بسته کردن منو">{% icon "menu" 22 %}</button>
+        <button type="button" class="menu-btn" data-sidebar-toggle aria-controls="sidebar" aria-expanded="false" aria-label="{% trans "Toggle menu" %}">{% icon "menu" 22 %}</button>
         <span class="topbar-title">{% block page_title %}{% endblock %}</span>
       </div>
-      <a href="{% url 'accounts:profile' %}" class="user-chip" title="پروفایل من">
+      <a href="{% url 'accounts:profile' %}" class="user-chip" title="{% trans "My profile" %}">
         <span class="who"><strong>{{ request.user.display_name }}</strong><small>{{ request.user.get_role_display }}</small></span>
         <span class="avatar">{% if request.user.avatar %}<img src="{{ request.user.avatar.url }}" alt="">{% else %}{{ request.user.display_name|slice:":1"|upper }}{% endif %}</span>
       </a>
@@ -44,7 +45,7 @@
     <main class="content {% block content_class %}{% endblock %}">
       {% block content %}{% endblock %}
     </main>
-    <footer class="site-footer">{% if site.footer_text %}{{ site.footer_text }}{% else %}Ravix — نسخه ۰٫۱{% endif %}</footer>
+    <footer class="site-footer">{% if site.footer_text %}{{ site.footer_text }}{% else %}{% trans "Ravix — version 0.1" %}{% endif %}</footer>
   </div>
 </div>
 {% endblock %}
