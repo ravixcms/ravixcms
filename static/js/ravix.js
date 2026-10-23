@@ -105,6 +105,7 @@
     var preview = root.querySelector("[data-md-preview]");
     var url = root.dataset.previewUrl;
     if (!ta) return;
+    ta.setAttribute("dir", "auto"); // Persian text stays right-to-left, English Markdown source left-to-right
 
     function wrap(before, after, placeholder) {
       var s = ta.selectionStart, e = ta.selectionEnd;
