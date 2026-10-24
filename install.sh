@@ -138,6 +138,36 @@ have_systemd() {
 }
 pkg_missing() { local p; for p in "$@"; do dpkg -s "$p" >/dev/null 2>&1 || echo "$p"; done; }
 
+# ----------------------------------------------------------------- helpers: HTTP/2 and the install token (tested by apps/core/tests/test_install_script_logic.py)
+nginx_version() { nginx -v 2>&1 | sed -n 's|.*nginx/\([0-9][0-9.]*\).*|\1|p'; }
+version_ge() { [ "$(printf '%s\n%s\n' "$2" "$1" | sort -V | head -1)" = "$2" ]; }   # version_ge A B → A >= B
+nginx_enable_http2() {  # nginx_enable_http2 FILE VERSION: turns HTTP/2 on in every "listen ... 443 ssl" server block. 0 = changed, 1 = nothing to do
+  local f="$1" v="${2:-}" tmp
+  grep -qE '^[[:space:]]*listen[[:space:]]+[^;#]*443[^;#]*[[:space:]]ssl' "$f" || return 1   # no HTTPS block yet (certbot has not run)
+  if [ -n "$v" ] && version_ge "$v" 1.25.1; then   # nginx >= 1.25.1: the separate "http2 on;" directive ("listen ... http2" is deprecated)
+    grep -qE '^[[:space:]]*http2[[:space:]]+on[[:space:]]*;' "$f" && return 1
+    tmp="$(mktemp)"
+    awk '/^[[:space:]]*server[[:space:]]*\{/ { seen = 0 }
+         { print }
+         /^[[:space:]]*listen[[:space:]]+[^;#]*443[^;#]*[[:space:]]ssl[^;#]*;/ && !seen { match($0, /^[[:space:]]*/); print substr($0, 1, RLENGTH) "http2 on;"; seen = 1 }' "$f" > "$tmp"
+    cat "$tmp" > "$f"; rm -f "$tmp"
+  else   # older nginx (Ubuntu 22.04 has 1.18, 24.04 has 1.24): the "http2" parameter of listen
+    grep -E '^[[:space:]]*listen[[:space:]]+[^;#]*443[^;#]*[[:space:]]ssl' "$f" | grep -qv 'http2' || return 1
+    sed -i -E '/^[[:space:]]*listen[[:space:]]+[^;#]*443[^;#]*[[:space:]]ssl/{/http2/!s/\bssl\b/ssl http2/}' "$f"
+  fi
+}
+site_installed() {  # 0 = the site is already installed (read-only check against the real database; any failure means "not installed")
+  [ -f "$ENV_FILE" ] && [ -x "$VENV/bin/python" ] && [ -n "$(env_get DATABASE_URL)" ] || return 1
+  envsh "$VENV/bin/python" -c 'import sys, django; django.setup(); from apps.accounts.models import User; from apps.core.models import SiteSettings; sys.exit(0 if (SiteSettings.objects.filter(pk=1, installed_at__isnull=False).exists() or User.objects.exists()) else 1)' >/dev/null 2>&1
+}
+forget_install_token() {  # removes RAVIX_INSTALL_TOKEN from ravix.env (the install page is closed for good once the site is installed)
+  [ -f "$ENV_FILE" ] && grep -q '^RAVIX_INSTALL_TOKEN=' "$ENV_FILE" || return 0
+  if [ "$DRY_RUN" = 1 ]; then printf '  [dry-run] '; t "%s would be removed from %s" RAVIX_INSTALL_TOKEN "$ENV_FILE"; echo; return 0; fi
+  run sed -i '/^RAVIX_INSTALL_TOKEN=/d' "$ENV_FILE"
+  chown root:"$APP_USER" "$ENV_FILE"; chmod 640 "$ENV_FILE"
+  ok "The site is already installed: %s was removed from %s" RAVIX_INSTALL_TOKEN "$ENV_FILE"
+}
+
 # ----------------------------------------------------------------- 0. preliminary checks
 step "Checking prerequisites"
 [ "$(id -u)" = 0 ] || die "Run as root: sudo ./install.sh"
@@ -332,7 +362,8 @@ env_set DJANGO_ALLOWED_HOSTS "$ALLOWED"
 env_set DJANGO_CSRF_TRUSTED_ORIGINS "$ORIGINS"
 [ -n "$DB_PASS" ] && env_set DATABASE_URL "postgres://$DB_USER:$DB_PASS@127.0.0.1:5432/$DB_NAME"
 env_set RAVIX_SITE_URL "https://$DOMAIN"
-env_set RAVIX_INSTALL_TOKEN "$(rand_hex 16)"
+# the install token only exists until the site is installed: an installed site never gets a new one (and loses an old one)
+if site_installed; then forget_install_token; else env_set RAVIX_INSTALL_TOKEN "$(rand_hex 16)"; fi
 env_set RAVIX_SHOP_PRIVATE_ROOT "$BASE/shop_private"
 env_set RAVIX_PLUGIN_INSTALL_DIR "$BASE/plugins_installed"
 env_set RAVIX_PLUGIN_BACKUP_DIR "$BASE/plugin_backups"
@@ -393,7 +424,7 @@ if [ "$NGINX" = 1 ]; then
   if cmp -s "$TMP_SITE" "$SITE" 2>/dev/null && cmp -s "$PROXY_SRC" /etc/nginx/ravix-proxy.conf 2>/dev/null; then ok "The nginx configuration is up to date"
   else
     if [ -f "$SITE" ] && grep -q "managed by Certbot" "$SITE" 2>/dev/null; then
-      warn "certbot has modified %s; not overwriting it (edit it by hand to change it)." "$SITE"
+      warn "certbot has modified %s; not overwriting it (docs/installer.md explains how to apply the newer nginx template)." "$SITE"
     else
       confirm "Install the nginx configuration for %s (an existing file is saved with a .bak suffix)?" "$SERVER_NAMES" && {
         [ -f "$SITE" ] && run cp -a "$SITE" "$SITE.bak.$(date +%s)"
@@ -434,6 +465,26 @@ if [ "$SSL" = 1 ]; then
   fi
 fi
 
+# ----------------------------------------------------------------- 10b. HTTP/2 (needs the HTTPS block certbot adds)
+if [ "$NGINX" = 1 ] && [ "$SSL" = 1 ] && [ "$DRY_RUN" = 0 ] && [ -f "${SITE:-/nonexistent}" ]; then
+  H2_TMP="$(mktemp)"; cp "$SITE" "$H2_TMP"
+  if nginx_enable_http2 "$H2_TMP" "$(nginx_version)"; then
+    if confirm "Enable HTTP/2 in %s (a backup copy is kept)?" "$SITE"; then
+      H2_BAK="$SITE.bak.$(date +%s)"
+      run cp -a "$SITE" "$H2_BAK"
+      run install -m 644 "$H2_TMP" "$SITE"
+      if nginx -t >/dev/null 2>&1; then
+        if have_systemd; then systemctl reload nginx; fi
+        ok "HTTP/2 is enabled"
+      else
+        run cp -a "$H2_BAK" "$SITE"
+        warn "nginx rejected the HTTP/2 change; the previous configuration was restored."
+      fi
+    fi
+  else ok "HTTP/2 is enabled (or the HTTPS block does not exist yet)"; fi
+  rm -f "$H2_TMP"
+fi
+
 # ----------------------------------------------------------------- 11. final check
 step "Final check"
 if [ "$DRY_RUN" = 0 ]; then
@@ -446,14 +497,22 @@ if [ "$DRY_RUN" = 0 ]; then
   envsh "$VENV/bin/python" manage.py ravix_preflight || warn "ravix_preflight reports errors/warnings; read the output above (a few are normal on a fresh server)."
 fi
 SCHEME=https; [ "$SSL" = 0 ] && [ "$NGINX" = 0 ] && SCHEME=http
+INSTALLED=0
+if site_installed; then INSTALLED=1; forget_install_token; fi
 TOKEN="$(env_get RAVIX_INSTALL_TOKEN)"
 [ -n "$TOKEN" ] || TOKEN="$(t "(in %s after a real run)" "$ENV_FILE")"
 echo
 printf '%s' "$B"; t "Done."; printf '%s ' "$N"; t "(%s changes applied; log: %s)" "$CHANGES" "$LOG_FILE"; echo
 echo
-t "  Last step: open the install page and enter the site name, the super admin, the language and the time zone:"; echo
-echo "      $SCHEME://$DOMAIN/install/"
-t "  Install token:  %s" "$TOKEN"; echo
-t "  (after the install that page is closed for good. Without the web: sudo -u %s ... manage.py ravix_install --help)" "$APP_USER"; echo
+if [ "$INSTALLED" = 1 ]; then
+  t "  The site is already installed. Sign in to the panel:"; echo
+  echo "      $SCHEME://$DOMAIN/panel/"
+else
+  t "  Last step: open the install page and enter the site name, the super admin, the language and the time zone:"; echo
+  echo "      $SCHEME://$DOMAIN/install/"
+  t "  Install token:  %s" "$TOKEN"; echo
+  t "  (after the install that page is closed for good. Without the web: sudo -u %s ... manage.py ravix_install --help)" "$APP_USER"; echo
+  t "  After installing, run “sudo ./install.sh” again (or delete the RAVIX_INSTALL_TOKEN line in %s): the token is then removed from the settings." "$ENV_FILE"; echo
+fi
 echo
 t "  Daily backup: %s (ravix-backup.timer) — back up %s separately; it is not part of the automatic backup." "$BACKUP_DIR" "$ENV_FILE"; echo

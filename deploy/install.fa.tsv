@@ -98,7 +98,7 @@ Skipped (no systemd). Run manually: cd %s && gunicorn config.wsgi:application -c
 Nginx	Nginx
 IPv6 is not enabled on this system; the listen [::] lines were removed	IPv6 در این سیستم فعال نیست؛ خطوط listen [::] حذف شد
 The nginx configuration is up to date	پیکربندی nginx به‌روز است
-certbot has modified %s; not overwriting it (edit it by hand to change it).	%s را certbot تغییر داده؛ بازنویسی نمی‌کنم (برای تغییر دستی ویرایش کنید).
+certbot has modified %s; not overwriting it (docs/installer.md explains how to apply the newer nginx template).	certbot فایل %s را تغییر داده؛ رونویسی نمی‌شود (روش اعمال قالب جدیدتر nginx در docs/installer.md آمده است).
 Install the nginx configuration for %s (an existing file is saved with a .bak suffix)?	نصب پیکربندی nginx برای %s (در صورت وجود، فایل قبلی با پسوند .bak ذخیره می‌شود)؟
 Remove nginx's default site (sites-enabled/default)?	حذف سایت پیش‌فرض nginx (sites-enabled/default)؟
 Reload nginx yourself	nginx را خودتان reload کنید
@@ -125,3 +125,11 @@ Done.	تمام شد.
 The site's domain (e.g. example.com):	دامنهٔ سایت (مثل example.com):
 Host name / domain for ALLOWED_HOSTS:	نام میزبان/دامنه برای ALLOWED_HOSTS:
 Email for Let's Encrypt (empty = no email):	ایمیل برای Let's Encrypt (خالی = بدون ایمیل):
+%s would be removed from %s	%s از %s حذف می‌شد
+The site is already installed: %s was removed from %s	سایت از قبل نصب شده است: %s از %s حذف شد
+Enable HTTP/2 in %s (a backup copy is kept)?	HTTP/2 در %s روشن شود؟ (یک نسخهٔ پشتیبان نگه داشته می‌شود)
+HTTP/2 is enabled	HTTP/2 روشن شد
+nginx rejected the HTTP/2 change; the previous configuration was restored.	nginx تغییر HTTP/2 را نپذیرفت؛ پیکربندی قبلی برگردانده شد.
+HTTP/2 is enabled (or the HTTPS block does not exist yet)	HTTP/2 روشن است (یا بلاک HTTPS هنوز ساخته نشده)
+  The site is already installed. Sign in to the panel:	  سایت از قبل نصب شده است. وارد پنل شوید:
+  After installing, run “sudo ./install.sh” again (or delete the RAVIX_INSTALL_TOKEN line in %s): the token is then removed from the settings.	  بعد از نصب، «sudo ./install.sh» را دوباره اجرا کنید (یا خط RAVIX_INSTALL_TOKEN را از %s پاک کنید): آن‌وقت توکن از تنظیمات حذف می‌شود.

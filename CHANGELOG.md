@@ -2,6 +2,11 @@
 قالب: [Keep a Changelog](https://keepachangelog.com/)، نسخه‌بندی [SemVer](https://semver.org/).
 
 ## [Unreleased]
+### Changed (کارایی nginx و Gunicorn، رفتار install.sh)
+- قالب nginx (`deploy/nginx-ravix.conf`): gzip با `Vary` و فهرست نوع‌های کامل‌تر (تصویر/فونت فشرده نمی‌شوند)، keepalive به مرورگر و به Gunicorn (`upstream keepalive`، `proxy_http_version 1.1`)، `/static/` با نام هش‌دار `max-age=31536000, immutable` و نام بدون هش یک ساعت (نگاشت `$ravix_static_cache`)، `/media/` سی‌روزه.
+- `install.sh` بعد از certbot **HTTP/2** را روشن می‌کند (`http2 on;` برای nginx ≥ 1.25.1، وگرنه پارامتر `http2`؛ با نسخهٔ پشتیبان و بازگرداندن در صورت رد شدن توسط `nginx -t`).
+- Gunicorn: تعداد worker از CPU و رم (و سقف cgroup) محاسبه می‌شود؛ سرور ۲ گیگ ← ۳ تا ۵ worker؛ `GUNICORN_WORKERS` / `WEB_CONCURRENCY` همچنان جایگزین می‌کنند. `keepalive` از ۵ به ۶۵ ثانیه.
+- `install.sh` برای سایتی که از قبل نصب شده «گام آخر» و توکن نصب را چاپ نمی‌کند، توکن جدید نمی‌سازد و توکن باقی‌مانده را از `ravix.env` پاک می‌کند. آزمون: `apps/core/tests/test_install_script_logic.py`.
 ### Added (لوگوی رسمی Ravix)
 - بستهٔ لوگو در `static/brand/` (SVG روشن/تیره، آیکون، wordmark، `favicon.ico`، PNGها و `apple-touch-icon`)؛ رنگ‌های برند به‌صورت متغیرهای CSS پنل: `--brand-navy` (#0F172A)، `--brand-indigo` (#4F46E5، همان `--c-primary`) و `--brand-amber` (#F59E0B).
 - منوی کناری پنل: آیکون `ravix-icon.svg` به‌جای مربع بنفش با «ر» (لوگوی بارگذاری‌شدهٔ خود سایت همچنان اولویت دارد؛ پیوند «مشاهدهٔ سایت» همان است). صفحهٔ ورود، بازیابی رمز و نصب‌کننده: لوگوی کامل. صفحهٔ خطای سایت و صفحهٔ مستقل خطا/حالت تعمیر: لوگوی کامل (صفحهٔ مستقل با دو نسخه به‌صورت درون‌خطی و نسخهٔ تیره در حالت تیره).

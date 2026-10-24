@@ -89,6 +89,8 @@ systemctl list-timers 'ravix-*'     # هر تایمر باید NEXT داشته �
 ```
 لاگ: `journalctl -u ravix -f`.
 
+**تعداد worker** خودکار است: `min(۲×CPU+۱، (رم − ۷۰۰MB) ÷ ۲۵۰MB)`، حداقل ۱ و حداکثر ۱۶؛ سقف کانتینر (cgroup) هم حساب می‌شود. سرور ۲ گیگ: ۳ worker با ۱ CPU و ۵ worker با ۲ CPU یا بیشتر. جایگزین دستی: `GUNICORN_WORKERS=N` (یا `WEB_CONCURRENCY`) در `/etc/ravix/ravix.env` و `GUNICORN_THREADS` (پیش‌فرض ۲)؛ تنظیم برآورد: `RAVIX_WORKER_MB` و `RAVIX_RESERVED_MB`. مقدار انتخاب‌شده هنگام شروع در لاگ می‌آید («Ravix: N workers × M threads»). `GUNICORN_KEEPALIVE` (پیش‌فرض ۶۵) باید از `keepalive_timeout` بالادست nginx (۵۵ ثانیه) بیشتر بماند.
+
 ### تایمرهای systemd
 | تایمر | کار | زمان‌بندی | دستور |
 |---|---|---|---|
