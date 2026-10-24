@@ -1,6 +1,7 @@
 from django.utils.translation import gettext, gettext_lazy
 from django import forms
 from django.core.exceptions import ValidationError
+from django.utils.functional import lazy
 
 from apps.content.models import Category, Page
 from apps.core.forms import StyledFormMixin
@@ -8,10 +9,13 @@ from apps.media_library.models import Media
 
 from .colors import palette_errors
 from .constants import (
+    FEATURE_ICONS,
     FONT_SIZES,
     FONTS,
     HOME_SECTION_TYPES,
+    MAX_FEATURE_ITEMS,
     MAX_MENU_ITEMS,
+    MAX_SECTION_BUTTONS,
     MAX_SECTIONS,
     MAX_SOCIAL_LINKS,
     MENU_KINDS,
@@ -207,20 +211,67 @@ def menu_from_formset(formset) -> list[dict]:
 
 
 # ----------------------------------------------------------------------------- بخش‌های صفحه اصلی
+def parse_items(text: str) -> tuple[list[dict], str]:
+    """One item per line: ``icon | title | short text`` (``title | text`` and ``title`` also work). → (items, error message)."""
+    items = []
+    for number, line in enumerate((text or "").splitlines(), 1):
+        if not line.strip():
+            continue
+        parts = [p.strip() for p in line.split("|", 2)]
+        icon = ""
+        if len(parts) == 3:
+            icon, title, body = parts
+            if icon and icon not in FEATURE_ICONS:
+                return [], (gettext("Line %(line)s: unknown icon “%(icon)s”. Available icons: %(icons)s.") % {"line": number, "icon": icon, "icons": ", ".join(FEATURE_ICONS)})
+        elif len(parts) == 2:
+            title, body = parts
+        else:
+            title, body = parts[0], ""
+        if len(title) > 60 or len(body) > 300:
+            return [], (gettext("Line %(line)s is too long: the title may have up to 60 and the text up to 300 characters.") % {"line": number})
+        if title or body:
+            items.append({"title": title, "icon": icon, "text": body})
+    if len(items) > MAX_FEATURE_ITEMS:
+        return [], (gettext("At most %(count)s items are allowed.") % {"count": MAX_FEATURE_ITEMS})
+    return items, ""
+
+
+def items_to_text(items) -> str:
+    return "\n".join(f"{i.get('icon', '')} | {i.get('title', '')} | {i.get('text', '')}" for i in items or [])
+
+
 class SectionForm(StyledFormMixin, forms.Form):
     type = forms.ChoiceField(label=gettext_lazy("Section type"), choices=BLANK + list(HOME_SECTION_TYPES.items()), required=False)
     hidden = forms.BooleanField(label=gettext_lazy("Temporarily hidden"), required=False)
     title = forms.CharField(label=gettext_lazy("Title"), max_length=120, required=False)
     subtitle = forms.CharField(label=gettext_lazy("Subtitle"), max_length=300, required=False)
     body = forms.CharField(label=gettext_lazy("Body (Markdown)"), max_length=5000, required=False, widget=forms.Textarea(attrs={"rows": 3}))
+    items = forms.CharField(
+        label=gettext_lazy("Feature items"), max_length=6000, required=False, widget=forms.Textarea(attrs={"rows": 4, "dir": "auto"}),
+        help_text=lazy(lambda: gettext("One item per line: icon | title | short text. The icon may be left empty. Icons: %(icons)s.") % {"icons": ", ".join(FEATURE_ICONS)}, str)())
     button_label = forms.CharField(label=gettext_lazy("Button text"), max_length=40, required=False)
     button_url = forms.CharField(label=gettext_lazy("Button URL"), max_length=500, required=False, widget=forms.TextInput(attrs={"dir": "ltr"}))
+    button2_label = forms.CharField(label=gettext_lazy("Second button text"), max_length=40, required=False)
+    button2_url = forms.CharField(label=gettext_lazy("Second button URL"), max_length=500, required=False, widget=forms.TextInput(attrs={"dir": "ltr"}))
+    button3_label = forms.CharField(label=gettext_lazy("Third button text"), max_length=40, required=False)
+    button3_url = forms.CharField(label=gettext_lazy("Third button URL"), max_length=500, required=False, widget=forms.TextInput(attrs={"dir": "ltr"}))
     category = forms.ModelChoiceField(queryset=Category.objects.order_by("name"), required=False, label=gettext_lazy("Content category"), empty_label="—")
     page = PageChoice(queryset=Page.objects.order_by("title"), required=False, label=gettext_lazy("Page"), empty_label="—")
     count = forms.IntegerField(label=gettext_lazy("Count"), min_value=1, max_value=24, required=False, widget=forms.NumberInput(attrs={"dir": "ltr"}))
 
+    # position of this section in the saved document (hidden): lets the section keep its translations when rows are reordered
+    origin = forms.IntegerField(required=False, min_value=0, widget=forms.HiddenInput)
+
+    BUTTON_FIELDS = (("button_label", "button_url"), ("button2_label", "button2_url"), ("button3_label", "button3_url"))
+
     def clean_button_url(self):
         return normalize_link(self.cleaned_data.get("button_url", ""))
+
+    def clean_button2_url(self):
+        return normalize_link(self.cleaned_data.get("button2_url", ""))
+
+    def clean_button3_url(self):
+        return normalize_link(self.cleaned_data.get("button3_url", ""))
 
     def clean(self):
         cleaned = super().clean()
@@ -234,23 +285,41 @@ class SectionForm(StyledFormMixin, forms.Form):
             self.add_error("page", gettext("Choose a page."))
         if kind == "text" and not (cleaned.get("body") or "").strip():
             self.add_error("body", gettext("Enter the section text."))
-        label, url = (cleaned.get("button_label") or "").strip(), cleaned.get("button_url", "")
-        if bool(label) != bool(url) and "button_url" not in self.errors:
-            self.add_error("button_label" if not label else "button_url", gettext("Fill in both the button text and URL, or leave both empty."))
+        if kind == "features":
+            items, error = parse_items(cleaned.get("items", ""))
+            if error:
+                self.add_error("items", error)
+            elif not items:
+                self.add_error("items", gettext("Enter at least one item."))
+        for label_name, url_name in self.BUTTON_FIELDS:
+            label, url = (cleaned.get(label_name) or "").strip(), cleaned.get(url_name, "")
+            if bool(label) != bool(url) and url_name not in self.errors:
+                self.add_error(label_name if not label else url_name, gettext("Fill in both the button text and URL, or leave both empty."))
         return cleaned
 
     def to_section(self) -> dict:
         d = self.cleaned_data
+        buttons = [
+            {"label": d[l].strip(), "url": d[u]} for l, u in self.BUTTON_FIELDS[:MAX_SECTION_BUTTONS] if d.get(l, "").strip() and d.get(u)
+        ]
         return {
             "type": d["type"], "enabled": not d["hidden"], "title": d["title"].strip(), "subtitle": d["subtitle"].strip(),
-            "body": d["body"].strip(), "button_label": d["button_label"].strip(), "button_url": d["button_url"],
+            "body": d["body"].strip(), "button_label": buttons[0]["label"] if buttons else "", "button_url": buttons[0]["url"] if buttons else "",
+            "buttons": buttons, "items": parse_items(d.get("items", ""))[0] if d["type"] == "features" else [],
             "category": d["category"].pk if d.get("category") else None, "page": d["page"].pk if d.get("page") else None,
             "count": d.get("count") or 6,
         }
 
 
 def section_initial(sections: list[dict]) -> list[dict]:
-    return [{**s, "hidden": not s["enabled"]} for s in sections]
+    out = []
+    for index, s in enumerate(sections):
+        row = {**s, "hidden": not s["enabled"], "items": items_to_text(s.get("items")), "origin": index}
+        for number, (label_name, url_name) in enumerate(SectionForm.BUTTON_FIELDS):
+            button = s["buttons"][number] if number < len(s.get("buttons", [])) else {}
+            row[label_name], row[url_name] = button.get("label", ""), button.get("url", "")
+        out.append(row)
+    return out
 
 
 SectionFormSet = forms.formset_factory(
@@ -258,8 +327,66 @@ SectionFormSet = forms.formset_factory(
 )
 
 
-def sections_from_formset(formset) -> list[dict]:
-    return [form.to_section() for form in formset.ordered_forms]
+def sections_from_formset(formset, previous: list[dict] | None = None) -> list[dict]:
+    """Sections from the posted forms. ``translations`` are not part of this form (they have their own language tabs), so the
+    translations of a section are carried over from ``previous`` through the hidden ``origin`` field (so they follow the section
+    when rows are reordered; a new row has none)."""
+    result = []
+    for form in formset.ordered_forms:
+        section = form.to_section()
+        origin = form.cleaned_data.get("origin")
+        section["translations"] = previous[origin].get("translations", {}) if previous and origin is not None and origin < len(previous) else {}
+        result.append(section)
+    return result
+
+
+class SectionTextForm(StyledFormMixin, forms.Form):
+    """The texts of one home section in one (non-default) language. Empty field = use the text of the site's default language."""
+    title = forms.CharField(label=gettext_lazy("Title"), max_length=120, required=False, widget=forms.TextInput(attrs={"dir": "auto"}))
+    subtitle = forms.CharField(label=gettext_lazy("Subtitle"), max_length=300, required=False, widget=forms.TextInput(attrs={"dir": "auto"}))
+    body = forms.CharField(label=gettext_lazy("Body (Markdown)"), max_length=5000, required=False, widget=forms.Textarea(attrs={"rows": 3, "dir": "auto"}))
+    button_label = forms.CharField(label=gettext_lazy("Button text"), max_length=40, required=False, widget=forms.TextInput(attrs={"dir": "auto"}))
+    button2_label = forms.CharField(label=gettext_lazy("Second button text"), max_length=40, required=False, widget=forms.TextInput(attrs={"dir": "auto"}))
+    button3_label = forms.CharField(label=gettext_lazy("Third button text"), max_length=40, required=False, widget=forms.TextInput(attrs={"dir": "auto"}))
+    items = forms.CharField(
+        label=gettext_lazy("Feature items"), max_length=6000, required=False, widget=forms.Textarea(attrs={"rows": 4, "dir": "auto"}),
+        help_text=gettext_lazy("One item per line, in the same order as the default language: title | short text."))
+
+    def clean_items(self):
+        lines = []
+        for number, line in enumerate((self.cleaned_data.get("items") or "").splitlines(), 1):
+            parts = [p.strip() for p in line.split("|", 1)]
+            if len(parts[0]) > 60 or (len(parts) == 2 and len(parts[1]) > 300):
+                raise ValidationError(gettext("Line %(line)s is too long: the title may have up to 60 and the text up to 300 characters.") % {"line": number})
+            lines.append({"title": parts[0], "text": parts[1] if len(parts) == 2 else ""})
+        if len(lines) > MAX_FEATURE_ITEMS:
+            raise ValidationError(gettext("At most %(count)s items are allowed.") % {"count": MAX_FEATURE_ITEMS})
+        return lines
+
+    def to_translation(self) -> dict:
+        d = self.cleaned_data  # an untouched extra form has no cleaned values: nothing to store
+        return {
+            "title": d.get("title", "").strip(), "subtitle": d.get("subtitle", "").strip(), "body": d.get("body", "").strip(),
+            "button_labels": [d.get(k, "").strip() for k in ("button_label", "button2_label", "button3_label")],
+            "items": d.get("items", []),
+        }
+
+
+def text_initial(sections: list[dict], language: str) -> list[dict]:
+    rows = []
+    for s in sections:
+        tr = s.get("translations", {}).get(language, {})
+        labels = tr.get("button_labels", [])
+        rows.append({
+            "title": tr.get("title", ""), "subtitle": tr.get("subtitle", ""), "body": tr.get("body", ""),
+            "button_label": labels[0] if len(labels) > 0 else "", "button2_label": labels[1] if len(labels) > 1 else "",
+            "button3_label": labels[2] if len(labels) > 2 else "",
+            "items": "\n".join(f"{i['title']} | {i['text']}" for i in tr.get("items", [])),
+        })
+    return rows
+
+
+SectionTextFormSet = forms.formset_factory(SectionTextForm, extra=0, max_num=MAX_SECTIONS, validate_max=True)
 
 
 class ThemeUploadForm(forms.Form):

@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-24 01:30+0330\n"
+"POT-Creation-Date: 2026-10-24 15:09+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -5838,6 +5838,10 @@ msgid "Free text"
 msgstr "自由文本"
 
 #: apps/themes/constants.py
+msgid "Features (icon, title and short text for each item)"
+msgstr "功能特色（每项包含图标、标题和简短文字）"
+
+#: apps/themes/constants.py
 msgid "Header menu"
 msgstr "页眉菜单"
 
@@ -6014,6 +6018,24 @@ msgid "Choose a category."
 msgstr "请选择一个分类。"
 
 #: apps/themes/forms.py
+#, python-format
+msgid "Line %(line)s: unknown icon “%(icon)s”. Available icons: %(icons)s."
+msgstr "第 %(line)s 行：未知图标“%(icon)s”。可用图标：%(icons)s。"
+
+#: apps/themes/forms.py
+#, python-format
+msgid ""
+"Line %(line)s is too long: the title may have up to 60 and the text up to "
+"300 characters."
+msgstr "第 %(line)s 行过长：标题最多 60 个字符，文字最多 300 个字符。"
+
+#: apps/themes/forms.py
+#, python-format
+#| msgid "At most %(limit)s %(label)s are allowed."
+msgid "At most %(count)s items are allowed."
+msgstr "最多允许 %(count)s 项。"
+
+#: apps/themes/forms.py
 msgid "Section type"
 msgstr "区块类型"
 
@@ -6026,8 +6048,40 @@ msgid "Subtitle"
 msgstr "副标题"
 
 #: apps/themes/forms.py
+#| msgid "Featured image"
+msgid "Feature items"
+msgstr "功能项"
+
+#: apps/themes/forms.py
+#, python-format
+msgid ""
+"One item per line: icon | title | short text. The icon may be left empty. "
+"Icons: %(icons)s."
+msgstr "每行一项：图标 | 标题 | 简短文字。图标可留空。可用图标：%(icons)s。"
+
+#: apps/themes/forms.py
 msgid "Button URL"
 msgstr "按钮 URL"
+
+#: apps/themes/forms.py
+#| msgid "Header button text"
+msgid "Second button text"
+msgstr "第二个按钮的文字"
+
+#: apps/themes/forms.py
+#| msgid "Header button URL"
+msgid "Second button URL"
+msgstr "第二个按钮的链接"
+
+#: apps/themes/forms.py
+#| msgid "Header button text"
+msgid "Third button text"
+msgstr "第三个按钮的文字"
+
+#: apps/themes/forms.py
+#| msgid "Header button URL"
+msgid "Third button URL"
+msgstr "第三个按钮的链接"
 
 #: apps/themes/forms.py templates/shop/panel/order.html
 #: templates/shop/public/cart.html templates/shop/public/detail.html
@@ -6042,6 +6096,17 @@ msgstr "请选择区块类型。"
 #: apps/themes/forms.py
 msgid "Enter the section text."
 msgstr "请输入区块文字。"
+
+#: apps/themes/forms.py
+#| msgid "Enter at least two characters."
+msgid "Enter at least one item."
+msgstr "请至少输入一项。"
+
+#: apps/themes/forms.py
+msgid ""
+"One item per line, in the same order as the default language: title | short "
+"text."
+msgstr "每行一项，顺序与默认语言相同：标题 | 简短文字。"
 
 #: apps/themes/forms.py templates/themes/theme_list.html
 msgid "Theme ZIP file"
@@ -6756,6 +6821,15 @@ msgstr "未发布的更改已被放弃。"
 msgid ""
 "The changes were saved to the draft. Publish it to apply it to the site."
 msgstr "更改已保存到草稿。发布后才会应用到站点。"
+
+#: apps/themes/views.py
+#| msgid ""
+#| "The form has expired or the request was not valid. Reload the page and try "
+#| "again."
+msgid ""
+"The home page sections changed in the meantime. Reload the page and try "
+"again."
+msgstr "首页版块在此期间已更改。请刷新页面后重试。"
 
 #: apps/updater/apps.py apps/updater/views.py
 msgid "Update"
@@ -10338,6 +10412,24 @@ msgid ""
 "Changes are saved to a draft first and are not applied to the site until "
 "published."
 msgstr "更改会先保存到草稿，在发布之前不会应用到站点。"
+
+#: templates/themes/customize_home.html
+#| msgid "Set up the home page sections"
+msgid "Language of the home page texts"
+msgstr "首页文字的语言"
+
+#: templates/themes/customize_home.html
+#| msgid "Default"
+msgid "default"
+msgstr "默认"
+
+#: templates/themes/customize_home.html
+#, python-format
+msgid ""
+"Texts of the home page in %(language)s. Leave a field empty to show the text"
+" of the default language instead. Section types, links, icons and the order "
+"are the same in every language and are edited in the default language tab."
+msgstr "首页的 %(language)s 文字。留空则显示默认语言的文字。版块类型、链接、图标和顺序在所有语言中相同，请在默认语言标签页中编辑。"
 
 #: templates/themes/customize_home.html
 #, python-format

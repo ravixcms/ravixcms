@@ -20,8 +20,11 @@ from .constants import (
     DEFAULT_THEME,
     FONT_SIZES,
     FONTS,
+    FEATURE_ICONS,
     HOME_SECTION_TYPES,
+    MAX_FEATURE_ITEMS,
     MAX_MENU_ITEMS,
+    MAX_SECTION_BUTTONS,
     MAX_SECTIONS,
     MAX_SOCIAL_LINKS,
     MENU_KINDS,
@@ -89,11 +92,13 @@ def default_config() -> dict:
             "sections": [
                 {
                     "type": "hero", "enabled": True, "title": "", "subtitle": "", "body": "",
-                    "button_label": gettext("View posts"), "button_url": "/blog/", "category": None, "page": None, "count": 6,
+                    "button_label": gettext("View posts"), "button_url": "/blog/", "buttons": [{"label": gettext("View posts"), "url": "/blog/"}],
+                    "items": [], "translations": {}, "category": None, "page": None, "count": 6,
                 },
                 {
                     "type": "latest_posts", "enabled": True, "title": gettext("Latest posts"), "subtitle": "", "body": "",
-                    "button_label": "", "button_url": "", "category": None, "page": None, "count": 6,
+                    "button_label": "", "button_url": "", "buttons": [], "items": [], "translations": {},
+                    "category": None, "page": None, "count": 6,
                 },
             ]
         },
@@ -156,6 +161,63 @@ def sanitize_menu_item(raw) -> dict | None:
     return item
 
 
+def sanitize_buttons(raw_buttons, first_label="", first_url="") -> list[dict]:
+    """[{"label", "url"}] (at most MAX_SECTION_BUTTONS). A button needs both a label and a valid link; without a ``buttons`` list the
+    older single button (button_label/button_url) is the first one."""
+    entries = []
+    if isinstance(raw_buttons, list):
+        entries = [_dict(b) for b in raw_buttons]
+    elif first_label or first_url:
+        entries = [{"label": first_label, "url": first_url}]
+    buttons = []
+    for entry in entries:
+        label, url = _text(entry.get("label"), 40), _link(entry.get("url"))
+        if label and url:
+            buttons.append({"label": label, "url": url})
+    return buttons[:MAX_SECTION_BUTTONS]
+
+
+def sanitize_items(raw_items) -> list[dict]:
+    """Feature items: [{"title", "icon", "text"}]. The icon must be one of FEATURE_ICONS (else empty); an item needs a title or text."""
+    items = []
+    for entry in raw_items if isinstance(raw_items, list) else []:
+        entry = _dict(entry)
+        title, text = _text(entry.get("title"), 60), _text(entry.get("text"), 300)
+        icon = entry.get("icon") if entry.get("icon") in FEATURE_ICONS else ""
+        if title or text:
+            items.append({"title": title, "icon": icon, "text": text})
+    return items[:MAX_FEATURE_ITEMS]
+
+
+def sanitize_section_translations(raw) -> dict:
+    """{language: {"title", "subtitle", "body", "button_labels": [...], "items": [{"title", "text"}]}}.
+
+    Only text can differ per language: structure (type, links, icons, order, counts) is shared. Entries that match an item or button
+    by position; an empty value means "use the text of the site's default language"."""
+    from apps.core.regional import normalize_language
+
+    result = {}
+    for code, entry in _dict(raw).items():
+        code = normalize_language(code)
+        entry = _dict(entry)
+        if not code:
+            continue
+        cleaned = {
+            "title": _text(entry.get("title"), 120),
+            "subtitle": _text(entry.get("subtitle"), 300),
+            "body": _text(entry.get("body"), 5000),
+            "button_labels": [_text(v, 40) for v in (entry.get("button_labels") if isinstance(entry.get("button_labels"), list) else [])][:MAX_SECTION_BUTTONS],
+            "items": [
+                {"title": _text(_dict(i).get("title"), 60), "text": _text(_dict(i).get("text"), 300)}
+                for i in (entry.get("items") if isinstance(entry.get("items"), list) else [])
+            ][:MAX_FEATURE_ITEMS],
+        }
+        if (cleaned["title"] or cleaned["subtitle"] or cleaned["body"] or any(cleaned["button_labels"])
+                or any(i["title"] or i["text"] for i in cleaned["items"])):
+            result[code] = cleaned
+    return dict(sorted(result.items()))
+
+
 def sanitize_section(raw) -> dict | None:
     raw = _dict(raw)
     kind = raw.get("type")
@@ -163,18 +225,56 @@ def sanitize_section(raw) -> dict | None:
         return None
     count = raw.get("count")
     count = count if isinstance(count, int) and not isinstance(count, bool) and 1 <= count <= 24 else 6
+    buttons = sanitize_buttons(raw.get("buttons"), _text(raw.get("button_label"), 40), _link(raw.get("button_url")))
+    # button_label/button_url stay the first button's values (themes and "view all" links written for one button keep working)
+    if buttons:
+        first_label, first_url = buttons[0]["label"], buttons[0]["url"]
+    else:  # a link without text (a post list's "view all" falls back to a default label)
+        first_label, first_url = _text(raw.get("button_label"), 40), _link(raw.get("button_url"))
     return {
         "type": kind,
         "enabled": _bool(raw.get("enabled"), True),
         "title": _text(raw.get("title"), 120),
         "subtitle": _text(raw.get("subtitle"), 300),
         "body": _text(raw.get("body"), 5000),
-        "button_label": _text(raw.get("button_label"), 40),
-        "button_url": _link(raw.get("button_url")),
+        "button_label": first_label,
+        "button_url": first_url,
+        "buttons": buttons,
+        "items": sanitize_items(raw.get("items")),
+        "translations": sanitize_section_translations(raw.get("translations")),
         "category": _int_or_none(raw.get("category")),
         "page": _int_or_none(raw.get("page")),
         "count": count,
     }
+
+
+def localized_section(section: dict, language: str, default_language: str) -> dict:
+    """The section with the texts of ``language`` applied (a copy). The site's default language, or a language without translations,
+    gets the base text; an empty translated value falls back to the base text, field by field."""
+    from apps.core.regional import normalize_language
+
+    language, default_language = normalize_language(language), normalize_language(default_language)
+    tr = section.get("translations", {}).get(language) if language and language != default_language else None
+    if not tr:
+        return section
+    out = dict(section)
+    for key in ("title", "subtitle", "body"):
+        if tr.get(key):
+            out[key] = tr[key]
+    labels = tr.get("button_labels") or []
+    buttons = [{**b, "label": (labels[i] if i < len(labels) and labels[i] else b["label"])} for i, b in enumerate(section["buttons"])]
+    out["buttons"] = buttons
+    if buttons:
+        out["button_label"], out["button_url"] = buttons[0]["label"], buttons[0]["url"]
+    elif section["button_url"] and labels and labels[0]:  # single-button sections (e.g. "view all" link of a post list)
+        out["button_label"] = labels[0]
+    translated = tr.get("items") or []
+    out["items"] = [
+        {**item, "title": (translated[i]["title"] if i < len(translated) and translated[i]["title"] else item["title"]),
+         "text": (translated[i]["text"] if i < len(translated) and translated[i]["text"] else item["text"])}
+        for i, item in enumerate(section["items"])
+    ]
+    return out
 
 
 def sanitize_social(raw) -> list[dict]:
@@ -247,7 +347,7 @@ def sanitize(doc) -> dict:
         sections = [sanitize_section(s) for s in raw_home["sections"]]
         sections = [s for s in sections if s][:MAX_SECTIONS]
     else:
-        sections = base["home"]["sections"]
+        sections = [sanitize_section(s) for s in base["home"]["sections"]]
 
     return {
         "theme": theme,

@@ -69,18 +69,33 @@ def walk(bases, suffixes, *, skip=()):
                 yield path
 
 
-def python_files():
-    return walk(("apps", "config", "themes", "plugins"), {".py"}, skip=SKIP_PYTHON_DIRS)
+EXTENSION_ROOTS = ("themes", "plugins")  # themes and plugins carry their own translations; core strings live in locale/
 
 
-def template_files():
-    for path in walk(("apps", "templates", "themes", "plugins"), {".html", ".txt"}, skip=("__pycache__", "/tests")):
-        if "templates" in path.relative_to(ROOT).parts:
+def extension_of(path: Path):
+    """("theme"|"plugin", slug) for a file inside themes/<slug> or plugins/<slug>; None for core files."""
+    parts = path.relative_to(ROOT).parts
+    if len(parts) > 2 and parts[0] in EXTENSION_ROOTS:
+        return ("theme" if parts[0] == "themes" else "plugin"), parts[1]
+    return None
+
+
+def python_files(*, extensions=True):
+    for path in walk(("apps", "config", "themes", "plugins"), {".py"}, skip=SKIP_PYTHON_DIRS):
+        if extensions or extension_of(path) is None:
             yield path
 
 
-def js_files():
-    return walk(("static", "themes", "plugins", "apps"), {".js"}, skip=("__pycache__", "/tests", ".min.", "/vendor/"))
+def template_files(*, extensions=True):
+    for path in walk(("apps", "templates", "themes", "plugins"), {".html", ".txt"}, skip=("__pycache__", "/tests")):
+        if "templates" in path.relative_to(ROOT).parts and (extensions or extension_of(path) is None):
+            yield path
+
+
+def js_files(*, extensions=True):
+    for path in walk(("static", "themes", "plugins", "apps"), {".js"}, skip=("__pycache__", "/tests", ".min.", "/vendor/")):
+        if extensions or extension_of(path) is None:
+            yield path
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -192,9 +207,9 @@ def marked_in_template_source(source: str, name: str = "<template>") -> set:
     return found
 
 
-def marked_in_templates():
+def marked_in_templates(*, extensions=False):
     found = {}
-    for path in template_files():
+    for path in template_files(extensions=extensions):
         try:
             msgids = marked_in_template_source(path.read_text(encoding="utf-8"), rel(path))
         except Exception as exc:  # noqa: BLE001
@@ -207,9 +222,9 @@ def marked_in_templates():
 JS_CALL = re.compile(r"""(?<![\w.])gettext\(\s*("(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*')\s*\)""")
 
 
-def marked_in_js():
+def marked_in_js(*, extensions=False):
     found = {}
-    for path in js_files():
+    for path in js_files(extensions=extensions):
         for m in JS_CALL.finditer(path.read_text(encoding="utf-8")):
             literal = m.group(1)
             text = json.loads(literal) if literal[0] == '"' else ast.literal_eval(literal)
@@ -304,6 +319,132 @@ class UnmarkedTextTests(SimpleTestCase):
         self.assertEqual(marked_in_template_source('{% trans "A" %}{% blocktrans with n=x %}B {{ n }}{% endblocktrans %}{{ _("C") }}'), {"A", "B %(n)s", "C"})
 
 
+# --------------------------------------------------------------------------------------------------------------------
+# Themes and plugins: core text comes from the core catalog; their own text must be complete in THEIR OWN locale
+# --------------------------------------------------------------------------------------------------------------------
+def extensions():
+    """{("theme"|"plugin", slug): Path} for every folder in themes/ and plugins/ that has templates or Python code."""
+    found = {}
+    for base, kind in (("themes", "theme"), ("plugins", "plugin")):
+        top = ROOT / base
+        if top.is_dir():
+            for folder in sorted(p for p in top.iterdir() if p.is_dir() and not p.name.startswith((".", "_"))):
+                found[(kind, folder.name)] = folder
+    return found
+
+
+def marked_in_extension(folder: Path) -> dict:
+    """{msgid: first file} for every string an extension marks in its templates and Python code."""
+    found = {}
+    for path in sorted(folder.rglob("*")):
+        if "__pycache__" in path.parts or "tests" in path.relative_to(folder).parts or "migrations" in path.relative_to(folder).parts:
+            continue
+        if path.suffix in {".html", ".txt"} and "templates" in path.relative_to(folder).parts:
+            ids = marked_in_template_source(path.read_text(encoding="utf-8"), rel(path))
+        elif path.suffix == ".py":
+            ids = marked_in_python(path.read_text(encoding="utf-8"), rel(path))
+        else:
+            continue
+        for msgid in ids:
+            found.setdefault(msgid, rel(path))
+    return found
+
+
+def own_catalogs(kind: str, folder: Path) -> dict:
+    """{language code: {msgid: translation}} the extension ships. Themes: locale/<lang>.json; plugins: locale/<ll_CC>/LC_MESSAGES/django.mo."""
+    result = {}
+    for code in LANGUAGES:
+        if kind == "theme":
+            for name in (code, to_locale(code)):
+                path = folder / "locale" / f"{name}.json"
+                if path.is_file():
+                    result[code] = json.loads(path.read_text(encoding="utf-8"))
+                    break
+        else:
+            path = folder / "locale" / to_locale(code) / "LC_MESSAGES" / "django.mo"
+            if path.is_file():
+                with path.open("rb") as fh:
+                    result[code] = {k: v for k, v in pygettext.GNUTranslations(fh)._catalog.items() if k != "" and isinstance(k, str)}
+    return result
+
+
+def extension_catalog_problems(specific_ids, catalogs: dict) -> list:
+    """What is wrong with an extension's own translations: a language without a catalog, a missing/empty translation, a lost or
+    invented placeholder, an English-less (non-English) msgid. ``specific_ids`` = strings that the core catalog does not have."""
+    problems = []
+    if not specific_ids and not catalogs:
+        return problems
+    for code in LANGUAGES:
+        catalog = catalogs.get(code)
+        if catalog is None:
+            problems.append(f"{code}: no catalog (every language except English needs one)")
+            continue
+        for msgid in sorted(specific_ids):
+            text = catalog.get(msgid)
+            if not isinstance(text, str) or not text.strip():
+                problems.append(f"{code}: missing translation of {msgid[:60]!r}")
+            elif collections.Counter(PLACEHOLDER.findall(msgid)) != collections.Counter(PLACEHOLDER.findall(text)):
+                problems.append(f"{code}: placeholders differ in {msgid[:60]!r}")
+        for msgid in catalog:
+            if ARABIC_SCRIPT.search(msgid):
+                problems.append(f"{code}: msgid must be English: {msgid[:40]!r}")
+    return problems
+
+
+class ExtensionTranslationTests(SimpleTestCase):
+    """A theme or plugin may reuse core strings (they come from the core catalog) and add its own, but then it must translate
+    them itself, for all nine non-English languages, in its own locale files. The core catalog is never required to contain them."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.core_ids = {key_of(e) for e in load_po("fa", "django")[0]}
+
+    def test_extension_strings_are_in_the_core_catalog_or_their_own_locale(self):
+        problems = []
+        for (kind, slug), folder in extensions().items():
+            specific = {m for m in marked_in_extension(folder) if m not in self.core_ids}
+            problems += [f"{kind} {slug}: {p}" for p in extension_catalog_problems(specific, own_catalogs(kind, folder))]
+        self.assertEqual(problems, [], "Add the strings to the extension's own locale (themes: locale/<lang>.json; plugins: django.mo):\n" + "\n".join(problems[:40]))
+
+    def test_every_locale_file_an_extension_ships_is_complete(self):
+        """Shipping any catalog means shipping all nine, each with the same strings, none empty."""
+        problems = []
+        for (kind, slug), folder in extensions().items():
+            catalogs = own_catalogs(kind, folder)
+            if not catalogs:
+                continue
+            problems += [f"{kind} {slug}: {p}" for p in extension_catalog_problems(set(), catalogs)]
+            reference = set(next(iter(catalogs.values())))
+            for code, catalog in catalogs.items():
+                if set(catalog) != reference:
+                    problems.append(f"{kind} {slug}: {code} has different strings than the other languages")
+                problems += [f"{kind} {slug}: {code} empty translation {m[:40]!r}" for m, t in catalog.items() if not str(t).strip()]
+        self.assertEqual(problems, [])
+
+    def test_theme_locale_files_are_valid_for_ravix(self):
+        from apps.core import catalogs as ravix_catalogs
+
+        problems = []
+        for (kind, slug), folder in extensions().items():
+            if kind != "theme" or not (folder / "locale").is_dir():
+                continue
+            for file in sorted((folder / "locale").iterdir()):
+                data, ok = ravix_catalogs.read_theme_catalog(file)
+                if not ok or not ravix_catalogs.theme_catalog_language(file.name):
+                    problems.append(f"{slug}/locale/{file.name}: rejected by Ravix's own reader")
+        self.assertEqual(problems, [])
+
+    def test_the_checker_itself_detects_problems(self):
+        good = {code: {"Hello %(n)s": "x %(n)s"} for code in LANGUAGES}
+        self.assertEqual(extension_catalog_problems({"Hello %(n)s"}, good), [])
+        self.assertTrue(extension_catalog_problems({"Hello %(n)s"}, {}))  # no catalogs at all
+        self.assertTrue(extension_catalog_problems({"New text"}, good))  # missing translation
+        broken = {**good, "fa": {"Hello %(n)s": "x"}}
+        self.assertTrue(extension_catalog_problems({"Hello %(n)s"}, broken))  # placeholder lost
+        self.assertEqual(extension_catalog_problems(set(), {}), [])  # reusing only core strings needs nothing
+
+
 class MarkedStringsAreTranslatedTests(SimpleTestCase):
     @classmethod
     def setUpClass(cls):
@@ -313,7 +454,7 @@ class MarkedStringsAreTranslatedTests(SimpleTestCase):
 
     def test_python_strings_are_in_the_catalog(self):
         missing = []
-        for path in python_files():
+        for path in python_files(extensions=False):
             for msgid in marked_in_python(path.read_text(encoding="utf-8"), rel(path)):
                 if msgid not in self.django_ids:
                     missing.append(f"{rel(path)}: {msgid[:70]!r}")
@@ -321,7 +462,7 @@ class MarkedStringsAreTranslatedTests(SimpleTestCase):
         self.assertEqual(missing, [], "Run makemessages and translate these into every language:\n" + "\n".join(missing))
 
     def test_template_strings_are_in_the_catalog(self):
-        missing = [f"{where}: {msgid[:70]!r}" for msgid, where in marked_in_templates().items() if msgid not in self.django_ids]
+        missing = [f"{where}: {msgid[:70]!r}" for msgid, where in marked_in_templates(extensions=False).items() if msgid not in self.django_ids]
         self.assertEqual(missing, [], "Run makemessages and translate these into every language:\n" + "\n".join(missing))
 
     def test_javascript_strings_are_in_the_catalog(self):

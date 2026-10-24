@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-24 01:30+0330\n"
+"POT-Creation-Date: 2026-10-24 15:09+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -5991,6 +5991,10 @@ msgid "Free text"
 msgstr "نص حر"
 
 #: apps/themes/constants.py
+msgid "Features (icon, title and short text for each item)"
+msgstr "الميزات (أيقونة وعنوان ونص قصير لكل عنصر)"
+
+#: apps/themes/constants.py
 msgid "Header menu"
 msgstr "قائمة الترويسة"
 
@@ -6169,6 +6173,28 @@ msgid "Choose a category."
 msgstr "اختر تصنيفًا."
 
 #: apps/themes/forms.py
+#, python-format
+msgid "Line %(line)s: unknown icon “%(icon)s”. Available icons: %(icons)s."
+msgstr ""
+"السطر %(line)s: الأيقونة «%(icon)s» غير معروفة. الأيقونات المتاحة: "
+"%(icons)s."
+
+#: apps/themes/forms.py
+#, python-format
+msgid ""
+"Line %(line)s is too long: the title may have up to 60 and the text up to "
+"300 characters."
+msgstr ""
+"السطر %(line)s طويل جدًا: يمكن أن يصل العنوان إلى 60 حرفًا والنص إلى 300 "
+"حرف."
+
+#: apps/themes/forms.py
+#, python-format
+#| msgid "At most %(limit)s %(label)s are allowed."
+msgid "At most %(count)s items are allowed."
+msgstr "يُسمح بحد أقصى %(count)s عنصرًا."
+
+#: apps/themes/forms.py
 msgid "Section type"
 msgstr "نوع القسم"
 
@@ -6181,8 +6207,42 @@ msgid "Subtitle"
 msgstr "العنوان الفرعي"
 
 #: apps/themes/forms.py
+#| msgid "Featured image"
+msgid "Feature items"
+msgstr "عناصر الميزات"
+
+#: apps/themes/forms.py
+#, python-format
+msgid ""
+"One item per line: icon | title | short text. The icon may be left empty. "
+"Icons: %(icons)s."
+msgstr ""
+"عنصر واحد في كل سطر: أيقونة | عنوان | نص قصير. يمكن ترك الأيقونة فارغة. "
+"الأيقونات: %(icons)s."
+
+#: apps/themes/forms.py
 msgid "Button URL"
 msgstr "رابط الزر"
+
+#: apps/themes/forms.py
+#| msgid "Header button text"
+msgid "Second button text"
+msgstr "نص الزر الثاني"
+
+#: apps/themes/forms.py
+#| msgid "Header button URL"
+msgid "Second button URL"
+msgstr "رابط الزر الثاني"
+
+#: apps/themes/forms.py
+#| msgid "Header button text"
+msgid "Third button text"
+msgstr "نص الزر الثالث"
+
+#: apps/themes/forms.py
+#| msgid "Header button URL"
+msgid "Third button URL"
+msgstr "رابط الزر الثالث"
 
 #: apps/themes/forms.py templates/shop/panel/order.html
 #: templates/shop/public/cart.html templates/shop/public/detail.html
@@ -6197,6 +6257,17 @@ msgstr "اختر نوع القسم."
 #: apps/themes/forms.py
 msgid "Enter the section text."
 msgstr "أدخل نص القسم."
+
+#: apps/themes/forms.py
+#| msgid "Enter at least two characters."
+msgid "Enter at least one item."
+msgstr "أدخل عنصرًا واحدًا على الأقل."
+
+#: apps/themes/forms.py
+msgid ""
+"One item per line, in the same order as the default language: title | short "
+"text."
+msgstr "عنصر واحد في كل سطر وبنفس ترتيب اللغة الافتراضية: عنوان | نص قصير."
 
 #: apps/themes/forms.py templates/themes/theme_list.html
 msgid "Theme ZIP file"
@@ -6955,6 +7026,17 @@ msgstr "تم تجاهل التغييرات غير المنشورة."
 msgid ""
 "The changes were saved to the draft. Publish it to apply it to the site."
 msgstr "حُفظت التغييرات في المسودة. انشرها لتطبيقها على الموقع."
+
+#: apps/themes/views.py
+#| msgid ""
+#| "The form has expired or the request was not valid. Reload the page and try "
+#| "again."
+msgid ""
+"The home page sections changed in the meantime. Reload the page and try "
+"again."
+msgstr ""
+"تغيّرت أقسام الصفحة الرئيسية في هذه الأثناء. أعد تحميل الصفحة وحاول مرة "
+"أخرى."
 
 #: apps/updater/apps.py apps/updater/views.py
 msgid "Update"
@@ -10655,6 +10737,27 @@ msgid ""
 "Changes are saved to a draft first and are not applied to the site until "
 "published."
 msgstr "تُحفظ التغييرات في مسودة أولًا ولا تُطبَّق على الموقع حتى تُنشر."
+
+#: templates/themes/customize_home.html
+#| msgid "Set up the home page sections"
+msgid "Language of the home page texts"
+msgstr "لغة نصوص الصفحة الرئيسية"
+
+#: templates/themes/customize_home.html
+#| msgid "Default"
+msgid "default"
+msgstr "افتراضي"
+
+#: templates/themes/customize_home.html
+#, python-format
+msgid ""
+"Texts of the home page in %(language)s. Leave a field empty to show the text"
+" of the default language instead. Section types, links, icons and the order "
+"are the same in every language and are edited in the default language tab."
+msgstr ""
+"نصوص الصفحة الرئيسية بلغة %(language)s. اترك الحقل فارغًا لعرض نص اللغة "
+"الافتراضية بدلًا منه. أنواع الأقسام والروابط والأيقونات والترتيب واحدة في كل"
+" اللغات وتُعدَّل في تبويب اللغة الافتراضية."
 
 #: templates/themes/customize_home.html
 #, python-format

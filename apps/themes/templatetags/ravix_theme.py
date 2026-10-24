@@ -103,6 +103,27 @@ def language_switcher(context, css_class="rv-lang"):
         gettext("Change"))
 
 
+@register.simple_tag
+def feature_icon(name, size=28):
+    """Inline SVG for a "features" item: ``{% feature_icon item.icon %}``. Draws nothing for an empty or unknown name. The shapes come
+    from Ravix (not from user input), take their colour from ``currentColor`` and have class ``rv-icon``."""
+    from apps.core.templatetags.ravix_ui import ICONS
+
+    from ..constants import FEATURE_ICONS
+
+    if name not in FEATURE_ICONS or name not in ICONS:
+        return ""
+    try:
+        size = max(12, min(96, int(size)))
+    except (TypeError, ValueError):
+        size = 28
+    return format_html(
+        '<svg class="rv-icon" width="{0}" height="{0}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" '
+        'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">{1}</svg>',
+        size, mark_safe(ICONS[name]),
+    )
+
+
 @register.simple_tag(takes_context=True)
 def theme_head(context):
     """عنوان صفحه، متاتگ‌های سئو، Open Graph، JSON-LD، فونت و رنگ‌های سفارشی. باید اولین مورد داخل <head> باشد."""

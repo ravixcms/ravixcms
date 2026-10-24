@@ -13,8 +13,21 @@
         {% if forloop.first %}<h1 class="hero-title">{{ s.title }}</h1>{% else %}<h2 class="hero-title">{{ s.title }}</h2>{% endif %}
         {% if s.subtitle %}<p class="hero-sub">{{ s.subtitle }}</p>{% endif %}
         {% if s.body_html %}<div class="hero-body">{{ s.body_html }}</div>{% endif %}
-        {% if s.button_url %}<p><a class="btn btn-lg" href="{{ s.button_url }}">{{ s.button_label }}</a></p>{% endif %}
+        {% if s.buttons %}<p class="hero-actions">{% for b in s.buttons %}<a class="btn btn-lg{% if not forloop.first %} btn-quiet{% endif %}" href="{{ b.url }}">{{ b.label }}</a>{% endfor %}</p>{% endif %}
       </div>
+    </div>
+  </section>
+
+  {% elif s.type == "features" %}
+  <section class="band" aria-labelledby="sec-{{ forloop.counter }}">
+    <div class="container">
+      {% if s.title %}<div class="band-head"><h2 id="sec-{{ forloop.counter }}">{{ s.title }}</h2></div>{% endif %}
+      {% if s.subtitle %}<p class="muted features-lead" dir="auto">{{ s.subtitle }}</p>{% endif %}
+      <ul class="features">
+        {% for item in s.items %}
+        <li>{% if item.icon %}<span class="feature-icon">{% feature_icon item.icon 28 %}</span>{% endif %}{% if item.title %}<h3 dir="auto">{{ item.title }}</h3>{% endif %}{% if item.text %}<p dir="auto">{{ item.text }}</p>{% endif %}</li>
+        {% endfor %}
+      </ul>
     </div>
   </section>
 
@@ -73,7 +86,7 @@
       <div class="article">
         {% if s.title %}<h2 id="sec-{{ forloop.counter }}">{{ s.title }}</h2>{% endif %}
         <div class="prose">{{ s.body_html }}</div>
-        {% if s.button_url %}<p><a class="btn" href="{{ s.button_url }}">{{ s.button_label }}</a></p>{% endif %}
+        {% if s.buttons %}<p class="hero-actions">{% for b in s.buttons %}<a class="btn{% if not forloop.first %} btn-quiet{% endif %}" href="{{ b.url }}">{{ b.label }}</a>{% endfor %}</p>{% endif %}
       </div>
     </div>
   </section>

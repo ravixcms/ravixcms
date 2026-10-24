@@ -81,6 +81,7 @@ python manage.py startheme my-theme --name "قالب من" --author "نام شم
 - `{% theme_static 'مسیر' %}`: نشانی فایل داخل `static/` همین قالب (با `?v=<version>`).
 - `{% theme_toolbar %}`: نوار مدیر و هشدار حالت پیش‌نمایش؛ بلافاصله پس از `<body>`.
 - فیلتر `|fa_digits`: تبدیل اعداد به ارقام فارسی.
+- `{% feature_icon نام [اندازه] %}`: آیکون SVG یکی از موردهای بخش «ویژگی‌ها» (بالا).
 
 **رنگ‌ها و فونت** را مدیر از پنل تعیین می‌کند. CSS قالب فقط از این متغیرها استفاده کند و مقدارهای پیش‌فرض را با
 `:where(:root){...}` بدهد تا مقدار مدیر را نپوشاند:
@@ -156,8 +157,16 @@ themes/<slug>/
   HTML امن و یک بلوک `<style>` که فقط به کلاس‌های `bx-*` و متغیرهای `--rv-primary`/`--rv-on-primary` قالب وابسته است. جزئیات: `docs/page-builder.md`.
 - `category`/`categories[]`: `name`، `slug`، `url`، `description`، `post_count`؛ `tag`: `name`، `url`
 - `pagination`: `page`، `num_pages`، `total`، `has_prev`، `has_next`، `prev_url`، `next_url`، `pages[]` (`number`، `url`، `current`؛ `number=0` یعنی «…»)
-- `sections[]` (صفحهٔ اصلی): `type` ∈ `hero | latest_posts | category_posts | categories | page | text`، به‌همراه
-  `title`، `subtitle`، `body_html`، `button_label`، `button_url` و بسته به نوع `posts`، `categories` یا `page`
+- `sections[]` (صفحهٔ اصلی): `type` ∈ `hero | latest_posts | category_posts | categories | page | text | features`، به‌همراه
+  `title`، `subtitle`، `body_html`، `button_label`، `button_url` و بسته به نوع `posts`، `categories`، `page` یا `items`.
+  - `buttons[]`: همهٔ دکمه‌های بخش (تا ۳ دکمه؛ هرکدام `label` و `url`). `button_label`/`button_url` همان دکمهٔ نخست است (قالب‌های
+    قدیمی بدون تغییر کار می‌کنند)؛ برای hero با چند دکمه `{% for b in s.buttons %}` بنویسید.
+  - `body_html`: Markdown پاک‌سازی‌شده (همان فهرست تگ‌های مجاز نوشته‌ها؛ بدون اسکریپت و رویداد) برای `hero` و `text`.
+  - `items[]` (فقط `features`): `title`، `icon` (نام ثابت یا خالی) و `text`. آیکون را با `{% feature_icon item.icon 28 %}` بکشید
+    (SVG درون‌خطی از Ravix؛ برای نام خالی/ناشناخته چیزی برنمی‌گرداند و رنگ از `currentColor` می‌آید). نام‌ها: `FEATURE_ICONS` در `apps/themes/constants.py`.
+  - متن‌ها (`title`، `subtitle`، `body_html`، متن دکمه‌ها، `items`) از قبل به **زبان فعال** درآمده‌اند: مدیر برای هر زبان در
+    «سفارشی‌سازی ← صفحهٔ اصلی» متن جدا می‌دهد و زبان بدون متن به متن زبان پیش‌فرض سایت برمی‌گردد. قالب کاری برای ترجمه نمی‌کند.
+  - بخش `features` فقط وقتی نشان داده می‌شود که قالب آن را در `supports.home_sections` اعلام کرده باشد.
 
 هر فیلد جدید باید در `apps/public/dto.py` تعریف و همین‌جا مستند شود. تغییر ناسازگار در این قرارداد یعنی افزایش `api_version`.
 

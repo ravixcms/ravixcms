@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-24 01:30+0330\n"
+"POT-Creation-Date: 2026-10-24 15:09+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -6100,6 +6100,10 @@ msgid "Free text"
 msgstr "Произвольный текст"
 
 #: apps/themes/constants.py
+msgid "Features (icon, title and short text for each item)"
+msgstr "Возможности (значок, заголовок и короткий текст для каждого пункта)"
+
+#: apps/themes/constants.py
 msgid "Header menu"
 msgstr "Меню шапки"
 
@@ -6281,6 +6285,26 @@ msgid "Choose a category."
 msgstr "Выберите категорию."
 
 #: apps/themes/forms.py
+#, python-format
+msgid "Line %(line)s: unknown icon “%(icon)s”. Available icons: %(icons)s."
+msgstr ""
+"Строка %(line)s: неизвестный значок «%(icon)s». Доступные значки: %(icons)s."
+
+#: apps/themes/forms.py
+#, python-format
+msgid ""
+"Line %(line)s is too long: the title may have up to 60 and the text up to "
+"300 characters."
+msgstr ""
+"Строка %(line)s слишком длинная: заголовок — до 60 символов, текст — до 300."
+
+#: apps/themes/forms.py
+#, python-format
+#| msgid "At most %(limit)s %(label)s are allowed."
+msgid "At most %(count)s items are allowed."
+msgstr "Допускается не более %(count)s пунктов."
+
+#: apps/themes/forms.py
 msgid "Section type"
 msgstr "Тип раздела"
 
@@ -6293,8 +6317,42 @@ msgid "Subtitle"
 msgstr "Подзаголовок"
 
 #: apps/themes/forms.py
+#| msgid "Featured image"
+msgid "Feature items"
+msgstr "Пункты возможностей"
+
+#: apps/themes/forms.py
+#, python-format
+msgid ""
+"One item per line: icon | title | short text. The icon may be left empty. "
+"Icons: %(icons)s."
+msgstr ""
+"Один пункт в строке: значок | заголовок | короткий текст. Значок можно не "
+"указывать. Значки: %(icons)s."
+
+#: apps/themes/forms.py
 msgid "Button URL"
 msgstr "URL кнопки"
+
+#: apps/themes/forms.py
+#| msgid "Header button text"
+msgid "Second button text"
+msgstr "Текст второй кнопки"
+
+#: apps/themes/forms.py
+#| msgid "Header button URL"
+msgid "Second button URL"
+msgstr "Адрес второй кнопки"
+
+#: apps/themes/forms.py
+#| msgid "Header button text"
+msgid "Third button text"
+msgstr "Текст третьей кнопки"
+
+#: apps/themes/forms.py
+#| msgid "Header button URL"
+msgid "Third button URL"
+msgstr "Адрес третьей кнопки"
 
 #: apps/themes/forms.py templates/shop/panel/order.html
 #: templates/shop/public/cart.html templates/shop/public/detail.html
@@ -6309,6 +6367,19 @@ msgstr "Выберите тип раздела."
 #: apps/themes/forms.py
 msgid "Enter the section text."
 msgstr "Введите текст раздела."
+
+#: apps/themes/forms.py
+#| msgid "Enter at least two characters."
+msgid "Enter at least one item."
+msgstr "Введите хотя бы один пункт."
+
+#: apps/themes/forms.py
+msgid ""
+"One item per line, in the same order as the default language: title | short "
+"text."
+msgstr ""
+"Один пункт в строке, в том же порядке, что и на языке по умолчанию: "
+"заголовок | короткий текст."
 
 #: apps/themes/forms.py templates/themes/theme_list.html
 msgid "Theme ZIP file"
@@ -7095,6 +7166,17 @@ msgid ""
 "The changes were saved to the draft. Publish it to apply it to the site."
 msgstr ""
 "Изменения сохранены в черновик. Опубликуйте его, чтобы применить к сайту."
+
+#: apps/themes/views.py
+#| msgid ""
+#| "The form has expired or the request was not valid. Reload the page and try "
+#| "again."
+msgid ""
+"The home page sections changed in the meantime. Reload the page and try "
+"again."
+msgstr ""
+"Разделы главной страницы тем временем изменились. Перезагрузите страницу и "
+"повторите попытку."
 
 #: apps/updater/apps.py apps/updater/views.py
 msgid "Update"
@@ -10872,6 +10954,28 @@ msgid ""
 msgstr ""
 "Изменения сначала сохраняются в черновик и не применяются к сайту до "
 "публикации."
+
+#: templates/themes/customize_home.html
+#| msgid "Set up the home page sections"
+msgid "Language of the home page texts"
+msgstr "Язык текстов главной страницы"
+
+#: templates/themes/customize_home.html
+#| msgid "Default"
+msgid "default"
+msgstr "по умолчанию"
+
+#: templates/themes/customize_home.html
+#, python-format
+msgid ""
+"Texts of the home page in %(language)s. Leave a field empty to show the text"
+" of the default language instead. Section types, links, icons and the order "
+"are the same in every language and are edited in the default language tab."
+msgstr ""
+"Тексты главной страницы на языке: %(language)s. Оставьте поле пустым, чтобы "
+"показывался текст на языке по умолчанию. Типы разделов, ссылки, значки и "
+"порядок одинаковы для всех языков и редактируются на вкладке языка по "
+"умолчанию."
 
 #: templates/themes/customize_home.html
 #, python-format

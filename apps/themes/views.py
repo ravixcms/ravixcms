@@ -11,6 +11,7 @@ from django.views.generic import TemplateView
 
 from apps.accounts.mixins import CapabilityRequiredMixin
 from apps.core.models import SiteSettings
+from apps.core.regional import normalize_language
 
 from . import installer, preview, registry, services
 from .constants import (
@@ -28,11 +29,13 @@ from .forms import (
     LayoutForm,
     MenuFormSet,
     SectionFormSet,
+    SectionTextFormSet,
     ThemeUploadForm,
     menu_from_formset,
     menu_initial,
     section_initial,
     sections_from_formset,
+    text_initial,
 )
 from .models import ThemeConfig
 from .services import ThemeError
@@ -226,7 +229,7 @@ class CustomizeView(ThemesAdminMixin, TemplateView):
 
     def saved(self, request):
         messages.success(request, gettext("The changes were saved to the draft. Publish it to apply it to the site."))
-        return redirect(request.path)
+        return redirect(request.get_full_path())
 
     def invalid(self, request, ctx_updates):
         messages.error(request, gettext("Could not save. Please check the form errors."))
@@ -252,7 +255,7 @@ class AppearanceView(CustomizeView):
                 services.save_draft_part(request, "appearance", form.to_doc())
             except ThemeError as exc:
                 messages.error(request, str(exc))
-                return redirect(request.path)
+                return redirect(request.get_full_path())
             return self.saved(request)
         return self.invalid(request, {"form": form})
 
@@ -303,22 +306,78 @@ class MenusView(CustomizeView):
 
 
 class HomeSectionsView(CustomizeView):
+    """Home page sections. Without ``?lang=`` (or with the site's default language) it edits the structure and the default-language
+    texts; ``?lang=<code>`` edits only the texts of that language (empty = fall back to the default-language text)."""
+
     tab = "home"
     template_name = "themes/customize_home.html"
+
+    def default_language(self) -> str:
+        return normalize_language(SiteSettings.load().language) or "fa"
+
+    def text_language(self) -> str:
+        code = normalize_language(self.request.GET.get("lang", ""))
+        return code if code and code != self.default_language() else ""
 
     def build_formset(self, doc, data=None):
         initial = section_initial(doc["home"]["sections"]) if data is None else None
         return SectionFormSet(data, initial=initial, prefix="sections")
 
+    def build_text_formset(self, doc, language, data=None):
+        initial = text_initial(doc["home"]["sections"], language) if data is None else None
+        return SectionTextFormSet(data, initial=initial, prefix="texts")
+
+    def language_tabs(self, doc):
+        default = self.default_language()
+        translated = {code for s in doc["home"]["sections"] for code in s.get("translations", {})}
+        base = reverse("themes:home")
+        return [
+            {"code": code, "name": name, "is_default": code == default, "has_texts": code in translated,
+             "url": base if code == default else f"{base}?lang={code}", "current": code == (self.text_language() or default)}
+            for code, name in settings.LANGUAGES
+        ]
+
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        ctx["formset"] = kwargs.get("formset") or self.build_formset(ctx["doc"])
+        language = self.text_language()
+        ctx["language_tabs"] = self.language_tabs(ctx["doc"])
+        ctx["text_language"] = language
         ctx["frame_url"] = reverse("themes:frame")
+        if language:
+            formset = kwargs.get("formset") or self.build_text_formset(ctx["doc"], language)
+            sections = ctx["doc"]["home"]["sections"]
+            ctx["text_rows"] = [
+                {"form": f, "section": sections[i] if i < len(sections) else {}, "type_label": HOME_SECTION_TYPES.get(sections[i]["type"], "") if i < len(sections) else ""}
+                for i, f in enumerate(formset)
+            ]
+            ctx["formset"] = formset
+            ctx["language_name"] = dict(settings.LANGUAGES).get(language, language)
+        else:
+            ctx["formset"] = kwargs.get("formset") or self.build_formset(ctx["doc"])
         return ctx
 
     def post(self, request, *args, **kwargs):
+        language = self.text_language()
+        doc = self.get_doc()
+        sections = doc["home"]["sections"]
+        if language:
+            formset = self.build_text_formset(None, language, data=request.POST)
+            if formset.total_form_count() != len(sections):  # the sections changed while this page was open
+                messages.error(request, gettext("The home page sections changed in the meantime. Reload the page and try again."))
+                return redirect(request.get_full_path())
+            if formset.is_valid():
+                updated = []
+                for section, form in zip(sections, formset.forms):
+                    translation = form.to_translation()
+                    translations = {k: v for k, v in section.get("translations", {}).items() if k != language}
+                    if translation["title"] or translation["subtitle"] or translation["body"] or any(translation["button_labels"]) or translation["items"]:
+                        translations[language] = translation
+                    updated.append({**section, "translations": translations})
+                services.save_draft_part(request, "home", {"sections": updated})
+                return self.saved(request)
+            return self.invalid(request, {"formset": formset})
         formset = self.build_formset(None, data=request.POST)
         if formset.is_valid():
-            services.save_draft_part(request, "home", {"sections": sections_from_formset(formset)})
+            services.save_draft_part(request, "home", {"sections": sections_from_formset(formset, sections)})
             return self.saved(request)
         return self.invalid(request, {"formset": formset})

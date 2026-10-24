@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-24 01:30+0330\n"
+"POT-Creation-Date: 2026-10-24 15:09+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -6017,6 +6017,10 @@ msgid "Free text"
 msgstr "متن آزاد"
 
 #: apps/themes/constants.py
+msgid "Features (icon, title and short text for each item)"
+msgstr "ویژگی‌ها (برای هر مورد آیکون، عنوان و متن کوتاه)"
+
+#: apps/themes/constants.py
 msgid "Header menu"
 msgstr "منوی سربرگ"
 
@@ -6195,6 +6199,25 @@ msgid "Choose a category."
 msgstr "یک دسته‌بندی انتخاب کنید."
 
 #: apps/themes/forms.py
+#, python-format
+msgid "Line %(line)s: unknown icon “%(icon)s”. Available icons: %(icons)s."
+msgstr ""
+"خط %(line)s: آیکون «%(icon)s» ناشناخته است. آیکون‌های موجود: %(icons)s."
+
+#: apps/themes/forms.py
+#, python-format
+msgid ""
+"Line %(line)s is too long: the title may have up to 60 and the text up to "
+"300 characters."
+msgstr "خط %(line)s بلند است: عنوان تا ۶۰ و متن تا ۳۰۰ نویسه می‌تواند باشد."
+
+#: apps/themes/forms.py
+#, python-format
+#| msgid "At most %(limit)s %(label)s are allowed."
+msgid "At most %(count)s items are allowed."
+msgstr "حداکثر %(count)s مورد مجاز است."
+
+#: apps/themes/forms.py
 msgid "Section type"
 msgstr "نوع بخش"
 
@@ -6207,8 +6230,42 @@ msgid "Subtitle"
 msgstr "زیرعنوان"
 
 #: apps/themes/forms.py
+#| msgid "Featured image"
+msgid "Feature items"
+msgstr "موردهای ویژگی"
+
+#: apps/themes/forms.py
+#, python-format
+msgid ""
+"One item per line: icon | title | short text. The icon may be left empty. "
+"Icons: %(icons)s."
+msgstr ""
+"هر مورد در یک خط: آیکون | عنوان | متن کوتاه. آیکون را می‌توان خالی گذاشت. "
+"آیکون‌ها: %(icons)s."
+
+#: apps/themes/forms.py
 msgid "Button URL"
 msgstr "نشانی دکمه"
+
+#: apps/themes/forms.py
+#| msgid "Header button text"
+msgid "Second button text"
+msgstr "متن دکمهٔ دوم"
+
+#: apps/themes/forms.py
+#| msgid "Header button URL"
+msgid "Second button URL"
+msgstr "نشانی دکمهٔ دوم"
+
+#: apps/themes/forms.py
+#| msgid "Header button text"
+msgid "Third button text"
+msgstr "متن دکمهٔ سوم"
+
+#: apps/themes/forms.py
+#| msgid "Header button URL"
+msgid "Third button URL"
+msgstr "نشانی دکمهٔ سوم"
 
 #: apps/themes/forms.py templates/shop/panel/order.html
 #: templates/shop/public/cart.html templates/shop/public/detail.html
@@ -6223,6 +6280,17 @@ msgstr "نوع بخش را انتخاب کنید."
 #: apps/themes/forms.py
 msgid "Enter the section text."
 msgstr "متن بخش را وارد کنید."
+
+#: apps/themes/forms.py
+#| msgid "Enter at least two characters."
+msgid "Enter at least one item."
+msgstr "دست‌کم یک مورد وارد کنید."
+
+#: apps/themes/forms.py
+msgid ""
+"One item per line, in the same order as the default language: title | short "
+"text."
+msgstr "هر مورد در یک خط و با همان ترتیب زبان پیش‌فرض: عنوان | متن کوتاه."
 
 #: apps/themes/forms.py templates/themes/theme_list.html
 msgid "Theme ZIP file"
@@ -6980,6 +7048,17 @@ msgstr "تغییرات منتشرنشده دور ریخته شد."
 msgid ""
 "The changes were saved to the draft. Publish it to apply it to the site."
 msgstr "تغییرات در پیش‌نویس ذخیره شد. برای اعمال روی سایت، آن را منتشر کنید."
+
+#: apps/themes/views.py
+#| msgid ""
+#| "The form has expired or the request was not valid. Reload the page and try "
+#| "again."
+msgid ""
+"The home page sections changed in the meantime. Reload the page and try "
+"again."
+msgstr ""
+"در این فاصله بخش‌های صفحهٔ اصلی تغییر کرده‌اند. صفحه را دوباره بارگذاری کنید"
+" و دوباره تلاش کنید."
 
 #: apps/updater/apps.py apps/updater/views.py
 msgid "Update"
@@ -10702,6 +10781,27 @@ msgid ""
 msgstr ""
 "تغییرات ابتدا در پیش‌نویس ذخیره می‌شوند و تا انتشار، روی سایت اعمال "
 "نمی‌شوند."
+
+#: templates/themes/customize_home.html
+#| msgid "Set up the home page sections"
+msgid "Language of the home page texts"
+msgstr "زبان متن‌های صفحهٔ اصلی"
+
+#: templates/themes/customize_home.html
+#| msgid "Default"
+msgid "default"
+msgstr "پیش‌فرض"
+
+#: templates/themes/customize_home.html
+#, python-format
+msgid ""
+"Texts of the home page in %(language)s. Leave a field empty to show the text"
+" of the default language instead. Section types, links, icons and the order "
+"are the same in every language and are edited in the default language tab."
+msgstr ""
+"متن‌های صفحهٔ اصلی به زبان %(language)s. فیلد خالی یعنی متن زبان پیش‌فرض "
+"نمایش داده می‌شود. نوع بخش‌ها، پیوندها، آیکون‌ها و ترتیب در همهٔ زبان‌ها "
+"یکسان است و در زبانهٔ پیش‌فرض ویرایش می‌شود."
 
 #: templates/themes/customize_home.html
 #, python-format

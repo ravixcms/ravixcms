@@ -223,3 +223,10 @@ ul,ol{padding-inline-start:1.4em}
 .comment-form label{display:block;margin-bottom:.3rem;font-weight:600}
 .comment-form input[type=text],.comment-form input[type=email],.comment-form textarea{width:100%;box-sizing:border-box;padding:.6rem .75rem;font:inherit;color:var(--rv-text);background:var(--rv-bg);border:1px solid var(--rv-border)}
 .cm-hp{position:absolute;inset-inline-start:-10000px;width:1px;height:1px;overflow:hidden}
+
+/* multiple buttons and the features section */
+.hero-actions{display:flex;flex-wrap:wrap;gap:.75rem}
+.features{list-style:none;margin:0;padding:0;display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr))}
+.features li{background:var(--rv-surface);border:1px solid var(--rv-border);border-radius:var(--radius);padding:1.2rem}
+.features h3{font-size:1.1rem;margin:.4rem 0 .25rem}.features p{margin:0;color:var(--rv-muted)}
+.feature-icon{display:inline-flex;color:var(--rv-primary)}.features-lead{max-width:40rem}

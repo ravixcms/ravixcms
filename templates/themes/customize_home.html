@@ -2,8 +2,38 @@
 {% load i18n %}
 {% load ravix_ui %}
 {% block tab_content %}
+<nav class="tabs" aria-label="{% trans "Language of the home page texts" %}">
+  {% for t in language_tabs %}<a class="tab {% if t.current %}active{% endif %}" href="{{ t.url }}"{% if t.current %} aria-current="page"{% endif %} lang="{{ t.code }}">{{ t.name }}{% if t.is_default %} · {% trans "default" %}{% elif t.has_texts %} ✓{% endif %}</a>{% endfor %}
+</nav>
 <form method="post" novalidate data-once>
   {% csrf_token %}
+  {% if text_language %}
+  <p class="help">{% blocktrans trimmed with language=language_name %}Texts of the home page in {{ language }}. Leave a field empty to show the text of the default language instead. Section types, links, icons and the order are the same in every language and are edited in the default language tab.{% endblocktrans %}</p>
+  {{ formset.management_form }}
+  {% for e in formset.non_form_errors %}<div class="form-errors" role="alert"><p>{{ e }}</p></div>{% endfor %}
+  {% for row in text_rows %}{% with f=row.form s=row.section %}
+  <section class="card formset" aria-labelledby="text-sec-{{ forloop.counter }}">
+    <div class="card-header"><h2 id="text-sec-{{ forloop.counter }}">{{ forloop.counter }}. {{ row.type_label }}</h2></div>
+    <div class="card-body">
+      {% for e in f.non_field_errors %}<p class="error-text">{{ e }}</p>{% endfor %}
+      <p class="help" dir="auto">{% if s.title %}{{ s.title }}{% endif %}{% if s.subtitle %} — {{ s.subtitle }}{% endif %}</p>
+      <div class="row-grid">
+        {% include "partials/_field.html" with field=f.title %}
+        {% if s.type == "hero" or s.type == "features" %}{% include "partials/_field.html" with field=f.subtitle %}{% endif %}
+      </div>
+      {% if s.type == "hero" or s.type == "text" %}{% include "partials/_field.html" with field=f.body %}{% endif %}
+      {% if s.buttons or s.button_url %}
+      <div class="row-grid">
+        {% include "partials/_field.html" with field=f.button_label %}
+        {% if s.buttons|length > 1 %}{% include "partials/_field.html" with field=f.button2_label %}{% endif %}
+        {% if s.buttons|length > 2 %}{% include "partials/_field.html" with field=f.button3_label %}{% endif %}
+      </div>
+      {% endif %}
+      {% if s.type == "features" %}{% include "partials/_field.html" with field=f.items %}{% endif %}
+    </div>
+  </section>
+  {% endwith %}{% endfor %}
+  {% else %}
   <p class="help">{% trans ", " as list_sep %}{% blocktrans trimmed with display_name=working_theme.display_name supported_sections=supported_sections|join:list_sep %}Sections supported by the “{{ display_name }}” theme: {{ supported_sections }}. Other sections are saved but not displayed. The order is set by the “Row” number.{% endblocktrans %}</p>
   <section class="card formset" aria-labelledby="sections-title">
     <div class="card-header"><h2 id="sections-title">{% trans "Home page sections" %}</h2></div>
@@ -14,6 +44,7 @@
       <fieldset class="formset-row{% if f.errors %} has-errors{% endif %}">
         <legend class="sr-only">{% blocktrans trimmed with counter=forloop.counter %}Section {{ counter }}{% endblocktrans %}</legend>
         {% for e in f.non_field_errors %}<p class="error-text">{{ e }}</p>{% endfor %}
+        {{ f.origin }}
         <div class="row-grid">
           {% include "partials/_field.html" with field=f.type %}
           {% include "partials/_field.html" with field=f.title %}
@@ -23,9 +54,14 @@
           {% include "partials/_field.html" with field=f.count %}
           {% include "partials/_field.html" with field=f.button_label %}
           {% include "partials/_field.html" with field=f.button_url %}
+          {% include "partials/_field.html" with field=f.button2_label %}
+          {% include "partials/_field.html" with field=f.button2_url %}
+          {% include "partials/_field.html" with field=f.button3_label %}
+          {% include "partials/_field.html" with field=f.button3_url %}
           {% include "partials/_field.html" with field=f.ORDER %}
         </div>
         {% include "partials/_field.html" with field=f.body %}
+        {% include "partials/_field.html" with field=f.items %}
         <div class="row-flags">
           {% include "partials/_field.html" with field=f.hidden %}
           {% include "partials/_field.html" with field=f.DELETE %}
@@ -34,6 +70,7 @@
       {% endfor %}
     </div>
   </section>
+  {% endif %}
   <div class="form-actions"><button type="submit" class="btn">{% icon "check" 18 %} {% trans "Save to draft" %}</button></div>
 </form>
 {% include "themes/_preview_frame.html" %}

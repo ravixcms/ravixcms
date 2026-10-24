@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-24 01:30+0330\n"
+"POT-Creation-Date: 2026-10-24 15:09+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -6189,6 +6189,10 @@ msgid "Free text"
 msgstr "Texto libre"
 
 #: apps/themes/constants.py
+msgid "Features (icon, title and short text for each item)"
+msgstr "Características (icono, título y texto breve para cada elemento)"
+
+#: apps/themes/constants.py
 msgid "Header menu"
 msgstr "Menú de la cabecera"
 
@@ -6373,6 +6377,27 @@ msgid "Choose a category."
 msgstr "Elige una categoría."
 
 #: apps/themes/forms.py
+#, python-format
+msgid "Line %(line)s: unknown icon “%(icon)s”. Available icons: %(icons)s."
+msgstr ""
+"Línea %(line)s: icono «%(icon)s» desconocido. Iconos disponibles: %(icons)s."
+
+#: apps/themes/forms.py
+#, python-format
+msgid ""
+"Line %(line)s is too long: the title may have up to 60 and the text up to "
+"300 characters."
+msgstr ""
+"La línea %(line)s es demasiado larga: el título admite hasta 60 caracteres y"
+" el texto hasta 300."
+
+#: apps/themes/forms.py
+#, python-format
+#| msgid "At most %(limit)s %(label)s are allowed."
+msgid "At most %(count)s items are allowed."
+msgstr "Se permiten como máximo %(count)s elementos."
+
+#: apps/themes/forms.py
 msgid "Section type"
 msgstr "Tipo de sección"
 
@@ -6385,8 +6410,42 @@ msgid "Subtitle"
 msgstr "Subtítulo"
 
 #: apps/themes/forms.py
+#| msgid "Featured image"
+msgid "Feature items"
+msgstr "Elementos de características"
+
+#: apps/themes/forms.py
+#, python-format
+msgid ""
+"One item per line: icon | title | short text. The icon may be left empty. "
+"Icons: %(icons)s."
+msgstr ""
+"Un elemento por línea: icono | título | texto breve. El icono puede dejarse "
+"vacío. Iconos: %(icons)s."
+
+#: apps/themes/forms.py
 msgid "Button URL"
 msgstr "URL del botón"
+
+#: apps/themes/forms.py
+#| msgid "Header button text"
+msgid "Second button text"
+msgstr "Texto del segundo botón"
+
+#: apps/themes/forms.py
+#| msgid "Header button URL"
+msgid "Second button URL"
+msgstr "URL del segundo botón"
+
+#: apps/themes/forms.py
+#| msgid "Header button text"
+msgid "Third button text"
+msgstr "Texto del tercer botón"
+
+#: apps/themes/forms.py
+#| msgid "Header button URL"
+msgid "Third button URL"
+msgstr "URL del tercer botón"
 
 #: apps/themes/forms.py templates/shop/panel/order.html
 #: templates/shop/public/cart.html templates/shop/public/detail.html
@@ -6401,6 +6460,19 @@ msgstr "Elige el tipo de sección."
 #: apps/themes/forms.py
 msgid "Enter the section text."
 msgstr "Introduce el texto de la sección."
+
+#: apps/themes/forms.py
+#| msgid "Enter at least two characters."
+msgid "Enter at least one item."
+msgstr "Introduzca al menos un elemento."
+
+#: apps/themes/forms.py
+msgid ""
+"One item per line, in the same order as the default language: title | short "
+"text."
+msgstr ""
+"Un elemento por línea, en el mismo orden que el idioma predeterminado: "
+"título | texto breve."
 
 #: apps/themes/forms.py templates/themes/theme_list.html
 msgid "Theme ZIP file"
@@ -7204,6 +7276,17 @@ msgid ""
 "The changes were saved to the draft. Publish it to apply it to the site."
 msgstr ""
 "Los cambios se guardaron en el borrador. Publícalo para aplicarlo al sitio."
+
+#: apps/themes/views.py
+#| msgid ""
+#| "The form has expired or the request was not valid. Reload the page and try "
+#| "again."
+msgid ""
+"The home page sections changed in the meantime. Reload the page and try "
+"again."
+msgstr ""
+"Las secciones de la página de inicio han cambiado mientras tanto. Recargue "
+"la página e inténtelo de nuevo."
 
 #: apps/updater/apps.py apps/updater/views.py
 msgid "Update"
@@ -11026,6 +11109,28 @@ msgid ""
 msgstr ""
 "Los cambios se guardan primero en un borrador y no se aplican al sitio hasta"
 " que se publican."
+
+#: templates/themes/customize_home.html
+#| msgid "Set up the home page sections"
+msgid "Language of the home page texts"
+msgstr "Idioma de los textos de la página de inicio"
+
+#: templates/themes/customize_home.html
+#| msgid "Default"
+msgid "default"
+msgstr "predeterminado"
+
+#: templates/themes/customize_home.html
+#, python-format
+msgid ""
+"Texts of the home page in %(language)s. Leave a field empty to show the text"
+" of the default language instead. Section types, links, icons and the order "
+"are the same in every language and are edited in the default language tab."
+msgstr ""
+"Textos de la página de inicio en %(language)s. Deje un campo vacío para "
+"mostrar el texto del idioma predeterminado. Los tipos de sección, los "
+"enlaces, los iconos y el orden son iguales en todos los idiomas y se editan "
+"en la pestaña del idioma predeterminado."
 
 #: templates/themes/customize_home.html
 #, python-format

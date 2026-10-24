@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-24 01:30+0330\n"
+"POT-Creation-Date: 2026-10-24 15:09+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -6102,6 +6102,10 @@ msgid "Free text"
 msgstr "Serbest metin"
 
 #: apps/themes/constants.py
+msgid "Features (icon, title and short text for each item)"
+msgstr "Özellikler (her öğe için simge, başlık ve kısa metin)"
+
+#: apps/themes/constants.py
 msgid "Header menu"
 msgstr "Üst menü"
 
@@ -6281,6 +6285,28 @@ msgid "Choose a category."
 msgstr "Bir kategori seçin."
 
 #: apps/themes/forms.py
+#, python-format
+msgid "Line %(line)s: unknown icon “%(icon)s”. Available icons: %(icons)s."
+msgstr ""
+"%(line)s. satır: “%(icon)s” simgesi bilinmiyor. Kullanılabilir simgeler: "
+"%(icons)s."
+
+#: apps/themes/forms.py
+#, python-format
+msgid ""
+"Line %(line)s is too long: the title may have up to 60 and the text up to "
+"300 characters."
+msgstr ""
+"%(line)s. satır çok uzun: başlık en fazla 60, metin en fazla 300 karakter "
+"olabilir."
+
+#: apps/themes/forms.py
+#, python-format
+#| msgid "At most %(limit)s %(label)s are allowed."
+msgid "At most %(count)s items are allowed."
+msgstr "En fazla %(count)s öğeye izin verilir."
+
+#: apps/themes/forms.py
 msgid "Section type"
 msgstr "Bölüm türü"
 
@@ -6293,8 +6319,42 @@ msgid "Subtitle"
 msgstr "Alt başlık"
 
 #: apps/themes/forms.py
+#| msgid "Featured image"
+msgid "Feature items"
+msgstr "Özellik öğeleri"
+
+#: apps/themes/forms.py
+#, python-format
+msgid ""
+"One item per line: icon | title | short text. The icon may be left empty. "
+"Icons: %(icons)s."
+msgstr ""
+"Her satıra bir öğe: simge | başlık | kısa metin. Simge boş bırakılabilir. "
+"Simgeler: %(icons)s."
+
+#: apps/themes/forms.py
 msgid "Button URL"
 msgstr "Düğme URL’si"
+
+#: apps/themes/forms.py
+#| msgid "Header button text"
+msgid "Second button text"
+msgstr "İkinci düğme metni"
+
+#: apps/themes/forms.py
+#| msgid "Header button URL"
+msgid "Second button URL"
+msgstr "İkinci düğme adresi"
+
+#: apps/themes/forms.py
+#| msgid "Header button text"
+msgid "Third button text"
+msgstr "Üçüncü düğme metni"
+
+#: apps/themes/forms.py
+#| msgid "Header button URL"
+msgid "Third button URL"
+msgstr "Üçüncü düğme adresi"
 
 #: apps/themes/forms.py templates/shop/panel/order.html
 #: templates/shop/public/cart.html templates/shop/public/detail.html
@@ -6309,6 +6369,17 @@ msgstr "Bölüm türünü seçin."
 #: apps/themes/forms.py
 msgid "Enter the section text."
 msgstr "Bölüm metnini girin."
+
+#: apps/themes/forms.py
+#| msgid "Enter at least two characters."
+msgid "Enter at least one item."
+msgstr "En az bir öğe girin."
+
+#: apps/themes/forms.py
+msgid ""
+"One item per line, in the same order as the default language: title | short "
+"text."
+msgstr "Her satıra bir öğe, varsayılan dildeki sırayla: başlık | kısa metin."
 
 #: apps/themes/forms.py templates/themes/theme_list.html
 msgid "Theme ZIP file"
@@ -7090,6 +7161,16 @@ msgstr "Yayımlanmamış değişiklikler atıldı."
 msgid ""
 "The changes were saved to the draft. Publish it to apply it to the site."
 msgstr "Değişiklikler taslağa kaydedildi. Siteye uygulamak için yayımlayın."
+
+#: apps/themes/views.py
+#| msgid ""
+#| "The form has expired or the request was not valid. Reload the page and try "
+#| "again."
+msgid ""
+"The home page sections changed in the meantime. Reload the page and try "
+"again."
+msgstr ""
+"Bu sırada ana sayfa bölümleri değişti. Sayfayı yenileyip tekrar deneyin."
 
 #: apps/updater/apps.py apps/updater/views.py
 msgid "Update"
@@ -10852,6 +10933,27 @@ msgid ""
 msgstr ""
 "Değişiklikler önce bir taslağa kaydedilir ve yayımlanana kadar siteye "
 "uygulanmaz."
+
+#: templates/themes/customize_home.html
+#| msgid "Set up the home page sections"
+msgid "Language of the home page texts"
+msgstr "Ana sayfa metinlerinin dili"
+
+#: templates/themes/customize_home.html
+#| msgid "Default"
+msgid "default"
+msgstr "varsayılan"
+
+#: templates/themes/customize_home.html
+#, python-format
+msgid ""
+"Texts of the home page in %(language)s. Leave a field empty to show the text"
+" of the default language instead. Section types, links, icons and the order "
+"are the same in every language and are edited in the default language tab."
+msgstr ""
+"Ana sayfanın %(language)s dilindeki metinleri. Bir alanı boş bırakırsanız "
+"varsayılan dilin metni gösterilir. Bölüm türleri, bağlantılar, simgeler ve "
+"sıralama tüm dillerde aynıdır ve varsayılan dil sekmesinde düzenlenir."
 
 #: templates/themes/customize_home.html
 #, python-format

@@ -93,13 +93,31 @@ class Pagination:
 
 
 @dataclass(frozen=True)
+class SectionButton:
+    label: str
+    url: str
+
+
+@dataclass(frozen=True)
+class FeatureItem:
+    """یک مورد از بخش «ویژگی‌ها». ``icon`` یکی از نام‌های ثابت (``{% feature_icon item.icon %}``) یا خالی است."""
+    title: str = ""
+    icon: str = ""
+    text: str = ""
+
+
+@dataclass(frozen=True)
 class Section:
+    """یک بخش صفحهٔ اصلی. ``button_label``/``button_url`` همان دکمهٔ نخست ``buttons`` است (سازگاری با قالب‌های قدیمی؛
+    hero تا ۳ دکمه دارد). ``body_html`` Markdown پاک‌سازی‌شده است. ``items``: فقط در بخش ``features``."""
     type: str
     title: str = ""
     subtitle: str = ""
     body_html: str = ""
     button_label: str = ""
     button_url: str = ""
+    buttons: tuple = field(default_factory=tuple)
+    items: tuple = field(default_factory=tuple)
     posts: tuple = field(default_factory=tuple)
     categories: tuple = field(default_factory=tuple)
     page: Optional[PageItem] = None

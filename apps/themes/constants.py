@@ -70,7 +70,18 @@ HOME_SECTION_TYPES = {
     "categories": gettext_lazy("Category list"),
     "page": gettext_lazy("Show the content of a static page"),
     "text": gettext_lazy("Free text"),
+    "features": gettext_lazy("Features (icon, title and short text for each item)"),
 }
+
+# Hero buttons (the first one is also exposed as button_label/button_url for older themes) and feature items.
+MAX_SECTION_BUTTONS = 3
+MAX_FEATURE_ITEMS = 12
+# Icons a "features" item can use; the theme draws them with {% feature_icon item.icon %} (inline SVG supplied by Ravix).
+FEATURE_ICONS = (
+    "zap", "rocket", "shield", "lock", "key", "globe", "code", "puzzle", "palette", "layers", "search", "mail", "users",
+    "heart", "star", "book", "chart", "clock", "calendar", "settings", "file", "image", "tag", "folder", "eye", "check",
+    "cloud", "link", "home", "info",
+)
 
 MENU_LOCATIONS = {"header": gettext_lazy("Header menu"), "footer": gettext_lazy("Footer menu")}
 MENU_KINDS = {

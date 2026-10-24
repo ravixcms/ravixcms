@@ -20,9 +20,10 @@ from django.utils.safestring import mark_safe
 
 from apps.content.models import Category, Page, Post, PublishStatus, Tag
 
-from apps.themes.config import localize_default_text
+from apps.core.markup import render_markdown
+from apps.themes.config import localize_default_text, localized_section
 
-from .dto import CategoryItem, CommentItem, CommentsSection, PageItem, PageLink, Pagination, PostItem, Section, TagItem
+from .dto import CategoryItem, CommentItem, CommentsSection, FeatureItem, PageItem, PageLink, Pagination, PostItem, Section, SectionButton, TagItem
 from .formatting import date_display, date_iso, excerpt_from, reading_time
 
 
@@ -211,23 +212,31 @@ def paginate(request, queryset, *, base_url: str, extra: dict | None = None, per
 
 
 # ------------------------------------------------------------------ بخش‌های صفحه اصلی
-def _plain_html(text: str):
-    return mark_safe(linebreaks(text, autoescape=True)) if text else ""
+def _markdown_html(text: str):
+    return mark_safe(render_markdown(text)) if text else ""  # sanitized by nh3 (apps.core.markup)
 
 
 def build_sections(doc: dict, allowed: tuple, site: dict) -> list[Section]:
+    from django.utils.translation import get_language
+
+    from apps.core.models import SiteSettings
+
+    language, default_language = get_language() or "", SiteSettings.load().language
     sections = []
-    for raw in doc["home"]["sections"]:
-        if not raw["enabled"] or raw["type"] not in allowed:
+    for section in doc["home"]["sections"]:
+        if not section["enabled"] or section["type"] not in allowed:
             continue
+        raw = localized_section(section, language, default_language)  # the visitor's language, field by field
         kind, count = raw["type"], raw["count"]
+        buttons = tuple(SectionButton(label=localize_default_text(b["label"]), url=localize_internal_url(b["url"])) for b in raw["buttons"])
         base = dict(
             type=kind,
             title=localize_default_text(raw["title"]),
             subtitle=raw["subtitle"],
-            body_html=_plain_html(raw["body"]),
+            body_html=_markdown_html(raw["body"]),
             button_label=localize_default_text(raw["button_label"]) if raw["button_url"] else "",
             button_url=localize_internal_url(raw["button_url"]),
+            buttons=buttons,
         )
         if kind == "hero":
             base["title"] = raw["title"] or site["name"]
@@ -260,5 +269,9 @@ def build_sections(doc: dict, allowed: tuple, site: dict) -> list[Section]:
             base["title"] = raw["title"] or page.title
         elif kind == "text" and not (raw["title"] or raw["body"]):
             continue
+        elif kind == "features":
+            base["items"] = tuple(FeatureItem(title=i["title"], icon=i["icon"], text=i["text"]) for i in raw["items"])
+            if not base["items"]:
+                continue
         sections.append(Section(**base))
     return sections
