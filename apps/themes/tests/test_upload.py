@@ -85,8 +85,8 @@ def snapshot(path: Path):
         return out
     for p in sorted(path.rglob("*")):
         rel = p.relative_to(path).as_posix()
-        if rel in (".install.lock", ".revision"):
-            continue  # فایل‌های زیرساختی قفل/مهر نسخه (عمداً پایدار می‌مانند، محتوای قالب نیستند)
+        if rel in (".install.lock", ".revision") or rel == ".i18n" or rel.startswith(".i18n/"):
+            continue  # فایل‌های زیرساختی قفل/مهر نسخه و کش کاتالوگ ترجمهٔ قالب‌ها (مشتق‌شده؛ محتوای قالب نیستند)
         out[rel] = hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() and not p.is_symlink() else "dir"
     return out
 
@@ -714,9 +714,9 @@ class PanelTests(UploadCase):
             upload(self.client, build_zip())
             page = self.client.get(reverse("themes:list"))
             self.assertContains(page, "هنوز منتشر نشده‌اند")
-            # شبیه‌سازی خروجی collectstatic برای هر دو قالب (پیش‌فرض و نصب‌شده)
-            (static_root / "themes" / "my-theme").mkdir(parents=True)
-            (static_root / "themes" / "default").mkdir(parents=True)
+            # شبیه‌سازی خروجی collectstatic برای همهٔ قالب‌ها (قالب‌های همراه مخزن و نصب‌شده)
+            for slug in ["my-theme", *(d.name for d in (Path(settings.BASE_DIR) / "themes").iterdir() if d.is_dir())]:
+                (static_root / "themes" / slug).mkdir(parents=True, exist_ok=True)
             page = self.client.get(reverse("themes:list"))
             self.assertNotContains(page, "هنوز منتشر نشده‌اند")
 

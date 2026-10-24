@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load ravix_theme %}
+{% block body_class %}page-list{% endblock %}
+{% block content %}
+<div class="container">
+  {% include "partials/breadcrumbs.html" %}
+  <header class="page-head">
+    <h1>{% trans "Posts" %}</h1>
+    {% if pagination.total %}<p class="muted">{% blocktrans trimmed with total=pagination.total|local_digits %}{{ total }} posts{% endblocktrans %}</p>{% endif %}
+  </header>
+  {% if categories %}
+  <nav class="cat-nav" aria-label="{% trans "Content categories" %}">
+    <ul class="chips">{% for c in categories %}<li><a href="{{ c.url }}">{{ c.name }} ({{ c.post_count|local_digits }})</a></li>{% endfor %}</ul>
+  </nav>
+  {% endif %}
+  {% if posts %}
+  <div class="cards">{% for post in posts %}{% include "partials/post_row.html" with post=post hlevel=2 %}{% endfor %}</div>
+  {% include "partials/pagination.html" %}
+  {% else %}
+  <div class="empty-state"><p>{% trans "No post has been published yet." %}</p></div>
+  {% endif %}
+</div>
+{% endblock %}

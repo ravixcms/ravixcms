@@ -1,0 +1,18 @@
+{% load i18n %}
+{# Parameters: post, hlevel (2 or 3) #}
+<article class="card{% if post.image_url %} has-media{% endif %}">
+  {% if post.image_url %}
+  <a class="card-media" href="{{ post.url }}" tabindex="-1" aria-hidden="true"><img src="{{ post.image_url }}" alt="" loading="lazy" decoding="async"></a>
+  {% else %}
+  <a class="card-media card-media-empty" href="{{ post.url }}" tabindex="-1" aria-hidden="true"></a>
+  {% endif %}
+  <div class="card-body">
+    {% if post.categories %}<ul class="chips" aria-label="{% trans "Content categories" %}">{% for c in post.categories %}<li><a href="{{ c.url }}" dir="auto">{{ c.name }}</a></li>{% endfor %}</ul>{% endif %}
+    {% if hlevel == 3 %}<h3 class="card-title" dir="auto"><a href="{{ post.url }}">{{ post.title }}</a></h3>{% else %}<h2 class="card-title" dir="auto"><a href="{{ post.url }}">{{ post.title }}</a></h2>{% endif %}
+    {% if post.excerpt %}<p class="card-excerpt" dir="auto">{{ post.excerpt }}</p>{% endif %}
+    <ul class="meta">
+      {% if post.author_name %}<li>{{ post.author_name }}</li>{% endif %}
+      <li><time datetime="{{ post.date_iso }}">{{ post.date_display }}</time></li>
+    </ul>
+  </div>
+</article>

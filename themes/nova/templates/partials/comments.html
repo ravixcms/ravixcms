@@ -1,0 +1,28 @@
+{% load i18n %}
+<section class="comments" id="comments" aria-labelledby="comments-title">
+  <h2 id="comments-title">{% trans "Comments" %}{% if comments.count %} <span class="comments-count">({{ comments.count }})</span>{% endif %}</h2>
+  {% if comments.notice == "pending" %}<p class="comment-notice" role="status">{% trans "Your comment was received and will be shown after the administrator approves it." %}</p>{% endif %}
+  {% if comments.notice == "ok" %}<p class="comment-notice" role="status">{% trans "Your comment was published." %}</p>{% endif %}
+  {% if comments.items %}
+  <ol class="comment-list">{% for c in comments.items %}{% include "partials/comment.html" with c=c %}{% endfor %}</ol>
+  {% else %}<p class="muted">{% trans "No comment has been posted yet." %}</p>{% endif %}
+
+  {% if comments.open %}
+  <form class="comment-form" id="comment-form" method="post" action="{{ comments.action_url }}" novalidate>
+    <h3>{% if comments.reply_to_id %}{% blocktrans trimmed with reply_to_name=comments.reply_to_name %}Reply to {{ reply_to_name }}{% endblocktrans %} <a class="comment-cancel" href="{{ comments.cancel_reply_url }}">{% trans "Cancel" %}</a>{% else %}{% trans "Write your comment" %}{% endif %}</h3>
+    {% if comments.errors.form %}<p class="comment-error" role="alert">{{ comments.errors.form }}</p>{% endif %}
+    {% if comments.reply_to_id %}<input type="hidden" name="parent" value="{{ comments.reply_to_id }}">{% endif %}
+    <div class="field"><label for="cm-name">{% trans "Name" %}</label>
+      <input id="cm-name" name="name" type="text" dir="auto" maxlength="80" required autocomplete="name" value="{{ comments.values.name }}">
+      {% if comments.errors.name %}<p class="comment-error" role="alert">{{ comments.errors.name }}</p>{% endif %}</div>
+    <div class="field"><label for="cm-email">{% trans "Email" %} <span class="muted">{% trans "(not shown)" %}</span></label>
+      <input id="cm-email" name="email" type="email" dir="ltr" maxlength="254" required autocomplete="email" value="{{ comments.values.email }}">
+      {% if comments.errors.email %}<p class="comment-error" role="alert">{{ comments.errors.email }}</p>{% endif %}</div>
+    <div class="field"><label for="cm-body">{% trans "Comment" %}</label>
+      <textarea id="cm-body" name="body" dir="auto" rows="5" maxlength="{{ comments.max_length }}" required>{{ comments.values.body }}</textarea>
+      {% if comments.errors.body %}<p class="comment-error" role="alert">{{ comments.errors.body }}</p>{% endif %}</div>
+    <div class="cm-hp" aria-hidden="true"><label>{% trans "Website (leave empty)" %}<input type="text" name="{{ comments.honeypot_name }}" tabindex="-1" autocomplete="off"></label></div>
+    <button type="submit" class="btn">{% trans "Post comment" %}</button>
+  </form>
+  {% else %}<p class="muted">{% trans "Comments are closed for this post." %}</p>{% endif %}
+</section>

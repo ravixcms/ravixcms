@@ -1,0 +1,7 @@
+{% load i18n %}
+{# Parameters: input_id (a unique id for the field), query #}
+<form class="search-form search-form-lg" role="search" action="{{ site.search_url }}" method="get">
+  <label class="sr-only" for="{{ input_id }}">{% trans "Search phrase" %}</label>
+  <input id="{{ input_id }}" type="search" name="q" value="{{ query }}" placeholder="{% trans "What are you looking for?" %}" maxlength="100" autocomplete="off">
+  <button type="submit" class="btn">{% trans "Search" %}</button>
+</form>

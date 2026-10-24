@@ -1,0 +1,42 @@
+{
+  "api_version": 1,
+  "slug": "nova",
+  "name": {
+    "fa": "نووا",
+    "en": "Nova",
+    "ar": "نوفا",
+    "tr": "Nova",
+    "es": "Nova",
+    "fr": "Nova",
+    "de": "Nova",
+    "ru": "Нова",
+    "pt-br": "Nova",
+    "zh-hans": "Nova 新星"
+  },
+  "version": "1.0.0",
+  "author": "Ravix",
+  "homepage": "https://ravixcms.com",
+  "description": {
+    "fa": "قالبی مدرن و تمیز برای معرفی محصول متن‌باز و وبلاگ؛ hero بزرگ با دو دکمه، بخش ویژگی‌ها، کارت نوشته‌ها، حالت تیره و روشن، و پشتیبانی کامل از ۱۰ زبان.",
+    "en": "A modern, clean theme for an open-source product site and blog: large hero with two buttons, feature cards, post cards, dark and light modes, and full support for 10 languages.",
+    "ar": "قالب عصري ونظيف لموقع منتج مفتوح المصدر ومدونة: واجهة رئيسية كبيرة بزرّين، بطاقات للميزات والمقالات، الوضعان الداكن والفاتح، ودعم كامل لعشر لغات.",
+    "tr": "Açık kaynak ürün sitesi ve blog için modern, temiz bir tema: iki düğmeli büyük giriş alanı, özellik ve yazı kartları, koyu ve açık mod, 10 dilde tam destek.",
+    "es": "Un tema moderno y limpio para el sitio de un producto de código abierto y un blog: portada grande con dos botones, tarjetas de funciones y de entradas, modo oscuro y claro, y compatibilidad total con 10 idiomas.",
+    "fr": "Un thème moderne et épuré pour un site de produit open source et un blog : grand bandeau avec deux boutons, cartes de fonctionnalités et d’articles, modes sombre et clair, et prise en charge complète de 10 langues.",
+    "de": "Ein modernes, klares Theme für die Website eines Open-Source-Produkts und einen Blog: großer Hero-Bereich mit zwei Schaltflächen, Funktions- und Beitragskarten, dunkler und heller Modus sowie volle Unterstützung für 10 Sprachen.",
+    "ru": "Современная аккуратная тема для сайта open-source продукта и блога: большой первый экран с двумя кнопками, карточки возможностей и записей, тёмная и светлая темы, полная поддержка 10 языков.",
+    "pt-br": "Um tema moderno e limpo para o site de um produto de código aberto e um blog: hero grande com dois botões, cartões de recursos e de posts, modos escuro e claro e suporte total a 10 idiomas.",
+    "zh-hans": "适用于开源产品网站和博客的现代简洁主题：带两个按钮的大型首屏、功能卡片与文章卡片、深色与浅色模式，完整支持 10 种语言。"
+  },
+  "screenshot": "screenshot.png",
+  "supports": {
+    "home_sections": [
+      "hero",
+      "latest_posts",
+      "category_posts",
+      "categories",
+      "page",
+      "text"
+    ]
+  }
+}

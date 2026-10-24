@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load ravix_theme %}
+{% block body_class %}page-list{% endblock %}
+{% block content %}
+<div class="container">
+  {% include "partials/breadcrumbs.html" %}
+  <header class="page-head">
+    <h1>{% blocktrans trimmed with name=tag.name %}Tag: {{ name }}{% endblocktrans %}</h1>
+    {% if pagination.total %}<p class="muted">{% blocktrans trimmed with total=pagination.total|local_digits %}{{ total }} posts{% endblocktrans %}</p>{% endif %}
+  </header>
+  {% if posts %}
+  <div class="cards">{% for post in posts %}{% include "partials/post_row.html" with post=post hlevel=2 %}{% endfor %}</div>
+  {% include "partials/pagination.html" %}
+  {% else %}
+  <div class="empty-state"><p>{% trans "No post with this tag was found." %}</p></div>
+  {% endif %}
+</div>
+{% endblock %}

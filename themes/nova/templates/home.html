@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load ravix_theme %}
+{% block body_class %}page-home{% endblock %}
+{% block content %}
+{% with first=sections.0 %}{% if first.type != "hero" %}<h1 class="sr-only">{{ site.name }}</h1>{% endif %}{% endwith %}
+
+{% for s in sections %}
+  {% if s.type == "hero" %}
+  <section class="hero">
+    <div class="container">
+      <div class="hero-inner">
+        {% if forloop.first %}<h1 class="hero-title">{{ s.title }}</h1>{% else %}<h2 class="hero-title">{{ s.title }}</h2>{% endif %}
+        {% if s.subtitle %}<p class="hero-sub">{{ s.subtitle }}</p>{% endif %}
+        {% if s.body_html %}<div class="hero-body">{{ s.body_html }}</div>{% endif %}
+        {% if s.button_url or header.cta %}<p class="hero-actions">{% if s.button_url %}<a class="btn btn-lg" href="{{ s.button_url }}">{{ s.button_label }}</a>{% endif %}{% if header.cta %}<a class="btn btn-lg btn-quiet" href="{{ header.cta.url }}">{{ header.cta.label }}</a>{% endif %}</p>{% endif %}
+      </div>
+    </div>
+  </section>
+
+  {% elif s.type == "latest_posts" or s.type == "category_posts" %}
+  <section class="band" aria-labelledby="sec-{{ forloop.counter }}">
+    <div class="container">
+      <div class="band-head">
+        <h2 id="sec-{{ forloop.counter }}">{% if s.title %}{{ s.title }}{% else %}{% trans "Posts" %}{% endif %}</h2>
+        {% if s.button_url %}<a class="more" href="{{ s.button_url }}">{% if s.button_label %}{{ s.button_label }}{% else %}{% trans "View all" %}{% endif %}</a>{% endif %}
+      </div>
+      <div class="cards">
+        {% for post in s.posts %}{% include "partials/post_row.html" with post=post hlevel=3 %}{% endfor %}
+      </div>
+    </div>
+  </section>
+
+  {% elif s.type == "categories" %}
+  <section class="band" aria-labelledby="sec-{{ forloop.counter }}">
+    <div class="container">
+      <div class="band-head"><h2 id="sec-{{ forloop.counter }}">{% if s.title %}{{ s.title }}{% else %}{% trans "Content categories" %}{% endif %}</h2></div>
+      <ul class="cat-list">
+        {% for c in s.categories %}
+        <li><a href="{{ c.url }}"><strong>{{ c.name }}</strong><span>{% blocktrans trimmed with post_count=c.post_count|local_digits %}{{ post_count }} posts{% endblocktrans %}</span>{% if c.description %}<small>{{ c.description }}</small>{% endif %}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </section>
+
+  {% elif s.type == "page" %}
+  <section class="band{% if '<ul' in s.page.body_html %} band-features{% endif %}" aria-labelledby="sec-{{ forloop.counter }}">
+    <div class="container">
+      <div class="article{% if '<ul' in s.page.body_html %} article-wide{% endif %}">
+        <h2 id="sec-{{ forloop.counter }}">{{ s.title }}</h2>
+        <div class="prose{% if '<ul' in s.page.body_html %} features{% endif %}">{{ s.page.body_html }}</div>
+        <p class="section-link"><a class="more" href="{{ s.page.url }}">{% blocktrans trimmed with title=s.page.title %}Continue on the “{{ title }}” page{% endblocktrans %}</a></p>
+      </div>
+    </div>
+  </section>
+
+  {% elif s.type == "text" %}
+  <section class="band{% if '</p>\n\n<p>' in s.body_html %} band-features{% endif %}"{% if s.title %} aria-labelledby="sec-{{ forloop.counter }}"{% endif %}>
+    <div class="container">
+      <div class="article{% if '</p>\n\n<p>' in s.body_html %} article-wide{% endif %}">
+        {% if s.title %}<h2 id="sec-{{ forloop.counter }}">{{ s.title }}</h2>{% endif %}
+        <div class="prose{% if '</p>\n\n<p>' in s.body_html %} features features-text{% endif %}">{{ s.body_html }}</div>
+        {% if s.button_url %}<p><a class="btn" href="{{ s.button_url }}">{{ s.button_label }}</a></p>{% endif %}
+      </div>
+    </div>
+  </section>
+  {% endif %}
+{% empty %}
+  <section class="band"><div class="container empty-state">
+    <p>{% trans "The home page has no sections yet." %}</p>
+    {% if viewer.customize_url %}<p><a class="btn" href="{{ viewer.customize_url }}">{% trans "Set up the home page sections" %}</a></p>{% endif %}
+  </div></section>
+{% endfor %}
+{% endblock %}
