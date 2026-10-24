@@ -5,6 +5,7 @@
 {% block body %}
 <main class="error-page">
   <div>
+    {% include "partials/_brand_logo.html" %}
     <div class="error-code">{{ status|fa_digits }}</div>
     <h1>{{ title }}</h1>
     <p class="muted">{{ message }}</p>

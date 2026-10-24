@@ -1,0 +1,2 @@
+{% load i18n static %}
+{% if site.logo %}<div class="brand-mark"><img src="{{ site.logo.url }}" alt="{% blocktrans with name=site.site_name %}Logo of {{ name }}{% endblocktrans %}"></div>{% else %}<img class="brand-logo" src="{% static 'brand/ravix-logo.svg' %}" alt="Ravix" width="171" height="56">{% endif %}

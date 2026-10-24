@@ -3,9 +3,9 @@ from django.utils.translation import gettext
 import logging
 
 from django.conf import settings
-from django.core.mail import EmailMessage
 from django.urls import reverse
 
+from apps.core.mailhtml import build_message
 from apps.core.models import SiteSettings
 from apps.core.recipient import language_for_email, use_language
 
@@ -33,8 +33,9 @@ def notify_admin(request, comment) -> bool:
             "",
             (gettext("Manage comments: %(absolute_url)s") % {"absolute_url": absolute_url(request, reverse("comments:list") + f"?status={comment.status}")}),
         ]
+        message = build_message(subject, "\n".join(lines), [cfg.admin_email], settings.DEFAULT_FROM_EMAIL)
     try:
-        EmailMessage(subject, "\n".join(lines), settings.DEFAULT_FROM_EMAIL, [cfg.admin_email]).send()
+        message.send()
     except Exception:  # noqa: BLE001
         logger.exception(cli_gettext("Sending the new-comment notification email failed."))
         return False

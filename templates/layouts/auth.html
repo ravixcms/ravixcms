@@ -5,8 +5,8 @@
 <main class="auth-page">
   <div class="auth-card">
     <div class="auth-brand">
-      <div class="brand-mark">{% include "partials/_brand_mark.html" %}</div>
-      <h1>{{ site.site_name }}</h1>
+      {% include "partials/_brand_logo.html" %}
+      <h1{% if not site.logo and site.site_name|is_default_site_name %} class="sr-only"{% endif %}>{{ site.site_name }}</h1>
       {% if site.tagline %}<p>{{ site.tagline }}</p>{% endif %}
     </div>
     <div class="card"><div class="card-body">{% block auth_content %}{% endblock %}</div></div>

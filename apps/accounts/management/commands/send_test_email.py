@@ -2,10 +2,10 @@ from apps.core.clilang import cli_gettext
 import socket
 
 from django.conf import settings
-from django.core.mail import EmailMessage
 from django.core.management.base import BaseCommand, CommandError
 from django.utils.translation import gettext
 
+from apps.core.mailhtml import build_message
 from apps.core.recipient import language_for_email, use_language
 from apps.core.regional import normalize_language
 
@@ -38,9 +38,10 @@ class Command(BaseCommand):
         with use_language(code):
             subject = subject or gettext("Ravix test email")
             body = gettext("This is a test message; it shows that Ravix email is being sent from %(hostname)s.") % {"hostname": socket.gethostname()}
+            message = build_message(subject, body, [to])
         self.stdout.write(cli_gettext("message language: %(a1)s") % {"a1": code})
         try:
-            sent = EmailMessage(subject, body, to=[to]).send(fail_silently=False)
+            sent = message.send(fail_silently=False)
         except Exception as exc:  # noqa: BLE001 - هر خطای SMTP/شبکه را روشن گزارش بده
             raise CommandError(cli_gettext("Sending failed: %(a1)s: %(exc)s") % {"a1": type(exc).__name__, "exc": exc}) from None
         if not sent:

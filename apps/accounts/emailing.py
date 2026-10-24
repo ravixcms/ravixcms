@@ -11,10 +11,10 @@ from urllib.parse import urlsplit
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core import signing
-from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.urls import reverse
 
+from apps.core.mailhtml import build_message
 from apps.core.recipient import current_language, language_for_user, use_language
 
 from . import throttle
@@ -72,8 +72,9 @@ def send_verification_email(request, user) -> bool:
     with use_language(language_for_user(user, fallback=current_language())):
         subject = " ".join(render_to_string("accounts/email/verify_subject.txt", ctx).split())
         body = render_to_string("accounts/email/verify.txt", ctx)
+        message = build_message(subject, body, [user.email])  # built in the recipient's language (text direction)
     try:
-        EmailMessage(subject, body, to=[user.email]).send(fail_silently=False)
+        message.send(fail_silently=False)
     except Exception:  # noqa: BLE001 - SMTP خراب نباید ثبت‌نام/ورود را بشکند یا چیزی فاش کند
         logger.exception(cli_gettext("Sending the verification email to user %s failed."), user.pk)
         return False

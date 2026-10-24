@@ -50,6 +50,12 @@ class LoginView(RedirectAuthenticatedMixin, DjangoLoginView):
     template_name = "accounts/login.html"
     authentication_form = LoginForm
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Django puts a ``RequestSite`` under "site"; the templates (and the context processor) mean the SiteSettings: name, logo, favicon.
+        context.pop("site", None)
+        return context
+
     def form_valid(self, form):
         response = super().form_valid(form)
         if not form.cleaned_data.get("remember_me"):

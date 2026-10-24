@@ -65,8 +65,6 @@ class SiteHealthTestEmailView(CapabilityRequiredMixin, View):
     http_method_names = ["post"]
 
     def post(self, request):
-        from django.core.mail import EmailMessage
-
         to = request.user.email
         if not to:
             messages.error(request, gettext("Your account has no email; add an email in your profile first."))
@@ -76,11 +74,13 @@ class SiteHealthTestEmailView(CapabilityRequiredMixin, View):
             messages.warning(request, gettext("Wait a few seconds and try again."))
             return redirect("core:site_health")
         try:
+            from .mailhtml import build_message
             from .recipient import current_language, language_for_email, use_language
 
             with use_language(language_for_email(to, fallback=current_language())):  # in the language of the person who will read it
                 subject, text = gettext("Ravix test email"), gettext("This is a test message and shows that sending email from your site works.")
-            sent = EmailMessage(subject, text, to=[to]).send(fail_silently=False)
+                message = build_message(subject, text, [to])
+            sent = message.send(fail_silently=False)
         except Exception as exc:  # noqa: BLE001
             messages.error(request, (gettext("Sending failed (%(name)s). Check the SMTP settings.") % {"name": type(exc).__name__}))
         else:

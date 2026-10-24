@@ -1,3 +1,10 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="static/brand/ravix-logo-dark.svg">
+    <img src="static/brand/ravix-logo.svg" alt="Ravix" width="320">
+  </picture>
+</p>
+
 # Ravix (راویکس)
 
 **سیستم مدیریت محتوای فارسی و راست‌چین** برای وبلاگ، سایت شرکتی و فروشگاه کوچک — با Python و Django. نسخهٔ `0.9.0`.

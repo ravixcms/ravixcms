@@ -30,7 +30,12 @@
   --c-text: #1d2433;
   --c-muted: #667089;
 
-  --c-primary: #4f46e5;
+  /* Official Ravix brand colours (static/brand/README.md). --c-primary is the same Indigo. */
+  --brand-navy: #0F172A;
+  --brand-indigo: #4F46E5;
+  --brand-amber: #F59E0B;
+
+  --c-primary: var(--brand-indigo);
   --c-primary-600: #4338ca;
   --c-primary-50: #eef0ff;
   --c-success: #0f9d6b;
@@ -179,6 +184,9 @@ textarea.input { resize: vertical; }
   box-shadow: 0 8px 20px rgba(79, 70, 229, .35); overflow: hidden;
 }
 .brand-mark img { width: 100%; height: 100%; object-fit: cover; }
+.brand-mark.is-ravix { background: none; box-shadow: none; border-radius: 25%; overflow: visible; }
+.brand-mark.is-ravix img { display: block; border-radius: 25%; box-shadow: 0 0 0 1px rgba(255, 255, 255, .14); }
+.brand-logo { display: block; width: auto; height: 56px; max-width: 100%; margin: 0 auto .75rem; }
 .auth-brand h1 { font-size: 1.4rem; margin-bottom: .15rem; }
 .auth-brand p { margin: 0; color: var(--c-muted); font-size: .92rem; }
 .auth-card .card-body { padding: 1.75rem; }

@@ -959,3 +959,6 @@ msgstr "فایل استاتیک %r نه در manifest است و نه در STATIC
 #, python-format
 msgid "The theme “%(slug)s” in %(ignored)s is unused: %(winner)s has the same ID and wins; delete the unused folder"
 msgstr "قالب «%(slug)s» در %(ignored)s استفاده نمی‌شود: %(winner)s همان شناسه را دارد و برنده است؛ پوشهٔ بی‌استفاده را پاک کنید"
+
+msgid "The branded HTML part of the email could not be built; sending plain text only."
+msgstr "بخش HTML برنددار ایمیل ساخته نشد؛ فقط متن ساده فرستاده می‌شود."

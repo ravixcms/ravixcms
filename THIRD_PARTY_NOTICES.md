@@ -9,3 +9,5 @@ Python dependencies are installed from PyPI and keep their own licenses
 gunicorn – MIT, WhiteNoise – MIT, cryptography – Apache-2.0/BSD, nh3 – MIT, Markdown – BSD-3,
 jdatetime – Python-2.0/MIT-style). See `requirements.lock` for exact versions;
 check each package's metadata (`pip show -v <name>`) for the authoritative license.
+
+Logo: the official Ravix logo (`static/brand/`) is set in Space Grotesk Bold (SIL Open Font License 1.1); the text is converted to outlines, so no font file is shipped or needed.

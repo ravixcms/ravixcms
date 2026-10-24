@@ -177,8 +177,10 @@ def theme_head(context):
     favicon = site.get("favicon_url")
     if favicon:
         parts.append(format_html('<link rel="icon" href="{}">', favicon))
-    else:
-        parts.append(mark_safe('<link rel="icon" href="data:,">'))  # از درخواست بی‌فایده /favicon.ico جلوگیری می‌کند
+    else:  # the site and its theme have no favicon of their own: the official Ravix icon (also stops the useless /favicon.ico request)
+        parts.append(format_html('<link rel="icon" href="{}" sizes="48x48">', static("brand/favicon.ico")))
+        parts.append(format_html('<link rel="icon" type="image/svg+xml" href="{}">', static("brand/ravix-icon.svg")))
+        parts.append(format_html('<link rel="apple-touch-icon" href="{}">', static("brand/png/apple-touch-icon.png")))
     preload = vars_.get("font_preload_url")
     if preload and not localefmt.uses_arabic_script():  # the Persian/Arabic font is not used for this language
         preload = static("fonts/inter-latin-wght-normal.woff2") if localefmt.base_language() != "zh" else ""

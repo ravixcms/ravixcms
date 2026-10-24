@@ -21,6 +21,22 @@ def ui_languages():
     return list(settings.LANGUAGES)
 
 
+@register.filter
+def is_default_site_name(name) -> bool:
+    """True for an empty site name or the product's own name in any interface language (the logo already says it)."""
+    from django.conf import settings
+    from django.utils import translation
+
+    name = str(name or "").strip()
+    if not name:
+        return True
+    names = {"Ravix"}
+    for code, _label in settings.LANGUAGES:
+        with translation.override(code):
+            names.add(translation.gettext("Ravix"))
+    return name in names
+
+
 @register.filter(name="tr")
 def tr_filter(value):
     """Translate a dynamic text (plugin/theme manifest strings) with the active language."""

@@ -173,8 +173,20 @@ class PasswordResetRequestForm(StyledFormMixin, PasswordResetForm):
         """The message is written in the recipient's language (profile, else the language the visitor is using now)."""
         from apps.core.recipient import current_language, language_for_user, use_language
 
+        from django.template import loader
+
+        from apps.core.mailhtml import build_message
+
         with use_language(language_for_user(context.get("user"), fallback=current_language())):
-            super().send_mail(subject_template_name, email_template_name, context, from_email, to_email, html_email_template_name)
+            subject = "".join(loader.render_to_string(subject_template_name, context).splitlines())
+            body = loader.render_to_string(email_template_name, context)
+            message = build_message(subject, body, [to_email], from_email)  # text + HTML alternative with the Ravix logo
+        try:
+            message.send()
+        except Exception:  # noqa: BLE001 - the same behaviour and logger as Django's PasswordResetForm.send_mail
+            from django.contrib.auth.forms import logger as auth_logger
+
+            auth_logger.exception("Failed to send password reset email to %s", context["user"].pk)
 
     def save(self, *args, request=None, **kwargs):
         email = self.cleaned_data["email"]

@@ -6,7 +6,7 @@
   <aside class="sidebar" id="sidebar" aria-label="{% trans "Main menu" %}">
     <div class="sidebar-brand">
       <a href="{% url 'public:home' %}" class="sidebar-brand-link" data-view-site title="{% trans "View site" %}">
-        <span class="brand-mark">{% include "partials/_brand_mark.html" %}</span>
+        <span class="brand-mark{% if not site.logo %} is-ravix{% endif %}">{% include "partials/_brand_mark.html" %}</span>
         <span>{% blocktrans trimmed with site_name=site.site_name %}<strong>{{ site_name }}</strong><small>Admin panel</small>{% endblocktrans %}<span class="sr-only"> — {% trans "View site" %}</span></span>
       </a>
       <a href="{% url 'public:home' %}" class="sidebar-brand-new" data-view-site-new target="_blank" rel="noopener" title="{% trans "View site in a new tab" %}" aria-label="{% trans "View site in a new tab" %}">{% icon "external" 16 %}</a>
