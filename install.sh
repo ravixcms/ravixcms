@@ -1,17 +1,18 @@
 #!/usr/bin/env bash
-# نصب Ravix روی Ubuntu 22.04 / 24.04:  Python، PostgreSQL، کاربر سیستمی، Gunicorn+systemd، Nginx و Let's Encrypt (certbot).
+# Installs Ravix on Ubuntu 22.04 / 24.04: Python, PostgreSQL, a system user, Gunicorn + systemd, Nginx and Let's Encrypt (certbot).
 #
-#   sudo ./install.sh                                   # تعاملی؛ پیش از هر تغییر می‌پرسد
-#   sudo ./install.sh --domain example.com --email me@example.com --yes   # غیرتعاملی
-#   sudo ./install.sh --dry-run                         # فقط نشان می‌دهد چه می‌کرد
+#   sudo ./install.sh                                   # interactive; asks before every change
+#   sudo ./install.sh --domain example.com --email me@example.com --yes   # non-interactive
+#   sudo ./install.sh --dry-run                         # only shows what it would do
 #
-# Idempotent: هر مرحله ابتدا وضعیت را می‌سنجد و اگر انجام شده باشد رد می‌شود؛ اجرای دوباره امن است.
-# رازها (رمز دیتابیس، کلید Django، توکن نصب) فقط در /etc/ravix/ravix.env (مجوز 640) نوشته و هرگز بازنویسی نمی‌شوند.
-# راهنما: docs/installer.md
+# Idempotent: every step checks the state first and is skipped when done; running it again is safe.
+# Secrets (database password, Django key, install token) are written only to /etc/ravix/ravix.env (mode 640) and never overwritten.
+# Every message the operator sees is English here and is translated through t() from deploy/install.<lang>.tsv; the language is
+# chosen with RAVIX_CLI_LANG=fa (or --lang fa), the same variable as the Python CLI. Guide: docs/installer.md
 set -Eeuo pipefail
 IFS=$'\n\t'
 
-# ----------------------------------------------------------------- پیش‌فرض‌ها و گزینه‌ها
+# ----------------------------------------------------------------- defaults and options
 APP_USER=ravix
 BASE=/srv/ravix
 APP_DIR=$BASE/app
@@ -23,6 +24,7 @@ DB_NAME=ravix
 DB_USER=ravix
 LOG_FILE=/var/log/ravix-install.log
 SRC="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+HERE="$SRC"   # where deploy/ (units and message catalogs) lives; --source only changes where the code is copied from
 
 DOMAIN=""
 LE_EMAIL=""
@@ -34,21 +36,45 @@ NGINX=1
 SYSTEMD=auto
 CHANGES=0
 
-usage() {
-  cat <<'EOF'
-استفاده: sudo ./install.sh [گزینه‌ها]
-  --domain D       دامنهٔ سایت (بدون http://)
-  --email E        ایمیل برای Let's Encrypt (اطلاع‌رسانی انقضا)
-  --no-www         www.D را در nginx/گواهی نیاور
-  --no-ssl         بدون certbot (فقط وقتی TLS جای دیگری تمام می‌شود: Cloudflare، لودبالانسر)
-  --no-nginx       nginx را دست نزن (پراکسی را خودتان می‌سازید)
-  --no-systemd     سرویس/تایمر systemd نساز (مثلاً کانتینر)
-  --source DIR     مسیر کد (پیش‌فرض: پوشهٔ همین اسکریپت)
-  -y, --yes        به همهٔ پرسش‌ها «بله» (غیرتعاملی)
-  -n, --dry-run    هیچ تغییری نده؛ فقط چاپ کن
-  -h, --help
-EOF
+# ----------------------------------------------------------------- language of the messages (RAVIX_CLI_LANG / --lang)
+declare -A I18N=()
+LANG_CODE="${RAVIX_CLI_LANG:-}"
+for ((i = 1; i < $#; i++)); do [ "${!i}" = "--lang" ] && { j=$((i + 1)); LANG_CODE="${!j}"; }; done
+LANG_CODE="${LANG_CODE//-/_}"
+load_messages() {  # deploy/install.<lang>.tsv (msgid<TAB>translation); a language without a file simply stays English
+  local code f k v
+  for code in "$LANG_CODE" "${LANG_CODE%%_*}"; do
+    [ -n "$code" ] && [ "$code" != en ] || continue
+    f="$HERE/deploy/install.$code.tsv"
+    [ -f "$f" ] || continue
+    while IFS=$'\t' read -r k v || [ -n "$k" ]; do [ -n "$k" ] && I18N["$k"]="$v"; done < "$f"
+    return 0
+  done
 }
+t() {  # t "English message with %s" args... → the message in the operator's language (printf-style, no trailing newline)
+  local m="$1"; shift
+  [ -n "${I18N[$m]+x}" ] && m="${I18N[$m]}"
+  # shellcheck disable=SC2059
+  printf -- "$m" "$@"
+}
+
+
+usage() {
+  t "Usage: sudo ./install.sh [options]"; echo
+  t "  --domain D       the site's domain (without http://)"; echo
+  t "  --email E        email for Let's Encrypt (expiry notices)"; echo
+  t "  --no-www         do not add www.D to nginx / the certificate"; echo
+  t "  --no-ssl         no certbot (only when TLS ends elsewhere: Cloudflare, a load balancer)"; echo
+  t "  --no-nginx       do not touch nginx (you build the proxy yourself)"; echo
+  t "  --no-systemd     do not create systemd services/timers (e.g. in a container)"; echo
+  t "  --source DIR     path of the code (default: the folder of this script)"; echo
+  t "  --lang CODE      language of these messages (same as RAVIX_CLI_LANG; 'fa' ships with Ravix)"; echo
+  t "  -y, --yes        answer “yes” to every question (non-interactive)"; echo
+  t "  -n, --dry-run    change nothing; only print"; echo
+  t "  -h, --help"; echo
+}
+
+load_messages
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -59,34 +85,37 @@ while [ $# -gt 0 ]; do
     --no-nginx) NGINX=0; SSL=0; shift;;
     --no-systemd) SYSTEMD=no; shift;;
     --source) SRC="$(cd "${2:?}" && pwd)"; shift 2;;
+    --lang) shift 2;;
     -y|--yes) ASSUME_YES=1; shift;;
     -n|--dry-run) DRY_RUN=1; shift;;
     -h|--help) usage; exit 0;;
-    *) echo "گزینهٔ ناشناخته: $1" >&2; usage >&2; exit 2;;
+    *) t "Unknown option: %s" "$1" >&2; echo >&2; usage >&2; exit 2;;
   esac
 done
 
-# ----------------------------------------------------------------- ابزارهای کمکی
+# ----------------------------------------------------------------- helpers (every message goes through t())
 if [ -t 1 ]; then B=$'\033[1m'; G=$'\033[32m'; Y=$'\033[33m'; R=$'\033[31m'; N=$'\033[0m'; else B=""; G=""; Y=""; R=""; N=""; fi
-step() { printf '\n%s== %s%s\n' "$B" "$*" "$N"; }
-ok()   { printf '  %s✔%s %s\n' "$G" "$N" "$*"; }
-warn() { printf '  %s!%s %s\n' "$Y" "$N" "$*" >&2; }
-die()  { printf '%s✘ %s%s\n' "$R" "$*" "$N" >&2; exit 1; }
-trap 'die "خطای پیش‌بینی‌نشده در خط $LINENO (دستور: $BASH_COMMAND). لاگ: $LOG_FILE"' ERR
+step() { printf '\n%s== %s%s\n' "$B" "$(t "$@")" "$N"; }
+ok()   { printf '  %s✔%s %s\n' "$G" "$N" "$(t "$@")"; }
+warn() { printf '  %s!%s %s\n' "$Y" "$N" "$(t "$@")" >&2; }
+die()  { printf '%s✘ %s%s\n' "$R" "$(t "$@")" "$N" >&2; exit 1; }
+trap 'die "Unexpected error at line %s (command: %s). Log: %s" "$LINENO" "$BASH_COMMAND" "$LOG_FILE"' ERR
 
-run() {  # اجرای دستور تغییردهنده؛ در dry-run فقط چاپ می‌شود
+run() {  # run a changing command; in dry-run only print it
   if [ "$DRY_RUN" = 1 ]; then (IFS=' '; printf '  [dry-run] %s\n' "$*"); return 0; fi
   CHANGES=$((CHANGES + 1)); "$@"
 }
 
-confirm() {  # confirm "پرسش" → 0=بله
-  if [ "$ASSUME_YES" = 1 ] || [ "$DRY_RUN" = 1 ]; then printf '  ? %s  [بله]\n' "$1"; return 0; fi
-  [ -t 0 ] || die "ورودی تعاملی نیست؛ با --yes اجرا کنید یا از ترمینال اجرا کنید."
-  local a; read -r -p "  ? $1 [y/N] " a; [[ "$a" =~ ^([yY]|yes|بله)$ ]]
+confirm() {  # confirm "question" args... → 0 = yes
+  local q; q="$(t "$@")"
+  if [ "$ASSUME_YES" = 1 ] || [ "$DRY_RUN" = 1 ]; then printf '  ? %s  [%s]\n' "$q" "$(t "yes")"; return 0; fi
+  [ -t 0 ] || die "Input is not interactive; run with --yes or from a terminal."
+  local a; read -r -p "  ? $q [y/N] " a; [[ "$a" =~ ^([yY]|yes|بله)$ ]]
 }
 
-ask() {  # ask VAR "پرسش" [پیش‌فرض]
-  local __var="$1" __q="$2" __def="${3:-}" __a=""
+ask() {  # ask VAR "question" [default]
+  local __var="$1" __q __def="${3:-}" __a=""
+  __q="$(t "$2")"
   if [ -n "${!__var}" ]; then return 0; fi
   if [ "$ASSUME_YES" = 1 ] || [ ! -t 0 ]; then printf -v "$__var" '%s' "$__def"; return 0; fi
   read -r -p "  ? $__q${__def:+ [$__def]} " __a; printf -v "$__var" '%s' "${__a:-$__def}"
@@ -94,13 +123,13 @@ ask() {  # ask VAR "پرسش" [پیش‌فرض]
 
 rand_hex() { openssl rand -hex "$1"; }
 as_app() { runuser -u "$APP_USER" -- "$@"; }
-envsh() {  # اجرای دستور به‌عنوان کاربر سرویس با متغیرهای ravix.env
+envsh() {  # run a command as the service user with the variables of ravix.env
   runuser -u "$APP_USER" -- bash -c 'set -a; . "$1"; set +a; shift; cd '"$APP_DIR"'; exec "$@"' _ "$ENV_FILE" "$@"
 }
 env_get() { [ -r "$ENV_FILE" ] && grep -E "^$1=" "$ENV_FILE" | head -1 | cut -d= -f2- || true; }
-env_set() {  # env_set KEY VALUE — فقط اگر کلید نبود می‌افزاید؛ هرگز مقدار موجود را عوض نمی‌کند
+env_set() {  # env_set KEY VALUE — adds the key only if missing; never changes an existing value
   if [ -n "$(env_get "$1")" ]; then return 0; fi
-  [ "$DRY_RUN" = 1 ] && { printf '  [dry-run] %s ← (تنظیم می‌شد)\n' "$1"; return 0; }
+  [ "$DRY_RUN" = 1 ] && { printf '  [dry-run] '; t "%s ← (would be set)" "$1"; echo; return 0; }
   printf '%s=%s\n' "$1" "$2" >> "$ENV_FILE"; CHANGES=$((CHANGES + 1))
 }
 have_systemd() {
@@ -109,92 +138,97 @@ have_systemd() {
 }
 pkg_missing() { local p; for p in "$@"; do dpkg -s "$p" >/dev/null 2>&1 || echo "$p"; done; }
 
-# ----------------------------------------------------------------- ۰. بررسی‌های اولیه
-step "بررسی پیش‌نیازها"
-[ "$(id -u)" = 0 ] || die "با دسترسی root اجرا کنید: sudo ./install.sh"
+# ----------------------------------------------------------------- 0. preliminary checks
+step "Checking prerequisites"
+[ "$(id -u)" = 0 ] || die "Run as root: sudo ./install.sh"
 if [ "$DRY_RUN" = 0 ]; then mkdir -p "$(dirname "$LOG_FILE")"; exec > >(tee -a "$LOG_FILE") 2>&1; fi
 . /etc/os-release 2>/dev/null || true
+UNKNOWN_OS="$(t "unknown")"
 if [ "${ID:-}" != "ubuntu" ] || { [ "${VERSION_ID:-}" != "22.04" ] && [ "${VERSION_ID:-}" != "24.04" ]; }; then
-  if [ "${RAVIX_SKIP_OS_CHECK:-0}" = 1 ]; then warn "سیستم ${PRETTY_NAME:-نامعلوم} پشتیبانی‌نشده است؛ به‌دلیل RAVIX_SKIP_OS_CHECK=1 ادامه می‌دهیم"
-  else die "فقط Ubuntu 22.04 و 24.04 پشتیبانی می‌شود (این سیستم: ${PRETTY_NAME:-نامعلوم})."; fi
+  if [ "${RAVIX_SKIP_OS_CHECK:-0}" = 1 ]; then warn "The system %s is not supported; continuing because of RAVIX_SKIP_OS_CHECK=1" "${PRETTY_NAME:-$UNKNOWN_OS}"
+  else die "Only Ubuntu 22.04 and 24.04 are supported (this system: %s)." "${PRETTY_NAME:-$UNKNOWN_OS}"; fi
 fi
-ok "سیستم‌عامل: ${PRETTY_NAME:-?}"
-[ -f "$SRC/manage.py" ] && [ -f "$SRC/requirements.lock" ] || die "کد Ravix در $SRC پیدا نشد (manage.py / requirements.lock). --source را بدهید."
-ok "کد: $SRC"
-if have_systemd; then ok "systemd فعال است"; else warn "systemd در حال اجرا نیست؛ سرویس/تایمر ساخته نمی‌شود (برای کانتینر طبیعی است)"; SYSTEMD=no; fi
+ok "Operating system: %s" "${PRETTY_NAME:-?}"
+[ -f "$SRC/manage.py" ] && [ -f "$SRC/requirements.lock" ] || die "The Ravix code was not found in %s (manage.py / requirements.lock). Pass --source." "$SRC"
+ok "Code: %s" "$SRC"
+if have_systemd; then ok "systemd is active"; else warn "systemd is not running; no service/timer is created (normal in a container)"; SYSTEMD=no; fi
 
 if [ "$NGINX" = 1 ] || [ "$SSL" = 1 ]; then
-  ask DOMAIN "دامنهٔ سایت (مثل example.com):"
-  [[ "$DOMAIN" =~ ^[A-Za-z0-9]([A-Za-z0-9.-]*[A-Za-z0-9])?$ ]] || die "دامنه نامعتبر یا خالی است (--domain)."
+  ask DOMAIN "The site's domain (e.g. example.com):"
+  [[ "$DOMAIN" =~ ^[A-Za-z0-9]([A-Za-z0-9.-]*[A-Za-z0-9])?$ ]] || die "The domain is invalid or empty (--domain)."
 else
-  ask DOMAIN "نام میزبان/دامنه برای ALLOWED_HOSTS:" "localhost"
+  ask DOMAIN "Host name / domain for ALLOWED_HOSTS:" "localhost"
 fi
-if [ "$SSL" = 1 ]; then ask LE_EMAIL "ایمیل برای Let's Encrypt (خالی = بدون ایمیل):"; fi
-[ "$SSL" = 0 ] && [ "$NGINX" = 1 ] && warn "بدون TLS: کوکی‌های نشست در production «Secure» هستند؛ ورود فقط پشت HTTPS (پایان‌دهندهٔ TLS دیگر) کار می‌کند."
+if [ "$SSL" = 1 ]; then ask LE_EMAIL "Email for Let's Encrypt (empty = no email):"; fi
+[ "$SSL" = 0 ] && [ "$NGINX" = 1 ] && warn "Without TLS: session cookies are “Secure” in production; login works only behind HTTPS (another TLS terminator)."
 
-cat <<EOF
+CERTBOT_PKG=""; [ "$SSL" = 1 ] && CERTBOT_PKG=", certbot"
+echo
+t "  With your confirmation at each step, this script will:"; echo
+t "    • install the missing apt packages (python3-venv, postgresql, nginx%s, rsync, openssl)" "$CERTBOT_PKG"; echo
+t "    • create the system user “%s” and folders in %s, settings in %s" "$APP_USER" "$BASE" "$ENV_DIR"; echo
+t "    • copy the code to %s and build the virtualenv in %s" "$APP_DIR" "$VENV"; echo
+t "    • create the PostgreSQL role/database “%s” with a random password" "$DB_NAME"; echo
+t "    • run migrate, collectstatic, the Gunicorn service and the systemd timers"; echo
+if [ "$SSL" = 1 ]; then t "    • set up the nginx site for “%s” and a Let's Encrypt certificate" "$DOMAIN"; else t "    • set up the nginx site for “%s”" "$DOMAIN"; fi; echo
+confirm "Continue?" || { t "Cancelled; nothing was changed."; echo; exit 0; }
 
-  این اسکریپت (با تأیید شما در هر مرحله) این کارها را انجام می‌دهد:
-    • نصب بسته‌های apt ناقص (python3-venv، postgresql، nginx$([ "$SSL" = 1 ] && echo '، certbot')، rsync، openssl)
-    • کاربر سیستمی «$APP_USER» و پوشه‌ها در $BASE، تنظیمات در $ENV_DIR
-    • کپی کد به $APP_DIR و ساخت virtualenv در $VENV
-    • ساخت نقش/دیتابیس PostgreSQL «$DB_NAME» با رمز تصادفی
-    • migrate، collectstatic، سرویس Gunicorn و تایمرهای systemd
-    • سایت nginx برای «$DOMAIN»$([ "$SSL" = 1 ] && echo " و گواهی Let's Encrypt")
-EOF
-confirm "ادامه می‌دهید؟" || { echo "لغو شد؛ هیچ تغییری داده نشد."; exit 0; }
-
-# ----------------------------------------------------------------- ۱. بسته‌های apt
-step "بسته‌های سیستمی"
+# ----------------------------------------------------------------- 1. apt packages
+step "System packages"
 PKGS=(python3 python3-venv ca-certificates curl openssl rsync postgresql postgresql-client)
 [ "$NGINX" = 1 ] && PKGS+=(nginx)
 [ "$SSL" = 1 ] && PKGS+=(certbot python3-certbot-nginx)
 mapfile -t MISSING < <(pkg_missing "${PKGS[@]}")
 if [ "${#MISSING[@]}" -gt 0 ] && [ -n "${MISSING[0]}" ]; then
-  echo "  بسته‌های ناقص: $(IFS=' '; echo "${MISSING[*]}")"
-  confirm "نصب با apt؟" || die "بدون این بسته‌ها نمی‌توان ادامه داد."
+  printf '  '; t "Missing packages: %s" "$(IFS=' '; echo "${MISSING[*]}")"; echo
+  confirm "Install with apt?" || die "Cannot continue without these packages."
   run apt-get update -y
   run env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "${MISSING[@]}"
 else
-  ok "همهٔ بسته‌های لازم نصب‌اند"
+  ok "All required packages are installed"
 fi
 
-# پایتون ≥ 3.11 (Ubuntu 22.04 فقط 3.10 دارد ⇒ python3.12 از deadsnakes با تأیید شما)
+# Python >= 3.11 (Ubuntu 22.04 only has 3.10 => python3.12 from deadsnakes, with your confirmation)
 PYBIN=""
 for c in python3.13 python3.12 python3.11 python3; do
   if command -v "$c" >/dev/null 2>&1 && "$c" -c 'import sys; sys.exit(0 if sys.version_info >= (3, 11) else 1)' 2>/dev/null; then PYBIN="$(command -v "$c")"; break; fi
 done
 if [ -z "$PYBIN" ]; then
-  warn "پایتون ۳٫۱۱ یا بالاتر پیدا نشد (Ubuntu ${VERSION_ID:-?} نسخهٔ قدیمی‌تر دارد)."
-  confirm "افزودن مخزن deadsnakes و نصب python3.12؟" || die "پایتون ≥ 3.11 لازم است."
+  warn "Python 3.11 or newer was not found (Ubuntu %s has an older version)." "${VERSION_ID:-?}"
+  confirm "Add the deadsnakes repository and install python3.12?" || die "Python >= 3.11 is required."
   run env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends software-properties-common
   run add-apt-repository -y ppa:deadsnakes/ppa
   run apt-get update -y
   run env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends python3.12 python3.12-venv
   PYBIN=/usr/bin/python3.12
 fi
-ok "پایتون: $PYBIN ($("$PYBIN" -V 2>&1 || echo '?'))"
+ok "Python: %s (%s)" "$PYBIN" "$("$PYBIN" -V 2>&1 || echo '?')"
 
-# ----------------------------------------------------------------- ۲. کاربر و پوشه‌ها
-step "کاربر سیستمی و پوشه‌ها"
-if id "$APP_USER" >/dev/null 2>&1; then ok "کاربر $APP_USER وجود دارد"
+# ----------------------------------------------------------------- 2. user and folders
+# Ownership model (deploy/*.service must match it; apps/core/tests/test_deploy_permissions.py checks both):
+#   code and plugins/  root:ravix 750   read-only for the service; the units therefore need SupplementaryGroups=ravix
+#   media              ravix:www-data 2750   nginx (www-data) reads it
+#   cache folder       ravix:www-data 750
+#   /etc/ravix         root:ravix 750, ravix.env 640
+step "System user and folders"
+if id "$APP_USER" >/dev/null 2>&1; then ok "The user %s exists" "$APP_USER"
 else
-  confirm "ساخت کاربر سیستمی «$APP_USER» (بدون ورود، home=$BASE)؟" || die "کاربر لازم است."
+  confirm "Create the system user “%s” (no login, home=%s)?" "$APP_USER" "$BASE" || die "The user is required."
   run adduser --system --group --home "$BASE" --shell /usr/sbin/nologin "$APP_USER"
 fi
-if getent group "$APP_USER" | grep -qw www-data; then ok "www-data عضو گروه $APP_USER است"
+if getent group "$APP_USER" | grep -qw www-data; then ok "www-data is a member of the group %s" "$APP_USER"
 else
-  [ "$NGINX" = 1 ] && { confirm "افزودن www-data به گروه $APP_USER (برای خواندن سوکت/media)؟" && run usermod -aG "$APP_USER" www-data; }
+  [ "$NGINX" = 1 ] && { confirm "Add www-data to the group %s (to read the socket/media)?" "$APP_USER" && run usermod -aG "$APP_USER" www-data; }
 fi
-CACHE_DIR=/var/cache/ravix   # کش فایلی مشترک بین ورکرها (systemd هم با CacheDirectory= می‌سازد)
+CACHE_DIR=/var/cache/ravix   # file cache shared by the workers (systemd also creates it with CacheDirectory=)
 DIRS=(app media shop_private plugins_installed plugin_backups themes_installed registry_packages update_work update_backups)
 need_dirs=0; for d in "${DIRS[@]}"; do [ -d "$BASE/$d" ] || need_dirs=1; done
 [ -d "$ENV_DIR" ] && [ -d "$BACKUP_DIR" ] && [ -d "$CACHE_DIR" ] || need_dirs=1
 if [ "$need_dirs" = 1 ]; then
-  confirm "ساخت پوشه‌ها زیر $BASE، $ENV_DIR و $BACKUP_DIR؟" || die "پوشه‌ها لازم‌اند."
+  confirm "Create the folders under %s, %s and %s?" "$BASE" "$ENV_DIR" "$BACKUP_DIR" || die "The folders are required."
   for d in "${DIRS[@]}"; do run mkdir -p "$BASE/$d"; done
   run mkdir -p "$ENV_DIR" "$BACKUP_DIR" "$CACHE_DIR"
-else ok "پوشه‌ها موجودند"
+else ok "The folders exist"
 fi
 if [ "$DRY_RUN" = 0 ]; then
   chown "$APP_USER:$APP_USER" "$BASE"; chmod 750 "$BASE"
@@ -206,87 +240,89 @@ if [ "$DRY_RUN" = 0 ]; then
   chown root:"$APP_USER" "$ENV_DIR"; chmod 750 "$ENV_DIR"
 fi
 
-# ----------------------------------------------------------------- ۳. کد
-step "کد برنامه"
-if [ "$SRC" = "$APP_DIR" ]; then ok "کد از پیش در $APP_DIR است"
+# ----------------------------------------------------------------- 3. code
+step "Application code"
+if [ "$SRC" = "$APP_DIR" ]; then ok "The code is already in %s" "$APP_DIR"
 else
+  do_sync=0
   if [ -f "$APP_DIR/manage.py" ]; then
-    echo "  نصب قبلی پیدا شد؛ فقط فایل‌های کد روی آن همگام می‌شوند (دادهٔ سایت، media و تنظیمات دست‌نخورده)."
-    q="به‌روزرسانی کد در $APP_DIR (rsync بدون حذف)؟"
+    t "  A previous installation was found; only the code files are synchronised over it (site data, media and settings are untouched)."; echo
+    confirm "Update the code in %s (rsync without deleting)?" "$APP_DIR" && do_sync=1
   else
-    q="کپی کد از $SRC به $APP_DIR؟"
+    confirm "Copy the code from %s to %s?" "$SRC" "$APP_DIR" && do_sync=1
   fi
-  if confirm "$q"; then
+  if [ "$do_sync" = 1 ]; then
     run rsync -a --exclude='.git' --exclude='.github' --exclude='.venv' --exclude='venv' --exclude='__pycache__' --exclude='*.pyc' \
       --exclude='db.sqlite3' --exclude='*.sqlite3' --exclude='.env' --exclude='.env.*' --exclude='/media' --exclude='/staticfiles' \
       --exclude='/shop_private' --exclude='/plugins_installed' --exclude='/plugin_backups' --exclude='/themes_installed' \
       --exclude='/registry_packages' --exclude='/update_work' --exclude='/update_backups' --exclude='/install_token' \
       --exclude='/dist' --exclude='/keys' --exclude='*.key' --exclude='/certs' "$SRC"/ "$APP_DIR"/
-  elif [ ! -f "$APP_DIR/manage.py" ]; then die "کد لازم است."
-  else warn "کد به‌روز نشد"; fi
+  elif [ ! -f "$APP_DIR/manage.py" ]; then die "The code is required."
+  else warn "The code was not updated"; fi
 fi
 if [ "$DRY_RUN" = 0 ] && [ -d "$APP_DIR" ]; then
   chown -R "$APP_USER:$APP_USER" "$APP_DIR"
-  # افزونه‌های همراه کد: فقط‌خواندنی برای کاربر سرویس (مثل docs/deployment.md)
+  # bundled plugins: read-only for the service user (as in docs/deployment.md). Because the folder is root:ravix 750, the units
+  # MUST give the process the group ravix (SupplementaryGroups=ravix), or listing it fails with PermissionError.
   [ -d "$APP_DIR/plugins" ] && { chown -R root:"$APP_USER" "$APP_DIR/plugins"; chmod -R g-w,o-rwx "$APP_DIR/plugins"; }
   [ -e "$APP_DIR/media" ] || ln -s "$BASE/media" "$APP_DIR/media"   # MEDIA_ROOT = BASE_DIR/media
   chown -h "$APP_USER:$APP_USER" "$APP_DIR/media" 2>/dev/null || true
 fi
 
-CODE="$APP_DIR"; [ -d "$APP_DIR/deploy" ] || CODE="$SRC"   # در dry-run کد هنوز کپی نشده است
+CODE="$APP_DIR"; [ -d "$APP_DIR/deploy" ] || CODE="$SRC"   # in dry-run the code has not been copied yet
 
-# ----------------------------------------------------------------- ۴. virtualenv و وابستگی‌ها
-step "virtualenv و وابستگی‌ها"
+# ----------------------------------------------------------------- 4. virtualenv and dependencies
+step "virtualenv and dependencies"
 LOCK_SUM="$(sha256sum "$SRC/requirements.lock" | cut -c1-64)"
-if [ -x "$VENV/bin/python" ]; then ok "virtualenv موجود است"
+if [ -x "$VENV/bin/python" ]; then ok "The virtualenv exists"
 else
-  confirm "ساخت virtualenv در $VENV؟" || die "virtualenv لازم است."
+  confirm "Create the virtualenv in %s?" "$VENV" || die "The virtualenv is required."
   run as_app "$PYBIN" -m venv "$VENV"
 fi
-if [ -f "$VENV/.requirements.sha256" ] && [ "$(cat "$VENV/.requirements.sha256")" = "$LOCK_SUM" ]; then ok "وابستگی‌ها با requirements.lock هم‌خوان‌اند"
+if [ -f "$VENV/.requirements.sha256" ] && [ "$(cat "$VENV/.requirements.sha256")" = "$LOCK_SUM" ]; then ok "The dependencies match requirements.lock"
 else
-  confirm "نصب وابستگی‌ها از requirements.lock با pip؟" || die "وابستگی‌ها لازم‌اند."
+  confirm "Install the dependencies from requirements.lock with pip?" || die "The dependencies are required."
   run as_app "$VENV/bin/pip" install --disable-pip-version-check -r "$APP_DIR/requirements.lock"
   [ "$DRY_RUN" = 1 ] || echo "$LOCK_SUM" | as_app tee "$VENV/.requirements.sha256" >/dev/null
 fi
 
-# ----------------------------------------------------------------- ۵. PostgreSQL
+# ----------------------------------------------------------------- 5. PostgreSQL
 step "PostgreSQL"
 if have_systemd; then run systemctl enable --now postgresql
 elif ! pg_isready -q 2>/dev/null; then
-  warn "PostgreSQL در حال اجرا نیست و systemd نداریم؛ آن را خودتان بالا بیاورید (مثلاً pg_ctlcluster)."
+  warn "PostgreSQL is not running and there is no systemd; start it yourself (e.g. pg_ctlcluster)."
 fi
 psql_admin() { runuser -u postgres -- psql -v ON_ERROR_STOP=1 -X -q "$@"; }
 if [ "$DRY_RUN" = 1 ] && ! pg_isready -q 2>/dev/null; then
-  warn "[dry-run] PostgreSQL فعلاً بالا نیست؛ ساخت نقش/دیتابیس چاپ می‌شود"; ROLE_EXISTS=""; DB_EXISTS=""
+  warn "[dry-run] PostgreSQL is not up yet; the role/database creation is only printed"; ROLE_EXISTS=""; DB_EXISTS=""
 else
-  pg_isready -q || die "PostgreSQL پاسخ نمی‌دهد."
+  pg_isready -q || die "PostgreSQL does not respond."
   ROLE_EXISTS="$(psql_admin -tAc "SELECT 1 FROM pg_roles WHERE rolname='$DB_USER'")"
   DB_EXISTS="$(psql_admin -tAc "SELECT 1 FROM pg_database WHERE datname='$DB_NAME'")"
 fi
 DB_PASS=""
-if [ -n "$(env_get DATABASE_URL)" ]; then ok "DATABASE_URL از قبل در $ENV_FILE هست"
+if [ -n "$(env_get DATABASE_URL)" ]; then ok "DATABASE_URL is already in %s" "$ENV_FILE"
 else
   DB_PASS="$(rand_hex 24)"
   if [ -z "$ROLE_EXISTS" ]; then
-    confirm "ساخت نقش PostgreSQL «$DB_USER» با رمز تصادفی؟" || die "نقش دیتابیس لازم است."
+    confirm "Create the PostgreSQL role “%s” with a random password?" "$DB_USER" || die "The database role is required."
     [ "$DRY_RUN" = 1 ] || printf "CREATE ROLE %s LOGIN PASSWORD :'pw';\n" "$DB_USER" | psql_admin -v pw="$DB_PASS"
   else
-    warn "نقش «$DB_USER» هست ولی رمزش در $ENV_FILE نیست."
-    confirm "رمز نقش را با رمز تصادفی تازه عوض کنم؟ (برنامه‌های دیگری که از این نقش استفاده می‌کنند خراب می‌شوند)" || die "بدون رمز نقش نمی‌توان ادامه داد."
+    warn "The role “%s” exists but its password is not in %s." "$DB_USER" "$ENV_FILE"
+    confirm "Replace the role's password with a new random one? (other applications using this role will break)" || die "Cannot continue without the role's password."
     [ "$DRY_RUN" = 1 ] || printf "ALTER ROLE %s LOGIN PASSWORD :'pw';\n" "$DB_USER" | psql_admin -v pw="$DB_PASS"
   fi
 fi
 if [ -z "$DB_EXISTS" ]; then
-  confirm "ساخت دیتابیس «$DB_NAME» (مالک $DB_USER، UTF8)؟" || die "دیتابیس لازم است."
+  confirm "Create the database “%s” (owner %s, UTF8)?" "$DB_NAME" "$DB_USER" || die "The database is required."
   [ "$DRY_RUN" = 1 ] || psql_admin -c "CREATE DATABASE $DB_NAME OWNER $DB_USER ENCODING 'UTF8' TEMPLATE template0"
-else ok "دیتابیس $DB_NAME موجود است"; fi
+else ok "The database %s exists" "$DB_NAME"; fi
 
-# ----------------------------------------------------------------- ۶. تنظیمات محیط
-step "تنظیمات ($ENV_FILE)"
+# ----------------------------------------------------------------- 6. environment settings
+step "Settings (%s)" "$ENV_FILE"
 if [ ! -f "$ENV_FILE" ]; then
-  confirm "ساخت $ENV_FILE (مجوز 640، رمزهای تصادفی)؟" || die "فایل تنظیمات لازم است."
-  [ "$DRY_RUN" = 1 ] || { install -m 640 -o root -g "$APP_USER" /dev/null "$ENV_FILE"; printf '# ساخته‌شده توسط install.sh — رازها را در مخزن کد نگذارید\n' >> "$ENV_FILE"; }
+  confirm "Create %s (mode 640, random secrets)?" "$ENV_FILE" || die "The settings file is required."
+  [ "$DRY_RUN" = 1 ] || { install -m 640 -o root -g "$APP_USER" /dev/null "$ENV_FILE"; printf '# created by install.sh — never put secrets in the code repository\n' >> "$ENV_FILE"; }
 fi
 ALLOWED="$DOMAIN"; ORIGINS="https://$DOMAIN"
 if [ "$WWW" = 1 ] && [ "$NGINX" = 1 ] && [[ "$DOMAIN" == *.* ]]; then ALLOWED="$DOMAIN,www.$DOMAIN"; ORIGINS="https://$DOMAIN,https://www.$DOMAIN"; fi
@@ -303,44 +339,44 @@ env_set RAVIX_PLUGIN_BACKUP_DIR "$BASE/plugin_backups"
 env_set RAVIX_THEME_INSTALL_DIR "$BASE/themes_installed"
 env_set RAVIX_REGISTRY_STORAGE "$BASE/registry_packages"
 env_set RAVIX_UPDATE_WORK_DIR "$BASE/update_work"
-# IP کلاینت: Gunicorn روی سوکت یونیکس است و به‌طور خودکار مورداعتماد؛ چیزی لازم نیست (RAVIX_TRUSTED_PROXIES فقط برای پروکسی روی TCP)
+# client IP: Gunicorn is on a unix socket and is trusted automatically; nothing is needed (RAVIX_TRUSTED_PROXIES is only for a proxy on TCP)
 [ "$SSL" = 0 ] && env_set DJANGO_SECURE_SSL_REDIRECT false
 [ "$DRY_RUN" = 1 ] || { chown root:"$APP_USER" "$ENV_FILE"; chmod 640 "$ENV_FILE"; }
-ok "تنظیمات آماده است (کلیدهای موجود دست نخوردند)"
+ok "The settings are ready (existing keys were not touched)"
 
-# ----------------------------------------------------------------- ۷. migrate / static
-step "migrate و فایل‌های استاتیک"
+# ----------------------------------------------------------------- 7. migrate / static
+step "migrate and static files"
 if [ "$DRY_RUN" = 1 ]; then
   echo "  [dry-run] manage.py migrate --noinput && collectstatic --noinput"
 else
-  if confirm "اجرای migrate و collectstatic؟"; then
+  if confirm "Run migrate and collectstatic?"; then
     envsh "$VENV/bin/python" manage.py migrate --noinput
     envsh "$VENV/bin/python" manage.py collectstatic --noinput >/dev/null
-    ok "migrate و collectstatic انجام شد"
+    ok "migrate and collectstatic are done"
   fi
 fi
 
-# ----------------------------------------------------------------- ۸. systemd
-step "سرویس‌ها (systemd)"
+# ----------------------------------------------------------------- 8. systemd
+step "Services (systemd)"
 if have_systemd; then
   UNITS=(ravix.service ravix-publish-scheduled.service ravix-publish-scheduled.timer ravix-backup.service ravix-backup.timer ravix-expire-orders.service ravix-expire-orders.timer)
   changed=0
   for u in "${UNITS[@]}"; do cmp -s "$CODE/deploy/$u" "/etc/systemd/system/$u" 2>/dev/null || changed=1; done
   if [ "$changed" = 1 ]; then
-    confirm "نصب فایل‌های unit در /etc/systemd/system؟" || die "سرویس لازم است."
+    confirm "Install the unit files in /etc/systemd/system?" || die "The service is required."
     for u in "${UNITS[@]}"; do run install -m 644 "$CODE/deploy/$u" "/etc/systemd/system/$u"; done
     run systemctl daemon-reload
-  else ok "unitها به‌روزند"; fi
-  confirm "فعال‌سازی و شروع ravix.service و تایمرها؟" && {
+  else ok "The units are up to date"; fi
+  confirm "Enable and start ravix.service and the timers?" && {
     run systemctl enable --now ravix.service ravix-publish-scheduled.timer ravix-backup.timer
     grep -qi '^RAVIX_SHOP_ENABLED=false' "$ENV_FILE" || run systemctl enable --now ravix-expire-orders.timer
     run systemctl restart ravix.service
   }
 else
-  warn "رد شد (بدون systemd). اجرای دستی: cd $APP_DIR && gunicorn config.wsgi:application -c deploy/gunicorn.conf.py"
+  warn "Skipped (no systemd). Run manually: cd %s && gunicorn config.wsgi:application -c deploy/gunicorn.conf.py" "$APP_DIR"
 fi
 
-# ----------------------------------------------------------------- ۹. nginx
+# ----------------------------------------------------------------- 9. nginx
 if [ "$NGINX" = 1 ]; then
   step "Nginx"
   SITE=/etc/nginx/sites-available/ravix
@@ -348,77 +384,76 @@ if [ "$NGINX" = 1 ]; then
   TMP_SITE="$(mktemp)"
   sed "s/server_name example.com www.example.com;/server_name $SERVER_NAMES;/" "$CODE/deploy/nginx-ravix.conf" > "$TMP_SITE"
   PROXY_SRC="$CODE/deploy/ravix-proxy.conf"
-  # هستهٔ بدون IPv6 (دیده شده در کانتینرها/VPSهای خاص): listen [::] باعث شکست nginx -t می‌شود
-  [ -e /proc/net/if_inet6 ] || { sed -i '/listen \[::\]/d' "$TMP_SITE"; warn "IPv6 در این سیستم فعال نیست؛ خطوط listen [::] حذف شد"; }
-  if [ "$SSL" = 0 ]; then  # TLS جای دیگری تمام می‌شود: X-Forwarded-Proto بالادستی را بپذیر
+  # a kernel without IPv6 (seen in some containers/VPSs): `listen [::]` makes nginx -t fail
+  [ -e /proc/net/if_inet6 ] || { sed -i '/listen \[::\]/d' "$TMP_SITE"; warn "IPv6 is not enabled on this system; the listen [::] lines were removed"; }
+  if [ "$SSL" = 0 ]; then  # TLS ends elsewhere: accept the upstream X-Forwarded-Proto
     { printf 'map $http_x_forwarded_proto $ravix_proto { default $scheme; https https; }\n'; cat "$TMP_SITE"; } > "$TMP_SITE.2" && mv "$TMP_SITE.2" "$TMP_SITE"
     PROXY_SRC="$(mktemp)"; sed 's/\$scheme/$ravix_proto/' "$CODE/deploy/ravix-proxy.conf" > "$PROXY_SRC"
   fi
-  if cmp -s "$TMP_SITE" "$SITE" 2>/dev/null && cmp -s "$PROXY_SRC" /etc/nginx/ravix-proxy.conf 2>/dev/null; then ok "پیکربندی nginx به‌روز است"
+  if cmp -s "$TMP_SITE" "$SITE" 2>/dev/null && cmp -s "$PROXY_SRC" /etc/nginx/ravix-proxy.conf 2>/dev/null; then ok "The nginx configuration is up to date"
   else
     if [ -f "$SITE" ] && grep -q "managed by Certbot" "$SITE" 2>/dev/null; then
-      warn "$SITE را certbot تغییر داده؛ بازنویسی نمی‌کنم (برای تغییر دستی ویرایش کنید)."
+      warn "certbot has modified %s; not overwriting it (edit it by hand to change it)." "$SITE"
     else
-      confirm "نصب پیکربندی nginx برای $SERVER_NAMES (در صورت وجود، فایل قبلی با پسوند .bak ذخیره می‌شود)؟" && {
+      confirm "Install the nginx configuration for %s (an existing file is saved with a .bak suffix)?" "$SERVER_NAMES" && {
         [ -f "$SITE" ] && run cp -a "$SITE" "$SITE.bak.$(date +%s)"
         run install -m 644 "$PROXY_SRC" /etc/nginx/ravix-proxy.conf
         run install -m 644 "$TMP_SITE" "$SITE"
         run ln -sfn "$SITE" /etc/nginx/sites-enabled/ravix
-        if [ -e /etc/nginx/sites-enabled/default ]; then confirm "حذف سایت پیش‌فرض nginx (sites-enabled/default)؟" && run rm -f /etc/nginx/sites-enabled/default; fi
+        if [ -e /etc/nginx/sites-enabled/default ]; then confirm "Remove nginx's default site (sites-enabled/default)?" && run rm -f /etc/nginx/sites-enabled/default; fi
       }
     fi
   fi
   rm -f "$TMP_SITE"
   if [ "$DRY_RUN" = 0 ]; then
     nginx -t
-    if have_systemd; then systemctl enable --now nginx && systemctl reload nginx; else warn "nginx را خودتان reload کنید"; fi
+    if have_systemd; then systemctl enable --now nginx && systemctl reload nginx; else warn "Reload nginx yourself"; fi
   fi
 fi
 
-# ----------------------------------------------------------------- ۱۰. Let's Encrypt
+# ----------------------------------------------------------------- 10. Let's Encrypt
 if [ "$SSL" = 1 ]; then
-  step "گواهی Let's Encrypt"
-  if [ -e "/etc/letsencrypt/live/$DOMAIN/fullchain.pem" ]; then ok "گواهی $DOMAIN از قبل هست (certbot تمدید را خودکار انجام می‌دهد)"
+  step "Let's Encrypt certificate"
+  if [ -e "/etc/letsencrypt/live/$DOMAIN/fullchain.pem" ]; then ok "A certificate for %s already exists (certbot renews it automatically)" "$DOMAIN"
   else
     resolved="$(getent ahostsv4 "$DOMAIN" | awk '{print $1; exit}' || true)"
     mine=" $(hostname -I 2>/dev/null) "
-    if [ -z "$resolved" ]; then warn "DNS دامنهٔ $DOMAIN هنوز resolve نمی‌شود؛ certbot شکست می‌خورد."
-    elif [[ "$mine" != *" $resolved "* ]]; then warn "DNS به $resolved اشاره دارد که IP محلی این سرور نیست (پشت NAT/CDN ممکن است طبیعی باشد)."
-    else ok "DNS به این سرور اشاره دارد ($resolved)"; fi
+    if [ -z "$resolved" ]; then warn "The DNS of %s does not resolve yet; certbot will fail." "$DOMAIN"
+    elif [[ "$mine" != *" $resolved "* ]]; then warn "The DNS points to %s, which is not a local IP of this server (may be normal behind NAT/a CDN)." "$resolved"
+    else ok "The DNS points to this server (%s)" "$resolved"; fi
     CB=(certbot --nginx --non-interactive --agree-tos --no-eff-email --redirect -d "$DOMAIN")
     [ "$WWW" = 1 ] && [[ "$DOMAIN" == *.* ]] && CB+=(-d "www.$DOMAIN")
     if [ -n "$LE_EMAIL" ]; then CB+=(-m "$LE_EMAIL"); else CB+=(--register-unsafely-without-email); fi
-    echo "  دستور: $(IFS=' '; echo "${CB[*]}")"
-    if confirm "گرفتن گواهی با certbot؟ (پورت ۸۰ باید از اینترنت باز و DNS درست باشد)"; then
-      run "${CB[@]}" || warn "certbot ناموفق بود؛ بعد از درست‌شدن DNS دوباره install.sh را اجرا کنید (idempotent است)."
-    else warn "گواهی گرفته نشد؛ سایت تا HTTPS نشود ورود را نمی‌پذیرد."; fi
+    printf '  '; t "Command: %s" "$(IFS=' '; echo "${CB[*]}")"; echo
+    if confirm "Get a certificate with certbot? (port 80 must be open to the internet and the DNS correct)"; then
+      run "${CB[@]}" || warn "certbot failed; run install.sh again once the DNS is right (it is idempotent)."
+    else warn "No certificate was obtained; the site will not accept logins until HTTPS works."; fi
   fi
   if command -v ufw >/dev/null 2>&1 && ufw status 2>/dev/null | grep -q "Status: active"; then
-    ufw status | grep -qE "Nginx Full|443" || { confirm "باز کردن پورت‌های ۸۰/۴۴۳ در ufw (ssh دست نمی‌خورد)؟" && run ufw allow 'Nginx Full'; }
+    ufw status | grep -qE "Nginx Full|443" || { confirm "Open ports 80/443 in ufw (ssh is not touched)?" && run ufw allow 'Nginx Full'; }
   fi
 fi
 
-# ----------------------------------------------------------------- ۱۱. بررسی نهایی
-step "بررسی نهایی"
+# ----------------------------------------------------------------- 11. final check
+step "Final check"
 if [ "$DRY_RUN" = 0 ]; then
   if have_systemd && systemctl is-active --quiet ravix.service; then
     for _ in $(seq 1 20); do
-      if curl -fsS --unix-socket /run/ravix/gunicorn.sock -H "Host: $DOMAIN" -H "X-Forwarded-Proto: https" http://localhost/healthz >/dev/null 2>&1; then ok "/healthz پاسخ می‌دهد"; break; fi
+      if curl -fsS --unix-socket /run/ravix/gunicorn.sock -H "Host: $DOMAIN" -H "X-Forwarded-Proto: https" http://localhost/healthz >/dev/null 2>&1; then ok "/healthz responds"; break; fi
       sleep 1
     done
   fi
-  envsh "$VENV/bin/python" manage.py ravix_preflight || warn "ravix_preflight خطا/هشدار دارد؛ خروجی بالا را بخوانید (روی سرور تازه چند مورد طبیعی است)."
+  envsh "$VENV/bin/python" manage.py ravix_preflight || warn "ravix_preflight reports errors/warnings; read the output above (a few are normal on a fresh server)."
 fi
 SCHEME=https; [ "$SSL" = 0 ] && [ "$NGINX" = 0 ] && SCHEME=http
 TOKEN="$(env_get RAVIX_INSTALL_TOKEN)"
-cat <<EOF
-
-${B}تمام شد.${N} ($CHANGES تغییر اعمال شد؛ لاگ: $LOG_FILE)
-
-  گام آخر: صفحهٔ نصب را باز کنید و نام سایت، مدیرکل، زبان و منطقهٔ زمانی را بدهید:
-      $SCHEME://$DOMAIN/install/
-  توکن نصب:  ${TOKEN:-"(پس از اجرای واقعی در $ENV_FILE)"}
-  (پس از نصب، آن صفحه برای همیشه بسته می‌شود. بدون وب: sudo -u $APP_USER ... manage.py ravix_install --help)
-
-  پشتیبان روزانه: $BACKUP_DIR (ravix-backup.timer) — از ${ENV_FILE} جداگانه پشتیبان بگیرید؛ در پشتیبان خودکار نیست.
-EOF
+[ -n "$TOKEN" ] || TOKEN="$(t "(in %s after a real run)" "$ENV_FILE")"
+echo
+printf '%s' "$B"; t "Done."; printf '%s ' "$N"; t "(%s changes applied; log: %s)" "$CHANGES" "$LOG_FILE"; echo
+echo
+t "  Last step: open the install page and enter the site name, the super admin, the language and the time zone:"; echo
+echo "      $SCHEME://$DOMAIN/install/"
+t "  Install token:  %s" "$TOKEN"; echo
+t "  (after the install that page is closed for good. Without the web: sudo -u %s ... manage.py ravix_install --help)" "$APP_USER"; echo
+echo
+t "  Daily backup: %s (ravix-backup.timer) — back up %s separately; it is not part of the automatic backup." "$BACKUP_DIR" "$ENV_FILE"; echo

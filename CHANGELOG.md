@@ -2,6 +2,10 @@
 قالب: [Keep a Changelog](https://keepachangelog.com/)، نسخه‌بندی [SemVer](https://semver.org/).
 
 ## [Unreleased]
+### Added (دسترسی پوشه‌های کد و زبان install.sh)
+- `ravix_preflight` و «سلامت سایت» (بررسی «پوشه‌های کد») پوشه‌های افزونه و قالب را با **گروه‌های واقعی همان فرایند** می‌خوانند و فهرست می‌کنند (نه فقط «قابل نوشتن نیست»)، و در صورت شکست مالک/مجوز پوشه، کاربر و گروه‌های فرایند و راه‌حل (`SupplementaryGroups=ravix`) را می‌نویسند (`apps/core/fsaccess.py`).
+- آزمون `test_deploy_permissions`: گروه‌های هر unit با مالکیت و مجوزهایی که `install.sh` می‌گذارد هماهنگ باشند؛ هر unitی که با `Group=` غیر از `ravix` اجرا شود باید `SupplementaryGroups=ravix` داشته باشد.
+- `install.sh` انگلیسی است و با `RAVIX_CLI_LANG=fa` (یا `--lang fa`) فارسی اجرا می‌شود؛ ترجمه در `deploy/install.fa.tsv` (برای زبان دیگر فایل `deploy/install.<lang>.tsv` بگذارید)؛ آزمون `test_install_script_i18n` کامل‌بودن و جانگهدارها را می‌سنجد.
 ### Added (صفحهٔ اصلی و ترجمهٔ قالب/افزونه)
 - **hero با چند دکمه** (تا ۳): `Section.buttons`؛ `button_label`/`button_url` همان دکمهٔ نخست می‌ماند (سازگاری با قالب‌های قدیمی).
 - **بخش «ویژگی‌ها»** (`features`): برای هر مورد آیکون (از فهرست ثابت)، عنوان و متن کوتاه؛ تگ `{% feature_icon %}` برای کشیدن آیکون. قالب با `supports.home_sections` آن را اعلام می‌کند.
@@ -24,6 +28,8 @@
 - **آدرس‌های رسمی پروژه**: سایت `https://ravixcms.com`، مستندات `https://ravixcms.com/docs`، مخزن `https://github.com/ravixcms/ravixcms`، منبع به‌روزرسانی `https://updates.ravixcms.com` و مخزن افزونه/قالب `https://plugins.ravixcms.com` در `apps/core/official.py`؛ همه با `RAVIX_WEBSITE_URL`، `RAVIX_DOCS_URL`، `RAVIX_REPO_URL`، `RAVIX_UPDATE_URL` و `RAVIX_OFFICIAL_REGISTRY_URL` قابل تغییرند. کلید عمومی ناشر هنوز خالی است: **تا وقتی هیچ کلید مورد اعتمادی تنظیم نشده، منبع رسمی به‌روزرسانی و مخزن افزونه غیرفعال‌اند** (شبکه صدا زده نمی‌شود؛ پنل به‌روزرسانی، «سلامت سایت» و `ravix_update check` پیام روشن می‌دهند، نه خطا).
 - پاورقی پنل نسخه، وب‌سایت و مستندات را نشان می‌دهد؛ صفحهٔ نصب‌کننده پیوند راهنما دارد؛ User-Agent درخواست‌های به‌روزرسانی/مخزن `Ravix/<نسخه> (+https://ravixcms.com)` است؛ `homepage` در `theme.json` (تازه) و `plugin.json` ثبت شد؛ README، SECURITY، CONTRIBUTING و docs به‌روز شدند (نسخهٔ قالب پیش‌فرض ۱.۱.۲ و افزونه‌ها ۱.۰.۳/۱.۰.۲/۱.۰.۲).
 ### Fixed
+- **۵۰۰ در `/panel/plugins/` روی سرور واقعی (`PermissionError: /srv/ravix/app/plugins`).** `install.sh` کد را `root:ravix` با مجوز 750 می‌گذارد، ولی `ravix.service` با `Group=www-data` اجرا می‌شد و فرایند عضو گروه `ravix` نبود. حالا `SupplementaryGroups=ravix` در `ravix.service`، `ravix-backup.service`، `ravix-publish-scheduled.service` و `ravix-expire-orders.service` هست (روی سرور دارای نصب قبلی: فایل‌های unit را دوباره کپی کنید، `systemctl daemon-reload` و `systemctl restart ravix`، یا `install.sh` را دوباره اجرا کنید؛ `drop-in` دستی دیگر لازم نیست).
+- پوشهٔ افزونه‌ها/قالب‌ها که فرایند نتواند بخواند دیگر ۵۰۰ نمی‌دهد: لیست افزونه‌ها هشدار با نام پوشه و راه‌حل نشان می‌دهد، کشف قالب‌ها فقط لاگ می‌کند.
 - ورودی‌های فایل در پنل دکمه و متن «فایلی انتخاب نشده» ترجمه‌شدهٔ خود Ravix را دارند (به‌جای متن انگلیسی مرورگر)؛ ورودی واقعی شفاف و روی ناحیه است، پس با صفحه‌کلید در دسترس است و کشیدن‌ورهاکردن هم کار می‌کند (`static/js/ravix.js`).
 - بررسی بصری ۱۰ زبان × دسکتاپ/موبایل: ستون کناری ویرایش نوشته و داشبورد موبایل دیگر از صفحه بیرون نمی‌زنند؛ متن Markdown و دکمه‌های نوارابزار در راست‌به‌چپ درست نمایش داده می‌شوند.
 ### Changed (ناسازگار)

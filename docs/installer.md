@@ -123,13 +123,15 @@ docker compose up -d
 sudo ./install.sh                                                       # تعاملی؛ پیش از هر تغییر می‌پرسد
 sudo ./install.sh --domain example.com --email me@example.com --yes    # غیرتعاملی
 sudo ./install.sh --dry-run --domain example.com                       # فقط نشان بده چه می‌کرد
+sudo RAVIX_CLI_LANG=fa ./install.sh                                    # پیام‌ها فارسی (یا: --lang fa)
 ```
+پیام‌های `install.sh` به‌طور پیش‌فرض انگلیسی‌اند؛ `RAVIX_CLI_LANG=fa` (همان متغیر خط فرمان پایتون) یا `--lang fa` آن‌ها را فارسی می‌کند. ترجمه‌ها در `deploy/install.fa.tsv` هستند (هر خط: متن انگلیسی، TAB، ترجمه)؛ برای زبان دیگر فایل `deploy/install.<lang>.tsv` بگذارید. زبان بدون فایل انگلیسی می‌ماند.
 پیش‌نیاز: DNS دامنه از قبل به IP سرور اشاره کند و پورت‌های ۸۰/۴۴۳ باز باشند.
 
 ### چه می‌کند (به ترتیب؛ هر مرحله اول وضعیت را می‌سنجد و اگر انجام شده باشد رد می‌شود)
 1. فقط بسته‌های apt **ناقص** را نصب می‌کند (`python3-venv`، `postgresql`، `nginx`، `certbot`، …). اگر پایتون ≥ 3.11 نبود (Ubuntu 22.04) با پرسش جداگانه `python3.12` را از deadsnakes می‌گیرد.
 2. کاربر سیستمی `ravix` (بدون ورود) و پوشه‌ها: `/srv/ravix/{app,media,shop_private,…}`، `/etc/ravix`، `/var/backups/ravix`، `/var/cache/ravix`.
-3. کد را با `rsync` (بدون حذف و بدون لمس داده/media/تنظیمات) به `/srv/ravix/app` می‌برد و `plugins/` را برای کاربر سرویس فقط‌خواندنی می‌کند.
+3. کد را با `rsync` (بدون حذف و بدون لمس داده/media/تنظیمات) به `/srv/ravix/app` می‌برد و `plugins/` را برای کاربر سرویس فقط‌خواندنی می‌کند (`root:ravix` با مجوز 750). چون سرویس‌های systemd با `Group=www-data` اجرا می‌شوند، فایل‌های unit `SupplementaryGroups=ravix` دارند تا فرایند همین پوشه را بخواند؛ `ravix_preflight` و «سلامت سایت» این را با گروه‌های واقعی فرایند می‌سنجند.
 4. virtualenv و `pip install -r requirements.lock` (فقط اگر `requirements.lock` عوض شده باشد).
 5. نقش و دیتابیس PostgreSQL `ravix` با رمز تصادفی (اگر نقش از قبل هست و رمزش در env نیست، پیش از تغییر رمز می‌پرسد).
 6. `/etc/ravix/ravix.env` (مجوز 640): کلید Django، `DATABASE_URL`، `ALLOWED_HOSTS`، `CSRF_TRUSTED_ORIGINS`، توکن نصب و مسیرها. **فقط کلیدهای غایب را می‌افزاید؛ مقدار موجود را هرگز عوض نمی‌کند.**

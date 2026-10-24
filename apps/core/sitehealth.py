@@ -199,6 +199,24 @@ def check_database() -> list[Check]:
 
 
 # ------------------------------------------------------------------ timerها
+def check_code_dirs() -> list[Check]:
+    """Plugin/theme code folders are read-only for the service on purpose (root:ravix 750), but the service must still be able to read them."""
+    from . import fsaccess
+
+    g = gettext("Cache and storage")
+    dirs = [*getattr(settings, "RAVIX_PLUGIN_DIRS", []), *getattr(settings, "RAVIX_THEME_DIRS", [])]
+    bad = []
+    for d in dirs:
+        reason = fsaccess.list_error(d)
+        if reason and reason != "missing":
+            bad.append(str(d))
+    if bad:
+        return [_c("code_dirs", g, gettext("Code folders"), CRITICAL,
+                   (gettext("The web service cannot read these folders: %(dirs)s. The plugin list and plugins do not work.") % {"dirs": gettext(", ").join(bad)}),
+                   gettext("Add the folder’s group to the service (SupplementaryGroups=ravix in ravix.service, then daemon-reload and restart), or run install.sh again."))]
+    return [_c("code_dirs", g, gettext("Code folders"), GOOD, gettext("The plugin and theme folders are readable by the web service."))]
+
+
 def check_timers(now=None) -> list[Check]:
     from .management.commands.ravix_preflight import _ENABLED_OK, systemd_unit_state
 
@@ -360,7 +378,7 @@ GROUP_ORDER = [gettext_lazy("Security and HTTPS"), gettext_lazy("Email"), gettex
 
 def run_all(request=None) -> list[Check]:
     checks: list[Check] = []
-    for fn in (lambda: check_https(request), lambda: check_client_ip(request), check_email, check_cache, check_database, check_timers, check_backup, check_versions, check_content):
+    for fn in (lambda: check_https(request), lambda: check_client_ip(request), check_email, check_cache, check_database, check_code_dirs, check_timers, check_backup, check_versions, check_content):
         try:
             checks.extend(fn())
         except Exception as exc:  # noqa: BLE001 — یک بررسی خراب نباید کل صفحه را بیندازد

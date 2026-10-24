@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-24 15:09+0330\n"
+"POT-Creation-Date: 2026-10-24 21:17+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -2536,6 +2536,34 @@ msgid "Disk space could not be measured."
 msgstr "Não foi possível medir o espaço em disco."
 
 #: apps/core/sitehealth.py
+#| msgid "Media folder"
+msgid "Code folders"
+msgstr "Pastas de código"
+
+#: apps/core/sitehealth.py
+#, python-format
+msgid ""
+"The web service cannot read these folders: %(dirs)s. The plugin list and "
+"plugins do not work."
+msgstr ""
+"O serviço web não consegue ler estas pastas: %(dirs)s. A lista de plugins e "
+"os plugins não funcionam."
+
+#: apps/core/sitehealth.py
+msgid ""
+"Add the folder’s group to the service (SupplementaryGroups=ravix in "
+"ravix.service, then daemon-reload and restart), or run install.sh again."
+msgstr ""
+"Adicione o grupo da pasta ao serviço (SupplementaryGroups=ravix em "
+"ravix.service, depois daemon-reload e reinicie) ou execute install.sh "
+"novamente."
+
+#: apps/core/sitehealth.py
+#| msgid "The plugin system is disabled by the setting"
+msgid "The plugin and theme folders are readable by the web service."
+msgstr "O serviço web consegue ler as pastas de plugins e temas."
+
+#: apps/core/sitehealth.py
 msgid "Scheduled jobs"
 msgstr "Tarefas agendadas"
 
@@ -3701,6 +3729,19 @@ msgstr "O arquivo __init__.py está ausente."
 
 #: apps/plugins/discovery.py
 #, python-format
+msgid ""
+"The plugin folder %(path)s cannot be read by the web service, so the plugins"
+" in it are not listed. Give the service user read access "
+"(SupplementaryGroups=ravix in ravix.service, then restart) and run "
+"ravix_preflight."
+msgstr ""
+"O serviço web não consegue ler a pasta de plugins (%(path)s), então os "
+"plugins dela não são listados. Dê acesso de leitura ao usuário do serviço "
+"(SupplementaryGroups=ravix em ravix.service e reinicie) e execute "
+"ravix_preflight."
+
+#: apps/plugins/discovery.py
+#, python-format
 msgid "Duplicate slug; the version in folder %(path)s takes priority."
 msgstr "Slug duplicado; a versão na pasta %(path)s tem prioridade."
 
@@ -4554,6 +4595,11 @@ msgid ""
 "Plugin “%(dep)s” must be “%(spec)s”; the installed version is %(version)s."
 msgstr ""
 "O plugin “%(dep)s” deve ser “%(spec)s”; a versão instalada é %(version)s."
+
+#: apps/plugins/services.py
+#| msgid "The plugin folder must not be a symlink."
+msgid "The plugin folder could not be read."
+msgstr "Não foi possível ler a pasta do plugin."
 
 #: apps/plugins/services.py
 msgid "The plugin folder was not found on disk."
@@ -6357,7 +6403,6 @@ msgstr ""
 
 #: apps/themes/forms.py
 #, python-format
-#| msgid "At most %(limit)s %(label)s are allowed."
 msgid "At most %(count)s items are allowed."
 msgstr "São permitidos no máximo %(count)s itens."
 
@@ -6374,7 +6419,6 @@ msgid "Subtitle"
 msgstr "Subtítulo"
 
 #: apps/themes/forms.py
-#| msgid "Featured image"
 msgid "Feature items"
 msgstr "Itens de recursos"
 
@@ -6392,22 +6436,18 @@ msgid "Button URL"
 msgstr "URL do botão"
 
 #: apps/themes/forms.py
-#| msgid "Header button text"
 msgid "Second button text"
 msgstr "Texto do segundo botão"
 
 #: apps/themes/forms.py
-#| msgid "Header button URL"
 msgid "Second button URL"
 msgstr "URL do segundo botão"
 
 #: apps/themes/forms.py
-#| msgid "Header button text"
 msgid "Third button text"
 msgstr "Texto do terceiro botão"
 
 #: apps/themes/forms.py
-#| msgid "Header button URL"
 msgid "Third button URL"
 msgstr "URL do terceiro botão"
 
@@ -6426,7 +6466,6 @@ msgid "Enter the section text."
 msgstr "Informe o texto da seção."
 
 #: apps/themes/forms.py
-#| msgid "Enter at least two characters."
 msgid "Enter at least one item."
 msgstr "Informe pelo menos um item."
 
@@ -7239,9 +7278,6 @@ msgstr ""
 "As alterações foram salvas no rascunho. Publique-o para aplicá-lo ao site."
 
 #: apps/themes/views.py
-#| msgid ""
-#| "The form has expired or the request was not valid. Reload the page and try "
-#| "again."
 msgid ""
 "The home page sections changed in the meantime. Reload the page and try "
 "again."
@@ -11046,12 +11082,10 @@ msgstr ""
 " até serem publicadas."
 
 #: templates/themes/customize_home.html
-#| msgid "Set up the home page sections"
 msgid "Language of the home page texts"
 msgstr "Idioma dos textos da página inicial"
 
 #: templates/themes/customize_home.html
-#| msgid "Default"
 msgid "default"
 msgstr "padrão"
 

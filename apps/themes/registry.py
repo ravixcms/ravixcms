@@ -32,10 +32,20 @@ def _discover() -> dict[str, ThemeInfo]:
     found: dict[str, ThemeInfo] = {}
     for base in getattr(settings, "RAVIX_THEME_DIRS", []):
         base = Path(base)
-        if not base.is_dir():
+        try:
+            if not base.is_dir():
+                continue
+            children = sorted(base.iterdir())
+        except OSError:
+            from apps.core import fsaccess
+
+            logger.warning("%s", fsaccess.unreadable_detail(base))
             continue
-        for child in sorted(base.iterdir()):
-            if not child.is_dir() or child.name.startswith((".", "_")):
+        for child in children:
+            try:
+                if not child.is_dir() or child.name.startswith((".", "_")):
+                    continue
+            except OSError:
                 continue
             if child.name in found:
                 logger.warning(cli_gettext("Duplicate theme “%s” in %s was ignored."), child.name, base)

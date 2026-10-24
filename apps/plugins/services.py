@@ -87,10 +87,14 @@ def check_compat(manifest: Manifest) -> list[str]:
 
 
 # ------------------------------------------------------------------ فهرست
-def overview() -> list[Row]:
+def overview(warnings: list | None = None) -> list[Row]:
+    """The rows of the plugin list. ``warnings`` (optional list) is filled with folders that could not be read."""
     records = {r.slug: r for r in PluginRecord.objects.all()}
     rows, seen = [], set()
-    for item in discovery.discover():
+    items, scan_warnings = discovery.scan()
+    if warnings is not None:
+        warnings.extend(scan_warnings)
+    for item in items:
         seen.add(item.slug)
         rec = records.get(item.slug)
         m = item.manifest
@@ -116,7 +120,7 @@ def overview() -> list[Row]:
     for slug, rec in records.items():
         if slug not in seen:
             rows.append(Row(slug=slug, name=rec.name, version=rec.version, description="", status="missing", status_label=STATUS_LABELS["missing"],
-                            problems=[gettext("The plugin folder was not found on disk.")], record=rec))
+                            problems=[gettext("The plugin folder could not be read.") if scan_warnings else gettext("The plugin folder was not found on disk.")], record=rec))
     order = {"active": 0, "update_pending": 1, "auto_disabled": 2, "inactive": 3, "available": 4, "incompatible": 5, "invalid": 6, "missing": 7}
     return sorted(rows, key=lambda r: (order[r.status], r.name))
 

@@ -4,6 +4,8 @@ Description=Ravix - cancel expired unpaid orders and release stock
 [Service]
 Type=oneshot
 User=ravix
+# گروه اصلی ravix است؛ SupplementaryGroups صریح می‌ماند تا هر سرویس یکسان و مستقل از گروه اصلی باشد (کد root:ravix 750).
+SupplementaryGroups=ravix
 EnvironmentFile=/etc/ravix/ravix.env
 WorkingDirectory=/srv/ravix/app
 ExecStart=/srv/ravix/venv/bin/python manage.py shop_expire_orders

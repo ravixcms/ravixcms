@@ -943,3 +943,11 @@ msgstr "پوشهٔ کش %(a1)s وجود ندارد یا قابل نوشتن نی
 
 msgid "The official update source is disabled until a trusted public key is configured (RAVIX_TRUSTED_PUBLIC_KEYS); nothing was checked."
 msgstr "منبع رسمی به‌روزرسانی تا تنظیم‌شدن یک کلید عمومی مورد اعتماد (RAVIX_TRUSTED_PUBLIC_KEYS) غیرفعال است؛ چیزی بررسی نشد."
+
+#, python-format
+msgid "Cannot list %(path)s: the service runs as %(who)s but the folder is %(owner)s. Add the folder's group to the unit (SupplementaryGroups=ravix in ravix.service) and restart."
+msgstr "فهرست‌کردن %(path)s ممکن نیست: سرویس با %(who)s اجرا می‌شود ولی پوشه %(owner)s است. گروه پوشه را به unit بیفزایید (SupplementaryGroups=ravix در ravix.service) و سرویس را راه‌اندازی مجدد کنید."
+
+#, python-format
+msgid "The code folder %(d)s is readable and listable by this process"
+msgstr "پوشهٔ کد %(d)s برای همین فرایند قابل‌خواندن و فهرست‌کردن است"

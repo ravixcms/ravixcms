@@ -6,6 +6,9 @@ After=network.target postgresql.service
 Type=oneshot
 User=ravix
 Group=www-data
+# کد برنامه (plugins/ و ...) برای install.sh مالکیت root:ravix با مجوز 750 دارد. گروه اصلی این سرویس www-data است، پس بدون SupplementaryGroups=ravix
+# خواندن/فهرست‌کردن پوشهٔ plugins با PermissionError (و ۵۰۰ در /panel/plugins/) شکست می‌خورد. این خط را حذف نکنید.
+SupplementaryGroups=ravix
 EnvironmentFile=/etc/ravix/ravix.env
 WorkingDirectory=/srv/ravix/app
 ExecStart=/srv/ravix/venv/bin/python manage.py publish_scheduled

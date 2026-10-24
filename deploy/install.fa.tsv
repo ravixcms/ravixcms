@@ -1,0 +1,127 @@
+Usage: sudo ./install.sh [options]	استفاده: sudo ./install.sh [گزینه‌ها]
+  --domain D       the site's domain (without http://)	  --domain D       دامنهٔ سایت (بدون http://)
+  --email E        email for Let's Encrypt (expiry notices)	  --email E        ایمیل برای Let's Encrypt (اطلاع‌رسانی انقضا)
+  --no-www         do not add www.D to nginx / the certificate	  --no-www         www.D را در nginx/گواهی نیاور
+  --no-ssl         no certbot (only when TLS ends elsewhere: Cloudflare, a load balancer)	  --no-ssl         بدون certbot (فقط وقتی TLS جای دیگری تمام می‌شود: Cloudflare، لودبالانسر)
+  --no-nginx       do not touch nginx (you build the proxy yourself)	  --no-nginx       nginx را دست نزن (پراکسی را خودتان می‌سازید)
+  --no-systemd     do not create systemd services/timers (e.g. in a container)	  --no-systemd     سرویس/تایمر systemd نساز (مثلاً کانتینر)
+  --source DIR     path of the code (default: the folder of this script)	  --source DIR     مسیر کد (پیش‌فرض: پوشهٔ همین اسکریپت)
+  --lang CODE      language of these messages (same as RAVIX_CLI_LANG; 'fa' ships with Ravix)	  --lang CODE      زبان این پیام‌ها (مثل RAVIX_CLI_LANG؛ «fa» همراه راویکس است)
+  -y, --yes        answer “yes” to every question (non-interactive)	  -y, --yes        به همهٔ پرسش‌ها «بله» (غیرتعاملی)
+  -n, --dry-run    change nothing; only print	  -n, --dry-run    هیچ تغییری نده؛ فقط چاپ کن
+  -h, --help	  -h, --help
+Unknown option: %s	گزینهٔ ناشناخته: %s
+Unexpected error at line %s (command: %s). Log: %s	خطای پیش‌بینی‌نشده در خط %s (دستور: %s). لاگ: %s
+yes	بله
+Input is not interactive; run with --yes or from a terminal.	ورودی تعاملی نیست؛ با --yes اجرا کنید یا از ترمینال اجرا کنید.
+%s ← (would be set)	%s ← (تنظیم می‌شد)
+Checking prerequisites	بررسی پیش‌نیازها
+Run as root: sudo ./install.sh	با دسترسی root اجرا کنید: sudo ./install.sh
+unknown	نامعلوم
+The system %s is not supported; continuing because of RAVIX_SKIP_OS_CHECK=1	سیستم %s پشتیبانی‌نشده است؛ به‌دلیل RAVIX_SKIP_OS_CHECK=1 ادامه می‌دهیم
+Only Ubuntu 22.04 and 24.04 are supported (this system: %s).	فقط Ubuntu 22.04 و 24.04 پشتیبانی می‌شود (این سیستم: %s).
+Operating system: %s	سیستم‌عامل: %s
+The Ravix code was not found in %s (manage.py / requirements.lock). Pass --source.	کد Ravix در %s پیدا نشد (manage.py / requirements.lock). --source را بدهید.
+Code: %s	کد: %s
+systemd is active	systemd فعال است
+systemd is not running; no service/timer is created (normal in a container)	systemd در حال اجرا نیست؛ سرویس/تایمر ساخته نمی‌شود (برای کانتینر طبیعی است)
+The domain is invalid or empty (--domain).	دامنه نامعتبر یا خالی است (--domain).
+Without TLS: session cookies are “Secure” in production; login works only behind HTTPS (another TLS terminator).	بدون TLS: کوکی‌های نشست در production «Secure» هستند؛ ورود فقط پشت HTTPS (پایان‌دهندهٔ TLS دیگر) کار می‌کند.
+  With your confirmation at each step, this script will:	  این اسکریپت (با تأیید شما در هر مرحله) این کارها را انجام می‌دهد:
+    • install the missing apt packages (python3-venv, postgresql, nginx%s, rsync, openssl)	    • نصب بسته‌های apt ناقص (python3-venv، postgresql، nginx%s، rsync، openssl)
+    • create the system user “%s” and folders in %s, settings in %s	    • کاربر سیستمی «%s» و پوشه‌ها در %s، تنظیمات در %s
+    • copy the code to %s and build the virtualenv in %s	    • کپی کد به %s و ساخت virtualenv در %s
+    • create the PostgreSQL role/database “%s” with a random password	    • ساخت نقش/دیتابیس PostgreSQL «%s» با رمز تصادفی
+    • run migrate, collectstatic, the Gunicorn service and the systemd timers	    • migrate، collectstatic، سرویس Gunicorn و تایمرهای systemd
+    • set up the nginx site for “%s” and a Let's Encrypt certificate	    • سایت nginx برای «%s» و گواهی Let's Encrypt
+    • set up the nginx site for “%s”	    • سایت nginx برای «%s»
+Continue?	ادامه می‌دهید؟
+Cancelled; nothing was changed.	لغو شد؛ هیچ تغییری داده نشد.
+System packages	بسته‌های سیستمی
+Missing packages: %s	بسته‌های ناقص: %s
+Install with apt?	نصب با apt؟
+Cannot continue without these packages.	بدون این بسته‌ها نمی‌توان ادامه داد.
+All required packages are installed	همهٔ بسته‌های لازم نصب‌اند
+Python 3.11 or newer was not found (Ubuntu %s has an older version).	پایتون ۳٫۱۱ یا بالاتر پیدا نشد (Ubuntu %s نسخهٔ قدیمی‌تر دارد).
+Add the deadsnakes repository and install python3.12?	افزودن مخزن deadsnakes و نصب python3.12؟
+Python >= 3.11 is required.	پایتون ≥ 3.11 لازم است.
+Python: %s (%s)	پایتون: %s (%s)
+System user and folders	کاربر سیستمی و پوشه‌ها
+The user %s exists	کاربر %s وجود دارد
+Create the system user “%s” (no login, home=%s)?	ساخت کاربر سیستمی «%s» (بدون ورود، home=%s)؟
+The user is required.	کاربر لازم است.
+www-data is a member of the group %s	www-data عضو گروه %s است
+Add www-data to the group %s (to read the socket/media)?	افزودن www-data به گروه %s (برای خواندن سوکت/media)؟
+Create the folders under %s, %s and %s?	ساخت پوشه‌ها زیر %s، %s و %s؟
+The folders are required.	پوشه‌ها لازم‌اند.
+The folders exist	پوشه‌ها موجودند
+Application code	کد برنامه
+The code is already in %s	کد از پیش در %s است
+  A previous installation was found; only the code files are synchronised over it (site data, media and settings are untouched).	  نصب قبلی پیدا شد؛ فقط فایل‌های کد روی آن همگام می‌شوند (دادهٔ سایت، media و تنظیمات دست‌نخورده).
+Update the code in %s (rsync without deleting)?	به‌روزرسانی کد در %s (rsync بدون حذف)؟
+Copy the code from %s to %s?	کپی کد از %s به %s؟
+The code is required.	کد لازم است.
+The code was not updated	کد به‌روز نشد
+virtualenv and dependencies	virtualenv و وابستگی‌ها
+The virtualenv exists	virtualenv موجود است
+Create the virtualenv in %s?	ساخت virtualenv در %s؟
+The virtualenv is required.	virtualenv لازم است.
+The dependencies match requirements.lock	وابستگی‌ها با requirements.lock هم‌خوان‌اند
+Install the dependencies from requirements.lock with pip?	نصب وابستگی‌ها از requirements.lock با pip؟
+The dependencies are required.	وابستگی‌ها لازم‌اند.
+PostgreSQL	PostgreSQL
+PostgreSQL is not running and there is no systemd; start it yourself (e.g. pg_ctlcluster).	PostgreSQL در حال اجرا نیست و systemd نداریم؛ آن را خودتان بالا بیاورید (مثلاً pg_ctlcluster).
+[dry-run] PostgreSQL is not up yet; the role/database creation is only printed	[dry-run] PostgreSQL فعلاً بالا نیست؛ ساخت نقش/دیتابیس چاپ می‌شود
+PostgreSQL does not respond.	PostgreSQL پاسخ نمی‌دهد.
+DATABASE_URL is already in %s	DATABASE_URL از قبل در %s هست
+Create the PostgreSQL role “%s” with a random password?	ساخت نقش PostgreSQL «%s» با رمز تصادفی؟
+The database role is required.	نقش دیتابیس لازم است.
+The role “%s” exists but its password is not in %s.	نقش «%s» هست ولی رمزش در %s نیست.
+Replace the role's password with a new random one? (other applications using this role will break)	رمز نقش را با رمز تصادفی تازه عوض کنم؟ (برنامه‌های دیگری که از این نقش استفاده می‌کنند خراب می‌شوند)
+Cannot continue without the role's password.	بدون رمز نقش نمی‌توان ادامه داد.
+Create the database “%s” (owner %s, UTF8)?	ساخت دیتابیس «%s» (مالک %s، UTF8)؟
+The database is required.	دیتابیس لازم است.
+The database %s exists	دیتابیس %s موجود است
+Settings (%s)	تنظیمات (%s)
+Create %s (mode 640, random secrets)?	ساخت %s (مجوز 640، رمزهای تصادفی)؟
+The settings file is required.	فایل تنظیمات لازم است.
+The settings are ready (existing keys were not touched)	تنظیمات آماده است (کلیدهای موجود دست نخوردند)
+migrate and static files	migrate و فایل‌های استاتیک
+Run migrate and collectstatic?	اجرای migrate و collectstatic؟
+migrate and collectstatic are done	migrate و collectstatic انجام شد
+Services (systemd)	سرویس‌ها (systemd)
+Install the unit files in /etc/systemd/system?	نصب فایل‌های unit در /etc/systemd/system؟
+The service is required.	سرویس لازم است.
+The units are up to date	unitها به‌روزند
+Enable and start ravix.service and the timers?	فعال‌سازی و شروع ravix.service و تایمرها؟
+Skipped (no systemd). Run manually: cd %s && gunicorn config.wsgi:application -c deploy/gunicorn.conf.py	رد شد (بدون systemd). اجرای دستی: cd %s && gunicorn config.wsgi:application -c deploy/gunicorn.conf.py
+Nginx	Nginx
+IPv6 is not enabled on this system; the listen [::] lines were removed	IPv6 در این سیستم فعال نیست؛ خطوط listen [::] حذف شد
+The nginx configuration is up to date	پیکربندی nginx به‌روز است
+certbot has modified %s; not overwriting it (edit it by hand to change it).	%s را certbot تغییر داده؛ بازنویسی نمی‌کنم (برای تغییر دستی ویرایش کنید).
+Install the nginx configuration for %s (an existing file is saved with a .bak suffix)?	نصب پیکربندی nginx برای %s (در صورت وجود، فایل قبلی با پسوند .bak ذخیره می‌شود)؟
+Remove nginx's default site (sites-enabled/default)?	حذف سایت پیش‌فرض nginx (sites-enabled/default)؟
+Reload nginx yourself	nginx را خودتان reload کنید
+Let's Encrypt certificate	گواهی Let's Encrypt
+A certificate for %s already exists (certbot renews it automatically)	گواهی %s از قبل هست (certbot تمدید را خودکار انجام می‌دهد)
+The DNS of %s does not resolve yet; certbot will fail.	DNS دامنهٔ %s هنوز resolve نمی‌شود؛ certbot شکست می‌خورد.
+The DNS points to %s, which is not a local IP of this server (may be normal behind NAT/a CDN).	DNS به %s اشاره دارد که IP محلی این سرور نیست (پشت NAT/CDN ممکن است طبیعی باشد).
+The DNS points to this server (%s)	DNS به این سرور اشاره دارد (%s)
+Command: %s	دستور: %s
+Get a certificate with certbot? (port 80 must be open to the internet and the DNS correct)	گرفتن گواهی با certbot؟ (پورت ۸۰ باید از اینترنت باز و DNS درست باشد)
+certbot failed; run install.sh again once the DNS is right (it is idempotent).	certbot ناموفق بود؛ بعد از درست‌شدن DNS دوباره install.sh را اجرا کنید (idempotent است).
+No certificate was obtained; the site will not accept logins until HTTPS works.	گواهی گرفته نشد؛ سایت تا HTTPS نشود ورود را نمی‌پذیرد.
+Open ports 80/443 in ufw (ssh is not touched)?	باز کردن پورت‌های ۸۰/۴۴۳ در ufw (ssh دست نمی‌خورد)؟
+Final check	بررسی نهایی
+/healthz responds	/healthz پاسخ می‌دهد
+ravix_preflight reports errors/warnings; read the output above (a few are normal on a fresh server).	ravix_preflight خطا/هشدار دارد؛ خروجی بالا را بخوانید (روی سرور تازه چند مورد طبیعی است).
+(in %s after a real run)	(پس از اجرای واقعی در %s)
+Done.	تمام شد.
+(%s changes applied; log: %s)	(%s تغییر اعمال شد؛ لاگ: %s)
+  Last step: open the install page and enter the site name, the super admin, the language and the time zone:	  گام آخر: صفحهٔ نصب را باز کنید و نام سایت، مدیرکل، زبان و منطقهٔ زمانی را بدهید:
+  Install token:  %s	  توکن نصب:  %s
+  (after the install that page is closed for good. Without the web: sudo -u %s ... manage.py ravix_install --help)	  (پس از نصب، آن صفحه برای همیشه بسته می‌شود. بدون وب: sudo -u %s ... manage.py ravix_install --help)
+  Daily backup: %s (ravix-backup.timer) — back up %s separately; it is not part of the automatic backup.	  پشتیبان روزانه: %s (ravix-backup.timer) — از %s جداگانه پشتیبان بگیرید؛ در پشتیبان خودکار نیست.
+The site's domain (e.g. example.com):	دامنهٔ سایت (مثل example.com):
+Host name / domain for ALLOWED_HOSTS:	نام میزبان/دامنه برای ALLOWED_HOSTS:
+Email for Let's Encrypt (empty = no email):	ایمیل برای Let's Encrypt (خالی = بدون ایمیل):

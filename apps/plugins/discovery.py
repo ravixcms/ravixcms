@@ -6,10 +6,14 @@ from django.utils.translation import gettext
 from dataclasses import dataclass, field
 from pathlib import Path
 
+import logging
+
 from django.conf import settings
 
 from .integrity import IntegrityError, fingerprint
 from .manifest import MANIFEST_FILE, ManifestError, read_manifest
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -51,13 +55,27 @@ def _inspect(path: Path) -> Discovered:
     return d
 
 
-def discover() -> list[Discovered]:
+def scan() -> tuple[list[Discovered], list[str]]:
+    """Every plugin found, plus warnings for plugin folders this process cannot read (a permission problem is shown, never a 500)."""
     found: dict[str, Discovered] = {}
+    warnings: list[str] = []
     for base in plugin_dirs():
-        if not base.is_dir():
+        try:
+            if not base.is_dir():
+                continue
+            children = sorted(base.iterdir())
+        except OSError:
+            from apps.core import fsaccess
+
+            logger.warning("%s", fsaccess.unreadable_detail(base))
+            warnings.append(gettext("The plugin folder %(path)s cannot be read by the web service, so the plugins in it are not listed. "
+                                    "Give the service user read access (SupplementaryGroups=ravix in ravix.service, then restart) and run ravix_preflight.") % {"path": base})
             continue
-        for child in sorted(base.iterdir()):
-            if not child.is_dir() or child.name.startswith((".", "_")):
+        for child in children:
+            try:
+                if not child.is_dir() or child.name.startswith((".", "_")):
+                    continue
+            except OSError:
                 continue
             item = _inspect(child)
             if child.name in found:
@@ -66,7 +84,11 @@ def discover() -> list[Discovered]:
                 found[item.slug] = item
                 continue
             found[child.name] = item
-    return list(found.values())
+    return list(found.values()), warnings
+
+
+def discover() -> list[Discovered]:
+    return scan()[0]
 
 
 def find(slug: str) -> Discovered | None:
@@ -76,4 +98,4 @@ def find(slug: str) -> Discovered | None:
     return None
 
 
-__all__ = ["Discovered", "discover", "find", "plugin_dirs", "MANIFEST_FILE"]
+__all__ = ["Discovered", "discover", "scan", "find", "plugin_dirs", "MANIFEST_FILE"]

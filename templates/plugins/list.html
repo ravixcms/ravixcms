@@ -11,6 +11,7 @@
     <a class="btn btn-light" href="{% url 'plugins:events' %}">{% icon "list" 18 %} {% trans "Plugin log" %}</a></div></div>
 {% if not plugins_enabled %}<div class="form-errors" role="alert"><p>{% trans "The plugin system is disabled by the setting" %} <span class="ltr">RAVIX_PLUGINS_ENABLED=false</span> {% trans "." %}</p></div>{% endif %}
 {% if safe_mode %}<div class="form-errors warn" role="status"><p>{% trans "Safe mode is on (" %}<span class="ltr">RAVIX_PLUGINS_SAFE_MODE</span>{% trans "): no plugin code runs. Only management (install/remove/log) is available." %}</p></div>{% endif %}
+{% if folder_warnings %}<div class="form-errors warn" role="alert">{% for w in folder_warnings %}<p>{{ w }}</p>{% endfor %}</div>{% endif %}
 {% if recent_errors %}
 <div class="form-errors warn" role="status"><p>{% trans "<strong>Latest errors:</strong>" %}</p><ul>
   {% for e in recent_errors %}<li><span class="ltr">{{ e.slug }}</span> — {{ e.message }} ({{ e.created_at|jalali_datetime }})</li>{% endfor %}</ul></div>

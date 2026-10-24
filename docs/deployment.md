@@ -27,6 +27,8 @@ sudo mkdir -p /srv/ravix/{app,media,shop_private,plugins_installed,plugin_backup
 # (نصب قالب ZIP از پنل — پیش‌فرض خاموش؛ فقط اگر می‌خواهید: sudo chown ravix:ravix /srv/ravix/themes_installed && sudo chmod 750 /srv/ravix/themes_installed ، سپس RAVIX_THEME_INSTALL_DIR و RAVIX_THEME_WEB_INSTALL را در /etc/ravix/ravix.env بگذارید؛ docs/themes.md)
 sudo chown ravix:ravix /srv/ravix/plugins_installed /srv/ravix/plugin_backups && sudo chmod 750 /srv/ravix/plugins_installed && sudo chmod 700 /srv/ravix/plugin_backups
 sudo chown ravix:www-data /srv/ravix/media /var/cache/ravix && sudo chmod 2750 /srv/ravix/media
+# کد برنامه (به‌ویژه plugins/) فقط‌خواندنی برای سرویس است: sudo chown -R root:ravix /srv/ravix/app/plugins && sudo chmod -R g-w,o-rwx /srv/ravix/app/plugins
+# سرویس‌های systemd با Group=www-data اجرا می‌شوند؛ پس فایل‌های unit باید SupplementaryGroups=ravix داشته باشند (هست) وگرنه پوشهٔ plugins خوانده نمی‌شود.
 sudo chown ravix:ravix /var/backups/ravix && sudo chmod 700 /var/backups/ravix
 ```
 
@@ -163,6 +165,7 @@ sudo systemctl reload ravix
 ## عیب‌یابی
 | نشانه | علت/راه‌حل |
 |---|---|
+| `/panel/plugins/` هشدار «پوشهٔ افزونه‌ها قابل خواندن نیست» یا `PermissionError` در لاگ؛ در `ravix_preflight` خطای «پوشهٔ کد … فهرست‌کردن ممکن نیست» | فرایند سرویس عضو گروه `ravix` نیست (پوشه `root:ravix` 750 است). `SupplementaryGroups=ravix` را در unit بگذارید (در نسخهٔ جدید همراه است): `sudo cp deploy/ravix*.service /etc/systemd/system/ && sudo systemctl daemon-reload && sudo systemctl restart ravix`؛ بررسی: `systemctl show ravix -p SupplementaryGroups -p Group` |
 | ۵۰۲ از Nginx | `systemctl status ravix`؛ سوکت `/run/ravix/gunicorn.sock` و عضویت `www-data` در گروه `ravix` |
 | `DisallowedHost` | دامنه در `DJANGO_ALLOWED_HOSTS` نیست |
 | ۴۰۳ CSRF روی فرم‌ها | `DJANGO_CSRF_TRUSTED_ORIGINS` با `https://` و هدر `X-Forwarded-Proto` در Nginx |

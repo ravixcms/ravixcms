@@ -35,10 +35,11 @@ class PluginListView(PluginsAdminMixin, TemplateView):
         from django.conf import settings
 
         ctx = super().get_context_data(**kwargs)
-        rows = services.overview()
+        folder_warnings: list[str] = []
+        rows = services.overview(folder_warnings)
         for r in rows:
             r.new_version = sources.update_available(r.slug, r.record.version) if r.record else None
-        ctx.update(rows=rows, web_install=settings.RAVIX_PLUGIN_WEB_INSTALL, safe_mode=settings.RAVIX_PLUGINS_SAFE_MODE, plugins_enabled=settings.RAVIX_PLUGINS_ENABLED,
+        ctx.update(rows=rows, folder_warnings=folder_warnings, web_install=settings.RAVIX_PLUGIN_WEB_INSTALL, safe_mode=settings.RAVIX_PLUGINS_SAFE_MODE, plugins_enabled=settings.RAVIX_PLUGINS_ENABLED,
                    recent_errors=PluginEvent.objects.filter(level="error").order_by("-created_at")[:5])
         return ctx
 

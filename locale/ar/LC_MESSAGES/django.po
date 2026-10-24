@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-24 15:09+0330\n"
+"POT-Creation-Date: 2026-10-24 21:17+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -2485,6 +2485,33 @@ msgid "Disk space could not be measured."
 msgstr "تعذّر قياس مساحة القرص."
 
 #: apps/core/sitehealth.py
+#| msgid "Media folder"
+msgid "Code folders"
+msgstr "مجلدات الشيفرة"
+
+#: apps/core/sitehealth.py
+#, python-format
+msgid ""
+"The web service cannot read these folders: %(dirs)s. The plugin list and "
+"plugins do not work."
+msgstr ""
+"لا تستطيع خدمة الويب قراءة هذه المجلدات: %(dirs)s. قائمة الإضافات والإضافات "
+"نفسها لا تعمل."
+
+#: apps/core/sitehealth.py
+msgid ""
+"Add the folder’s group to the service (SupplementaryGroups=ravix in "
+"ravix.service, then daemon-reload and restart), or run install.sh again."
+msgstr ""
+"أضف مجموعة المجلد إلى الخدمة (SupplementaryGroups=ravix في ravix.service ثم "
+"daemon-reload وأعد التشغيل)، أو شغّل install.sh مرة أخرى."
+
+#: apps/core/sitehealth.py
+#| msgid "The plugin system is disabled by the setting"
+msgid "The plugin and theme folders are readable by the web service."
+msgstr "تستطيع خدمة الويب قراءة مجلدات الإضافات والقوالب."
+
+#: apps/core/sitehealth.py
 msgid "Scheduled jobs"
 msgstr "المهام المجدولة"
 
@@ -3613,6 +3640,18 @@ msgstr "الملف __init__.py مفقود."
 
 #: apps/plugins/discovery.py
 #, python-format
+msgid ""
+"The plugin folder %(path)s cannot be read by the web service, so the plugins"
+" in it are not listed. Give the service user read access "
+"(SupplementaryGroups=ravix in ravix.service, then restart) and run "
+"ravix_preflight."
+msgstr ""
+"لا تستطيع خدمة الويب قراءة مجلد الإضافات (%(path)s)، لذلك لا تظهر الإضافات "
+"الموجودة فيه. امنح مستخدم الخدمة صلاحية القراءة (SupplementaryGroups=ravix "
+"في ravix.service ثم أعد التشغيل) وشغّل ravix_preflight."
+
+#: apps/plugins/discovery.py
+#, python-format
 msgid "Duplicate slug; the version in folder %(path)s takes priority."
 msgstr "slug مكرر؛ تكون الأولوية للإصدار الموجود في المجلد %(path)s."
 
@@ -4439,6 +4478,11 @@ msgid ""
 msgstr ""
 "يجب أن تكون الإضافة «%(dep)s» بالإصدار «%(spec)s»؛ والإصدار المثبّت هو "
 "%(version)s."
+
+#: apps/plugins/services.py
+#| msgid "The plugin folder must not be a symlink."
+msgid "The plugin folder could not be read."
+msgstr "تعذّرت قراءة مجلد الإضافة."
 
 #: apps/plugins/services.py
 msgid "The plugin folder was not found on disk."
@@ -6190,7 +6234,6 @@ msgstr ""
 
 #: apps/themes/forms.py
 #, python-format
-#| msgid "At most %(limit)s %(label)s are allowed."
 msgid "At most %(count)s items are allowed."
 msgstr "يُسمح بحد أقصى %(count)s عنصرًا."
 
@@ -6207,7 +6250,6 @@ msgid "Subtitle"
 msgstr "العنوان الفرعي"
 
 #: apps/themes/forms.py
-#| msgid "Featured image"
 msgid "Feature items"
 msgstr "عناصر الميزات"
 
@@ -6225,22 +6267,18 @@ msgid "Button URL"
 msgstr "رابط الزر"
 
 #: apps/themes/forms.py
-#| msgid "Header button text"
 msgid "Second button text"
 msgstr "نص الزر الثاني"
 
 #: apps/themes/forms.py
-#| msgid "Header button URL"
 msgid "Second button URL"
 msgstr "رابط الزر الثاني"
 
 #: apps/themes/forms.py
-#| msgid "Header button text"
 msgid "Third button text"
 msgstr "نص الزر الثالث"
 
 #: apps/themes/forms.py
-#| msgid "Header button URL"
 msgid "Third button URL"
 msgstr "رابط الزر الثالث"
 
@@ -6259,7 +6297,6 @@ msgid "Enter the section text."
 msgstr "أدخل نص القسم."
 
 #: apps/themes/forms.py
-#| msgid "Enter at least two characters."
 msgid "Enter at least one item."
 msgstr "أدخل عنصرًا واحدًا على الأقل."
 
@@ -7028,9 +7065,6 @@ msgid ""
 msgstr "حُفظت التغييرات في المسودة. انشرها لتطبيقها على الموقع."
 
 #: apps/themes/views.py
-#| msgid ""
-#| "The form has expired or the request was not valid. Reload the page and try "
-#| "again."
 msgid ""
 "The home page sections changed in the meantime. Reload the page and try "
 "again."
@@ -10739,12 +10773,10 @@ msgid ""
 msgstr "تُحفظ التغييرات في مسودة أولًا ولا تُطبَّق على الموقع حتى تُنشر."
 
 #: templates/themes/customize_home.html
-#| msgid "Set up the home page sections"
 msgid "Language of the home page texts"
 msgstr "لغة نصوص الصفحة الرئيسية"
 
 #: templates/themes/customize_home.html
-#| msgid "Default"
 msgid "default"
 msgstr "افتراضي"
 

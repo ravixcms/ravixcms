@@ -157,8 +157,11 @@ def locate(slug):
 
     for base in plugin_dirs():
         path = base / slug
-        if path.is_dir() and not path.is_symlink():
-            return path
+        try:
+            if path.is_dir() and not path.is_symlink():
+                return path
+        except OSError:  # unreadable folder: treated as absent (discovery reports it)
+            continue
     return None
 
 

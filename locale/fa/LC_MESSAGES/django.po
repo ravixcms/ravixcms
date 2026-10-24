@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-24 15:09+0330\n"
+"POT-Creation-Date: 2026-10-24 21:17+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -2501,6 +2501,33 @@ msgid "Disk space could not be measured."
 msgstr "فضای دیسک قابل سنجش نبود."
 
 #: apps/core/sitehealth.py
+#| msgid "Media folder"
+msgid "Code folders"
+msgstr "پوشه‌های کد"
+
+#: apps/core/sitehealth.py
+#, python-format
+msgid ""
+"The web service cannot read these folders: %(dirs)s. The plugin list and "
+"plugins do not work."
+msgstr ""
+"سرویس وب نمی‌تواند این پوشه‌ها را بخواند: %(dirs)s. فهرست افزونه‌ها و خود "
+"افزونه‌ها کار نمی‌کنند."
+
+#: apps/core/sitehealth.py
+msgid ""
+"Add the folder’s group to the service (SupplementaryGroups=ravix in "
+"ravix.service, then daemon-reload and restart), or run install.sh again."
+msgstr ""
+"گروه پوشه را به سرویس بیفزایید (SupplementaryGroups=ravix در ravix.service، "
+"سپس daemon-reload و راه‌اندازی مجدد) یا install.sh را دوباره اجرا کنید."
+
+#: apps/core/sitehealth.py
+#| msgid "The plugin system is disabled by the setting"
+msgid "The plugin and theme folders are readable by the web service."
+msgstr "سرویس وب می‌تواند پوشه‌های افزونه و قالب را بخواند."
+
+#: apps/core/sitehealth.py
 msgid "Scheduled jobs"
 msgstr "کارهای زمان‌بندی‌شده"
 
@@ -3635,6 +3662,19 @@ msgstr "فایل __init__.py وجود ندارد."
 
 #: apps/plugins/discovery.py
 #, python-format
+msgid ""
+"The plugin folder %(path)s cannot be read by the web service, so the plugins"
+" in it are not listed. Give the service user read access "
+"(SupplementaryGroups=ravix in ravix.service, then restart) and run "
+"ravix_preflight."
+msgstr ""
+"سرویس وب نمی‌تواند پوشهٔ افزونه‌ها (%(path)s) را بخواند، پس افزونه‌های آن "
+"فهرست نشده‌اند. به کاربر سرویس دسترسی خواندن بدهید "
+"(SupplementaryGroups=ravix در ravix.service، سپس راه‌اندازی مجدد) و "
+"ravix_preflight را اجرا کنید."
+
+#: apps/plugins/discovery.py
+#, python-format
 msgid "Duplicate slug; the version in folder %(path)s takes priority."
 msgstr "نامک تکراری؛ نسخهٔ پوشهٔ %(path)s اولویت دارد."
 
@@ -4459,6 +4499,11 @@ msgstr "وابسته به افزونهٔ «%(dep)s» است که نصب و فع�
 msgid ""
 "Plugin “%(dep)s” must be “%(spec)s”; the installed version is %(version)s."
 msgstr "افزونهٔ «%(dep)s» باید «%(spec)s» باشد؛ نسخهٔ نصب‌شده %(version)s."
+
+#: apps/plugins/services.py
+#| msgid "The plugin folder must not be a symlink."
+msgid "The plugin folder could not be read."
+msgstr "پوشهٔ افزونه قابل خواندن نبود."
 
 #: apps/plugins/services.py
 msgid "The plugin folder was not found on disk."
@@ -6213,7 +6258,6 @@ msgstr "خط %(line)s بلند است: عنوان تا ۶۰ و متن تا ۳۰�
 
 #: apps/themes/forms.py
 #, python-format
-#| msgid "At most %(limit)s %(label)s are allowed."
 msgid "At most %(count)s items are allowed."
 msgstr "حداکثر %(count)s مورد مجاز است."
 
@@ -6230,7 +6274,6 @@ msgid "Subtitle"
 msgstr "زیرعنوان"
 
 #: apps/themes/forms.py
-#| msgid "Featured image"
 msgid "Feature items"
 msgstr "موردهای ویژگی"
 
@@ -6248,22 +6291,18 @@ msgid "Button URL"
 msgstr "نشانی دکمه"
 
 #: apps/themes/forms.py
-#| msgid "Header button text"
 msgid "Second button text"
 msgstr "متن دکمهٔ دوم"
 
 #: apps/themes/forms.py
-#| msgid "Header button URL"
 msgid "Second button URL"
 msgstr "نشانی دکمهٔ دوم"
 
 #: apps/themes/forms.py
-#| msgid "Header button text"
 msgid "Third button text"
 msgstr "متن دکمهٔ سوم"
 
 #: apps/themes/forms.py
-#| msgid "Header button URL"
 msgid "Third button URL"
 msgstr "نشانی دکمهٔ سوم"
 
@@ -6282,7 +6321,6 @@ msgid "Enter the section text."
 msgstr "متن بخش را وارد کنید."
 
 #: apps/themes/forms.py
-#| msgid "Enter at least two characters."
 msgid "Enter at least one item."
 msgstr "دست‌کم یک مورد وارد کنید."
 
@@ -7050,9 +7088,6 @@ msgid ""
 msgstr "تغییرات در پیش‌نویس ذخیره شد. برای اعمال روی سایت، آن را منتشر کنید."
 
 #: apps/themes/views.py
-#| msgid ""
-#| "The form has expired or the request was not valid. Reload the page and try "
-#| "again."
 msgid ""
 "The home page sections changed in the meantime. Reload the page and try "
 "again."
@@ -10783,12 +10818,10 @@ msgstr ""
 "نمی‌شوند."
 
 #: templates/themes/customize_home.html
-#| msgid "Set up the home page sections"
 msgid "Language of the home page texts"
 msgstr "زبان متن‌های صفحهٔ اصلی"
 
 #: templates/themes/customize_home.html
-#| msgid "Default"
 msgid "default"
 msgstr "پیش‌فرض"
 
