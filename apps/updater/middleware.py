@@ -4,13 +4,14 @@ import time
 
 from django.http import HttpResponse
 
-_cache = {"at": 0.0, "on": False}
+_cache = {"at": float("-inf"), "on": False}
+TTL = 1.0  # seconds a process trusts its last answer; the test runner makes it long so query-counting tests are deterministic
 EXEMPT = ("/healthz", "/panel/updates/", "/static/")
 
 
 def maintenance_active() -> bool:
     now = time.monotonic()
-    if now - _cache["at"] > 1.0:  # حداکثر یک پرس‌وجو در ثانیه برای هر پروسه
+    if now - _cache["at"] > TTL:  # حداکثر یک پرس‌وجو در ثانیه برای هر پروسه
         from django.db import DatabaseError
 
         from .models import UpdateLock
@@ -24,7 +25,7 @@ def maintenance_active() -> bool:
 
 
 def reset_cache():
-    _cache["at"] = 0.0
+    _cache["at"] = float("-inf")
 
 
 class MaintenanceMiddleware:

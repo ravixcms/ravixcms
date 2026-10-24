@@ -612,4 +612,4 @@ class ListQueryTests(ShopTestCase):
             Product.objects.create(site=self.site, name=f"م{i}", slug=f"m{i}", price=10, stock=1, category=cat, discount_percent=10)
         with CaptureQueriesContext(connection) as b:
             c.get("/fa/shop/")
-        self.assertEqual(len(a), len(b))
+        self.assertEqual(len(a), len(b), "\n".join(q["sql"][:160] for q in list(a) + [{"sql": "---- second request ----"}] + list(b)))
