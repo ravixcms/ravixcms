@@ -1,0 +1,7 @@
+# Security contact of the Ravix project (RFC 9116). Publish this file at https://ravixcms.com/.well-known/security.txt
+Contact: mailto:security@ravixcms.com
+Contact: https://github.com/ravixcms/ravixcms/security/advisories/new
+Expires: 2027-10-24T00:00:00.000Z
+Preferred-Languages: fa, en
+Canonical: https://ravixcms.com/.well-known/security.txt
+Policy: https://github.com/ravixcms/ravixcms/blob/main/SECURITY.md

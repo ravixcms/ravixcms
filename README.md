@@ -45,7 +45,7 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.lock
 .venv/bin/python manage.py migrate && .venv/bin/python manage.py runserver   # SQLite؛ فقط توسعه
 .venv/bin/python manage.py test
 ```
-مشارکت: [`CONTRIBUTING.md`](CONTRIBUTING.md) · گزارش مشکل: [Issues](https://github.com/ravixcms/ravixcms/issues) · تغییرات: [`CHANGELOG.md`](CHANGELOG.md) · امنیت: [`SECURITY.md`](SECURITY.md).
+مشارکت: [`CONTRIBUTING.md`](CONTRIBUTING.md) · گزارش مشکل: [Issues](https://github.com/ravixcms/ravixcms/issues) · تغییرات: [`CHANGELOG.md`](CHANGELOG.md) · امنیت: [`SECURITY.md`](SECURITY.md) (گزارش آسیب‌پذیری: security@ravixcms.com) · پشتیبانی: support@ravixcms.com.
 
 ## مجوز
 MIT — [`LICENSE`](LICENSE). اعلان‌های شخص ثالث (فونت‌ها): [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).

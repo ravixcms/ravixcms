@@ -2,6 +2,8 @@
 قالب: [Keep a Changelog](https://keepachangelog.com/)، نسخه‌بندی [SemVer](https://semver.org/).
 
 ## [Unreleased]
+### Changed
+- ایمیل‌های رسمی: گزارش امنیتی `security@ravixcms.com` و پشتیبانی `support@ravixcms.com` (SECURITY.md، README، CONTRIBUTING، سرصفحهٔ کاتالوگ‌های ترجمه، `.well-known/security.txt` پروژه) به‌جای نشانی Gmail.
 ### Added (دسترسی پوشه‌های کد و زبان install.sh)
 - `ravix_preflight` و «سلامت سایت» (بررسی «پوشه‌های کد») پوشه‌های افزونه و قالب را با **گروه‌های واقعی همان فرایند** می‌خوانند و فهرست می‌کنند (نه فقط «قابل نوشتن نیست»)، و در صورت شکست مالک/مجوز پوشه، کاربر و گروه‌های فرایند و راه‌حل (`SupplementaryGroups=ravix`) را می‌نویسند (`apps/core/fsaccess.py`).
 - آزمون `test_deploy_permissions`: گروه‌های هر unit با مالکیت و مجوزهایی که `install.sh` می‌گذارد هماهنگ باشند؛ هر unitی که با `Group=` غیر از `ravix` اجرا شود باید `SupplementaryGroups=ravix` داشته باشد.
@@ -28,6 +30,7 @@
 - **آدرس‌های رسمی پروژه**: سایت `https://ravixcms.com`، مستندات `https://ravixcms.com/docs`، مخزن `https://github.com/ravixcms/ravixcms`، منبع به‌روزرسانی `https://updates.ravixcms.com` و مخزن افزونه/قالب `https://plugins.ravixcms.com` در `apps/core/official.py`؛ همه با `RAVIX_WEBSITE_URL`، `RAVIX_DOCS_URL`، `RAVIX_REPO_URL`، `RAVIX_UPDATE_URL` و `RAVIX_OFFICIAL_REGISTRY_URL` قابل تغییرند. کلید عمومی ناشر هنوز خالی است: **تا وقتی هیچ کلید مورد اعتمادی تنظیم نشده، منبع رسمی به‌روزرسانی و مخزن افزونه غیرفعال‌اند** (شبکه صدا زده نمی‌شود؛ پنل به‌روزرسانی، «سلامت سایت» و `ravix_update check` پیام روشن می‌دهند، نه خطا).
 - پاورقی پنل نسخه، وب‌سایت و مستندات را نشان می‌دهد؛ صفحهٔ نصب‌کننده پیوند راهنما دارد؛ User-Agent درخواست‌های به‌روزرسانی/مخزن `Ravix/<نسخه> (+https://ravixcms.com)` است؛ `homepage` در `theme.json` (تازه) و `plugin.json` ثبت شد؛ README، SECURITY، CONTRIBUTING و docs به‌روز شدند (نسخهٔ قالب پیش‌فرض ۱.۱.۲ و افزونه‌ها ۱.۰.۳/۱.۰.۲/۱.۰.۲).
 ### Fixed
+- **آزمون ناپایدار** `ListQueryTests` فروشگاه («۸ != ۷») و دیگر آزمون‌های شمارش پرس‌وجو: کش یک‌ثانیه‌ای حالت تعمیر (`apps/updater/middleware.py`) وسط اندازه‌گیری منقضی می‌شد و یک `SELECT` اضافه می‌داد؛ اجراگر آزمون حالا TTL بلند و پاسخ تازه در شروع هر آزمون می‌دهد (`config/testrunner.py`) و آزمون تثبیت دارد. این همان شکست پنهان زیر خطای «cannot pickle 'traceback' object» در اجرای موازی بود (برای دیدن شکست واقعی `pip install tblib`؛ CONTRIBUTING).
 - **۵۰۰ در `/panel/themes/` پس از آپلود قالب (`Missing staticfiles manifest entry for 'themes/<slug>/screenshot.png'`).** استاتیک قالب نصب‌شده از پنل حالا از `/theme-assets/<slug>/…` (فقط‌خواندنی، بدون manifest، بدون `collectstatic` و restart) سرو می‌شود؛ و storage تولید (`apps.core.staticstorage.RavixStaticFilesStorage`) برای ورودی ناموجود در manifest به‌جای ۵۰۰ نشانی ساده می‌دهد. نامک تکراری (قالب همراه پروژه + نسخهٔ آپلودی): پوشهٔ مقدم برنده است و پنل/preflight پوشهٔ بی‌استفاده را نشان می‌دهند. آزمون با storage واقعی تولید برای نصب/ارتقا/حذف قالب و افزونه. راهنما: `docs/themes.md`.
 - **۵۰۰ در `/panel/plugins/` روی سرور واقعی (`PermissionError: /srv/ravix/app/plugins`).** `install.sh` کد را `root:ravix` با مجوز 750 می‌گذارد، ولی `ravix.service` با `Group=www-data` اجرا می‌شد و فرایند عضو گروه `ravix` نبود. حالا `SupplementaryGroups=ravix` در `ravix.service`، `ravix-backup.service`، `ravix-publish-scheduled.service` و `ravix-expire-orders.service` هست (روی سرور دارای نصب قبلی: فایل‌های unit را دوباره کپی کنید، `systemctl daemon-reload` و `systemctl restart ravix`، یا `install.sh` را دوباره اجرا کنید؛ `drop-in` دستی دیگر لازم نیست).
 - پوشهٔ افزونه‌ها/قالب‌ها که فرایند نتواند بخواند دیگر ۵۰۰ نمی‌دهد: لیست افزونه‌ها هشدار با نام پوشه و راه‌حل نشان می‌دهد، کشف قالب‌ها فقط لاگ می‌کند.
@@ -52,7 +55,7 @@
 - افزونه‌های همراه بسته (`contact_form`, `seo_toolkit`, `example_pay`) و قالب `startplugin`: `"ravix": ">=0.9,<2.0"` (قبلاً `<1.0.0`، یعنی روی ۱.۰ نصب نمی‌شدند). آزمون تازه سازگاری با نسخهٔ جاری و 1.x را می‌سنجد.
 - `RAVIX_VERSION = 0.9.0` (و `RAVIN_VERSION` قدیمی هم‌ارز).
 ### Changed (حقوقی و امنیتی)
-- `LICENSE`: دارندهٔ حق نشر «The Ravix Authors» (MIT بدون تغییر). `SECURITY.md`: راه تماس ravixcms@gmail.com، گزارش خصوصی، پاسخ اولیه ۷ روز، نسخه‌های پشتیبانی‌شده.
+- `LICENSE`: دارندهٔ حق نشر «The Ravix Authors» (MIT بدون تغییر). `SECURITY.md`: راه تماس security@ravixcms.com، گزارش خصوصی، پاسخ اولیه ۷ روز، نسخه‌های پشتیبانی‌شده.
 ### Fixed
 - **خطای ۵۰۰ با ورودی عددی بزرگ/غیرمعمول** (مانع ۱-۶): `apps/core/params.py` (`safe_id`/`safe_ids`/`safe_int`: فقط رقم ASCII، سقف INTEGER دیتابیس) در دیدگاه‌ها (فیلتر `post`، عملیات گروهی)، فیلترهای نوشته (`category`/`tag`/`author`)، سازندهٔ صفحه، پاسخ دیدگاه، سبد فروشگاه و مدیریت سایت‌ها. `NumericOverflowMiddleware` عددهای بیش از بازه در مسیرهای دیگر (مثلاً فیلترهای خود django-admin که با fuzz پیدا شد) را به ۴۰۰ فارسی تبدیل می‌کند. رقم‌های غیر ASCII مثل «²» هم قبلاً با `isdigit()` به `int()` می‌رسیدند و ۵۰۰ می‌دادند.
 - آزمون ناپایدار `test_token_shown_once_and_revocable` (گاهی به‌خاطر حروف تصادفی توکن) پایدار شد: کل توکن در صفحهٔ لیست جست‌وجو می‌شود، نه یک پیشوند ثابت.

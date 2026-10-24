@@ -15,7 +15,7 @@
 | ۱-۴ بستهٔ قدیمی | **تا حدی** | بسته‌های جدید ساخته و با `verify_release.py` سنجیده شدند؛ بستهٔ رسمی باید با `release.yml` روی تگ ساخته شود (اجرا نشده). |
 | ۱-۵ اجرا روی زیرساخت واقعی | **باز** | workflowها روی GitHub اجرا نشده‌اند؛ Docker image، certbot، Ubuntu 22.04، VPS و SMTP واقعی آزموده نشده‌اند. |
 | ۱-۶ خطای ۵۰۰ ورودی عددی | **رفع** | `apps/core/params.py` + `NumericOverflowMiddleware`؛ آزمون fuzz روی همهٔ مسیرهای بدون آرگومان (سه ۵۰۰ دیگر در django-admin هم پیدا و بسته شد). |
-| ۱-۷ SECURITY/LICENSE | **رفع** | `SECURITY.md`: ایمیل ravixcms@gmail.com، گزارش خصوصی، پاسخ اولیه ۷ روز، نسخهٔ پشتیبانی‌شده؛ `LICENSE`: «The Ravix Authors» ۲۰۲۶ (MIT بدون تغییر). **تأییدنشده:** فعال‌بودن Private vulnerability reporting روی مخزن GitHub و دریافت‌شدن ایمیل (باید خودتان بسنجید). |
+| ۱-۷ SECURITY/LICENSE | **رفع** | `SECURITY.md`: ایمیل security@ravixcms.com، گزارش خصوصی، پاسخ اولیه ۷ روز، نسخهٔ پشتیبانی‌شده؛ `LICENSE`: «The Ravix Authors» ۲۰۲۶ (MIT بدون تغییر). **تأییدنشده:** فعال‌بودن Private vulnerability reporting روی مخزن GitHub و دریافت‌شدن ایمیل (باید خودتان بسنجید). |
 | ۱-۸ نسخه و منبع رسمی | **تا حدی** | نسخه `0.9.0` و CHANGELOG کامل. سازوکار منبع رسمی، ابطال کلید و راهنما آماده است؛ مقادیر `apps/core/official.py` عمداً خالی‌اند (تا سرور و کلید آفلاین شما ساخته شود). |
 | ۱-۹ bandit | **رفع** | B202 با `nosec` مهار؛ CI با baseline. |
 | ۲-۲ آزمون در `media/` واقعی می‌نوشت | **رفع** | `config/testrunner.py` (MEDIA_ROOT موقت) + آزمون؛ فایل‌های آزمایشی قبلی پاک شدند. |
