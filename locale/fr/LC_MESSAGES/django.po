@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-24 21:17+0330\n"
+"POT-Creation-Date: 2026-10-24 21:42+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -2576,7 +2576,6 @@ msgid "Disk space could not be measured."
 msgstr "L’espace disque n’a pas pu être mesuré."
 
 #: apps/core/sitehealth.py
-#| msgid "Media folder"
 msgid "Code folders"
 msgstr "Dossiers de code"
 
@@ -2598,7 +2597,6 @@ msgstr ""
 "ravix.service, puis daemon-reload et redémarrage), ou relancez install.sh."
 
 #: apps/core/sitehealth.py
-#| msgid "The plugin system is disabled by the setting"
 msgid "The plugin and theme folders are readable by the web service."
 msgstr "Le service web peut lire les dossiers des extensions et des thèmes."
 
@@ -4673,7 +4671,6 @@ msgstr ""
 "%(version)s."
 
 #: apps/plugins/services.py
-#| msgid "The plugin folder must not be a symlink."
 msgid "The plugin folder could not be read."
 msgstr "Le dossier de l’extension n’a pas pu être lu."
 
@@ -11330,6 +11327,19 @@ msgid ""
 msgstr ""
 "Le thème actif détermine l’apparence du site public ; changer de thème ne "
 "modifie aucun article, page ou média."
+
+#: templates/themes/theme_list.html
+#, python-format
+msgid ""
+"The theme “%(slug)s” exists in two folders. The copy that was uploaded from "
+"the panel is not used because an earlier folder (for example one shipped "
+"with the project) has the same ID. Ask the server administrator to delete "
+"the unused copy."
+msgstr ""
+"Le thème « %(slug)s » existe dans deux dossiers. La copie envoyée depuis le "
+"panneau n’est pas utilisée, car un dossier antérieur (par exemple celui "
+"fourni avec le projet) porte le même identifiant. Demandez à "
+"l’administrateur du serveur de supprimer la copie inutilisée."
 
 #: templates/themes/theme_list.html
 msgid ""

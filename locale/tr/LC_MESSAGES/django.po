@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-24 21:17+0330\n"
+"POT-Creation-Date: 2026-10-24 21:42+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -2518,7 +2518,6 @@ msgid "Disk space could not be measured."
 msgstr "Disk alanı ölçülemedi."
 
 #: apps/core/sitehealth.py
-#| msgid "Media folder"
 msgid "Code folders"
 msgstr "Kod klasörleri"
 
@@ -2541,7 +2540,6 @@ msgstr ""
 "install.sh dosyasını yeniden çalıştırın."
 
 #: apps/core/sitehealth.py
-#| msgid "The plugin system is disabled by the setting"
 msgid "The plugin and theme folders are readable by the web service."
 msgstr "Web hizmeti eklenti ve tema klasörlerini okuyabiliyor."
 
@@ -4564,7 +4562,6 @@ msgid ""
 msgstr "“%(dep)s” eklentisi “%(spec)s” olmalıdır; kurulu sürüm %(version)s."
 
 #: apps/plugins/services.py
-#| msgid "The plugin folder must not be a symlink."
 msgid "The plugin folder could not be read."
 msgstr "Eklenti klasörü okunamadı."
 
@@ -11031,6 +11028,18 @@ msgid ""
 msgstr ""
 "Etkin tema herkese açık sitenin görünümünü belirler; temayı değiştirmek "
 "hiçbir yazıyı, sayfayı veya medyayı değiştirmez."
+
+#: templates/themes/theme_list.html
+#, python-format
+msgid ""
+"The theme “%(slug)s” exists in two folders. The copy that was uploaded from "
+"the panel is not used because an earlier folder (for example one shipped "
+"with the project) has the same ID. Ask the server administrator to delete "
+"the unused copy."
+msgstr ""
+"“%(slug)s” teması iki klasörde var. Panelden yüklenen kopya kullanılmıyor, "
+"çünkü daha önceki bir klasör (örneğin projeyle gelen) aynı kimliğe sahip. "
+"Sunucu yöneticisinden kullanılmayan kopyayı silmesini isteyin."
 
 #: templates/themes/theme_list.html
 msgid ""

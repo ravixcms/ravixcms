@@ -156,6 +156,10 @@ class Command(BaseCommand):
             if reason == "missing":
                 continue
             server(not reason, cli_gettext("The code folder %(d)s is readable and listable by this process") % {"d": d}, fsaccess.unreadable_detail(d))
+        from apps.themes import registry as theme_registry
+
+        for slug, ignored, winner in theme_registry.shadowed_themes():
+            advise(False, "", cli_gettext("The theme “%(slug)s” in %(ignored)s is unused: %(winner)s has the same ID and wins; delete the unused folder") % {"slug": slug, "ignored": ignored, "winner": winner})
         # --- به‌روزرسانی یکپارچه ---
         from apps.updater import versions as upd_versions
         from apps.updater.models import UpdateRun

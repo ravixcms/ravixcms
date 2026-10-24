@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-24 21:17+0330\n"
+"POT-Creation-Date: 2026-10-24 21:42+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -2485,7 +2485,6 @@ msgid "Disk space could not be measured."
 msgstr "تعذّر قياس مساحة القرص."
 
 #: apps/core/sitehealth.py
-#| msgid "Media folder"
 msgid "Code folders"
 msgstr "مجلدات الشيفرة"
 
@@ -2507,7 +2506,6 @@ msgstr ""
 "daemon-reload وأعد التشغيل)، أو شغّل install.sh مرة أخرى."
 
 #: apps/core/sitehealth.py
-#| msgid "The plugin system is disabled by the setting"
 msgid "The plugin and theme folders are readable by the web service."
 msgstr "تستطيع خدمة الويب قراءة مجلدات الإضافات والقوالب."
 
@@ -4480,7 +4478,6 @@ msgstr ""
 "%(version)s."
 
 #: apps/plugins/services.py
-#| msgid "The plugin folder must not be a symlink."
 msgid "The plugin folder could not be read."
 msgstr "تعذّرت قراءة مجلد الإضافة."
 
@@ -10831,6 +10828,18 @@ msgid ""
 msgstr ""
 "القالب النشط يحدد مظهر الموقع العام؛ وتغيير القالب لا يغيّر أي مقال أو صفحة "
 "أو وسائط."
+
+#: templates/themes/theme_list.html
+#, python-format
+msgid ""
+"The theme “%(slug)s” exists in two folders. The copy that was uploaded from "
+"the panel is not used because an earlier folder (for example one shipped "
+"with the project) has the same ID. Ask the server administrator to delete "
+"the unused copy."
+msgstr ""
+"السمة «%(slug)s» موجودة في مجلدين. النسخة المرفوعة من اللوحة غير مستخدمة لأن"
+" مجلدًا أسبق (مثل المرفق مع المشروع) يحمل المعرّف نفسه. اطلب من مسؤول الخادم"
+" حذف النسخة غير المستخدمة."
 
 #: templates/themes/theme_list.html
 msgid ""

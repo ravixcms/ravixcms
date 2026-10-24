@@ -26,7 +26,7 @@ class SecurityHeadersMiddleware:
         return response
 
 
-NON_LOCALIZED_PREFIXES = ("/panel/", "/accounts/", "/api/", "/django-admin/", "/static/", "/media/", "/ext/", "/registry/", "/install/",
+NON_LOCALIZED_PREFIXES = ("/panel/", "/accounts/", "/api/", "/django-admin/", "/static/", "/theme-assets/", "/media/", "/ext/", "/registry/", "/install/",
                           "/healthz", "/jsi18n/", "/i18n/")
 
 

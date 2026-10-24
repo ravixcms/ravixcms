@@ -14,6 +14,7 @@ from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
 
 from apps.core import localefmt
+from apps.themes.assets import theme_static_url
 from apps.core.templatetags import ravix_ui as _ui
 from apps.core.templatetags.ravix_ui import fa_digits as _fa_digits
 
@@ -47,9 +48,9 @@ def theme_static(context, path):
     path = str(path)
     if not _SLUG_RE.match(slug or "") or not _STATIC_PATH_RE.match(path) or ".." in path or path.startswith("/"):
         return ""
-    url = static(f"themes/{slug}/{path}")
     # ?v=<نسخه قالب>: با افزایش نسخه در theme.json کش مرورگر خودکار نو می‌شود (فایل‌ها نام ثابت دارند).
-    return f"{url}?v={version}" if _VERSION_RE.match(version or "") else url
+    # قالب نصب‌شده از پنل از /theme-assets/ سرو می‌شود (در manifest استاتیک نیست)؛ قالب‌های همراه پروژه از خط لوله استاتیک.
+    return theme_static_url(slug, path, version)
 
 
 def _css_vars(vars_: dict) -> str:

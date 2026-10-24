@@ -49,7 +49,7 @@ EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", True)
 # --- فایل‌های استاتیک با نام هش‌دار (کش طولانی امن) ---
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
-    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
+    "staticfiles": {"BACKEND": "apps.core.staticstorage.RavixStaticFilesStorage"},
 }
 WHITENOISE_MAX_AGE = int(env("RAVIX_STATIC_MAX_AGE", "31536000"))  # نام فایل‌ها هش‌دار است
 

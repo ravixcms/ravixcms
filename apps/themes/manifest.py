@@ -75,6 +75,15 @@ class ThemeInfo:
         return pick_localized(self.description, self.descriptions)
 
     @property
+    def screenshot_url(self) -> str:
+        """URL of the preview image: the static pipeline for bundled themes, /theme-assets/ for themes installed from the panel."""
+        if not self.screenshot:
+            return ""
+        from .assets import theme_static_url
+
+        return theme_static_url(self.slug, self.screenshot, self.version)
+
+    @property
     def screenshot_static_path(self) -> str:
         return f"themes/{self.slug}/{self.screenshot}" if self.screenshot else ""
 

@@ -304,7 +304,9 @@ def _theme_static_dirs(theme_dirs):
     return found
 
 
-STATICFILES_DIRS = [BASE_DIR / "static", *_theme_static_dirs(RAVIX_THEME_DIRS)]
+# قالب‌های نصب‌شده از پنل (RAVIX_THEME_INSTALL_DIR) عمداً اینجا نیستند: استاتیکشان را apps.themes.assets از /theme-assets/ سرو می‌کند
+# و به collectstatic/manifest نیازی ندارد.
+STATICFILES_DIRS = [BASE_DIR / "static", *_theme_static_dirs([d for d in RAVIX_THEME_DIRS if Path(d) != Path(RAVIX_THEME_INSTALL_DIR)])]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 # مدت کش مرورگر برای فایل‌های استاتیک (ثانیه؛ فقط در حالت DEBUG=False اثر دارد). نشانی فایل‌های هر قالب با ?v=<نسخه قالب>
 # ساخته می‌شود؛ پس با افزایش نسخه در theme.json کش مرورگر بازدیدکنندگان خودکار نو می‌شود.

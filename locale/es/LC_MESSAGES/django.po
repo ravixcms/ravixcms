@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-24 21:17+0330\n"
+"POT-Creation-Date: 2026-10-24 21:42+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -2555,7 +2555,6 @@ msgid "Disk space could not be measured."
 msgstr "No se pudo medir el espacio en disco."
 
 #: apps/core/sitehealth.py
-#| msgid "Media folder"
 msgid "Code folders"
 msgstr "Carpetas de código"
 
@@ -2578,7 +2577,6 @@ msgstr ""
 "nuevo."
 
 #: apps/core/sitehealth.py
-#| msgid "The plugin system is disabled by the setting"
 msgid "The plugin and theme folders are readable by the web service."
 msgstr "El servicio web puede leer las carpetas de plugins y temas."
 
@@ -4631,7 +4629,6 @@ msgstr ""
 "%(version)s."
 
 #: apps/plugins/services.py
-#| msgid "The plugin folder must not be a symlink."
 msgid "The plugin folder could not be read."
 msgstr "No se pudo leer la carpeta del plugin."
 
@@ -11208,6 +11205,19 @@ msgid ""
 msgstr ""
 "El tema activo determina el aspecto del sitio público; cambiar el tema no "
 "modifica ninguna entrada, página ni medio."
+
+#: templates/themes/theme_list.html
+#, python-format
+msgid ""
+"The theme “%(slug)s” exists in two folders. The copy that was uploaded from "
+"the panel is not used because an earlier folder (for example one shipped "
+"with the project) has the same ID. Ask the server administrator to delete "
+"the unused copy."
+msgstr ""
+"El tema «%(slug)s» existe en dos carpetas. La copia subida desde el panel no"
+" se usa porque una carpeta anterior (por ejemplo la incluida con el "
+"proyecto) tiene el mismo ID. Pida al administrador del servidor que elimine "
+"la copia sin usar."
 
 #: templates/themes/theme_list.html
 msgid ""

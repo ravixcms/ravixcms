@@ -13,7 +13,7 @@ from apps.accounts.mixins import CapabilityRequiredMixin
 from apps.core.models import SiteSettings
 from apps.core.regional import normalize_language
 
-from . import installer, preview, registry, services
+from . import assets, installer, preview, registry, services
 from .constants import (
     DEFAULT_THEME,
     FONT_SIZES,
@@ -87,9 +87,11 @@ class ThemeListView(ThemesAdminMixin, TemplateView):
                 {
                     "info": t,
                     "is_active": t.slug == cfg.active_theme,
-                    # فایل‌های استاتیک قالب فقط پس از collectstatic (در فرایند تازه) در STATIC_ROOT می‌آیند؛ نصب وب آن را اجرا نمی‌کند.
+                    # قالب همراه پروژه: استاتیکش با collectstatic (هنگام استقرار) می‌آید. قالب نصب‌شده از پنل از /theme-assets/ سرو می‌شود و
+                    # به collectstatic نیاز ندارد، پس هیچ‌وقت «در انتظار» نیست.
                     "static_pending": bool(
-                        t.valid and has_static and not settings.DEBUG and not (Path(settings.STATIC_ROOT) / "themes" / t.slug).is_dir()
+                        t.valid and has_static and not settings.DEBUG and not assets.is_web_installed(t.path)
+                        and not (Path(settings.STATIC_ROOT) / "themes" / t.slug).is_dir()
                     ),
                 }
             )
@@ -103,6 +105,7 @@ class ThemeListView(ThemesAdminMixin, TemplateView):
             web_install=bool(settings.RAVIX_THEME_WEB_INSTALL),
             upload_form=ThemeUploadForm(),
             limits={"zip_bytes": MAX_ZIP_BYTES, "zip_mb": MAX_ZIP_BYTES // (1024 * 1024), "extracted_mb": MAX_EXTRACTED_BYTES // (1024 * 1024), "files": MAX_FILES},
+            shadowed=[slug for slug, _ignored, _winner in registry.shadowed_themes()],
             installed=installed if installed in themes else "",
             installed_static_pending=any(i["static_pending"] and i["info"].slug == installed for i in items),
         )

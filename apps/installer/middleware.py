@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 
 from . import services, token
 
-EXEMPT_PREFIXES = ("/install/", "/static/", "/healthz")
+EXEMPT_PREFIXES = ("/install/", "/static/", "/theme-assets/", "/healthz")
 
 
 class InstallGateMiddleware:

@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-24 21:17+0330\n"
+"POT-Creation-Date: 2026-10-24 21:42+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -2435,7 +2435,6 @@ msgid "Disk space could not be measured."
 msgstr "无法测量磁盘空间。"
 
 #: apps/core/sitehealth.py
-#| msgid "Media folder"
 msgid "Code folders"
 msgstr "代码文件夹"
 
@@ -2455,7 +2454,6 @@ msgstr ""
 " 并重启），或重新运行 install.sh。"
 
 #: apps/core/sitehealth.py
-#| msgid "The plugin system is disabled by the setting"
 msgid "The plugin and theme folders are readable by the web service."
 msgstr "Web 服务可以读取插件和主题文件夹。"
 
@@ -4346,7 +4344,6 @@ msgid ""
 msgstr "插件“%(dep)s”必须为“%(spec)s”；已安装的版本是 %(version)s。"
 
 #: apps/plugins/services.py
-#| msgid "The plugin folder must not be a symlink."
 msgid "The plugin folder could not be read."
 msgstr "无法读取插件文件夹。"
 
@@ -10495,6 +10492,17 @@ msgid ""
 "The active theme determines the look of the public site; changing the theme "
 "does not change any post, page or media."
 msgstr "当前启用的主题决定公开站点的外观；更换主题不会改变任何文章、页面或媒体。"
+
+#: templates/themes/theme_list.html
+#, python-format
+msgid ""
+"The theme “%(slug)s” exists in two folders. The copy that was uploaded from "
+"the panel is not used because an earlier folder (for example one shipped "
+"with the project) has the same ID. Ask the server administrator to delete "
+"the unused copy."
+msgstr ""
+"主题“%(slug)s”存在于两个文件夹中。从面板上传的副本不会被使用，因为更靠前的文件夹（例如随项目附带的）有相同的 "
+"ID。请让服务器管理员删除未使用的副本。"
 
 #: templates/themes/theme_list.html
 msgid ""

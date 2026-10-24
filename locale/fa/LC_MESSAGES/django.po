@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ravix 0.9.0\n"
 "Report-Msgid-Bugs-To: ravixcms@gmail.com\n"
-"POT-Creation-Date: 2026-10-24 21:17+0330\n"
+"POT-Creation-Date: 2026-10-24 21:42+0330\n"
 "PO-Revision-Date: 2026-10-23 00:00+0000\n"
 "Last-Translator: Ravix\n"
 "Language-Team: Ravix Translators\n"
@@ -2501,7 +2501,6 @@ msgid "Disk space could not be measured."
 msgstr "فضای دیسک قابل سنجش نبود."
 
 #: apps/core/sitehealth.py
-#| msgid "Media folder"
 msgid "Code folders"
 msgstr "پوشه‌های کد"
 
@@ -2523,7 +2522,6 @@ msgstr ""
 "سپس daemon-reload و راه‌اندازی مجدد) یا install.sh را دوباره اجرا کنید."
 
 #: apps/core/sitehealth.py
-#| msgid "The plugin system is disabled by the setting"
 msgid "The plugin and theme folders are readable by the web service."
 msgstr "سرویس وب می‌تواند پوشه‌های افزونه و قالب را بخواند."
 
@@ -4501,7 +4499,6 @@ msgid ""
 msgstr "افزونهٔ «%(dep)s» باید «%(spec)s» باشد؛ نسخهٔ نصب‌شده %(version)s."
 
 #: apps/plugins/services.py
-#| msgid "The plugin folder must not be a symlink."
 msgid "The plugin folder could not be read."
 msgstr "پوشهٔ افزونه قابل خواندن نبود."
 
@@ -10878,6 +10875,18 @@ msgid ""
 msgstr ""
 "قالب فعال ظاهر سایت عمومی را مشخص می‌کند؛ تغییر قالب هیچ نوشته، صفحه یا "
 "رسانه‌ای را تغییر نمی‌دهد."
+
+#: templates/themes/theme_list.html
+#, python-format
+msgid ""
+"The theme “%(slug)s” exists in two folders. The copy that was uploaded from "
+"the panel is not used because an earlier folder (for example one shipped "
+"with the project) has the same ID. Ask the server administrator to delete "
+"the unused copy."
+msgstr ""
+"قالب «%(slug)s» در دو پوشه وجود دارد. نسخه‌ای که از پنل بارگذاری شده استفاده"
+" نمی‌شود، چون پوشهٔ مقدم‌تری (مثلاً همراه خود پروژه) همان شناسه را دارد. از "
+"مدیر سرور بخواهید نسخهٔ بی‌استفاده را پاک کند."
 
 #: templates/themes/theme_list.html
 msgid ""

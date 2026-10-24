@@ -951,3 +951,11 @@ msgstr "فهرست‌کردن %(path)s ممکن نیست: سرویس با %(who)
 #, python-format
 msgid "The code folder %(d)s is readable and listable by this process"
 msgstr "پوشهٔ کد %(d)s برای همین فرایند قابل‌خواندن و فهرست‌کردن است"
+
+#, python-format
+msgid "Static file %r is not in the manifest or STATIC_ROOT; serving its plain URL (run collectstatic)."
+msgstr "فایل استاتیک %r نه در manifest است و نه در STATIC_ROOT؛ نشانی ساده‌اش داده می‌شود (collectstatic را اجرا کنید)."
+
+#, python-format
+msgid "The theme “%(slug)s” in %(ignored)s is unused: %(winner)s has the same ID and wins; delete the unused folder"
+msgstr "قالب «%(slug)s» در %(ignored)s استفاده نمی‌شود: %(winner)s همان شناسه را دارد و برنده است؛ پوشهٔ بی‌استفاده را پاک کنید"

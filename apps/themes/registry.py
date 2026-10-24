@@ -28,8 +28,18 @@ def _stamp() -> int | None:
         return None
 
 
+_shadowed: list[tuple[str, Path, Path]] = []  # (slug, ignored folder, folder that won) from the last discovery
+
+
+def shadowed_themes() -> list[tuple[str, Path, Path]]:
+    """Themes whose ID is also used by an earlier folder (the earlier one wins; these are unused and can be deleted)."""
+    get_themes()
+    return list(_shadowed)
+
+
 def _discover() -> dict[str, ThemeInfo]:
     found: dict[str, ThemeInfo] = {}
+    shadowed: list[tuple[str, Path, Path]] = []
     for base in getattr(settings, "RAVIX_THEME_DIRS", []):
         base = Path(base)
         try:
@@ -49,11 +59,13 @@ def _discover() -> dict[str, ThemeInfo]:
                 continue
             if child.name in found:
                 logger.warning(cli_gettext("Duplicate theme “%s” in %s was ignored."), child.name, base)
+                shadowed.append((child.name, child, found[child.name].path))
                 continue
             info = inspect_theme_dir(child)
             if not info.valid:
                 logger.warning(cli_gettext("The theme “%s” is invalid: %s"), child.name, gettext("; ").join(info.errors))
             found[child.name] = info
+    _shadowed[:] = shadowed
     return found
 
 
