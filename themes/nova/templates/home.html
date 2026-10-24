@@ -13,8 +13,27 @@
         {% if forloop.first %}<h1 class="hero-title">{{ s.title }}</h1>{% else %}<h2 class="hero-title">{{ s.title }}</h2>{% endif %}
         {% if s.subtitle %}<p class="hero-sub">{{ s.subtitle }}</p>{% endif %}
         {% if s.body_html %}<div class="hero-body">{{ s.body_html }}</div>{% endif %}
-        {% if s.button_url or header.cta %}<p class="hero-actions">{% if s.button_url %}<a class="btn btn-lg" href="{{ s.button_url }}">{{ s.button_label }}</a>{% endif %}{% if header.cta %}<a class="btn btn-lg btn-quiet" href="{{ header.cta.url }}">{{ header.cta.label }}</a>{% endif %}</p>{% endif %}
+        {% if s.buttons %}<p class="hero-actions">{% for b in s.buttons %}<a class="btn btn-lg{% if not forloop.first %} btn-quiet{% endif %}" href="{{ b.url }}">{{ b.label }}</a>{% endfor %}</p>{% endif %}
       </div>
+    </div>
+  </section>
+
+  {% elif s.type == "features" %}
+  <section class="band band-features" aria-labelledby="sec-{{ forloop.counter }}">
+    <div class="container">
+      <header class="features-head">
+        <h2 id="sec-{{ forloop.counter }}">{% if s.title %}{{ s.title }}{% else %}{% trans "Features" %}{% endif %}</h2>
+        {% if s.subtitle %}<p class="features-sub" dir="auto">{{ s.subtitle }}</p>{% endif %}
+      </header>
+      <ul class="feature-grid">
+        {% for item in s.items %}
+        <li class="feature">
+          {% if item.icon %}<span class="feature-icon">{% feature_icon item.icon 24 %}</span>{% endif %}
+          {% if item.title %}<h3 dir="auto">{{ item.title }}</h3>{% endif %}
+          {% if item.text %}<p dir="auto">{{ item.text }}</p>{% endif %}
+        </li>
+        {% endfor %}
+      </ul>
     </div>
   </section>
 
@@ -44,23 +63,24 @@
   </section>
 
   {% elif s.type == "page" %}
-  <section class="band{% if '<ul' in s.page.body_html %} band-features{% endif %}" aria-labelledby="sec-{{ forloop.counter }}">
+  <section class="band" aria-labelledby="sec-{{ forloop.counter }}">
     <div class="container">
-      <div class="article{% if '<ul' in s.page.body_html %} article-wide{% endif %}">
+      <div class="article">
         <h2 id="sec-{{ forloop.counter }}">{{ s.title }}</h2>
-        <div class="prose{% if '<ul' in s.page.body_html %} features{% endif %}">{{ s.page.body_html }}</div>
+        <div class="prose">{{ s.page.body_html }}</div>
         <p class="section-link"><a class="more" href="{{ s.page.url }}">{% blocktrans trimmed with title=s.page.title %}Continue on the “{{ title }}” page{% endblocktrans %}</a></p>
       </div>
     </div>
   </section>
 
   {% elif s.type == "text" %}
-  <section class="band{% if '</p>\n\n<p>' in s.body_html %} band-features{% endif %}"{% if s.title %} aria-labelledby="sec-{{ forloop.counter }}"{% endif %}>
+  <section class="band"{% if s.title %} aria-labelledby="sec-{{ forloop.counter }}"{% endif %}>
     <div class="container">
-      <div class="article{% if '</p>\n\n<p>' in s.body_html %} article-wide{% endif %}">
+      <div class="article">
         {% if s.title %}<h2 id="sec-{{ forloop.counter }}">{{ s.title }}</h2>{% endif %}
-        <div class="prose{% if '</p>\n\n<p>' in s.body_html %} features features-text{% endif %}">{{ s.body_html }}</div>
-        {% if s.button_url %}<p><a class="btn" href="{{ s.button_url }}">{{ s.button_label }}</a></p>{% endif %}
+        {% if s.subtitle %}<p class="muted" dir="auto">{{ s.subtitle }}</p>{% endif %}
+        <div class="prose">{{ s.body_html }}</div>
+        {% if s.buttons %}<p class="hero-actions section-actions">{% for b in s.buttons %}<a class="btn{% if not forloop.first %} btn-quiet{% endif %}" href="{{ b.url }}">{{ b.label }}</a>{% endfor %}</p>{% endif %}
       </div>
     </div>
   </section>
