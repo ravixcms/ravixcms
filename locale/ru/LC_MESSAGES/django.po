@@ -11607,3 +11607,11 @@ msgstr "Результаты среди страниц"
 #: themes/default/templates/tag_detail.html
 msgid "No post with this tag was found."
 msgstr "Записи с этим тегом не найдены."
+
+#: templates/layouts/panel.html
+msgid "View site"
+msgstr "Посмотреть сайт"
+
+#: templates/layouts/panel.html
+msgid "View site in a new tab"
+msgstr "Посмотреть сайт в новой вкладке"

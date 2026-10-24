@@ -5,8 +5,11 @@
 <div class="panel">
   <aside class="sidebar" id="sidebar" aria-label="{% trans "Main menu" %}">
     <div class="sidebar-brand">
-      <div class="brand-mark">{% include "partials/_brand_mark.html" %}</div>
-      <div>{% blocktrans trimmed with site_name=site.site_name %}<strong>{{ site_name }}</strong><small>Admin panel</small>{% endblocktrans %}</div>
+      <a href="{% url 'public:home' %}" class="sidebar-brand-link" data-view-site title="{% trans "View site" %}">
+        <span class="brand-mark">{% include "partials/_brand_mark.html" %}</span>
+        <span>{% blocktrans trimmed with site_name=site.site_name %}<strong>{{ site_name }}</strong><small>Admin panel</small>{% endblocktrans %}<span class="sr-only"> — {% trans "View site" %}</span></span>
+      </a>
+      <a href="{% url 'public:home' %}" class="sidebar-brand-new" data-view-site-new target="_blank" rel="noopener" title="{% trans "View site in a new tab" %}" aria-label="{% trans "View site in a new tab" %}">{% icon "external" 16 %}</a>
     </div>
     {% if panel_sites %}<form method="post" action="{% url 'sites:switch' %}" class="site-switch" style="padding:.5rem 1rem">{% csrf_token %}
       <label for="site-switch" class="sr-only">{% trans "Active site" %}</label>

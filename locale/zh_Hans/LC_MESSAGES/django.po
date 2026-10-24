@@ -11011,3 +11011,11 @@ msgstr "页面结果"
 #: themes/default/templates/tag_detail.html
 msgid "No post with this tag was found."
 msgstr "未找到带有此标签的文章。"
+
+#: templates/layouts/panel.html
+msgid "View site"
+msgstr "查看站点"
+
+#: templates/layouts/panel.html
+msgid "View site in a new tab"
+msgstr "在新标签页中查看站点"

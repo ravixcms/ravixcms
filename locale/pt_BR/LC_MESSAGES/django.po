@@ -11702,3 +11702,11 @@ msgstr "Resultados de páginas"
 #: themes/default/templates/tag_detail.html
 msgid "No post with this tag was found."
 msgstr "Nenhum post com esta tag foi encontrado."
+
+#: templates/layouts/panel.html
+msgid "View site"
+msgstr "Ver site"
+
+#: templates/layouts/panel.html
+msgid "View site in a new tab"
+msgstr "Ver site em uma nova aba"

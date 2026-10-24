@@ -2,6 +2,8 @@
 قالب: [Keep a Changelog](https://keepachangelog.com/)، نسخه‌بندی [SemVer](https://semver.org/).
 
 ## [Unreleased]
+### Added (پیوند «مشاهدهٔ سایت» در پنل)
+- لوگو و نام سایت بالای منوی کناری پنل (و منوی موبایل) به صفحهٔ اصلی سایت عمومی در زبان فعلی کاربر می‌روند (همان تب)، با عنوان/متن دسترس‌پذیر «مشاهدهٔ سایت»؛ آیکون کوچک کنارش همان صفحه را در تب جدید (`rel=noopener`) باز می‌کند. ترجمه برای هر ۱۰ زبان؛ آزمون `apps/dashboard/tests/test_panel_site_link.py`.
 ### Changed
 - ایمیل‌های رسمی: گزارش امنیتی `security@ravixcms.com` و پشتیبانی `support@ravixcms.com` (SECURITY.md، README، CONTRIBUTING، سرصفحهٔ کاتالوگ‌های ترجمه، `.well-known/security.txt` پروژه) به‌جای نشانی Gmail.
 ### Added (دسترسی پوشه‌های کد و زبان install.sh)

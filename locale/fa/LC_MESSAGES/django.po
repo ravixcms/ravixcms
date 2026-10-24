@@ -11423,3 +11423,11 @@ msgstr "صفحه‌ها"
 #: themes/default/templates/tag_detail.html
 msgid "No post with this tag was found."
 msgstr "نوشته‌ای با این برچسب پیدا نشد."
+
+#: templates/layouts/panel.html
+msgid "View site"
+msgstr "مشاهدهٔ سایت"
+
+#: templates/layouts/panel.html
+msgid "View site in a new tab"
+msgstr "مشاهدهٔ سایت در تب جدید"

@@ -11372,3 +11372,11 @@ msgstr "نتائج الصفحات"
 #: themes/default/templates/tag_detail.html
 msgid "No post with this tag was found."
 msgstr "لم يُعثر على مقال بهذا الوسم."
+
+#: templates/layouts/panel.html
+msgid "View site"
+msgstr "عرض الموقع"
+
+#: templates/layouts/panel.html
+msgid "View site in a new tab"
+msgstr "عرض الموقع في علامة تبويب جديدة"

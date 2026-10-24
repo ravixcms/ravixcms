@@ -11895,3 +11895,11 @@ msgstr "Résultats de pages"
 #: themes/default/templates/tag_detail.html
 msgid "No post with this tag was found."
 msgstr "Aucun article avec cette étiquette n’a été trouvé."
+
+#: templates/layouts/panel.html
+msgid "View site"
+msgstr "Voir le site"
+
+#: templates/layouts/panel.html
+msgid "View site in a new tab"
+msgstr "Voir le site dans un nouvel onglet"
