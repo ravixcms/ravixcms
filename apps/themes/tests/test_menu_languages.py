@@ -101,3 +101,21 @@ class RenderTests(TestCase):
         en = self._links("en")
         self.assertIn("About Ravix", en)
         self.assertIn("/fa/about-fa/", en)
+
+
+class TranslatedTitleIsShownAsWrittenTests(TestCase):
+    def test_a_title_equal_to_another_languages_default_text_is_not_rewritten(self):
+        # "Articles" is how one interface language says the default "Posts"; as a title written for English it must stay "Articles"
+        from django.utils import translation
+
+        from apps.themes.config import localize_default_text
+
+        clash = next((t for t in ("Articles", "Beiträge", "Entradas", "Posts") if localize_default_text(t) != t), None)
+        if clash is None:
+            self.skipTest("no default text clashes in this catalog")
+        row = ThemeConfig.load()
+        row.published = config.sanitize({"menus": {"header": [{"label": "نوشته‌ها", "kind": "blog", "translations": {"en": {"label": clash}}}]}})
+        row.save()
+        with translation.override("en"):
+            html = self.client.get("/en/").content.decode()
+        self.assertIn(f">{clash}<", html)

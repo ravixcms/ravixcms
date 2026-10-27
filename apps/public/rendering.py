@@ -123,7 +123,9 @@ def _build_menus(doc: dict, path: str) -> dict:
     def own(entry: dict) -> dict:
         """The item's title/destination for the visitor's language (empty translated values fall back to the item's own)."""
         tr = entry.get("translations", {}).get(language, {}) if use_translations else {}
-        return {"label": tr.get("label") or entry["label"], "target": tr.get("target") or entry["target"], "url": tr.get("url") or entry["url"]}
+        # a title written for this language is shown as written; only the item's own title may be one of the translated default texts
+        label = tr.get("label") or localize_default_text(entry["label"])
+        return {"label": label, "target": tr.get("target") or entry["target"], "url": tr.get("url") or entry["url"]}
 
     items = [(i, own(i)) for loc in doc["menus"].values() for i in loc]
     page_ids = {o["target"] for i, o in items if i["kind"] == "page"}
@@ -152,7 +154,7 @@ def _build_menus(doc: dict, path: str) -> dict:
             if not url:
                 continue  # هدف حذف یا منتشرنشده؛ آیتم نمایش داده نمی‌شود (پیکربندی دست‌نخورده می‌ماند)
             internal = url.startswith("/")
-            links.append(Link(label=localize_default_text(o["label"]), url=url, active=internal and _is_active(url, path), new_tab=e["new_tab"]))
+            links.append(Link(label=o["label"], url=url, active=internal and _is_active(url, path), new_tab=e["new_tab"]))
         result[location] = tuple(links)
     return result
 
