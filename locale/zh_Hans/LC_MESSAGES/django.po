@@ -11565,3 +11565,25 @@ msgstr "%(where)s.path：无效、被保留或重复（小写字母、数字、-
 msgid "%(where)s.language_prefix: must be true/false."
 msgstr "%(where)s.language_prefix：必须为 true/false。"
 
+#: apps/themes/forms.py
+msgid "Other languages"
+msgstr "其他语言"
+
+#: apps/themes/forms.py
+msgid "One language per line: language code | title | destination (the slug of a page or category, or a link). The destination may be left empty. Example: en | About | about-ravix"
+msgstr "每行一种语言：语言代码 | 标题 | 目标（页面或分类的别名，或一个链接）。目标可以留空。示例：en | About | about-ravix"
+
+#: apps/themes/forms.py
+#, python-format
+msgid "Line %(line)s: unknown language “%(code)s”."
+msgstr "第 %(line)s 行：未知语言“%(code)s”。"
+
+#: apps/themes/forms.py
+#, python-format
+msgid "Line %(line)s: the title may have up to 60 characters."
+msgstr "第 %(line)s 行：标题最多 60 个字符。"
+
+#: apps/themes/forms.py
+#, python-format
+msgid "Line %(line)s: there is no page or category with the slug “%(slug)s”."
+msgstr "第 %(line)s 行：没有别名为“%(slug)s”的页面或分类。"

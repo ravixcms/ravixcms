@@ -161,10 +161,16 @@ class MenuItemForm(StyledFormMixin, forms.Form):
     category = forms.ModelChoiceField(queryset=Category.objects.order_by("name"), required=False, label=gettext_lazy("Content category"), empty_label="—")
     url = forms.CharField(label=gettext_lazy("URL"), max_length=500, required=False, widget=forms.TextInput(attrs={"dir": "ltr"}))
     new_tab = forms.BooleanField(label=gettext_lazy("In a new tab"), required=False)
+    translations = forms.CharField(
+        label=gettext_lazy("Other languages"), max_length=3000, required=False, widget=forms.Textarea(attrs={"rows": 2, "dir": "auto"}),
+        help_text=gettext_lazy("One language per line: language code | title | destination (the slug of a page or category, or a link). "
+                               "The destination may be left empty. Example: en | About | about-ravix"))
 
     def clean(self):
         cleaned = super().clean()
         kind, label = cleaned.get("kind"), (cleaned.get("label") or "").strip()
+        if cleaned.get("kind"):
+            cleaned["translations_parsed"] = self._parse_translations(cleaned["kind"], cleaned.get("translations", ""))
         if not kind:
             self.add_error("kind", gettext("Choose the link type."))
             return cleaned
@@ -181,6 +187,41 @@ class MenuItemForm(StyledFormMixin, forms.Form):
                 self.add_error("url", exc)
         return cleaned
 
+    def _parse_translations(self, kind: str, text: str) -> dict:
+        from apps.core.regional import normalize_language
+
+        result = {}
+        for number, line in enumerate((text or "").splitlines(), 1):
+            if not line.strip():
+                continue
+            parts = [p.strip() for p in line.split("|", 2)]
+            code = normalize_language(parts[0])
+            label = parts[1] if len(parts) > 1 else ""
+            dest = parts[2] if len(parts) > 2 else ""
+            if not code:
+                self.add_error("translations", gettext("Line %(line)s: unknown language “%(code)s”.") % {"line": number, "code": parts[0]})
+                continue
+            if len(label) > 60:
+                self.add_error("translations", gettext("Line %(line)s: the title may have up to 60 characters.") % {"line": number})
+                continue
+            entry = {"label": label}
+            if dest and kind in ("page", "category"):
+                model = Page if kind == "page" else Category
+                obj = model.objects.filter(slug=dest).first()
+                if obj is None:
+                    self.add_error("translations", gettext("Line %(line)s: there is no page or category with the slug “%(slug)s”.") % {"line": number, "slug": dest})
+                    continue
+                entry["target"] = obj.pk
+            elif dest and kind == "url":
+                try:
+                    entry["url"] = normalize_link(dest, allow_empty=False)
+                except ValidationError as exc:
+                    self.add_error("translations", exc)
+                    continue
+            if entry["label"] or len(entry) > 1:
+                result[code] = entry
+        return result
+
     def to_item(self) -> dict:
         d = self.cleaned_data
         kind = d["kind"]
@@ -188,7 +229,21 @@ class MenuItemForm(StyledFormMixin, forms.Form):
             "label": d["label"].strip(), "kind": kind,
             "target": d["page"].pk if kind == "page" else d["category"].pk if kind == "category" else None,
             "url": d["url"] if kind == "url" else "", "new_tab": d["new_tab"],
+            "translations": d.get("translations_parsed", {}),
         }
+
+
+def menu_translations_text(item: dict) -> str:
+    """The "Other languages" box of a menu item: ``code | title | destination`` per line (the destination as a slug or link)."""
+    kind = item["kind"]
+    ids = {t.get("target") for t in item.get("translations", {}).values() if t.get("target")}
+    model = Page if kind == "page" else Category if kind == "category" else None
+    slugs = dict(model.objects.filter(pk__in=ids).values_list("pk", "slug")) if model and ids else {}
+    lines = []
+    for code, t in item.get("translations", {}).items():
+        dest = slugs.get(t.get("target"), "") if model else t.get("url", "")
+        lines.append(f"{code} | {t.get('label', '')} | {dest}")
+    return "\n".join(lines)
 
 
 def menu_initial(items: list[dict]) -> list[dict]:
@@ -196,6 +251,7 @@ def menu_initial(items: list[dict]) -> list[dict]:
         {
             "label": i["label"], "kind": i["kind"], "page": i["target"] if i["kind"] == "page" else None,
             "category": i["target"] if i["kind"] == "category" else None, "url": i["url"], "new_tab": i["new_tab"],
+            "translations": menu_translations_text(i),
         }
         for i in items
     ]

@@ -11926,3 +11926,25 @@ msgstr "%(where)s.path: غير صالح أو محجوز أو مكرر (أحرف 
 msgid "%(where)s.language_prefix: must be true/false."
 msgstr "%(where)s.language_prefix: يجب أن يكون true/false."
 
+#: apps/themes/forms.py
+msgid "Other languages"
+msgstr "لغات أخرى"
+
+#: apps/themes/forms.py
+msgid "One language per line: language code | title | destination (the slug of a page or category, or a link). The destination may be left empty. Example: en | About | about-ravix"
+msgstr "لغة واحدة في كل سطر: رمز اللغة | العنوان | الوجهة (معرّف الصفحة أو التصنيف، أو رابط). يمكن ترك الوجهة فارغة. مثال: en | About | about-ravix"
+
+#: apps/themes/forms.py
+#, python-format
+msgid "Line %(line)s: unknown language “%(code)s”."
+msgstr "السطر %(line)s: اللغة «%(code)s» غير معروفة."
+
+#: apps/themes/forms.py
+#, python-format
+msgid "Line %(line)s: the title may have up to 60 characters."
+msgstr "السطر %(line)s: يجب ألا يزيد العنوان عن 60 حرفًا."
+
+#: apps/themes/forms.py
+#, python-format
+msgid "Line %(line)s: there is no page or category with the slug “%(slug)s”."
+msgstr "السطر %(line)s: لا توجد صفحة أو تصنيف بالمعرّف «%(slug)s»."

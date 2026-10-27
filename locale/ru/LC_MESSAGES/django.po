@@ -12161,3 +12161,25 @@ msgstr "%(where)s.path: недопустимый, зарезервированн
 msgid "%(where)s.language_prefix: must be true/false."
 msgstr "%(where)s.language_prefix: должно быть true/false."
 
+#: apps/themes/forms.py
+msgid "Other languages"
+msgstr "Другие языки"
+
+#: apps/themes/forms.py
+msgid "One language per line: language code | title | destination (the slug of a page or category, or a link). The destination may be left empty. Example: en | About | about-ravix"
+msgstr "Один язык в строке: код языка | название | назначение (слаг страницы или рубрики либо ссылка). Назначение можно оставить пустым. Пример: en | About | about-ravix"
+
+#: apps/themes/forms.py
+#, python-format
+msgid "Line %(line)s: unknown language “%(code)s”."
+msgstr "Строка %(line)s: неизвестный язык «%(code)s»."
+
+#: apps/themes/forms.py
+#, python-format
+msgid "Line %(line)s: the title may have up to 60 characters."
+msgstr "Строка %(line)s: название может содержать не более 60 символов."
+
+#: apps/themes/forms.py
+#, python-format
+msgid "Line %(line)s: there is no page or category with the slug “%(slug)s”."
+msgstr "Строка %(line)s: нет страницы или рубрики со слагом «%(slug)s»."

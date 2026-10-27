@@ -83,8 +83,8 @@ def default_config() -> dict:
         "footer": {"text": "", "show_menu": True, "show_contact": True, "social": []},
         "menus": {
             "header": [
-                {"label": gettext("Home"), "kind": "home", "target": None, "url": "", "new_tab": False},
-                {"label": gettext("Posts"), "kind": "blog", "target": None, "url": "", "new_tab": False},
+                {"label": gettext("Home"), "kind": "home", "target": None, "url": "", "new_tab": False, "translations": {}},
+                {"label": gettext("Posts"), "kind": "blog", "target": None, "url": "", "new_tab": False, "translations": {}},
             ],
             "footer": [],
         },
@@ -158,7 +158,34 @@ def sanitize_menu_item(raw) -> dict | None:
         item["url"] = _link(raw.get("url"))
         if not item["url"]:
             return None
+    item["translations"] = sanitize_menu_translations(raw.get("translations"), kind)
     return item
+
+
+def sanitize_menu_translations(raw, kind: str) -> dict:
+    """{language: {"label", "target" | "url"}}: a menu item's own title and destination for one language. ``target`` (a page or
+    category id) is used by page/category items and ``url`` by link items; whatever is empty falls back to the item's own value
+    (the site's default language), field by field. Structure (kind, order, new tab) stays shared."""
+    from apps.core.regional import normalize_language
+
+    result = {}
+    for code, entry in _dict(raw).items():
+        code = normalize_language(code)
+        entry = _dict(entry)
+        if not code:
+            continue
+        cleaned = {"label": _text(entry.get("label"), 60)}
+        if kind in ("page", "category"):
+            target = _int_or_none(entry.get("target"))
+            if target is not None:
+                cleaned["target"] = target
+        elif kind == "url":
+            url = _link(entry.get("url"))
+            if url:
+                cleaned["url"] = url
+        if cleaned["label"] or len(cleaned) > 1:
+            result[code] = cleaned
+    return dict(sorted(result.items()))
 
 
 def sanitize_buttons(raw_buttons, first_label="", first_url="") -> list[dict]:

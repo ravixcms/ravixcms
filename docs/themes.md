@@ -146,7 +146,7 @@ themes/<slug>/
 - `header`: `show_tagline`، `sticky`، `show_search`، `cta` (`label`/`url` یا خالی)
 - `footer`: `text`، `show_menu`، `show_contact`، `social` (فهرست `Link`)
 - `feeds`: فهرست `FeedLink` با `title`، `url` (مطلق)، `type` (`application/rss+xml` یا `application/atom+xml`)؛ `theme_head` خودش آن‌ها را در `<head>` می‌گذارد، نیازی به کار در قالب نیست. در صفحهٔ دسته/برچسب، فید همان دسته/برچسب اول می‌آید و بعد فید کل سایت.
-- `menus.header` / `menus.footer`: فهرست `Link` با `label`، `url`، `active`، `new_tab` (آیتم‌های بدون مقصد قابل‌نمایش حذف شده‌اند)
+- `menus.header` / `menus.footer`: فهرست `Link` با `label`، `url`، `active`، `new_tab` (آیتم‌های بدون مقصد قابل‌نمایش حذف شده‌اند)؛ عنوان و نشانی همان زبان بازدیدکننده است (هر آیتم می‌تواند عنوان و مقصد جدا برای هر زبان داشته باشد)
 - `viewer`: برای مدیر واردشده (`name`، `panel_url`، `edit_url`، `customize_url`) وگرنه خالی
 - `post`/`posts[]`: `title`، `url`، `excerpt`، `image_url`، `author_name`، `date_display`، `date_iso`، `categories`، `tags`،
   `reading_time` و `body_html` (فقط در صفحهٔ خود نوشته)

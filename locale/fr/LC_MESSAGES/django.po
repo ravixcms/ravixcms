@@ -12448,3 +12448,25 @@ msgstr "%(where)s.path : invalide, réservé ou en double (minuscules, chiffres,
 msgid "%(where)s.language_prefix: must be true/false."
 msgstr "%(where)s.language_prefix : doit valoir true/false."
 
+#: apps/themes/forms.py
+msgid "Other languages"
+msgstr "Autres langues"
+
+#: apps/themes/forms.py
+msgid "One language per line: language code | title | destination (the slug of a page or category, or a link). The destination may be left empty. Example: en | About | about-ravix"
+msgstr "Une langue par ligne : code de langue | titre | destination (le slug d’une page ou d’une catégorie, ou un lien). La destination peut rester vide. Exemple : en | About | about-ravix"
+
+#: apps/themes/forms.py
+#, python-format
+msgid "Line %(line)s: unknown language “%(code)s”."
+msgstr "Ligne %(line)s : langue inconnue « %(code)s »."
+
+#: apps/themes/forms.py
+#, python-format
+msgid "Line %(line)s: the title may have up to 60 characters."
+msgstr "Ligne %(line)s : le titre peut contenir jusqu’à 60 caractères."
+
+#: apps/themes/forms.py
+#, python-format
+msgid "Line %(line)s: there is no page or category with the slug “%(slug)s”."
+msgstr "Ligne %(line)s : aucune page ou catégorie avec le slug « %(slug)s »."

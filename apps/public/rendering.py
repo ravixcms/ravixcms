@@ -112,32 +112,47 @@ def _is_active(url: str, path: str) -> bool:
 
 
 def _build_menus(doc: dict, path: str) -> dict:
-    items = [i for loc in doc["menus"].values() for i in loc]
-    page_ids = {i["target"] for i in items if i["kind"] == "page"}
-    cat_ids = {i["target"] for i in items if i["kind"] == "category"}
+    from django.utils.translation import get_language
+
+    from apps.core.regional import normalize_language
+
+    language = normalize_language(get_language() or "")
+    default_language = normalize_language(SiteSettings.load().language)
+    use_translations = bool(language) and language != default_language
+
+    def own(entry: dict) -> dict:
+        """The item's title/destination for the visitor's language (empty translated values fall back to the item's own)."""
+        tr = entry.get("translations", {}).get(language, {}) if use_translations else {}
+        return {"label": tr.get("label") or entry["label"], "target": tr.get("target") or entry["target"], "url": tr.get("url") or entry["url"]}
+
+    items = [(i, own(i)) for loc in doc["menus"].values() for i in loc]
+    page_ids = {o["target"] for i, o in items if i["kind"] == "page"}
+    cat_ids = {o["target"] for i, o in items if i["kind"] == "category"}
     pages = {p.pk: p for p in Page.objects.filter(pk__in=page_ids, status="published")} if page_ids else {}
     cats = {c.pk: c for c in Category.objects.filter(pk__in=cat_ids)} if cat_ids else {}
     result = {}
     for location, entries in doc["menus"].items():
         links = []
         for e in entries:
-            kind = e["kind"]
+            kind, o = e["kind"], own(e)
             if kind == "home":
                 url = reverse("public:home")
             elif kind == "blog":
                 url = reverse("public:post_list")
             elif kind == "page":
-                target = pages.get(e["target"])
+                target = pages.get(o["target"])
+                if target is None and o["target"] != e["target"]:  # the language's own page is gone/unpublished: use the shared one
+                    target = Page.objects.filter(pk=e["target"], status="published").first()
                 url = page_url(target) if target else ""
             elif kind == "category":
-                target = cats.get(e["target"])
+                target = cats.get(o["target"])
                 url = category_url(target) if target else ""
             else:
-                url = localize_internal_url(e["url"])
+                url = localize_internal_url(o["url"])
             if not url:
                 continue  # هدف حذف یا منتشرنشده؛ آیتم نمایش داده نمی‌شود (پیکربندی دست‌نخورده می‌ماند)
             internal = url.startswith("/")
-            links.append(Link(label=localize_default_text(e["label"]), url=url, active=internal and _is_active(url, path), new_tab=e["new_tab"]))
+            links.append(Link(label=localize_default_text(o["label"]), url=url, active=internal and _is_active(url, path), new_tab=e["new_tab"]))
         result[location] = tuple(links)
     return result
 

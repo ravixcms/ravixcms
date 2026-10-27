@@ -12141,3 +12141,25 @@ msgstr "%(where)s.path: geçersiz, ayrılmış veya yinelenen (küçük harfler,
 msgid "%(where)s.language_prefix: must be true/false."
 msgstr "%(where)s.language_prefix: true/false olmalıdır."
 
+#: apps/themes/forms.py
+msgid "Other languages"
+msgstr "Diğer diller"
+
+#: apps/themes/forms.py
+msgid "One language per line: language code | title | destination (the slug of a page or category, or a link). The destination may be left empty. Example: en | About | about-ravix"
+msgstr "Her satıra bir dil: dil kodu | başlık | hedef (bir sayfanın veya kategorinin kısa adı ya da bir bağlantı). Hedef boş bırakılabilir. Örnek: en | About | about-ravix"
+
+#: apps/themes/forms.py
+#, python-format
+msgid "Line %(line)s: unknown language “%(code)s”."
+msgstr "Satır %(line)s: “%(code)s” dili bilinmiyor."
+
+#: apps/themes/forms.py
+#, python-format
+msgid "Line %(line)s: the title may have up to 60 characters."
+msgstr "Satır %(line)s: başlık en fazla 60 karakter olabilir."
+
+#: apps/themes/forms.py
+#, python-format
+msgid "Line %(line)s: there is no page or category with the slug “%(slug)s”."
+msgstr "Satır %(line)s: “%(slug)s” kısa adına sahip sayfa veya kategori yok."
