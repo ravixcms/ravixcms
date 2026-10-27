@@ -23,7 +23,7 @@ _WARN_EVERY = 60  # seconds: a broken folder must not fill the log on every requ
 class SafeFileBasedCache(FileBasedCache):
     def __init__(self, dir, params):  # noqa: A002 - Django's signature
         self.broken = False
-        self._last_warn = 0.0
+        self._last_warn = None  # monotonic() counts from boot: 0.0 would silence the first warning on a freshly booted machine
         super().__init__(dir, params)
 
     def _createdir(self):
@@ -35,7 +35,7 @@ class SafeFileBasedCache(FileBasedCache):
     def _failed(self, exc):
         self.broken = True
         now = time.monotonic()
-        if now - self._last_warn >= _WARN_EVERY:
+        if self._last_warn is None or now - self._last_warn >= _WARN_EVERY:
             self._last_warn = now
             logger.error(cli_gettext("The cache folder %(a1)s is missing or not writable (%(a2)s: %(a3)s). Provision it with CacheDirectory=ravix in the systemd unit "
                                      "or set RAVIX_CACHE_DIR; until then nothing is cached and login throttling uses the database table.")

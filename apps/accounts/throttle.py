@@ -15,7 +15,7 @@ MAX_ATTEMPTS_PER_IP = 20  # مجموع هر IP
 LOCK_SECONDS = 5 * 60
 FALLBACK_ALIAS = "throttle_fallback"  # کش جدولی (دیتابیس) برای وقتی کش اصلی خراب است
 _WARN_EVERY = 60  # ثانیه؛ هشدار لاگ هر بار تلاش ورود نباید لاگ را پر کند
-_last_warn = 0.0
+_last_warn = None  # monotonic() counts from boot, so 0.0 would silence the first warning on a freshly booted machine
 
 
 def client_ip(request) -> str | None:
@@ -55,7 +55,7 @@ def _with_cache(fn):
         if fb is None:
             raise
         now = time.monotonic()
-        if now - _last_warn >= _WARN_EVERY:
+        if _last_warn is None or now - _last_warn >= _WARN_EVERY:
             _last_warn = now
             logger.warning(cli_gettext("The main cache used for login throttling is broken (%s: %s); the database cache table is used instead. Check the cache folder / Redis."),
                            type(exc).__name__, exc)

@@ -75,7 +75,7 @@ class SafeFileBasedCacheTests(SimpleTestCase):
 
 class BrokenSafeCacheSiteTests(TestCase):
     def setUp(self):
-        throttle._last_warn = 0.0
+        throttle._last_warn = None
         self.caches, self.blocker = safe_caches()
         self.addCleanup(os.unlink, self.blocker)
 

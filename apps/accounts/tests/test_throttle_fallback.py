@@ -30,7 +30,7 @@ def broken_caches(with_fallback=True):
 
 class BrokenCacheLoginTests(TestCase):
     def setUp(self):
-        throttle._last_warn = 0.0
+        throttle._last_warn = None
         self.caches, self.blocker = broken_caches()
         self.addCleanup(os.unlink, self.blocker)
         self.url = reverse("accounts:login")
@@ -69,6 +69,14 @@ class BrokenCacheLoginTests(TestCase):
                 for _ in range(3):
                     self.post("wrong-password")
         self.assertEqual(len(logs.output), 1)
+
+    def test_first_warning_is_logged_on_a_freshly_booted_machine(self):
+        # time.monotonic() counts from boot: on a CI runner that started seconds ago it is below the warning interval.
+        from unittest import mock
+
+        with override_settings(CACHES=self.caches), mock.patch("apps.accounts.throttle.time.monotonic", return_value=3.0):
+            with self.assertLogs("apps.accounts.throttle", "WARNING"):
+                self.post("wrong-password")
 
     def test_healthy_cache_does_not_touch_database_fallback(self):
         self.post("wrong-password")
