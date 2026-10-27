@@ -115,7 +115,7 @@ class PluginAPI:
     def render_fragment(self, request, template: str, context: dict | None = None) -> str:
         return render_to_string(f"plugin:{self.slug}/{template}", context or {}, request=request)
 
-    def render_public(self, request, template: str, context: dict | None = None, *, title: str, status: int = 200, description: str = ""):
+    def render_public(self, request, template: str, context: dict | None = None, *, title: str, status: int = 200, description: str = "", index: bool = False):
         """قالب افزونه را رندر و داخل چارچوب قالب فعال سایت نشان می‌دهد (هدر/فوتر/منو از قالب سایت)."""
         from apps.public.dto import PageItem
         from apps.public.rendering import render_page
@@ -126,7 +126,7 @@ class PluginAPI:
         item = PageItem(title=title, url=request.path, body_html=body, date_display="", date_iso="", builder=True, show_title=True)
 
         def seo(site):
-            return make_seo(request, site, title=title, description=description, path=request.path, robots="noindex,follow")
+            return make_seo(request, site, title=title, description=description, path=request.path, robots="" if index else "noindex,follow")
 
         return render_page(request, "page_detail.html", {"page": item, "breadcrumbs": _crumbs((gettext("Home"), "/"), (title, ""))},
                            status=status, seo_factory=seo)

@@ -110,7 +110,7 @@ plugins/my_hello/
 | `api.has_cap(user, "x.y")`، `api.cap("view")` | بررسی مجوز با سیستم هسته |
 | `api.admin_url(page_key)`, `api.redirect_admin(key)`, `api.public_url(path)` | ساخت نشانی |
 | `api.render_admin(request, "t.html", ctx, title=...)` | رندر قالب افزونه در چارچوب پنل |
-| `api.render_public(request, "t.html", ctx, title=...)` | رندر قالب افزونه داخل قالب فعال سایت (هدر/فوتر/منو) |
+| `api.render_public(request, "t.html", ctx, title=..., index=False)` | رندر قالب افزونه داخل قالب فعال سایت (هدر/فوتر/منو)؛ پیش‌فرض noindex است و `index=True` صفحه را قابل ایندکس می‌کند |
 | `api.rate_limit(request, bucket, limit, window)` | True اگر درخواست مجاز است (بر پایهٔ IP) |
 | `api.site` | تنظیمات سایت |
 

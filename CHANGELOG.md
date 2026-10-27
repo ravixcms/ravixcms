@@ -4,6 +4,7 @@
 ## [Unreleased]
 ### Added (افزونه‌ها: صفحهٔ سایت، پوشهٔ خصوصی، دانلود فایل)
 - `site_routes` در `plugin.json`: صفحه‌ای که افزونه زیر پیشوند زبان سایت (`/<زبان>/مسیر/`) یا بدون پیشوند (`/مسیر/`، مثلاً لینک ثابت دانلود) سرو می‌کند؛ اولین بخش مسیر نمی‌تواند از بخش‌های رزروشدهٔ هسته باشد و فقط مسیرهای اعلام‌شدهٔ افزونه‌های فعال تطبیق می‌خورند.
+- `api.render_public(..., index=True)`: صفحهٔ عمومی افزونه می‌تواند قابل ایندکس باشد (پیش‌فرض همچنان noindex).
 - `api.data_dir()` (پوشهٔ خصوصی هر افزونه، خارج از media، `RAVIX_PLUGIN_DATA_DIR`) و `api.file_response()` (دانلود با `Content-Disposition: attachment` و `nosniff`؛ با `RAVIX_ACCEL_REDIRECT_PREFIX` فایل را nginx با `X-Accel-Redirect` می‌فرستد و پردازهٔ Gunicorn درگیر نمی‌شود).
 - `install.sh`/nginx: پوشهٔ `plugin_data`، مکان `internal` برای `/_plugin_files/`، سقف آپلود در صفحه‌های مدیریتی افزونه‌ها؛ پشتیبان‌گیری و بازیابی و بررسی `ravix_preflight` برای پوشهٔ جدید.
 ### Added (زبان نوشته و برگه)

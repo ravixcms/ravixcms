@@ -24,6 +24,10 @@ def plain(request, api):
     return HttpResponse("PLAIN")
 
 
+def shown(request, api):
+    return api.render_public(request, "pub.html", {}, title="Shown", description="About this page", index=request.GET.get("i") == "1")
+
+
 def boom(request, api):
     raise RuntimeError("boom")
 
@@ -43,6 +47,7 @@ def manifest(**over):
         {"path": "hello/", "view": "views:page"},
         {"path": "get/latest/", "view": "views:plain", "language_prefix": False},
         {"path": "boom/", "view": "views:boom"},
+        {"path": "shown/", "view": "views:shown"},
         {"path": "save/", "view": "views:save", "language_prefix": False},
         {"path": "file/", "view": "views:get_file", "language_prefix": False},
     ], **over)
@@ -84,8 +89,17 @@ class SiteRouteServingTests(PluginTestCase):
         ov = override_settings(RAVIX_PLUGIN_DATA_DIR=self.data, RAVIX_ACCEL_REDIRECT_PREFIX="")
         ov.enable()
         self.addCleanup(ov.disable)
-        self.write_plugin("demo", manifest(), views=VIEWS)
+        self.write_plugin("demo", manifest(), files={"templates/pub.html": "<p>inside the site frame</p>"}, views=VIEWS)
         self.install_activate("demo")
+
+    def test_public_page_is_noindex_unless_the_plugin_asks_for_indexing(self):
+        hidden = Client().get("/en/shown/").content.decode()
+        self.assertIn("inside the site frame", hidden)
+        self.assertIn('content="noindex', hidden)
+        visible = Client().get("/en/shown/?i=1").content.decode()
+        self.assertNotIn("noindex", visible)
+        self.assertIn('rel="canonical"', visible)
+        self.assertIn("About this page", visible)
 
     def test_localized_route_is_served_under_the_language_prefix(self):
         r = Client().get("/en/hello/")
