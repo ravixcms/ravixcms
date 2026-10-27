@@ -32,6 +32,8 @@ class RavixTestRunner(DiscoverRunner):
             return self._setup_and_call(case, result, debug)
 
         SimpleTestCase._setup_and_call = setup_and_call
+        self._modules_default = getattr(settings, "BUILTIN_MODULES_DEFAULT_ON", False)
+        settings.BUILTIN_MODULES_DEFAULT_ON = True  # the suite exercises the shop; tests of the off state switch it explicitly
         self._media_tmp = tempfile.mkdtemp(prefix="ravix-test-media-")
         self._media_before = settings.MEDIA_ROOT
         settings.MEDIA_ROOT = self._media_tmp
@@ -42,6 +44,7 @@ class RavixTestRunner(DiscoverRunner):
         maintenance.TTL = self._maintenance_ttl
         SimpleTestCase._setup_and_call = self._setup_and_call
         settings.MEDIA_ROOT = self._media_before
+        settings.BUILTIN_MODULES_DEFAULT_ON = self._modules_default
         settings.LANGUAGE_CODE, settings.RAVIX_CLI_LANG = self._language_before
         shutil.rmtree(self._media_tmp, ignore_errors=True)
         super().teardown_test_environment(**kwargs)

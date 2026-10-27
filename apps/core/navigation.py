@@ -20,6 +20,7 @@ class NavItem:
     capability: str | None = None  # اگر تعیین شود فقط کاربران دارای این دسترسی می‌بینند
     active_urls: tuple[str, ...] = field(default_factory=tuple)  # نام view ها (namespace:name) برای فعال‌سازی
     url: str = ""
+    module: str = ""  # built-in module key; hidden while that module is switched off
 
 
 SECTIONS = {
@@ -37,4 +38,7 @@ def register_nav_item(item: NavItem) -> None:
 
 
 def get_nav_items() -> list[NavItem]:
-    return sorted(_registry.values(), key=lambda i: (list(SECTIONS).index(i.section), i.order))
+    from . import modules
+
+    live = [i for i in _registry.values() if not i.module or modules.is_enabled(i.module)]
+    return sorted(live, key=lambda i: (list(SECTIONS).index(i.section), i.order))

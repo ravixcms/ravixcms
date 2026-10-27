@@ -11128,3 +11128,144 @@ msgstr "商店设置已保存。"
 #, python-format
 msgid "Order %(number)s — amount: <strong>%(amount)s</strong>"
 msgstr "订单 %(number)s — 金额：<strong>%(amount)s</strong>"
+
+#: apps/accounts/permissions.py
+msgid "Switch built-in modules such as Ravix Shop on and off (superadmin only)"
+msgstr "开启和关闭内置模块（如 Ravix Shop）（仅超级管理员）"
+
+#: apps/core/builtin_modules.py
+msgid "An online store inside Ravix: physical and digital products, cart and checkout, payment gateways, orders, discounts, shipping and reports."
+msgstr "Ravix 内置的网上商店：实体和数字商品、购物车与结账、支付网关、订单、折扣、配送和报表。"
+
+#: apps/core/builtin_modules.py
+msgid "The server has switched the shop off (RAVIX_SHOP_ENABLED=false in ravix.env). Ask the server administrator to remove that line, then restart once."
+msgstr "服务器已关闭商店（ravix.env 中的 RAVIX_SHOP_ENABLED=false）。请让服务器管理员删除该行并重启一次。"
+
+#: apps/plugins/views.py
+msgid "The setup guide was closed. You can open it again from the module settings."
+msgstr "设置向导已关闭。您可以在模块设置中重新打开。"
+
+#: apps/plugins/views.py
+#, python-format
+msgid "“%(name)s” was deactivated. Nothing was deleted; activate it again to bring everything back."
+msgstr "“%(name)s”已停用。未删除任何内容；重新启用后一切都会恢复。"
+
+#: apps/plugins/views.py
+#, python-format
+msgid "Module “%(name)s” was activated"
+msgstr "模块“%(name)s”已启用"
+
+#: apps/plugins/views.py
+#, python-format
+msgid "Module “%(name)s” was deactivated"
+msgstr "模块“%(name)s”已停用"
+
+#: apps/plugins/views.py
+#, python-format
+msgid "“%(name)s” was activated."
+msgstr "“%(name)s”已启用。"
+
+#: apps/plugins/views.py
+msgid "The server has switched this module off; it cannot be activated from the panel."
+msgstr "服务器已关闭此模块，无法从面板启用。"
+
+#: apps/plugins/views.py
+msgid "Module"
+msgstr "模块"
+
+#: apps/shop/models.py
+msgid "Store phone"
+msgstr "商店电话"
+
+#: apps/shop/models.py
+msgid "Store email"
+msgstr "商店邮箱"
+
+#: apps/shop/models.py
+msgid "Store name"
+msgstr "商店名称"
+
+#: apps/shop/models.py
+msgid "Store address"
+msgstr "商店地址"
+
+#: apps/shop/wizard.py
+msgid "Add a shipping method with its cost by region and weight."
+msgstr "添加按地区和重量计费的配送方式。"
+
+#: apps/shop/wizard.py
+msgid "Currency and toman display"
+msgstr "货币和土曼显示"
+
+#: apps/shop/wizard.py
+msgid "Store details"
+msgstr "商店信息"
+
+#: apps/shop/wizard.py
+msgid "Choose the shop currency (rial, toman, dollar or euro) and whether prices are shown in toman. It is fixed once the first product exists."
+msgstr "选择商店货币（里亚尔、土曼、美元或欧元）以及是否以土曼显示价格。创建第一个商品后不能再更改。"
+
+#: apps/shop/wizard.py
+msgid "The store name, address, phone and email shown on invoices and customer emails."
+msgstr "显示在发票和客户邮件中的商店名称、地址、电话和邮箱。"
+
+#: apps/shop/wizard.py
+msgid "Shipping method"
+msgstr "配送方式"
+
+#: apps/shop/wizard.py
+msgid "First product"
+msgstr "第一个商品"
+
+#: apps/shop/wizard.py
+msgid "Connect and enable a payment gateway so customers can pay."
+msgstr "连接并启用支付网关，让顾客可以付款。"
+
+#: apps/shop/wizard.py
+msgid "Create your first product."
+msgstr "创建您的第一个商品。"
+
+#: templates/plugins/list.html templates/shop/panel/settings.html
+msgid "Setup guide"
+msgstr "设置向导"
+
+#: templates/plugins/list.html
+msgid "Locked off by the server"
+msgstr "已被服务器关闭"
+
+#: templates/plugins/list.html
+msgid "Built-in plugins"
+msgstr "内置插件"
+
+#: templates/plugins/module_setup.html
+msgid "Skip for now"
+msgstr "暂时跳过"
+
+#: templates/plugins/module_setup.html
+msgid "Review"
+msgstr "查看"
+
+#: templates/plugins/module_setup.html
+msgid "Finish the guide"
+msgstr "完成向导"
+
+#: templates/plugins/module_setup.html
+msgid "Open"
+msgstr "打开"
+
+#: templates/plugins/module_setup.html
+#, python-format
+msgid "%(name)s setup guide"
+msgstr "%(name)s 设置向导"
+
+#: templates/plugins/module_setup.html
+msgid "To do"
+msgstr "待办"
+
+#: templates/plugins/module_setup.html
+msgid "Finish"
+msgstr "完成"
+
+#: templates/plugins/module_setup.html
+msgid "Follow these steps to get the store ready. Each step opens the real page and is ticked automatically when it is done. You can skip the guide and open it again later."
+msgstr "按以下步骤准备好商店。每一步都会打开实际页面，完成后自动打勾。您可以跳过向导，之后再打开。"

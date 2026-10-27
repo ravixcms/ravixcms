@@ -122,7 +122,10 @@ class Command(BaseCommand):
         server(os.path.isdir(static_root) and os.access(static_root, os.R_OK), cli_gettext("STATIC_ROOT exists and is readable"), cli_gettext("STATIC_ROOT (%(static_root)s) does not exist or is not readable; run collectstatic") % {"static_root": static_root})
         # --- تایمرهای systemd: بدون آن‌ها نوشتهٔ زمان‌بندی‌شده منتشر نمی‌شود و پشتیبان گرفته نمی‌شود ---
         timers = [("ravix-publish-scheduled.timer", cli_gettext("Publishing scheduled posts")), ("ravix-backup.timer", cli_gettext("Daily backup"))]
-        if settings.SHOP_ENABLED:
+        from apps.core import modules as builtin_modules
+
+        shop_live = settings.SHOP_ENABLED and builtin_modules.is_enabled("shop")
+        if shop_live:
             timers.append(("ravix-expire-orders.timer", cli_gettext("Cancelling unpaid orders")))
         unavailable = False
         for unit, label in timers:
@@ -181,7 +184,10 @@ class Command(BaseCommand):
             need(not plan, cli_gettext("All migrations have been applied"), cli_gettext("%(a1)s migrations have not been applied; run migrate") % {"a1": len(plan)})
         except Exception as exc:  # noqa: BLE001
             errors.append(cli_gettext("Database connection failed: %(exc)s") % {"exc": exc})
-        if settings.SHOP_ENABLED:
+        from apps.core import modules as builtin_modules
+
+        shop_live = settings.SHOP_ENABLED and builtin_modules.is_enabled("shop")
+        if shop_live:
             from apps.shop.models import GatewayConfig
             from apps.shop.payments import registry as gw_registry, vault as gw_vault
 
@@ -203,12 +209,12 @@ class Command(BaseCommand):
                 if tm:
                     warns.append(cli_gettext("The gateway is active in test mode: ") + cli_gettext(", ").join(tm))
             else:
-                warns.append(cli_gettext("The shop is on but no real gateway is active; ordering is disabled (RAVIX_SHOP_ENABLED=false turns it off completely)"))
+                warns.append(cli_gettext("The shop is on but no real gateway is active; ordering is disabled (switch Ravix Shop off in Plugins, or RAVIX_SHOP_ENABLED=false on the server)"))
             if has_secrets or real:
                 need(gw_vault.key_configured(), cli_gettext("The gateway secrets encryption key (RAVIX_SECRETS_KEY) is set"), cli_gettext("RAVIX_SECRETS_KEY is not set; gateway keys cannot be stored or read safely"))
             else:
                 advise(gw_vault.key_configured(), cli_gettext("The gateway secrets encryption key is set"), cli_gettext("RAVIX_SECRETS_KEY is not set (required before adding a gateway key)"))
-        if settings.SHOP_ENABLED:
+        if shop_live:
             priv = Path(settings.SHOP_PRIVATE_ROOT).resolve()
             media_root = Path(settings.MEDIA_ROOT).resolve()
             inside_media = priv == media_root or media_root in priv.parents

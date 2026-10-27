@@ -7,6 +7,6 @@
 <form method="post" novalidate data-once>{% csrf_token %}
   {% include "partials/_form_errors.html" %}
   <div class="card" style="margin-bottom:1.25rem"><div class="card-body">{% for field in form %}{% include "partials/_field.html" with field=field %}{% endfor %}</div></div>
-  <button class="btn" type="submit">{% trans "Save" %}</button>
+  <button class="btn" type="submit">{% trans "Save" %}</button> <a class="btn btn-light" href="{% url 'plugins:module_setup' 'shop' %}">{% trans "Setup guide" %}</a>
 </form>
 {% endblock %}

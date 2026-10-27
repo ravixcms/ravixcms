@@ -199,7 +199,7 @@ class ShopSettingsForm(forms.ModelForm):
 
     class Meta:
         model = ShopSettings
-        fields = ["currency", "show_in_toman", "low_stock_threshold", "notify_customers"]
+        fields = ["store_name", "store_address", "store_phone", "store_email", "currency", "show_in_toman", "low_stock_threshold", "notify_customers"]
 
     def __init__(self, *args, site, **kwargs):
         super().__init__(*args, **kwargs)

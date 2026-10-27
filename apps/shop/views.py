@@ -27,6 +27,8 @@ from apps.sites.middleware import current_site
 
 from . import gateways, services
 from .forms import CheckoutForm
+from apps.core import modules
+
 from . import money
 from .models import Order, Payment, Product, ProductCategory, SandboxTransaction, ShopSettings
 
@@ -39,7 +41,7 @@ class ShopView(View):
         self.site = current_site(request)
 
     def dispatch(self, request, *args, **kwargs):
-        if self.site is None or not settings.SHOP_ENABLED:
+        if self.site is None or not settings.SHOP_ENABLED or not modules.is_enabled("shop"):
             raise Http404
         return super().dispatch(request, *args, **kwargs)
 

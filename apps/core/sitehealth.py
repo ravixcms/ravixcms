@@ -222,7 +222,9 @@ def check_timers(now=None) -> list[Check]:
 
     g = gettext("Scheduled jobs")
     timers = [("ravix-publish-scheduled.timer", gettext("Publishing scheduled posts")), ("ravix-backup.timer", gettext("Daily backup"))]
-    if settings.SHOP_ENABLED:
+    from . import modules
+
+    if settings.SHOP_ENABLED and modules.is_enabled("shop"):
         timers.append(("ravix-expire-orders.timer", gettext("Cancelling unpaid orders")))
     out = []
     for unit, label in timers:

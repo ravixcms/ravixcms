@@ -11704,3 +11704,144 @@ msgstr "Mağaza ayarları kaydedildi."
 #, python-format
 msgid "Order %(number)s — amount: <strong>%(amount)s</strong>"
 msgstr "Sipariş %(number)s — tutar: <strong>%(amount)s</strong>"
+
+#: apps/accounts/permissions.py
+msgid "Switch built-in modules such as Ravix Shop on and off (superadmin only)"
+msgstr "Ravix Shop gibi yerleşik modülleri açıp kapatma (yalnızca süper yönetici)"
+
+#: apps/core/builtin_modules.py
+msgid "An online store inside Ravix: physical and digital products, cart and checkout, payment gateways, orders, discounts, shipping and reports."
+msgstr "Ravix içinde çevrimiçi mağaza: fiziksel ve dijital ürünler, sepet ve ödeme, ödeme geçitleri, siparişler, indirimler, kargo ve raporlar."
+
+#: apps/core/builtin_modules.py
+msgid "The server has switched the shop off (RAVIX_SHOP_ENABLED=false in ravix.env). Ask the server administrator to remove that line, then restart once."
+msgstr "Sunucu mağazayı kapattı (ravix.env içinde RAVIX_SHOP_ENABLED=false). Sunucu yöneticisinden bu satırı kaldırmasını ve bir kez yeniden başlatmasını isteyin."
+
+#: apps/plugins/views.py
+msgid "The setup guide was closed. You can open it again from the module settings."
+msgstr "Kurulum rehberi kapatıldı. Modül ayarlarından yeniden açabilirsiniz."
+
+#: apps/plugins/views.py
+#, python-format
+msgid "“%(name)s” was deactivated. Nothing was deleted; activate it again to bring everything back."
+msgstr "“%(name)s” devre dışı bırakıldı. Hiçbir şey silinmedi; yeniden etkinleştirince her şey geri gelir."
+
+#: apps/plugins/views.py
+#, python-format
+msgid "Module “%(name)s” was activated"
+msgstr "“%(name)s” modülü etkinleştirildi"
+
+#: apps/plugins/views.py
+#, python-format
+msgid "Module “%(name)s” was deactivated"
+msgstr "“%(name)s” modülü devre dışı bırakıldı"
+
+#: apps/plugins/views.py
+#, python-format
+msgid "“%(name)s” was activated."
+msgstr "“%(name)s” etkinleştirildi."
+
+#: apps/plugins/views.py
+msgid "The server has switched this module off; it cannot be activated from the panel."
+msgstr "Sunucu bu modülü kapattı; panelden etkinleştirilemez."
+
+#: apps/plugins/views.py
+msgid "Module"
+msgstr "Modül"
+
+#: apps/shop/models.py
+msgid "Store phone"
+msgstr "Mağaza telefonu"
+
+#: apps/shop/models.py
+msgid "Store email"
+msgstr "Mağaza e-postası"
+
+#: apps/shop/models.py
+msgid "Store name"
+msgstr "Mağaza adı"
+
+#: apps/shop/models.py
+msgid "Store address"
+msgstr "Mağaza adresi"
+
+#: apps/shop/wizard.py
+msgid "Add a shipping method with its cost by region and weight."
+msgstr "Bölgeye ve ağırlığa göre ücretli bir kargo yöntemi ekleyin."
+
+#: apps/shop/wizard.py
+msgid "Currency and toman display"
+msgstr "Para birimi ve toman gösterimi"
+
+#: apps/shop/wizard.py
+msgid "Store details"
+msgstr "Mağaza bilgileri"
+
+#: apps/shop/wizard.py
+msgid "Choose the shop currency (rial, toman, dollar or euro) and whether prices are shown in toman. It is fixed once the first product exists."
+msgstr "Mağaza para birimini (rial, toman, dolar veya euro) ve fiyatların toman olarak gösterilip gösterilmeyeceğini seçin. İlk ürün oluşturulduktan sonra değiştirilemez."
+
+#: apps/shop/wizard.py
+msgid "The store name, address, phone and email shown on invoices and customer emails."
+msgstr "Faturalarda ve müşteri e-postalarında görünen mağaza adı, adres, telefon ve e-posta."
+
+#: apps/shop/wizard.py
+msgid "Shipping method"
+msgstr "Kargo yöntemi"
+
+#: apps/shop/wizard.py
+msgid "First product"
+msgstr "İlk ürün"
+
+#: apps/shop/wizard.py
+msgid "Connect and enable a payment gateway so customers can pay."
+msgstr "Müşterilerin ödeme yapabilmesi için bir ödeme geçidi bağlayıp etkinleştirin."
+
+#: apps/shop/wizard.py
+msgid "Create your first product."
+msgstr "İlk ürününüzü oluşturun."
+
+#: templates/plugins/list.html templates/shop/panel/settings.html
+msgid "Setup guide"
+msgstr "Kurulum rehberi"
+
+#: templates/plugins/list.html
+msgid "Locked off by the server"
+msgstr "Sunucu tarafından kapatıldı"
+
+#: templates/plugins/list.html
+msgid "Built-in plugins"
+msgstr "Yerleşik eklentiler"
+
+#: templates/plugins/module_setup.html
+msgid "Skip for now"
+msgstr "Şimdilik atla"
+
+#: templates/plugins/module_setup.html
+msgid "Review"
+msgstr "Gözden geçir"
+
+#: templates/plugins/module_setup.html
+msgid "Finish the guide"
+msgstr "Rehberi bitir"
+
+#: templates/plugins/module_setup.html
+msgid "Open"
+msgstr "Aç"
+
+#: templates/plugins/module_setup.html
+#, python-format
+msgid "%(name)s setup guide"
+msgstr "%(name)s kurulum rehberi"
+
+#: templates/plugins/module_setup.html
+msgid "To do"
+msgstr "Yapılacak"
+
+#: templates/plugins/module_setup.html
+msgid "Finish"
+msgstr "Bitir"
+
+#: templates/plugins/module_setup.html
+msgid "Follow these steps to get the store ready. Each step opens the real page and is ticked automatically when it is done. You can skip the guide and open it again later."
+msgstr "Mağazayı hazırlamak için bu adımları izleyin. Her adım gerçek sayfayı açar ve tamamlandığında otomatik işaretlenir. Rehberi atlayıp daha sonra yeniden açabilirsiniz."

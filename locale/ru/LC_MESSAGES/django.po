@@ -11724,3 +11724,144 @@ msgstr "Настройки магазина сохранены."
 #, python-format
 msgid "Order %(number)s — amount: <strong>%(amount)s</strong>"
 msgstr "Заказ %(number)s — сумма: <strong>%(amount)s</strong>"
+
+#: apps/accounts/permissions.py
+msgid "Switch built-in modules such as Ravix Shop on and off (superadmin only)"
+msgstr "Включать и выключать встроенные модули, например Ravix Shop (только суперадминистратор)"
+
+#: apps/core/builtin_modules.py
+msgid "An online store inside Ravix: physical and digital products, cart and checkout, payment gateways, orders, discounts, shipping and reports."
+msgstr "Интернет-магазин внутри Ravix: физические и цифровые товары, корзина и оформление заказа, платёжные шлюзы, заказы, скидки, доставка и отчёты."
+
+#: apps/core/builtin_modules.py
+msgid "The server has switched the shop off (RAVIX_SHOP_ENABLED=false in ravix.env). Ask the server administrator to remove that line, then restart once."
+msgstr "Сервер отключил магазин (RAVIX_SHOP_ENABLED=false в ravix.env). Попросите администратора сервера удалить эту строку и один раз перезапустить."
+
+#: apps/plugins/views.py
+msgid "The setup guide was closed. You can open it again from the module settings."
+msgstr "Мастер настройки закрыт. Его можно открыть снова в настройках модуля."
+
+#: apps/plugins/views.py
+#, python-format
+msgid "“%(name)s” was deactivated. Nothing was deleted; activate it again to bring everything back."
+msgstr "«%(name)s» отключён. Ничего не удалено; после повторного включения всё вернётся."
+
+#: apps/plugins/views.py
+#, python-format
+msgid "Module “%(name)s” was activated"
+msgstr "Модуль «%(name)s» включён"
+
+#: apps/plugins/views.py
+#, python-format
+msgid "Module “%(name)s” was deactivated"
+msgstr "Модуль «%(name)s» отключён"
+
+#: apps/plugins/views.py
+#, python-format
+msgid "“%(name)s” was activated."
+msgstr "«%(name)s» включён."
+
+#: apps/plugins/views.py
+msgid "The server has switched this module off; it cannot be activated from the panel."
+msgstr "Сервер отключил этот модуль; включить его из панели нельзя."
+
+#: apps/plugins/views.py
+msgid "Module"
+msgstr "Модуль"
+
+#: apps/shop/models.py
+msgid "Store phone"
+msgstr "Телефон магазина"
+
+#: apps/shop/models.py
+msgid "Store email"
+msgstr "E-mail магазина"
+
+#: apps/shop/models.py
+msgid "Store name"
+msgstr "Название магазина"
+
+#: apps/shop/models.py
+msgid "Store address"
+msgstr "Адрес магазина"
+
+#: apps/shop/wizard.py
+msgid "Add a shipping method with its cost by region and weight."
+msgstr "Добавьте способ доставки со стоимостью по региону и весу."
+
+#: apps/shop/wizard.py
+msgid "Currency and toman display"
+msgstr "Валюта и показ в томанах"
+
+#: apps/shop/wizard.py
+msgid "Store details"
+msgstr "Данные магазина"
+
+#: apps/shop/wizard.py
+msgid "Choose the shop currency (rial, toman, dollar or euro) and whether prices are shown in toman. It is fixed once the first product exists."
+msgstr "Выберите валюту магазина (риал, томан, доллар или евро) и показывать ли цены в томанах. После создания первого товара изменить её нельзя."
+
+#: apps/shop/wizard.py
+msgid "The store name, address, phone and email shown on invoices and customer emails."
+msgstr "Название, адрес, телефон и e-mail магазина, которые показываются в счетах и письмах клиентам."
+
+#: apps/shop/wizard.py
+msgid "Shipping method"
+msgstr "Способ доставки"
+
+#: apps/shop/wizard.py
+msgid "First product"
+msgstr "Первый товар"
+
+#: apps/shop/wizard.py
+msgid "Connect and enable a payment gateway so customers can pay."
+msgstr "Подключите и включите платёжный шлюз, чтобы клиенты могли платить."
+
+#: apps/shop/wizard.py
+msgid "Create your first product."
+msgstr "Создайте свой первый товар."
+
+#: templates/plugins/list.html templates/shop/panel/settings.html
+msgid "Setup guide"
+msgstr "Мастер настройки"
+
+#: templates/plugins/list.html
+msgid "Locked off by the server"
+msgstr "Отключено сервером"
+
+#: templates/plugins/list.html
+msgid "Built-in plugins"
+msgstr "Встроенные плагины"
+
+#: templates/plugins/module_setup.html
+msgid "Skip for now"
+msgstr "Пропустить пока"
+
+#: templates/plugins/module_setup.html
+msgid "Review"
+msgstr "Проверить"
+
+#: templates/plugins/module_setup.html
+msgid "Finish the guide"
+msgstr "Завершить мастер"
+
+#: templates/plugins/module_setup.html
+msgid "Open"
+msgstr "Открыть"
+
+#: templates/plugins/module_setup.html
+#, python-format
+msgid "%(name)s setup guide"
+msgstr "Мастер настройки %(name)s"
+
+#: templates/plugins/module_setup.html
+msgid "To do"
+msgstr "Предстоит"
+
+#: templates/plugins/module_setup.html
+msgid "Finish"
+msgstr "Завершить"
+
+#: templates/plugins/module_setup.html
+msgid "Follow these steps to get the store ready. Each step opens the real page and is ticked automatically when it is done. You can skip the guide and open it again later."
+msgstr "Выполните эти шаги, чтобы подготовить магазин. Каждый шаг открывает настоящую страницу и отмечается автоматически, когда выполнен. Мастер можно пропустить и открыть позже."

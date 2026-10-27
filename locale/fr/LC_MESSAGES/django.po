@@ -12011,3 +12011,144 @@ msgstr "Les réglages de la boutique ont été enregistrés."
 #, python-format
 msgid "Order %(number)s — amount: <strong>%(amount)s</strong>"
 msgstr "Commande %(number)s — montant : <strong>%(amount)s</strong>"
+
+#: apps/accounts/permissions.py
+msgid "Switch built-in modules such as Ravix Shop on and off (superadmin only)"
+msgstr "Activer et désactiver les modules intégrés comme Ravix Shop (superadministrateur uniquement)"
+
+#: apps/core/builtin_modules.py
+msgid "An online store inside Ravix: physical and digital products, cart and checkout, payment gateways, orders, discounts, shipping and reports."
+msgstr "Une boutique en ligne intégrée à Ravix : produits physiques et numériques, panier et paiement, passerelles de paiement, commandes, remises, livraison et rapports."
+
+#: apps/core/builtin_modules.py
+msgid "The server has switched the shop off (RAVIX_SHOP_ENABLED=false in ravix.env). Ask the server administrator to remove that line, then restart once."
+msgstr "Le serveur a désactivé la boutique (RAVIX_SHOP_ENABLED=false dans ravix.env). Demandez à l’administrateur du serveur de retirer cette ligne puis de redémarrer une fois."
+
+#: apps/plugins/views.py
+msgid "The setup guide was closed. You can open it again from the module settings."
+msgstr "Le guide de configuration a été fermé. Vous pouvez le rouvrir depuis les réglages du module."
+
+#: apps/plugins/views.py
+#, python-format
+msgid "“%(name)s” was deactivated. Nothing was deleted; activate it again to bring everything back."
+msgstr "« %(name)s » a été désactivé. Rien n’a été supprimé ; réactivez-le pour tout retrouver."
+
+#: apps/plugins/views.py
+#, python-format
+msgid "Module “%(name)s” was activated"
+msgstr "Le module « %(name)s » a été activé"
+
+#: apps/plugins/views.py
+#, python-format
+msgid "Module “%(name)s” was deactivated"
+msgstr "Le module « %(name)s » a été désactivé"
+
+#: apps/plugins/views.py
+#, python-format
+msgid "“%(name)s” was activated."
+msgstr "« %(name)s » a été activé."
+
+#: apps/plugins/views.py
+msgid "The server has switched this module off; it cannot be activated from the panel."
+msgstr "Le serveur a désactivé ce module ; il ne peut pas être activé depuis le panneau."
+
+#: apps/plugins/views.py
+msgid "Module"
+msgstr "Module"
+
+#: apps/shop/models.py
+msgid "Store phone"
+msgstr "Téléphone de la boutique"
+
+#: apps/shop/models.py
+msgid "Store email"
+msgstr "E-mail de la boutique"
+
+#: apps/shop/models.py
+msgid "Store name"
+msgstr "Nom de la boutique"
+
+#: apps/shop/models.py
+msgid "Store address"
+msgstr "Adresse de la boutique"
+
+#: apps/shop/wizard.py
+msgid "Add a shipping method with its cost by region and weight."
+msgstr "Ajoutez un mode de livraison avec un coût selon la région et le poids."
+
+#: apps/shop/wizard.py
+msgid "Currency and toman display"
+msgstr "Devise et affichage en tomans"
+
+#: apps/shop/wizard.py
+msgid "Store details"
+msgstr "Informations de la boutique"
+
+#: apps/shop/wizard.py
+msgid "Choose the shop currency (rial, toman, dollar or euro) and whether prices are shown in toman. It is fixed once the first product exists."
+msgstr "Choisissez la devise de la boutique (rial, toman, dollar ou euro) et si les prix s’affichent en tomans. Elle ne peut plus changer après le premier produit."
+
+#: apps/shop/wizard.py
+msgid "The store name, address, phone and email shown on invoices and customer emails."
+msgstr "Le nom, l’adresse, le téléphone et l’e-mail de la boutique affichés sur les factures et les e-mails aux clients."
+
+#: apps/shop/wizard.py
+msgid "Shipping method"
+msgstr "Mode de livraison"
+
+#: apps/shop/wizard.py
+msgid "First product"
+msgstr "Premier produit"
+
+#: apps/shop/wizard.py
+msgid "Connect and enable a payment gateway so customers can pay."
+msgstr "Connectez et activez une passerelle de paiement pour que les clients puissent payer."
+
+#: apps/shop/wizard.py
+msgid "Create your first product."
+msgstr "Créez votre premier produit."
+
+#: templates/plugins/list.html templates/shop/panel/settings.html
+msgid "Setup guide"
+msgstr "Guide de configuration"
+
+#: templates/plugins/list.html
+msgid "Locked off by the server"
+msgstr "Désactivé par le serveur"
+
+#: templates/plugins/list.html
+msgid "Built-in plugins"
+msgstr "Extensions intégrées"
+
+#: templates/plugins/module_setup.html
+msgid "Skip for now"
+msgstr "Passer pour l’instant"
+
+#: templates/plugins/module_setup.html
+msgid "Review"
+msgstr "Vérifier"
+
+#: templates/plugins/module_setup.html
+msgid "Finish the guide"
+msgstr "Terminer le guide"
+
+#: templates/plugins/module_setup.html
+msgid "Open"
+msgstr "Ouvrir"
+
+#: templates/plugins/module_setup.html
+#, python-format
+msgid "%(name)s setup guide"
+msgstr "Guide de configuration de %(name)s"
+
+#: templates/plugins/module_setup.html
+msgid "To do"
+msgstr "À faire"
+
+#: templates/plugins/module_setup.html
+msgid "Finish"
+msgstr "Terminer"
+
+#: templates/plugins/module_setup.html
+msgid "Follow these steps to get the store ready. Each step opens the real page and is ticked automatically when it is done. You can skip the guide and open it again later."
+msgstr "Suivez ces étapes pour préparer la boutique. Chaque étape ouvre la vraie page et se coche automatiquement une fois terminée. Vous pouvez passer le guide et le rouvrir plus tard."

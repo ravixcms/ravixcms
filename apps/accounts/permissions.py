@@ -46,6 +46,7 @@ CAPABILITIES = {
     "builder.edit": gettext_lazy("Design pages with the visual page builder"),
     "builder.publish": gettext_lazy("Approve and publish page builder layouts"),
     "plugins.manage": gettext_lazy("Manage plugins (install, activate, settings)"),
+    "modules.manage": gettext_lazy("Switch built-in modules such as Ravix Shop on and off (superadmin only)"),
     "plugins.trust": gettext_lazy("Manage trusted plugin signing keys (root of trust; superadmin only)"),
     "registry.manage": gettext_lazy("Manage the plugin registry: publishers, categories, delisting (superadmin only)"),
     "sites.manage": gettext_lazy("Manage sites, domains and members (superadmin only)"),

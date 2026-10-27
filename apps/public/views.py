@@ -298,7 +298,9 @@ class SitemapView(View):
             entries.append((b.page_url(p), p.updated_at))
         for p in b.live_posts().filter(noindex=False).only("slug", "updated_at", "publish_at", "status", "created_at", "author", "featured_image", "title", "excerpt"):
             entries.append((b.post_url(p), p.updated_at))
-        if settings.SHOP_ENABLED:  # محصولات فعالِ سایتِ این دامنه
+        from apps.core import modules
+
+        if settings.SHOP_ENABLED and modules.is_enabled("shop"):  # محصولات فعالِ سایتِ این دامنه
             from apps.shop.models import Product
             from apps.sites.middleware import current_site
 

@@ -1,0 +1,22 @@
+{% extends "layouts/panel.html" %}
+{% load i18n %}
+{% block title %}{% blocktrans trimmed with name=module.name %}{{ name }} setup guide{% endblocktrans %}{% endblock %}
+{% block page_title %}{% blocktrans trimmed with name=module.name %}{{ name }} setup guide{% endblocktrans %}{% endblock %}
+{% block content_class %}content-narrow{% endblock %}
+{% block content %}
+<p class="muted">{% trans "Follow these steps to get the store ready. Each step opens the real page and is ticked automatically when it is done. You can skip the guide and open it again later." %}</p>
+<ol class="setup-steps" style="list-style:none;padding:0;margin:0">
+{% for number, step, current in steps %}
+  <li class="card" style="margin-bottom:.75rem{% if current %};border-color:var(--c-primary){% endif %}"><div class="card-body" style="display:flex;gap:1rem;align-items:center;justify-content:space-between;flex-wrap:wrap">
+    <div><strong>{{ number }}. {{ step.title }}</strong>
+      <span class="badge {% if step.done %}badge-published{% else %}badge-draft{% endif %}">{% if step.done %}{% trans "Done" %}{% else %}{% trans "To do" %}{% endif %}</span>
+      <p class="muted" style="margin:.25rem 0 0">{{ step.description }}</p></div>
+    {% if step.url %}<a class="btn {% if current %}btn-primary{% else %}btn-light{% endif %}" href="{{ step.url }}">{% if step.done %}{% trans "Review" %}{% else %}{% trans "Open" %}{% endif %}</a>{% endif %}
+  </div></li>
+{% endfor %}
+</ol>
+<form method="post" style="margin-top:1rem">{% csrf_token %}
+  <button class="btn" name="action" value="finish" type="submit">{% if all_done %}{% trans "Finish" %}{% else %}{% trans "Finish the guide" %}{% endif %}</button>
+  <button class="btn btn-light" name="action" value="dismiss" type="submit">{% trans "Skip for now" %}</button>
+</form>
+{% endblock %}

@@ -9,6 +9,7 @@ class CoreConfig(AppConfig):
 
     def ready(self):
         self._activate_cli_language()
+        from . import builtin_modules  # noqa: F401 - registers the built-in modules
         from .navigation import NavItem, register_nav_item
 
         register_nav_item(

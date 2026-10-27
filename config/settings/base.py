@@ -66,6 +66,8 @@ THIRD_PARTY_APPS = [
 ]
 
 # ماژول‌های Ravix؛ ماژول‌های آینده (محتوا، رسانه، افزونه‌ها و ...) اینجا اضافه می‌شوند.
+# Built-in modules without a saved on/off row: off (a new module waits for its first activation in Plugins). Tests turn it on.
+BUILTIN_MODULES_DEFAULT_ON = env_bool("RAVIX_BUILTIN_MODULES_DEFAULT_ON", False)
 SHOP_ENABLED = env_bool("RAVIX_SHOP_ENABLED", True)  # false: ماژول فروشگاه اصلاً نصب/بارگذاری نمی‌شود (جدول، مسیر، منو، API ندارد)
 
 LOCAL_APPS = [
@@ -105,7 +107,8 @@ MIDDLEWARE = [
     "django.middleware.http.ConditionalGetMiddleware",  # ETag/304 برای صفحات عمومی
     "apps.updater.middleware.MaintenanceMiddleware",  # ۵۰۳ فقط در بازهٔ اعمال ارتقا
     "apps.core.middleware.SiteRegionalMiddleware",  # زبان/منطقهٔ زمانی انتخابی مدیر (SiteSettings)
-    "apps.sites.middleware.CurrentSiteMiddleware",  # request.site (تنبل؛ فقط در صورت استفاده کوئری می‌زند)
+    "apps.sites.middleware.CurrentSiteMiddleware",
+    "apps.core.middleware_modules.ModuleGateMiddleware",  # a switched-off built-in module (Ravix Shop ...) answers 404 on its routes  # request.site (تنبل؛ فقط در صورت استفاده کوئری می‌زند)
     "apps.content.middleware.RedirectFallbackMiddleware",  # ریدایرکت مسیرهای قدیمی (فقط روی پاسخ ۴۰۴)
 ]
 

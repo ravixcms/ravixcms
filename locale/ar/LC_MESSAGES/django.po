@@ -11489,3 +11489,144 @@ msgstr "تم حفظ إعدادات المتجر."
 #, python-format
 msgid "Order %(number)s — amount: <strong>%(amount)s</strong>"
 msgstr "الطلب %(number)s — المبلغ: <strong>%(amount)s</strong>"
+
+#: apps/accounts/permissions.py
+msgid "Switch built-in modules such as Ravix Shop on and off (superadmin only)"
+msgstr "تشغيل وإيقاف الوحدات المدمجة مثل Ravix Shop (للمشرف العام فقط)"
+
+#: apps/core/builtin_modules.py
+msgid "An online store inside Ravix: physical and digital products, cart and checkout, payment gateways, orders, discounts, shipping and reports."
+msgstr "متجر إلكتروني داخل Ravix: منتجات مادية ورقمية، سلة وإتمام الشراء، بوابات الدفع، الطلبات، الخصومات، الشحن والتقارير."
+
+#: apps/core/builtin_modules.py
+msgid "The server has switched the shop off (RAVIX_SHOP_ENABLED=false in ravix.env). Ask the server administrator to remove that line, then restart once."
+msgstr "قام الخادم بإيقاف المتجر (RAVIX_SHOP_ENABLED=false في ravix.env). اطلب من مسؤول الخادم إزالة هذا السطر ثم إعادة التشغيل مرة واحدة."
+
+#: apps/plugins/views.py
+msgid "The setup guide was closed. You can open it again from the module settings."
+msgstr "تم إغلاق دليل الإعداد. يمكنك فتحه مجددًا من إعدادات الوحدة."
+
+#: apps/plugins/views.py
+#, python-format
+msgid "“%(name)s” was deactivated. Nothing was deleted; activate it again to bring everything back."
+msgstr "تم تعطيل «%(name)s». لم يُحذف أي شيء؛ فعّله مجددًا لتعود كل الأشياء."
+
+#: apps/plugins/views.py
+#, python-format
+msgid "Module “%(name)s” was activated"
+msgstr "تم تفعيل الوحدة «%(name)s»"
+
+#: apps/plugins/views.py
+#, python-format
+msgid "Module “%(name)s” was deactivated"
+msgstr "تم تعطيل الوحدة «%(name)s»"
+
+#: apps/plugins/views.py
+#, python-format
+msgid "“%(name)s” was activated."
+msgstr "تم تفعيل «%(name)s»."
+
+#: apps/plugins/views.py
+msgid "The server has switched this module off; it cannot be activated from the panel."
+msgstr "قام الخادم بإيقاف هذه الوحدة؛ لا يمكن تفعيلها من اللوحة."
+
+#: apps/plugins/views.py
+msgid "Module"
+msgstr "وحدة"
+
+#: apps/shop/models.py
+msgid "Store phone"
+msgstr "هاتف المتجر"
+
+#: apps/shop/models.py
+msgid "Store email"
+msgstr "بريد المتجر"
+
+#: apps/shop/models.py
+msgid "Store name"
+msgstr "اسم المتجر"
+
+#: apps/shop/models.py
+msgid "Store address"
+msgstr "عنوان المتجر"
+
+#: apps/shop/wizard.py
+msgid "Add a shipping method with its cost by region and weight."
+msgstr "أضف طريقة شحن بتكلفة حسب المنطقة والوزن."
+
+#: apps/shop/wizard.py
+msgid "Currency and toman display"
+msgstr "العملة وعرض التومان"
+
+#: apps/shop/wizard.py
+msgid "Store details"
+msgstr "بيانات المتجر"
+
+#: apps/shop/wizard.py
+msgid "Choose the shop currency (rial, toman, dollar or euro) and whether prices are shown in toman. It is fixed once the first product exists."
+msgstr "اختر عملة المتجر (ريال أو تومان أو دولار أو يورو) وهل تُعرض الأسعار بالتومان. لا يمكن تغييرها بعد إنشاء أول منتج."
+
+#: apps/shop/wizard.py
+msgid "The store name, address, phone and email shown on invoices and customer emails."
+msgstr "اسم المتجر وعنوانه وهاتفه وبريده التي تظهر في الفواتير ورسائل العملاء."
+
+#: apps/shop/wizard.py
+msgid "Shipping method"
+msgstr "طريقة الشحن"
+
+#: apps/shop/wizard.py
+msgid "First product"
+msgstr "المنتج الأول"
+
+#: apps/shop/wizard.py
+msgid "Connect and enable a payment gateway so customers can pay."
+msgstr "اربط بوابة دفع وفعّلها ليتمكن العملاء من الدفع."
+
+#: apps/shop/wizard.py
+msgid "Create your first product."
+msgstr "أنشئ منتجك الأول."
+
+#: templates/plugins/list.html templates/shop/panel/settings.html
+msgid "Setup guide"
+msgstr "دليل الإعداد"
+
+#: templates/plugins/list.html
+msgid "Locked off by the server"
+msgstr "معطّل من الخادم"
+
+#: templates/plugins/list.html
+msgid "Built-in plugins"
+msgstr "الإضافات المدمجة"
+
+#: templates/plugins/module_setup.html
+msgid "Skip for now"
+msgstr "تخطَّ الآن"
+
+#: templates/plugins/module_setup.html
+msgid "Review"
+msgstr "مراجعة"
+
+#: templates/plugins/module_setup.html
+msgid "Finish the guide"
+msgstr "إنهاء الدليل"
+
+#: templates/plugins/module_setup.html
+msgid "Open"
+msgstr "فتح"
+
+#: templates/plugins/module_setup.html
+#, python-format
+msgid "%(name)s setup guide"
+msgstr "دليل إعداد %(name)s"
+
+#: templates/plugins/module_setup.html
+msgid "To do"
+msgstr "قيد الإنجاز"
+
+#: templates/plugins/module_setup.html
+msgid "Finish"
+msgstr "إنهاء"
+
+#: templates/plugins/module_setup.html
+msgid "Follow these steps to get the store ready. Each step opens the real page and is ticked automatically when it is done. You can skip the guide and open it again later."
+msgstr "اتبع هذه الخطوات لتجهيز المتجر. تفتح كل خطوة الصفحة الفعلية وتُوسَم تلقائيًا عند إنجازها. يمكنك تخطي الدليل وفتحه لاحقًا."

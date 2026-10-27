@@ -39,9 +39,30 @@ class PluginListView(PluginsAdminMixin, TemplateView):
         rows = services.overview(folder_warnings)
         for r in rows:
             r.new_version = sources.update_available(r.slug, r.record.version) if r.record else None
+        ctx["builtin_modules"] = _module_cards(self.request)
         ctx.update(rows=rows, folder_warnings=folder_warnings, web_install=settings.RAVIX_PLUGIN_WEB_INSTALL, safe_mode=settings.RAVIX_PLUGINS_SAFE_MODE, plugins_enabled=settings.RAVIX_PLUGINS_ENABLED,
                    recent_errors=PluginEvent.objects.filter(level="error").order_by("-created_at")[:5])
         return ctx
+
+
+def _module_cards(request):
+    """Built-in modules for the top of the Plugins page."""
+    from django.templatetags.static import static
+    from django.urls import NoReverseMatch, reverse
+
+    from apps.core import modules
+
+    cards = []
+    for mod in modules.all_modules():
+        locked = modules.server_locked(mod.key)
+        enabled = modules.is_enabled(mod.key)
+        try:
+            settings_url = reverse(mod.settings_url_name) if (mod.settings_url_name and enabled) else ""
+        except NoReverseMatch:
+            settings_url = ""
+        cards.append({"mod": mod, "icon": static(mod.icon), "locked": locked, "enabled": enabled, "settings_url": settings_url,
+                      "has_setup": mod.wizard_steps is not None and enabled, "can_toggle": request.user.has_cap("modules.manage")})
+    return cards
 
 
 def _is_managed(path) -> bool:
@@ -396,3 +417,66 @@ class TrustedKeysView(CapabilityRequiredMixin, View):
             events.log_event("_keys", f"key_{op}", (gettext("Key %(key_id)s (%(label)s) %(op)s.") % {"key_id": k.key_id, "label": k.label, "op": op}), actor=request.user)
             messages.success(request, gettext("Done."))
         return redirect("plugins:trusted_keys")
+
+
+# ------------------------------------------------------------------ built-in modules (Ravix Shop, ...)
+class ModuleToggleView(CapabilityRequiredMixin, View):
+    """Switch a built-in module on or off. Superadmin only; recorded in the audit log. Data is never deleted."""
+
+    required_capability = "modules.manage"
+    http_method_names = ["post"]
+
+    def post(self, request, key):
+        from apps.audit.models import AuditLog
+        from apps.audit.services import log_event
+        from apps.core import modules
+
+        mod = modules.get_module(key)
+        if mod is None:
+            raise Http404
+        enable = request.POST.get("enable") == "1"
+        if enable and modules.server_locked(key):
+            messages.error(request, gettext("The server has switched this module off; it cannot be activated from the panel."))
+            return redirect("plugins:list")
+        was = modules.is_enabled(key)
+        row = modules.set_enabled(key, enable, request.user)
+        if was != enable:
+            log_event(request, AuditLog.Action.UPDATE, None, (gettext("Module “%(name)s” was activated") if enable else gettext("Module “%(name)s” was deactivated")) % {"name": mod.name},
+                      object_type=gettext("Module"))
+        if enable:
+            messages.success(request, gettext("“%(name)s” was activated.") % {"name": mod.name})
+            if mod.wizard_steps is not None and row.setup == "":
+                return redirect("plugins:module_setup", key=key)  # first activation: the setup guide
+        else:
+            messages.success(request, gettext("“%(name)s” was deactivated. Nothing was deleted; activate it again to bring everything back.") % {"name": mod.name})
+        return redirect("plugins:list")
+
+
+class ModuleSetupView(PluginsAdminMixin, TemplateView):
+    template_name = "plugins/module_setup.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        from apps.core import modules
+
+        self.module = modules.get_module(kwargs["key"])
+        if self.module is None or self.module.wizard_steps is None or not modules.is_enabled(kwargs["key"]):
+            raise Http404
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        from apps.core import modules
+
+        ctx = super().get_context_data(**kwargs)
+        steps = modules.wizard(self.module.key, self.request)
+        current = next((i for i, s in enumerate(steps) if not s.done), None)
+        ctx.update(module=self.module, steps=[(i + 1, s, i == current) for i, s in enumerate(steps)], all_done=current is None)
+        return ctx
+
+    def post(self, request, key):
+        from apps.core import modules
+        from apps.core.models import ModuleState
+
+        done = request.POST.get("action") == "finish"
+        modules.set_setup(key, ModuleState.SETUP_DONE if done else ModuleState.SETUP_DISMISSED)
+        messages.success(request, gettext("The setup guide was closed. You can open it again from the module settings."))
+        return redirect("plugins:list")

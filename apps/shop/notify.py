@@ -77,4 +77,8 @@ def order_status_changed(order, old_status, new_status):
     """Called after the status row is written; runs once the surrounding transaction commits (never for a rolled-back change)."""
     if old_status == new_status:
         return
+    from apps.core import modules
+
+    if not modules.is_enabled("shop"):  # switched off: no emails, no hook (the order itself is untouched)
+        return
     transaction.on_commit(lambda: _send(order.pk, new_status, old_status))

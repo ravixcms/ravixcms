@@ -119,3 +119,19 @@ class ThrottleCacheEntry(models.Model):
         db_table = "ravin_cache"
         verbose_name = gettext_lazy("Fallback cache entry")
         verbose_name_plural = gettext_lazy("Fallback cache entries")
+
+
+class ModuleState(models.Model):
+    """Runtime on/off switch (and setup-guide progress) of a built-in module such as Ravix Shop. Turning a module off hides it; it never
+    deletes the module's data. Absent row = the module's default (see ``apps/core/modules.py``)."""
+
+    SETUP_PENDING, SETUP_DISMISSED, SETUP_DONE = "", "dismissed", "done"
+
+    key = models.SlugField(max_length=50, unique=True)
+    enabled = models.BooleanField(default=False)
+    setup = models.CharField(max_length=10, blank=True, default="")
+    changed_at = models.DateTimeField(auto_now=True)
+    changed_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+
+    def __str__(self):
+        return f"{self.key}={'on' if self.enabled else 'off'}"

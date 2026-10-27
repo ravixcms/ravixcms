@@ -315,6 +315,11 @@ class ShopSettings(TimeStampedModel):
                                         help_text=gettext_lazy("Only for a rial shop: prices are shown and typed in toman, while rials stay stored and are what the gateway receives."))
     low_stock_threshold = models.PositiveIntegerField(gettext_lazy("Low-stock alert at"), default=3)
     notify_customers = models.BooleanField(gettext_lazy("Email customers about order status"), default=True)
+    # The store's own details (shown on invoices and emails)
+    store_name = models.CharField(gettext_lazy("Store name"), max_length=120, blank=True)
+    store_address = models.CharField(gettext_lazy("Store address"), max_length=300, blank=True)
+    store_phone = models.CharField(gettext_lazy("Store phone"), max_length=30, blank=True)
+    store_email = models.EmailField(gettext_lazy("Store email"), blank=True)
 
     class Meta:
         verbose_name = "Ravix Shop"

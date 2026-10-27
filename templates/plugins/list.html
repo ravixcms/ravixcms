@@ -16,6 +16,30 @@
 <div class="form-errors warn" role="status"><p>{% trans "<strong>Latest errors:</strong>" %}</p><ul>
   {% for e in recent_errors %}<li><span class="ltr">{{ e.slug }}</span> — {{ e.message }} ({{ e.created_at|jalali_datetime }})</li>{% endfor %}</ul></div>
 {% endif %}
+{% if builtin_modules %}
+<div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>{% trans "Built-in plugins" %}</h2></div>
+  <div class="table-wrap"><table class="table">
+    <thead><tr><th>{% trans "Plugin" %}</th><th>{% trans "Version" %}</th><th>{% trans "Status" %}</th><th>{% trans "Explanation" %}</th><th></th></tr></thead>
+    <tbody>
+    {% for c in builtin_modules %}
+      <tr>
+        <td><span style="display:flex;align-items:center;gap:.6rem"><img src="{{ c.icon }}" alt="" width="32" height="32"><span><strong>{{ c.mod.name }}</strong><br><span class="muted">{% trans "Built-in" %}</span></span></span></td>
+        <td class="ltr">{{ c.mod.version }}</td>
+        <td><span class="badge {% if c.locked %}badge-inactive{% elif c.enabled %}badge-published{% else %}badge-draft{% endif %}">{% if c.locked %}{% trans "Locked off by the server" %}{% elif c.enabled %}{% trans "Active" %}{% else %}{% trans "Inactive" %}{% endif %}</span></td>
+        <td style="white-space:normal;min-width:240px">{{ c.mod.description }}{% if c.locked %}<br><span class="muted">{{ c.mod.lock_hint }}</span>{% endif %}</td>
+        <td style="white-space:nowrap">
+          {% if c.settings_url %}<a class="btn btn-light btn-sm" href="{{ c.settings_url }}">{% trans "Settings" %}</a>{% endif %}
+          {% if c.has_setup %}<a class="btn btn-light btn-sm" href="{% url 'plugins:module_setup' c.mod.key %}">{% trans "Setup guide" %}</a>{% endif %}
+          {% if c.can_toggle %}<form method="post" action="{% url 'plugins:module_toggle' c.mod.key %}" style="display:inline">{% csrf_token %}
+            {% if c.enabled %}<button class="btn btn-light btn-sm" name="enable" value="0" type="submit">{% trans "Deactivate" %}</button>
+            {% elif c.locked %}<button class="btn btn-sm" type="button" disabled title="{{ c.mod.lock_hint }}">{% trans "Activate" %}</button>
+            {% else %}<button class="btn btn-sm" name="enable" value="1" type="submit">{% trans "Activate" %}</button>{% endif %}</form>{% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody></table></div>
+</div>
+{% endif %}
 <div class="card">
   {% if rows %}
   <div class="table-wrap"><table class="table">

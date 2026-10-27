@@ -66,6 +66,10 @@ def apply_filter(name, value, **ctx):
     """hookهای فیلتر را به‌ترتیب اولویت اجرا می‌کند. خطای افزونه ثبت می‌شود و مقدار قبلی حفظ می‌شود."""
     if name not in HOOKS or HOOKS[name] != "filter" or not state.active_plugins():
         return value
+    from apps.core.modules import hook_allowed
+
+    if not hook_allowed(name):  # a switched-off built-in module owns this hook
+        return value
     for loaded, fn in _iter_handlers(name):
         try:
             new = fn(value, loaded.api, **ctx)
@@ -78,6 +82,10 @@ def apply_filter(name, value, **ctx):
 
 def run_action(name, **ctx):
     if name not in HOOKS or HOOKS[name] != "action" or not state.active_plugins():
+        return
+    from apps.core.modules import hook_allowed
+
+    if not hook_allowed(name):
         return
     for loaded, fn in _iter_handlers(name):
         try:
