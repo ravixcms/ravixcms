@@ -23,7 +23,7 @@ from apps.content.models import Category, Page, Post, PublishStatus, Tag
 from apps.core.markup import render_markdown
 from apps.themes.config import localize_default_text, localized_section
 
-from .dto import LanguageOption, CategoryItem, CommentItem, CommentsSection, FeatureItem, PageItem, PageLink, Pagination, PostItem, Section, SectionButton, TagItem
+from .dto import LanguageLink, LanguageOption, CategoryItem, CommentItem, CommentsSection, FeatureItem, PageItem, PageLink, Pagination, PostItem, Section, SectionButton, TagItem
 from .formatting import date_display, date_iso, excerpt_from, reading_time
 
 
@@ -341,3 +341,40 @@ def wrong_language_redirect(request, obj, route: str, *args):
         url = reverse(route, args=args)
     query = request.META.get("QUERY_STRING", "")
     return HttpResponsePermanentRedirect(f"{url}?{query}" if query else url)
+
+
+_BLOG_HOME_ROUTES = {"public:post_detail", "public:comment_submit", "public:category_detail", "public:tag_detail"}
+
+
+def language_links(request) -> tuple:
+    """One ``LanguageLink`` per site language for a language switcher (the ``languages`` variable of every theme page).
+
+    Home, blog, search and other pages that exist in every language keep their page; a post, category or tag goes to the blog of the
+    chosen language (a post exists in one language only); a static page goes to the home page when languages are separated; an address
+    without a language prefix (a plugin page) keeps its path and the language cookie decides."""
+    from apps.core.regional import split_language_prefix, swap_language_prefix
+
+    from .seo import hreflang
+
+    current = (translation.get_language() or "").lower()
+    path = request.path
+    route = getattr(getattr(request, "resolver_match", None), "view_name", "") or ""
+    separated = False
+    if route == "public:page_detail":
+        separated = bool(separated_language())
+    prefixed = split_language_prefix(path)[0] != ""
+    links = []
+    for code, name in settings.LANGUAGES:
+        if route in _BLOG_HOME_ROUTES:
+            with translation.override(code):
+                url = reverse("public:post_list")
+        elif separated:
+            with translation.override(code):
+                url = reverse("public:home")
+        elif prefixed:
+            url = swap_language_prefix(path, code) or path
+        else:
+            url = path
+        links.append(LanguageLink(code=code, hreflang=hreflang(code), name=name, short_name=name.split(" (")[0], url=url, current=(code == current),
+                                  dir="rtl" if code in settings.LANGUAGES_BIDI else "ltr"))
+    return tuple(links)

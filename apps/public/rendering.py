@@ -25,7 +25,7 @@ from apps.themes.constants import DEFAULT_THEME, FONT_SIZES, FONTS
 from apps.themes.models import ThemeConfig
 
 from apps.core.minimalhtml import unavailable_page
-from .builders import category_url, localize_internal_url, page_url
+from .builders import category_url, language_links, localize_internal_url, page_url
 from .dto import Link
 from .feeds import feed_links
 
@@ -174,6 +174,7 @@ def base_context(request, resolved: Resolved, *, embedded: bool = False, edit_ur
         },
         "menus": _build_menus(doc, request.path),
         "feeds": feed_links(request, site_name=site["name"]),
+        "languages": language_links(request),
         "viewer": _build_viewer(request, edit_url),
         "is_preview": resolved.is_preview,
         "embedded": embedded,

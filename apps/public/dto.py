@@ -26,6 +26,18 @@ class LanguageOption:
 
 
 @dataclass(frozen=True)
+class LanguageLink:
+    """One entry of a language switcher: the same page in that language when it exists there, else the closest page that does."""
+    code: str  # Django language code ("pt-br"): the value to post to the language view
+    hreflang: str  # BCP-47 ("pt-BR") for lang/hreflang attributes
+    name: str  # endonym, e.g. "Português (Brasil)"
+    short_name: str  # endonym without the region, e.g. "Português"
+    url: str
+    current: bool = False
+    dir: str = "ltr"
+
+
+@dataclass(frozen=True)
 class FeedLink:
     """پیوند autodiscovery فید برای <head> (``rel="alternate"``)؛ url مطلق است."""
 
