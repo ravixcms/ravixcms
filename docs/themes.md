@@ -51,7 +51,7 @@ python manage.py startheme my-theme --name "قالب من" --author "نام شم
 |---|---|---|
 | `base.html` | چارچوب مشترک | `site`، `theme`، `header`، `footer`، `menus` |
 | `home.html` | صفحهٔ اصلی | `sections` |
-| `post_list.html` | فهرست نوشته‌ها | `posts`، `pagination`، `categories` |
+| `post_list.html` | فهرست نوشته‌ها | `posts`، `pagination`، `categories`؛ و `other_languages` (فقط وقتی زبان فعلی هنوز نوشته ندارد: فهرست `LanguageOption` با `code`، `name`، `url`، `post_count` برای زبان‌هایی که نوشته دارند) |
 | `post_detail.html` | یک نوشته | `post`، `related`، `comments` |
 | `category_detail.html` | یک دسته‌بندی | `category`، `children`، `posts`، `pagination` |
 | `tag_detail.html` | یک برچسب | `tag`، `posts`، `pagination` |

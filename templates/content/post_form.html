@@ -19,6 +19,7 @@
       <div class="card">
         <div class="card-header"><h2>{% trans "Publish" %}</h2></div>
         <div class="card-body">
+          {% include "partials/_field.html" with field=form.language %}
           {% include "partials/_field.html" with field=form.status %}
           {% if form.publish_at %}{% include "partials/_field.html" with field=form.publish_at %}{% endif %}
           {% if form.author %}{% include "partials/_field.html" with field=form.author %}{% endif %}

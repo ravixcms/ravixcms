@@ -100,6 +100,7 @@ class SiteSettingsForm(StyledFormMixin, forms.ModelForm):
             "comments_require_approval",
             "comments_notify_admin",
             "comments_blocked_words",
+            "content_per_language",
         )
         widgets = {
             "description": forms.Textarea(attrs={"rows": 4}),

@@ -16,16 +16,21 @@
       <option value="published" {% if selected_status == "published" %}selected{% endif %}>{% trans "Published" %}</option>
       <option value="draft" {% if selected_status == "draft" %}selected{% endif %}>{% trans "Draft" %}</option>
     </select>
+    <select name="language" class="input" aria-label="{% trans "Language" %}">
+      <option value="">{% trans "All languages" %}</option>
+      {% for code, name in languages %}<option value="{{ code }}" {% if selected_language == code %}selected{% endif %}>{{ name }}</option>{% endfor %}
+    </select>
     <button type="submit" class="btn">{% icon "search" 18 %} {% trans "Actions" %}</button>
   </form>
   {% if pages %}
   <div class="table-wrap"><table class="table">
-    <thead><tr><th>{% trans "Title" %}</th><th>{% trans "Slug" %}</th><th>{% trans "Status" %}</th><th>{% trans "Last edit" %}</th><th></th></tr></thead>
+    <thead><tr><th>{% trans "Title" %}</th><th>{% trans "Slug" %}</th><th>{% trans "Language" %}</th><th>{% trans "Status" %}</th><th>{% trans "Last edit" %}</th><th></th></tr></thead>
     <tbody>
     {% for page in pages %}
       <tr>
         <td><a href="{% url 'content:page_detail' page.pk %}"><strong>{{ page.title }}</strong></a></td>
         <td class="ltr">{{ page.slug }}</td>
+        <td><span class="badge ltr">{{ page.language }}</span></td>
         <td><span class="badge badge-{{ page.status }}">{{ page.get_status_display }}</span></td>
         <td>{{ page.updated_at|jalali_datetime }}</td>
         <td>

@@ -17,6 +17,15 @@ class Link:
 
 
 @dataclass(frozen=True)
+class LanguageOption:
+    """A language that has published posts: its code, native name, the address of its blog and how many posts it has."""
+    code: str
+    name: str
+    url: str
+    post_count: int = 0
+
+
+@dataclass(frozen=True)
 class FeedLink:
     """پیوند autodiscovery فید برای <head> (``rel="alternate"``)؛ url مطلق است."""
 

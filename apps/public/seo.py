@@ -43,7 +43,7 @@ def clip(text: str, length: int = 160) -> str:
 
 def make_seo(request, site: dict, *, title: str = "", description: str = "", path: str = "", robots: str = "",
              og_type: str = "website", og_image: str = "", jsonld=None, prev: str = "", next_: str = "",
-             published_time: str = "", modified_time: str = "") -> dict:
+             published_time: str = "", modified_time: str = "", alternates: bool = True) -> dict:
     """``og_image`` خالی ← تصویر پیش‌فرض اشتراک‌گذاری سایت (در صورت تعریف)."""
     image = absolute_url(request, og_image or site.get("share_image_url", ""))
     canonical_path = path or request.path
@@ -52,7 +52,7 @@ def make_seo(request, site: dict, *, title: str = "", description: str = "", pat
         "title": full_title,
         "description": clip(description or site["description"] or site["tagline"]),
         "canonical": absolute_url(request, canonical_path),
-        "alternates": [] if "noindex" in robots else alternate_links(request, canonical_path),
+        "alternates": [] if ("noindex" in robots or not alternates) else alternate_links(request, canonical_path),
         "robots": robots,
         "og_type": og_type,
         "og_image": image,

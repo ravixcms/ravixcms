@@ -17,6 +17,10 @@
       <option value="scheduled" {% if selected_status == "scheduled" %}selected{% endif %}>{% trans "Scheduled" %}</option>
       <option value="draft" {% if selected_status == "draft" %}selected{% endif %}>{% trans "Draft" %}</option>
     </select>
+    <select name="language" class="input" aria-label="{% trans "Language" %}">
+      <option value="">{% trans "All languages" %}</option>
+      {% for code, name in languages %}<option value="{{ code }}" {% if selected_language == code %}selected{% endif %}>{{ name }}</option>{% endfor %}
+    </select>
     <select name="category" class="input" aria-label="{% trans "Content category" %}">
       <option value="">{% trans "All post categories" %}</option>
       {% for c in categories %}<option value="{{ c.pk }}" {% if selected_category == c.pk|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>{% endfor %}
@@ -36,12 +40,13 @@
   {% if posts %}
   <div class="table-wrap">
     <table class="table">
-      <thead><tr><th>{% trans "Title" %}</th><th>{% trans "Author" %}</th><th>{% trans "Content categories" %}</th><th>{% trans "Status" %}</th><th>{% trans "Date" %}</th><th></th></tr></thead>
+      <thead><tr><th>{% trans "Title" %}</th><th>{% trans "Author" %}</th><th>{% trans "Language" %}</th><th>{% trans "Content categories" %}</th><th>{% trans "Status" %}</th><th>{% trans "Date" %}</th><th></th></tr></thead>
       <tbody>
       {% for post in posts %}
         <tr>
           <td style="white-space:normal;min-width:220px"><a href="{% url 'content:post_detail' post.pk %}"><strong>{{ post.title }}</strong></a><div class="muted ltr" style="font-size:.78rem">{{ post.slug }}</div></td>
           <td>{{ post.author.display_name|default:"—" }}</td>
+          <td><span class="badge ltr">{{ post.language }}</span></td>
           <td style="white-space:normal">{% for c in post.categories.all %}<span class="badge">{{ c.name }}</span> {% empty %}<span class="muted">—</span>{% endfor %}</td>
           <td><span class="badge badge-{{ post.effective_status }}">{{ post.effective_status_label }}</span>{% if post.effective_status == "scheduled" %}<div class="muted" style="font-size:.78rem">{{ post.publish_at|jalali_datetime }}</div>{% endif %}</td>
           <td><div style="font-size:.85rem">{{ post.created_at|jalali }}</div><div class="muted" style="font-size:.75rem">{% blocktrans trimmed with updated_at=post.updated_at|jalali %}Edited: {{ updated_at }}{% endblocktrans %}</div></td>

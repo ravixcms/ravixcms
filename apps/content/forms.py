@@ -21,7 +21,26 @@ class UserChoiceField(forms.ModelChoiceField):
         return f"{obj.display_name} (@{obj.username})"
 
 
-class PostForm(StyledFormMixin, forms.ModelForm):
+class LanguageFieldMixin:
+    """Turns the ``language`` text field into a choice of the site's languages (default: the site's default language)."""
+
+    def _language_field(self):
+        from apps.core.regional import language_choices
+
+        from .models import default_content_language
+
+        current = self.instance.language if self.instance.pk and self.instance.language else default_content_language()
+        self.fields["language"] = forms.ChoiceField(
+            label=self.fields["language"].label, help_text=self.fields["language"].help_text, choices=language_choices(), required=False, initial=current)
+        self.initial.setdefault("language", current)
+
+    def clean_language(self):
+        from .models import default_content_language
+
+        return self.cleaned_data.get("language") or (self.instance.language if self.instance.pk else "") or default_content_language()
+
+
+class PostForm(LanguageFieldMixin, StyledFormMixin, forms.ModelForm):
     publish_at = forms.DateTimeField(
         label=gettext_lazy("Publish time"),
         required=False,
@@ -32,7 +51,7 @@ class PostForm(StyledFormMixin, forms.ModelForm):
 
     class Meta:
         model = Post
-        fields = ("title", "slug", "excerpt", "body", "featured_image", "status", "publish_at", "author", "categories", "tags",
+        fields = ("title", "slug", "excerpt", "body", "featured_image", "language", "status", "publish_at", "author", "categories", "tags",
                   "seo_title", "seo_description", "noindex", "comments_open")
         widgets = {
             "slug": forms.TextInput(attrs={"dir": "ltr"}),
@@ -48,6 +67,7 @@ class PostForm(StyledFormMixin, forms.ModelForm):
     def __init__(self, *args, user, **kwargs):
         super().__init__(*args, **kwargs)
         self.user = user
+        self._language_field()
         self.can_publish = user.has_cap("content.publish")
         self.fields["status"].initial = self.instance.status if self.instance.pk else PublishStatus.DRAFT
         self.fields["categories"].queryset = Category.objects.all()
@@ -102,10 +122,10 @@ class PostForm(StyledFormMixin, forms.ModelForm):
         return post
 
 
-class PageForm(StyledFormMixin, forms.ModelForm):
+class PageForm(LanguageFieldMixin, StyledFormMixin, forms.ModelForm):
     class Meta:
         model = Page
-        fields = ("title", "slug", "body", "status", "seo_title", "seo_description")
+        fields = ("title", "slug", "body", "language", "status", "seo_title", "seo_description")
         widgets = {
             "slug": forms.TextInput(attrs={"dir": "ltr"}),
             "body": forms.Textarea(attrs={"rows": 16}),
@@ -117,6 +137,7 @@ class PageForm(StyledFormMixin, forms.ModelForm):
     def __init__(self, *args, user, **kwargs):
         super().__init__(*args, **kwargs)
         self.user = user
+        self._language_field()
 
     def clean_slug(self):
         slug = (self.cleaned_data.get("slug") or "").strip().lower()

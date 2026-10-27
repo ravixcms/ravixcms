@@ -58,6 +58,22 @@ class Tag(TimeStampedModel):
         super().save(*args, **kwargs)
 
 
+def default_content_language() -> str:
+    """The site's default language code (a valid ``settings.LANGUAGES`` code)."""
+    from apps.core.regional import regional_for
+
+    from apps.core.models import SiteSettings
+
+    return regional_for(SiteSettings.load())[0]
+
+
+def _normalize_language(value: str) -> str:
+    from django.conf import settings
+
+    value = (value or "").strip().lower().replace("_", "-")
+    return value if value in dict(settings.LANGUAGES) else ""
+
+
 class PublishStatus(models.TextChoices):
     DRAFT = "draft", gettext_lazy("Draft")
     PUBLISHED = "published", gettext_lazy("Published")
@@ -84,6 +100,8 @@ class Post(TimeStampedModel):
     body = models.TextField(gettext_lazy("Body (Markdown)"))
     body_html = models.TextField(editable=False, blank=True)  # خروجی پاک‌سازی‌شده؛ هنگام ذخیره ساخته می‌شود
     featured_image = models.ImageField(gettext_lazy("Featured image"), upload_to=RandomUploadPath("posts"), blank=True, validators=[validate_image_file])
+    language = models.CharField(gettext_lazy("Language"), max_length=10, blank=True, db_index=True,
+                                help_text=gettext_lazy("The language this text is written in. Visitors see it under this language's address."))
     status = models.CharField(gettext_lazy("Status"), max_length=12, choices=PublishStatus.choices, default=PublishStatus.DRAFT, db_index=True)
     publish_at = models.DateTimeField(gettext_lazy("Publish time"), null=True, blank=True, db_index=True)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL,
@@ -112,6 +130,7 @@ class Post(TimeStampedModel):
 
     # ------------------------------------------------------------ ذخیره
     def save(self, *args, **kwargs):
+        self.language = _normalize_language(self.language) or default_content_language()
         if not self.slug:
             self.slug = unique_slug(Post, self.title, instance=self, fallback="post", max_length=220)
         if self.status == PublishStatus.PUBLISHED and self.publish_at is None:
@@ -169,6 +188,8 @@ class Page(TimeStampedModel):
                             help_text=gettext_lazy("For example about-us. If left empty, it is generated automatically."))
     body = models.TextField(gettext_lazy("Content (Markdown)"))
     body_html = models.TextField(editable=False, blank=True)
+    language = models.CharField(gettext_lazy("Language"), max_length=10, blank=True, db_index=True,
+                                help_text=gettext_lazy("The language this text is written in. Visitors see it under this language's address."))
     status = models.CharField(gettext_lazy("Status"), max_length=12, choices=[(PublishStatus.DRAFT, gettext_lazy("Draft")), (PublishStatus.PUBLISHED, gettext_lazy("Published"))],
                               default=PublishStatus.DRAFT, db_index=True)
     seo_title = models.CharField(gettext_lazy("SEO title"), max_length=70, blank=True, help_text=gettext_lazy("Preferably up to 60 characters. If left empty, the page title is used."))
@@ -195,6 +216,7 @@ class Page(TimeStampedModel):
         return self.seo_title or self.title
 
     def save(self, *args, **kwargs):
+        self.language = _normalize_language(self.language) or default_content_language()
         if not self.slug:
             self.slug = unique_slug(Page, self.title, instance=self, fallback="page", max_length=220, reserved=RESERVED_PAGE_SLUGS)
         self.body_html = render_markdown(self.body)

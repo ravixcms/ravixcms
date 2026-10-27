@@ -1,5 +1,7 @@
 from django.utils.translation import gettext, gettext_lazy
+from django.conf import settings
 from django.core.exceptions import PermissionDenied
+from apps.core.regional import language_choices
 from apps.core.params import safe_id
 from django.db.models import Count, Q
 from django.http import JsonResponse
@@ -45,6 +47,8 @@ class PostListView(CapabilityRequiredMixin, QueryStringMixin, ListView):
             qs = qs.filter(Q(status=PublishStatus.PUBLISHED) | Q(status=PublishStatus.SCHEDULED, publish_at__lte=now))
         elif status == "scheduled":
             qs = qs.filter(status=PublishStatus.SCHEDULED, publish_at__gt=now)
+        if g.get("language", "") in dict(settings.LANGUAGES):
+            qs = qs.filter(language=g["language"])
         if safe_id(g.get("category")) is not None:
             qs = qs.filter(categories__pk=safe_id(g.get("category")))
         if safe_id(g.get("tag")) is not None:
@@ -62,6 +66,8 @@ class PostListView(CapabilityRequiredMixin, QueryStringMixin, ListView):
         ctx.update(
             q=g.get("q", ""),
             selected_status=g.get("status", ""),
+            selected_language=g.get("language", ""),
+            languages=language_choices(),
             selected_category=g.get("category", ""),
             selected_tag=g.get("tag", ""),
             selected_author=g.get("author", ""),
@@ -154,12 +160,16 @@ class PageListView(CapabilityRequiredMixin, QueryStringMixin, ListView):
             qs = qs.filter(Q(title__icontains=q) | Q(slug__icontains=q) | Q(body__icontains=q))
         if status in (PublishStatus.DRAFT, PublishStatus.PUBLISHED):
             qs = qs.filter(status=status)
+        if self.request.GET.get("language", "") in dict(settings.LANGUAGES):
+            qs = qs.filter(language=self.request.GET["language"])
         return qs
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx["q"] = self.request.GET.get("q", "")
         ctx["selected_status"] = self.request.GET.get("status", "")
+        ctx["selected_language"] = self.request.GET.get("language", "")
+        ctx["languages"] = language_choices()
         return ctx
 
 

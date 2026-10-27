@@ -11934,3 +11934,31 @@ msgstr "ویژگی‌هایی مثل رنگ یا اندازه که تنوع‌ه
 #: templates/shop/panel/product_form.html
 msgid "Create a variant for every combination of the chosen attributes. Existing variants are kept."
 msgstr "برای هر ترکیب از ویژگی‌های انتخاب‌شده یک تنوع بساز. تنوع‌های موجود حفظ می‌شوند."
+
+#: templates/content/post_list.html
+msgid "All languages"
+msgstr "همهٔ زبان‌ها"
+
+#: templates/core/site_settings.html
+msgid "Content languages"
+msgstr "زبان محتوا"
+
+#: apps/core/models.py
+msgid "Show each post and page only in its own language"
+msgstr "هر نوشته و برگه فقط به زبان خودش نمایش داده شود"
+
+#: apps/core/models.py
+msgid "On: /en/ lists only English posts, a post opened under another language prefix is redirected to its own language, and each language has its own feed and sitemap. Off: every post is shown under every language prefix (the behaviour before this option existed)."
+msgstr "روشن: /en/ فقط نوشته‌های انگلیسی را فهرست می‌کند، نوشته‌ای که با پیشوند زبان دیگر باز شود به زبان خودش هدایت می‌شود و هر زبان فید و نقشهٔ سایت جدا دارد. خاموش: هر نوشته زیر پیشوند همهٔ زبان‌ها نمایش داده می‌شود (رفتار پیش از این گزینه)."
+
+#: apps/content/models.py
+msgid "The language this text is written in. Visitors see it under this language's address."
+msgstr "زبانی که این متن به آن نوشته شده است. بازدیدکننده آن را زیر نشانی همین زبان می‌بیند."
+
+#: themes/default/templates/post_list.html
+msgid "No post has been published in this language yet."
+msgstr "هنوز مقاله‌ای به این زبان منتشر نشده است."
+
+#: themes/default/templates/post_list.html
+msgid "Read the blog in:"
+msgstr "وبلاگ را بخوانید به:"

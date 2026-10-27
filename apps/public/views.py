@@ -110,6 +110,8 @@ class PostListView(PublicView):
             )
 
         ctx = {"posts": posts, "pagination": pagination, "categories": categories, "breadcrumbs": _crumbs((gettext("Home"), reverse("public:home")), (gettext("Posts"), ""))}
+        if not posts and b.separated_language():  # this language has no post yet: point the visitor to the languages that have
+            ctx["other_languages"] = tuple(o for o in b.language_options() if o.code != b.separated_language())
         return self.respond(request, ctx, seo=seo)
 
 
@@ -121,7 +123,11 @@ class PostDetailView(PublicView):
 
     def get(self, request, slug):
         reply = request.GET.get("reply", "")
-        return self.render_post(request, self.get_post(slug), notice=request.GET.get("cm", ""), reply_to=safe_id(reply) or 0)
+        post = self.get_post(slug)
+        moved = b.wrong_language_redirect(request, post, "public:post_detail", post.slug)
+        if moved is not None:
+            return moved
+        return self.render_post(request, post, notice=request.GET.get("cm", ""), reply_to=safe_id(reply) or 0)
 
     def render_post(self, request, post, *, state=None, notice="", reply_to=0, status=200):
         item = b.post_item(post, full=True)
@@ -148,7 +154,7 @@ class PostDetailView(PublicView):
             if item.image_url:
                 article["image"] = [absolute_url(request, item.image_url)]
             data = make_seo(request, site, title=post.effective_title_tag, description=post.seo_description or item.excerpt,
-                            path=item.url, og_type="article", og_image=item.image_url, jsonld=[article],
+                            path=item.url, og_type="article", og_image=item.image_url, jsonld=[article], alternates=not b.separated_language(),
                             robots="noindex,follow" if post.noindex else "",
                             published_time=item.date_iso, modified_time=date_iso(post.updated_at))
             return finish_seo(request, apply_filter("public.seo", data, kind="post", obj_id=post.pk, site=site, request=request))
@@ -240,14 +246,17 @@ class PageDetailView(PublicView):
     template = "page_detail.html"
 
     def get(self, request, slug):
-        page = get_object_or_404(b.live_pages(), slug=slug)
+        page = get_object_or_404(b.live_pages(language=None), slug=slug)
+        moved = b.wrong_language_redirect(request, page, "public:page_detail", page.slug)
+        if moved is not None:
+            return moved
         item = b.page_item(page)
         built = published_body(page)
         if built is not None:  # صفحه طرح منتشرشده‌ی صفحه‌ساز دارد؛ همان صفحه/نشانی/سئو، فقط بدنه از صفحه‌ساز
             item = b.page_item(page, body_html=built[0], builder=True, show_title=built[1])
 
         def seo(site):
-            data = make_seo(request, site, title=page.effective_title_tag, description=page.seo_description or item.excerpt, path=item.url)
+            data = make_seo(request, site, title=page.effective_title_tag, description=page.seo_description or item.excerpt, path=item.url, alternates=not b.separated_language())
             return finish_seo(request, apply_filter("public.seo", data, kind="page", obj_id=page.pk, site=site, request=request))
 
         ctx = {"page": item, "breadcrumbs": _crumbs((gettext("Home"), reverse("public:home")), (page.title, ""))}
@@ -291,13 +300,15 @@ class SitemapView(View):
 
         from .seo import hreflang
 
-        entries = [(reverse("public:home"), None), (reverse("public:post_list"), None)]
+        separated = bool(b.separated_language())
+        entries = [(reverse("public:home"), None, True), (reverse("public:post_list"), None, True)]
         for c in b.categories_with_counts().filter(live_count__gt=0):
-            entries.append((b.category_url(c), c.updated_at))
+            entries.append((b.category_url(c), c.updated_at, True))
+        # a post or page exists in one language only (when languages are separated): no hreflang alternates for it
         for p in b.live_pages():
-            entries.append((b.page_url(p), p.updated_at))
+            entries.append((b.page_url(p), p.updated_at, not separated))
         for p in b.live_posts().filter(noindex=False).only("slug", "updated_at", "publish_at", "status", "created_at", "author", "featured_image", "title", "excerpt"):
-            entries.append((b.post_url(p), p.updated_at))
+            entries.append((b.post_url(p), p.updated_at, not separated))
         from apps.core import modules
 
         if settings.SHOP_ENABLED and modules.is_enabled("shop"):  # محصولات فعالِ سایتِ این دامنه
@@ -306,17 +317,17 @@ class SitemapView(View):
 
             site = current_site(request)
             if site is not None:
-                entries.append((reverse("shop:list"), None))
+                entries.append((reverse("shop:list"), None, True))
                 for pr in Product.objects.filter(site=site, is_active=True).only("slug", "updated_at"):
-                    entries.append((pr.get_absolute_url(), pr.updated_at))
+                    entries.append((pr.get_absolute_url(), pr.updated_at, True))
         languages = [code for code, _name in language_choices()]
         default = regional_for(load_site_settings(request))[0]
         lines = ['<?xml version="1.0" encoding="UTF-8"?>',
                  '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">']
-        for path, modified in entries[: self.LIMIT]:
+        for path, modified, with_alternates in entries[: self.LIMIT]:
             lastmod = f"<lastmod>{modified.date().isoformat()}</lastmod>" if modified else ""
             alternates = ""
-            if swap_language_prefix(path, "fa") is not None:
+            if with_alternates and swap_language_prefix(path, "fa") is not None:
                 links = [(hreflang(code), swap_language_prefix(path, code)) for code in languages]
                 links.append(("x-default", swap_language_prefix(path, default)))
                 alternates = "".join(

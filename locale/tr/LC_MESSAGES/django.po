@@ -12098,3 +12098,31 @@ msgstr "Değişken bir ürünün varyantlarını farklılaştıran renk veya bed
 #: templates/shop/panel/product_form.html
 msgid "Create a variant for every combination of the chosen attributes. Existing variants are kept."
 msgstr "Seçilen özelliklerin her kombinasyonu için bir varyant oluştur. Mevcut varyantlar korunur."
+
+#: templates/content/post_list.html
+msgid "All languages"
+msgstr "Tüm diller"
+
+#: templates/core/site_settings.html
+msgid "Content languages"
+msgstr "İçerik dilleri"
+
+#: apps/core/models.py
+msgid "Show each post and page only in its own language"
+msgstr "Her yazı ve sayfa yalnızca kendi dilinde gösterilsin"
+
+#: apps/core/models.py
+msgid "On: /en/ lists only English posts, a post opened under another language prefix is redirected to its own language, and each language has its own feed and sitemap. Off: every post is shown under every language prefix (the behaviour before this option existed)."
+msgstr "Açık: /en/ yalnızca İngilizce yazıları listeler, başka bir dil önekiyle açılan yazı kendi diline yönlendirilir ve her dilin kendi akışı ile site haritası olur. Kapalı: her yazı tüm dil öneklerinin altında gösterilir (bu seçenekten önceki davranış)."
+
+#: apps/content/models.py
+msgid "The language this text is written in. Visitors see it under this language's address."
+msgstr "Bu metnin yazıldığı dil. Ziyaretçiler onu bu dilin adresi altında görür."
+
+#: themes/default/templates/post_list.html
+msgid "No post has been published in this language yet."
+msgstr "Bu dilde henüz yazı yayımlanmadı."
+
+#: themes/default/templates/post_list.html
+msgid "Read the blog in:"
+msgstr "Blogu şu dilde okuyun:"

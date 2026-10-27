@@ -14,7 +14,7 @@ from django.db.models import Count, Q
 from django.db.models.functions import Substr
 from django.http import Http404
 from django.urls import reverse
-from django.utils import timezone
+from django.utils import timezone, translation
 from django.utils.html import linebreaks
 from django.utils.safestring import mark_safe
 
@@ -23,7 +23,7 @@ from apps.content.models import Category, Page, Post, PublishStatus, Tag
 from apps.core.markup import render_markdown
 from apps.themes.config import localize_default_text, localized_section
 
-from .dto import CategoryItem, CommentItem, CommentsSection, FeatureItem, PageItem, PageLink, Pagination, PostItem, Section, SectionButton, TagItem
+from .dto import LanguageOption, CategoryItem, CommentItem, CommentsSection, FeatureItem, PageItem, PageLink, Pagination, PostItem, Section, SectionButton, TagItem
 from .formatting import date_display, date_iso, excerpt_from, reading_time
 
 
@@ -31,7 +31,20 @@ _STYLE_BLOCK = re.compile(r"<style\b.*?</style>", re.S | re.I)  # بلوک سب�
 
 
 # ------------------------------------------------------------------ نشانی‌ها
+def _own_language(obj):
+    """The object's language when it differs from the active one and the site separates languages (so links, e.g. from a menu,
+    go straight to the right prefix instead of through a redirect); else None."""
+    lang = getattr(obj, "language", "")
+    if lang and lang != (translation.get_language() or "").lower() and lang in dict(settings.LANGUAGES) and separated_language():
+        return lang
+    return None
+
+
 def post_url(post) -> str:
+    own = _own_language(post)
+    if own:
+        with translation.override(own):
+            return reverse("public:post_detail", args=[post.slug])
     return reverse("public:post_detail", args=[post.slug])
 
 
@@ -44,6 +57,10 @@ def tag_url(tag) -> str:
 
 
 def page_url(page) -> str:
+    own = _own_language(page)
+    if own:
+        with translation.override(own):
+            return reverse("public:page_detail", args=[page.slug])
     return reverse("public:page_detail", args=[page.slug])
 
 
@@ -63,10 +80,26 @@ def localize_internal_url(url: str) -> str:
 
 
 # ------------------------------------------------------------------ کوئری‌های پایه (فقط منتشرشده)
-def live_posts():
-    """نوشته‌های منتشرشده (شامل زمان‌بندی‌شده‌های رسیده)، جدیدترین اول. بدنه کامل بارگذاری نمی‌شود."""
+def separated_language():
+    """The language code the public lists are limited to: the active language when the site shows each post and page only in its
+    own language, else ``None`` (every post under every prefix, as before the option existed)."""
+    from apps.core.models import SiteSettings
+
+    try:
+        if not SiteSettings.load().content_per_language:
+            return None
+    except Exception:  # noqa: BLE001 - before the first migrate
+        return None
+    return (translation.get_language() or "").lower() or None
+
+
+def live_posts(language=...):
+    """نوشته‌های منتشرشده (شامل زمان‌بندی‌شده‌های رسیده)، جدیدترین اول. بدنه کامل بارگذاری نمی‌شود.
+    ``language``: default = the separated language of this request (see ``separated_language``); ``None`` = all languages."""
+    lang = separated_language() if language is ... else language
+    qs = Post.objects.filter(language=lang) if lang else Post.objects.all()
     return (
-        Post.objects.live()
+        qs.live()
         .select_related("author")
         .prefetch_related("categories", "tags")
         .defer("body", "body_html")
@@ -75,13 +108,18 @@ def live_posts():
     )
 
 
-def live_pages():
-    return Page.objects.filter(status=PublishStatus.PUBLISHED)
+def live_pages(language=...):
+    lang = separated_language() if language is ... else language
+    qs = Page.objects.filter(status=PublishStatus.PUBLISHED)
+    return qs.filter(language=lang) if lang else qs
 
 
 def categories_with_counts():
     now = timezone.now()
     live = Q(posts__status=PublishStatus.PUBLISHED) | Q(posts__status=PublishStatus.SCHEDULED, posts__publish_at__lte=now)
+    lang = separated_language()
+    if lang:  # counts and "has posts" only for the posts of this language
+        live = live & Q(posts__language=lang)
     return Category.objects.annotate(live_count=Count("posts", filter=live, distinct=True)).order_by("name")
 
 
@@ -262,7 +300,7 @@ def build_sections(doc: dict, allowed: tuple, site: dict) -> list[Section]:
             if not base["categories"]:
                 continue
         elif kind == "page":
-            page = live_pages().filter(pk=raw["page"]).first() if raw["page"] else None
+            page = live_pages(language=None).filter(pk=raw["page"]).first() if raw["page"] else None
             if page is None:
                 continue
             base["page"] = page_item(page)
@@ -275,3 +313,31 @@ def build_sections(doc: dict, allowed: tuple, site: dict) -> list[Section]:
                 continue
         sections.append(Section(**base))
     return sections
+
+
+def language_options():
+    """Languages (in ``settings.LANGUAGES`` order) that have at least one live post, each with the address of its blog."""
+    from django.utils.translation import override
+
+    from apps.core.regional import language_choices
+
+    counts = dict(Post.objects.live().order_by().values_list("language").annotate(n=Count("pk")))
+    options = []
+    for code, name in language_choices():
+        if counts.get(code):
+            with override(code):
+                options.append(LanguageOption(code=code, name=name, url=reverse("public:post_list"), post_count=counts[code]))
+    return tuple(options)
+
+
+def wrong_language_redirect(request, obj, route: str, *args):
+    """301 to the object's own language when posts and pages are separated by language and the visitor is under another prefix."""
+    from django.http import HttpResponsePermanentRedirect
+
+    lang = separated_language()
+    if not lang or not obj.language or obj.language == lang or obj.language not in dict(settings.LANGUAGES):
+        return None
+    with translation.override(obj.language):
+        url = reverse(route, args=args)
+    query = request.META.get("QUERY_STRING", "")
+    return HttpResponsePermanentRedirect(f"{url}?{query}" if query else url)

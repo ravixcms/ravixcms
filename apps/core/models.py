@@ -53,6 +53,10 @@ class SiteSettings(models.Model):
     comments_blocked_words = models.TextField(
         gettext_lazy("Blocked words in comments"), blank=True, max_length=5000,
         help_text=gettext_lazy("One word or phrase per line. A comment that contains one of them (in the name, email or text) is recorded as “spam”."))
+    content_per_language = models.BooleanField(
+        gettext_lazy("Show each post and page only in its own language"), default=True,
+        help_text=gettext_lazy("On: /en/ lists only English posts, a post opened under another language prefix is redirected to its own language, and each language has its own feed and sitemap. "
+                               "Off: every post is shown under every language prefix (the behaviour before this option existed)."))
     translations = models.JSONField(default=dict, blank=True, editable=False)  # {language: {site_name, tagline, description, footer_text}}
     updated_at = models.DateTimeField(gettext_lazy("Last edit"), auto_now=True)
 

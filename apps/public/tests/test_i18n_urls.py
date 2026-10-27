@@ -45,6 +45,7 @@ class PrefixHelperTests(TestCase):
 class PublicPrefixTests(TestCase):
     @classmethod
     def setUpTestData(cls):
+        SiteSettings.objects.update_or_create(pk=1, defaults={"content_per_language": False})  # these tests are about the URL prefix, not about separating content
         cls.post = Post.objects.create(title="نوشتهٔ اول", slug="first", body=BODY, excerpt="خلاصه", status=PublishStatus.PUBLISHED,
                                        publish_at="2020-01-01T00:00:00Z")
         cls.page = Page.objects.create(title="درباره", slug="about", body="x", status="published")
@@ -199,6 +200,7 @@ class MixedDirectionContentTests(TestCase):
 
     @classmethod
     def setUpTestData(cls):
+        SiteSettings.objects.update_or_create(pk=1, defaults={"content_per_language": False})
         Post.objects.create(title="عنوان فارسی", slug="fa-post", body="متن **فارسی**\n\n- یک\n- دو", excerpt="خلاصه",
                             status=PublishStatus.PUBLISHED, publish_at="2020-01-01T00:00:00Z")
 

@@ -11522,3 +11522,31 @@ msgstr "可变商品的变体所区别的属性，例如颜色或尺码。"
 #: templates/shop/panel/product_form.html
 msgid "Create a variant for every combination of the chosen attributes. Existing variants are kept."
 msgstr "为所选属性的每种组合创建一个变体。现有变体将保留。"
+
+#: templates/content/post_list.html
+msgid "All languages"
+msgstr "所有语言"
+
+#: templates/core/site_settings.html
+msgid "Content languages"
+msgstr "内容语言"
+
+#: apps/core/models.py
+msgid "Show each post and page only in its own language"
+msgstr "每篇文章和页面仅以其自身语言显示"
+
+#: apps/core/models.py
+msgid "On: /en/ lists only English posts, a post opened under another language prefix is redirected to its own language, and each language has its own feed and sitemap. Off: every post is shown under every language prefix (the behaviour before this option existed)."
+msgstr "开启：/en/ 只列出英文文章，用其他语言前缀打开的文章会重定向到其自身语言，且每种语言都有各自的订阅源和站点地图。关闭：每篇文章在所有语言前缀下都显示（此选项出现之前的行为）。"
+
+#: apps/content/models.py
+msgid "The language this text is written in. Visitors see it under this language's address."
+msgstr "此文本所使用的语言。访问者会在该语言的地址下看到它。"
+
+#: themes/default/templates/post_list.html
+msgid "No post has been published in this language yet."
+msgstr "尚未发布此语言的文章。"
+
+#: themes/default/templates/post_list.html
+msgid "Read the blog in:"
+msgstr "阅读以下语言的博客："

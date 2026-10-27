@@ -46,6 +46,10 @@
     </div>
   </div>
   <div class="card" style="margin-bottom:1.25rem">
+    <div class="card-header"><h2>{% trans "Content languages" %}</h2></div>
+    <div class="card-body">{% include "partials/_field.html" with field=form.content_per_language %}</div>
+  </div>
+  <div class="card" style="margin-bottom:1.25rem">
     <div class="card-header"><h2>{% trans "User access" %}</h2></div>
     <div class="card-body">{% include "partials/_field.html" with field=form.registration_open %}</div>
   </div>

@@ -18,7 +18,15 @@
   <div class="river">{% for post in posts %}{% include "partials/post_row.html" with post=post hlevel=2 %}{% endfor %}</div>
   {% include "partials/pagination.html" %}
   {% else %}
+  {% if other_languages %}
+  <div class="empty-state">
+    <p>{% trans "No post has been published in this language yet." %}</p>
+    <p class="muted">{% trans "Read the blog in:" %}</p>
+    <ul class="chips">{% for o in other_languages %}<li><a href="{{ o.url }}" lang="{{ o.code }}" hreflang="{{ o.code }}">{{ o.name }}</a></li>{% endfor %}</ul>
+  </div>
+  {% else %}
   <div class="empty-state"><p>{% trans "No post has been published yet." %}</p></div>
+  {% endif %}
   {% endif %}
 </div>
 {% endblock %}

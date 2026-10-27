@@ -16,6 +16,7 @@
     </div></div>
     <aside class="editor-side">
       <div class="card"><div class="card-header"><h2>{% trans "Publish" %}</h2></div><div class="card-body">
+        {% include "partials/_field.html" with field=form.language %}
         {% include "partials/_field.html" with field=form.status %}
         {% if object.pk %}<p class="help">{% blocktrans trimmed with updated_at=object.updated_at|jalali_datetime %}Last edited: {{ updated_at }}{% endblocktrans %}</p>{% endif %}
         <div class="form-actions"><button type="submit" class="btn">{% icon "check" 18 %} {% trans "Save" %}</button><a href="{{ cancel_url }}" class="btn btn-light">{% trans "Cancel" %}</a></div>
