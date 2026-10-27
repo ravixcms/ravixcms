@@ -12126,3 +12126,18 @@ msgstr "Bu dilde henüz yazı yayımlanmadı."
 #: themes/default/templates/post_list.html
 msgid "Read the blog in:"
 msgstr "Blogu şu dilde okuyun:"
+
+#: apps/plugins/manifest.py
+msgid "site_routes: a list of at most 10 items is required."
+msgstr "site_routes: en fazla 10 öğeli bir liste gerekir."
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.path: invalid, reserved or duplicate (lowercase letters, digits, - _ and /)."
+msgstr "%(where)s.path: geçersiz, ayrılmış veya yinelenen (küçük harfler, rakamlar, - _ ve /)."
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.language_prefix: must be true/false."
+msgstr "%(where)s.language_prefix: true/false olmalıdır."
+

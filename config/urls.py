@@ -41,6 +41,11 @@ if settings.DEBUG:
 # Language-neutral root files (sitemap index, robots.txt) — never prefixed.
 urlpatterns += [path("", include("apps.public.root_urls"))]
 
+# Pages that plugins declare in ``site_routes``; each pattern matches only the paths an active plugin asked for.
+from apps.plugins.urls import site_route_localized_patterns, site_route_plain_patterns  # noqa: E402
+
+urlpatterns += site_route_plain_patterns
+
 # فروشگاه (اختیاری): فقط وقتی ماژول نصب است. مسیرهای عمومی (/shop/...) باید پیش از سایت عمومی باشند.
 if settings.SHOP_ENABLED:
     urlpatterns += [path("panel/", include("apps.shop.panel_urls"))]
@@ -49,7 +54,9 @@ if settings.SHOP_ENABLED:
 # و فقط به‌خاطر ترتیب، مسیرهای پنل و سیستم را نمی‌پوشاند (نامک‌های رزروشده هم در فرم صفحات رد می‌شوند).
 # The public site (and the shop) live under a language prefix: /fa/blog/, /en/blog/, /de/blog/ …
 # Old unprefixed URLs are redirected by SiteRegionalMiddleware (apps/core/middleware.py).
-_public = [path("", include("apps.shop.urls"))] if settings.SHOP_ENABLED else []
+_public = list(site_route_localized_patterns)
+if settings.SHOP_ENABLED:
+    _public.append(path("", include("apps.shop.urls")))
 _public.append(path("", include("apps.public.urls")))
 urlpatterns += i18n_patterns(*_public, prefix_default_language=True)
 

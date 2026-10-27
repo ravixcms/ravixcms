@@ -103,3 +103,15 @@ def nav_items():
             items.append(NavItem(key=f"plugin.{slug}.{page['key']}", label=gettext_lazy(page["title"]), url_name="", url=url, icon=page["icon"],
                                  section=page["section"], order=page["order"], capability=page["capability"]))
     return items
+
+
+def find_site_route(path: str, language_prefix: bool):
+    """``(slug, route)`` of the active plugin that declared this site route, or ``None``. Cheap enough for every public request."""
+    wanted = (path or "").strip("/")
+    if not wanted:
+        return None
+    for slug, info in active_plugins().items():
+        for route in info.manifest.site_routes:
+            if route["language_prefix"] is language_prefix and route["path"].strip("/") == wanted:
+                return slug, route
+    return None

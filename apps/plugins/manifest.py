@@ -25,8 +25,11 @@ RESERVED_SLUGS = frozenset({"log", "x", "events", "core", "ravix", "plugins", "a
 _MODULE_REF = re.compile(r"^([a-z_][a-z0-9_]*(?:\.[a-z_][a-z0-9_]*)*):([A-Za-z_][A-Za-z0-9_]*)$")
 _KEY_RE = re.compile(r"^[a-z][a-z0-9_]{0,29}$")
 _ROUTE_RE = re.compile(r"^(?:[a-z0-9][-a-z0-9_]*(?:/[a-z0-9][-a-z0-9_]*)*/?)?$")
+# First path segments a site route may never take: they belong to the panel, the system or the site itself.
+SITE_ROUTE_RESERVED = frozenset({"panel", "accounts", "api", "django-admin", "static", "theme-assets", "media", "ext", "registry", "install",
+                                 "healthz", "jsi18n", "i18n", "sitemap", "robots", "blog", "category", "tag", "search", "feed", "post", "shop", "cart", "checkout"})
 TOP_KEYS = {"slug", "name", "version", "description", "author", "homepage", "api_version", "ravix", "requires", "capabilities",
-            "settings", "admin_pages", "public_routes", "hooks", "models", "category", "license"}
+            "settings", "admin_pages", "public_routes", "site_routes", "hooks", "models", "category", "license"}
 
 
 class ManifestError(Exception):
@@ -52,6 +55,7 @@ class Manifest:
     public_routes: tuple
     hooks: tuple
     models: bool
+    site_routes: tuple = ()
     names: dict = field(default_factory=dict)  # multilingual «name»: {language code: text} (empty for a plain string)
     descriptions: dict = field(default_factory=dict)
     category: str = ""  # نامک دستهٔ مخزن (اختیاری)
@@ -82,6 +86,7 @@ class Manifest:
             "homepage": self.homepage, "api_version": self.api_version, "ravix": self.ravix, "requires": dict(self.requires),
             "capabilities": dict(self.capabilities), "settings": [f.to_json() for f in self.settings],
             "admin_pages": [dict(p) for p in self.admin_pages], "public_routes": [dict(r) for r in self.public_routes],
+            "site_routes": [dict(r) for r in self.site_routes],
             "hooks": [dict(h) for h in self.hooks], "models": self.models,
             "category": self.category, "license": self.license,
         }
@@ -92,9 +97,12 @@ class Manifest:
     def route(self, path):
         return next((r for r in self.public_routes if r["path"] == path), None)
 
+    def site_route(self, path):
+        return next((r for r in self.site_routes if r["path"] == path), None)
+
     def module_refs(self):
         """همهٔ ارجاع‌های «ماژول:نام» (برای import یکجا هنگام بارگذاری تأییدشده)."""
-        refs = [p["view"] for p in self.admin_pages] + [r["view"] for r in self.public_routes] + [h["handler"] for h in self.hooks]
+        refs = [p["view"] for p in self.admin_pages] + [r["view"] for r in self.public_routes] + [r["view"] for r in self.site_routes] + [h["handler"] for h in self.hooks]
         return refs
 
 
@@ -257,6 +265,35 @@ def parse_manifest(raw, *, expected_slug: str | None = None) -> Manifest:
             continue
         routes.append({"path": path, "view": view, "methods": sorted(set(methods))})
 
+    site_routes, seen_site = [], set()
+    raw_site = raw.get("site_routes", [])
+    if not isinstance(raw_site, list) or len(raw_site) > 10:
+        errors.append(gettext("site_routes: a list of at most 10 items is required."))
+        raw_site = []
+    for i, r in enumerate(raw_site):
+        where = f"site_routes[{i}]"
+        if not isinstance(r, dict):
+            errors.append((gettext("%(where)s: must be an object.") % {"where": where}))
+            continue
+        for k in r:
+            if k not in {"path", "view", "methods", "language_prefix"}:
+                errors.append((gettext("%(where)s.%(k)s: unknown key.") % {"where": where, "k": k}))
+        path, view, methods, prefixed = r.get("path", ""), r.get("view"), r.get("methods", ["GET"]), r.get("language_prefix", True)
+        if not isinstance(path, str) or not path or not _ROUTE_RE.match(path) or path.split("/")[0] in SITE_ROUTE_RESERVED or (path, bool(prefixed)) in seen_site:
+            errors.append((gettext("%(where)s.path: invalid, reserved or duplicate (lowercase letters, digits, - _ and /).") % {"where": where}))
+            continue
+        if not isinstance(prefixed, bool):
+            errors.append((gettext("%(where)s.language_prefix: must be true/false.") % {"where": where}))
+            continue
+        seen_site.add((path, prefixed))
+        if not isinstance(view, str) or not _MODULE_REF.match(view):
+            errors.append((gettext("%(where)s.view: must look like “module:function”.") % {"where": where}))
+            continue
+        if not isinstance(methods, list) or not methods or not all(m in ("GET", "POST") for m in methods):
+            errors.append((gettext("%(where)s.methods: a subset of [GET, POST].") % {"where": where}))
+            continue
+        site_routes.append({"path": path, "view": view, "methods": sorted(set(methods)), "language_prefix": prefixed})
+
     hooks = []
     raw_hooks = raw.get("hooks", [])
     if not isinstance(raw_hooks, list) or len(raw_hooks) > 20:
@@ -291,7 +328,7 @@ def parse_manifest(raw, *, expected_slug: str | None = None) -> Manifest:
         raise ManifestError(errors)
     return Manifest(slug=slug, name=name, version=version, description=description, author=author, homepage=homepage, api_version=api,
                     ravix=ravix, requires=dict(requires), capabilities={k: v.strip() for k, v in caps.items()}, settings=tuple(schema),
-                    admin_pages=tuple(pages), public_routes=tuple(routes), hooks=tuple(hooks), models=models, names=names, descriptions=descriptions, category=category, license=license_)
+                    admin_pages=tuple(pages), public_routes=tuple(routes), site_routes=tuple(site_routes), hooks=tuple(hooks), models=models, names=names, descriptions=descriptions, category=category, license=license_)
 
 
 def read_manifest(directory: Path, *, expected_slug: str | None = None) -> Manifest:

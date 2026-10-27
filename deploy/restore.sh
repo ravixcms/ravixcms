@@ -23,6 +23,7 @@ for TAR in "$@"; do
   case "$TAR" in
     *.media.tar.gz) DEST="$(dirname "${MEDIA_DIR:-$(rav_path /srv/ravix/media)}")" ;;
     *.shop_private.tar.gz) DEST="$(dirname "${SHOP_PRIVATE_ROOT:-${RAVIX_SHOP_PRIVATE_ROOT:-$(rav_path /srv/ravix/app/shop_private)}}")" ;;
+    *.plugin_data.tar.gz) DEST="$(dirname "${RAVIX_PLUGIN_DATA_DIR:-$(rav_path /srv/ravix/app/plugin_data)}")" ;;
     *.plugins_installed.tar.gz) DEST="$(dirname "${RAVIX_PLUGIN_INSTALL_DIR:-$(rav_path /srv/ravix/app/plugins_installed)}")" ;;
     *.themes_installed.tar.gz) DEST="$(dirname "${RAVIX_THEME_INSTALL_DIR:-$(rav_path /srv/ravix/app/themes_installed)}")" ;;
     *.plugin_backups.tar.gz) DEST="$(dirname "${RAVIX_PLUGIN_BACKUP_DIR:-$(rav_path /srv/ravix/app/plugin_backups)}")" ;;

@@ -11550,3 +11550,18 @@ msgstr "尚未发布此语言的文章。"
 #: themes/default/templates/post_list.html
 msgid "Read the blog in:"
 msgstr "阅读以下语言的博客："
+
+#: apps/plugins/manifest.py
+msgid "site_routes: a list of at most 10 items is required."
+msgstr "site_routes：需要最多包含 10 项的列表。"
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.path: invalid, reserved or duplicate (lowercase letters, digits, - _ and /)."
+msgstr "%(where)s.path：无效、被保留或重复（小写字母、数字、- _ 和 /）。"
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.language_prefix: must be true/false."
+msgstr "%(where)s.language_prefix：必须为 true/false。"
+

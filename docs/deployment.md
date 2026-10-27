@@ -22,9 +22,10 @@ sudo ufw allow OpenSSH && sudo ufw allow 'Nginx Full' && sudo ufw enable
 ```bash
 sudo adduser --system --group --home /srv/ravix ravix
 sudo usermod -aG ravix www-data                    # nginx باید بتواند سوکت و media را بخواند
-sudo mkdir -p /srv/ravix/{app,media,shop_private,plugins_installed,plugin_backups,themes_installed,update_work,update_backups} /etc/ravix /var/backups/ravix /var/cache/ravix
+sudo mkdir -p /srv/ravix/{app,media,shop_private,plugin_data,plugins_installed,plugin_backups,themes_installed,update_work,update_backups} /etc/ravix /var/backups/ravix /var/cache/ravix
 # (برای نصب افزونه از پنل: docs/plugin-installer.md)
 # (نصب قالب ZIP از پنل — پیش‌فرض خاموش؛ فقط اگر می‌خواهید: sudo chown ravix:ravix /srv/ravix/themes_installed && sudo chmod 750 /srv/ravix/themes_installed ، سپس RAVIX_THEME_INSTALL_DIR و RAVIX_THEME_WEB_INSTALL را در /etc/ravix/ravix.env بگذارید؛ docs/themes.md)
+sudo chown ravix:ravix /srv/ravix/plugin_data && sudo chmod 750 /srv/ravix/plugin_data   # فایل‌های خصوصی افزونه‌ها (nginx با X-Accel-Redirect می‌خواند)
 sudo chown ravix:ravix /srv/ravix/plugins_installed /srv/ravix/plugin_backups && sudo chmod 750 /srv/ravix/plugins_installed && sudo chmod 700 /srv/ravix/plugin_backups
 sudo chown ravix:www-data /srv/ravix/media /var/cache/ravix && sudo chmod 2750 /srv/ravix/media
 # کد برنامه (به‌ویژه plugins/) فقط‌خواندنی برای سرویس است: sudo chown -R root:ravix /srv/ravix/app/plugins && sudo chmod -R g-w,o-rwx /srv/ravix/app/plugins
@@ -127,7 +128,7 @@ sudo certbot renew --dry-run          # تمدید خودکار
 ## ۱۰. پشتیبان‌گیری و بازیابی
 **پشتیبان خودکار روزانه** با `ravix-backup.timer` (بخش ۷) انجام می‌شود؛ cron لازم نیست. اجرای دستی: `sudo -u ravix /srv/ravix/app/deploy/backup.sh`.
 هر اجرا در `/var/backups/ravix/` (دسترسی 700) این‌ها را می‌سازد (`STAMP` = تاریخ-ساعت):
-`ravix-STAMP.dump` (PostgreSQL، فرمت custom؛ با `pg_restore --list` صحت‌سنجی می‌شود)، `…media.tar.gz`، `…shop_private.tar.gz` (فایل‌های دیجیتال فروشگاه)، `…plugins_installed.tar.gz`، `…plugin_backups.tar.gz`، `…registry.tar.gz` (هر کدام فقط اگر پوشه‌اش وجود داشته باشد) و `ravix-STAMP.sha256` (فهرست هش). فقط **۷ پشتیبان کامل آخر** می‌مانند (`KEEP_COUNT`، پیش‌فرض ۷؛ در `/etc/ravix/ravix.env` قابل تغییر؛ عدد صحیح ≥ ۱). فقط پشتیبانِ «کامل» (دارای `.sha256`) شمرده می‌شود، پس یک اجرای شکست‌خورده جای پشتیبان سالم را نمی‌گیرد؛ بقایای ناقصِ قدیمی‌تر از ۱ روز پاک می‌شوند. (جایگزین `KEEP_DAYS` قبلی است که بر پایهٔ سن فایل بود.)
+`ravix-STAMP.dump` (PostgreSQL، فرمت custom؛ با `pg_restore --list` صحت‌سنجی می‌شود)، `…media.tar.gz`، `…shop_private.tar.gz` (فایل‌های دیجیتال فروشگاه)، `…plugin_data.tar.gz` (فایل‌های خصوصی افزونه‌ها)، `…plugins_installed.tar.gz`، `…plugin_backups.tar.gz`، `…registry.tar.gz` (هر کدام فقط اگر پوشه‌اش وجود داشته باشد) و `ravix-STAMP.sha256` (فهرست هش). فقط **۷ پشتیبان کامل آخر** می‌مانند (`KEEP_COUNT`، پیش‌فرض ۷؛ در `/etc/ravix/ravix.env` قابل تغییر؛ عدد صحیح ≥ ۱). فقط پشتیبانِ «کامل» (دارای `.sha256`) شمرده می‌شود، پس یک اجرای شکست‌خورده جای پشتیبان سالم را نمی‌گیرد؛ بقایای ناقصِ قدیمی‌تر از ۱ روز پاک می‌شوند. (جایگزین `KEEP_DAYS` قبلی است که بر پایهٔ سن فایل بود.)
 
 **عمداً پشتیبان گرفته نمی‌شود:** `/etc/ravix/ravix.env`، `DJANGO_SECRET_KEY` و `RAVIX_SECRETS_KEY` (کلید رمزنگاری اسرار ذخیره‌شده). این‌ها را جداگانه و امن (مثلاً مدیر رمز) نگه دارید؛ **بدون `RAVIX_SECRETS_KEY` اسرار رمزشده در دیتابیس (مثل اطلاعات درگاه) پس از بازیابی خوانده نمی‌شوند.**
 **پشتیبان را روی ماشین دیگر کپی کنید** (rsync/اسکریپت آف‌سایت)؛ پشتیبان روی همان سرور در برابر خرابی سرور بی‌فایده است.

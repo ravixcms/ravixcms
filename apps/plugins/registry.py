@@ -48,6 +48,7 @@ class Loaded:
     api: object
     pages: dict = field(default_factory=dict)
     routes: dict = field(default_factory=dict)
+    site_routes: dict = field(default_factory=dict)
     hooks: dict = field(default_factory=dict)
     verified_at: float = 0.0
     app_label: str = ""
@@ -197,6 +198,8 @@ def _do_load(slug, info, root, fp) -> Loaded:
         loaded.pages[p["key"]] = _resolve(pkg_name, p["view"])
     for r in m.public_routes:
         loaded.routes[r["path"]] = _resolve(pkg_name, r["view"])
+    for r in m.site_routes:
+        loaded.site_routes[(r["path"], r["language_prefix"])] = _resolve(pkg_name, r["view"])
     for h in m.hooks:
         loaded.hooks.setdefault(h["name"], []).append((h["priority"], _resolve(pkg_name, h["handler"])))
     for fns in loaded.hooks.values():

@@ -85,6 +85,10 @@ class SiteRegionalMiddleware:
         path = request.path_info
         if path.startswith(NON_LOCALIZED_PREFIXES) or path.startswith(f"/{settings.RAVIX_ADMIN_PATH}/"):
             return None  # system URLs are never language-prefixed (a missing one is just a 404)
+        from apps.plugins.state import find_site_route
+
+        if find_site_route(path, False):
+            return None  # a plain URL a plugin owns: its own 404 stays a 404
         code, rest = split_language_prefix(path)
         source = "url"
         if not code:

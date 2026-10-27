@@ -259,6 +259,10 @@ RAVIX_PLUGIN_DIRS = [BASE_DIR / "plugins"] + [Path(p) for p in env_list("RAVIX_E
 RAVIX_PLUGIN_INSTALL_DIR = Path(env("RAVIX_PLUGIN_INSTALL_DIR", str(BASE_DIR / "plugins_installed")))
 RAVIX_PLUGIN_DIRS = RAVIX_PLUGIN_DIRS + [RAVIX_PLUGIN_INSTALL_DIR]
 RAVIX_PLUGIN_BACKUP_DIR = Path(env("RAVIX_PLUGIN_BACKUP_DIR", str(BASE_DIR / "plugin_backups")))
+# Private files of plugins (one sub-folder per plugin), outside the public media; never executed. With nginx in front, RAVIX_ACCEL_REDIRECT_PREFIX
+# (e.g. /_plugin_files/, an ``internal`` location aliased to this folder) lets nginx send the files instead of the Gunicorn workers.
+RAVIX_PLUGIN_DATA_DIR = Path(env("RAVIX_PLUGIN_DATA_DIR", str(BASE_DIR / "plugin_data")))
+RAVIX_ACCEL_REDIRECT_PREFIX = env("RAVIX_ACCEL_REDIRECT_PREFIX", "")
 RAVIX_PLUGIN_BACKUPS_KEEP = int(env("RAVIX_PLUGIN_BACKUPS_KEEP", "5"))
 # نصب از طریق وب (آپلود/مخزن) صراحتاً باید روشن شود؛ بدون آن فقط نصب دستی پوشه‌ای + تأیید در پنل ممکن است.
 RAVIX_PLUGIN_WEB_INSTALL = env_bool("RAVIX_PLUGIN_WEB_INSTALL", False)

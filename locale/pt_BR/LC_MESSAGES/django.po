@@ -12241,3 +12241,18 @@ msgstr "Nenhum post foi publicado neste idioma ainda."
 #: themes/default/templates/post_list.html
 msgid "Read the blog in:"
 msgstr "Leia o blog em:"
+
+#: apps/plugins/manifest.py
+msgid "site_routes: a list of at most 10 items is required."
+msgstr "site_routes: é necessária uma lista com no máximo 10 itens."
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.path: invalid, reserved or duplicate (lowercase letters, digits, - _ and /)."
+msgstr "%(where)s.path: inválido, reservado ou duplicado (minúsculas, dígitos, - _ e /)."
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.language_prefix: must be true/false."
+msgstr "%(where)s.language_prefix: deve ser true/false."
+

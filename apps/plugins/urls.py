@@ -1,6 +1,37 @@
-from django.urls import path
+from django.urls import path, register_converter
 
-from . import views
+from . import state, views
+
+
+class _SiteRouteConverter:
+    """Matches only paths some active plugin declared as a site route; everything else falls through to the next URL pattern."""
+
+    regex = ".+"
+    language_prefix = True
+
+    def to_python(self, value):
+        if state.find_site_route(value, self.language_prefix) is None:
+            raise ValueError(value)
+        return value
+
+    def to_url(self, value):
+        return value
+
+
+class _LocalizedSiteRoute(_SiteRouteConverter):
+    language_prefix = True
+
+
+class _PlainSiteRoute(_SiteRouteConverter):
+    language_prefix = False
+
+
+register_converter(_LocalizedSiteRoute, "site_route")
+register_converter(_PlainSiteRoute, "site_route_plain")
+
+# Mounted by config/urls.py: the plain one at the site root, the localized one inside i18n_patterns (before the public site).
+site_route_plain_patterns = [path("<site_route_plain:route_path>", views.site_route_plain, name="site_route_plain")]
+site_route_localized_patterns = [path("<site_route:route_path>", views.site_route_localized, name="site_route")]
 
 app_name = "plugins"
 

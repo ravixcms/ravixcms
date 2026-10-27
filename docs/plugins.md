@@ -142,6 +142,27 @@ def inbox(request, api):
 - ورودی کاربر را **همیشه** با `forms.Form` اعتبارسنجی کنید؛ برای فرم‌های عمومی `api.rate_limit` و یک تلهٔ honeypot بگذارید (نمونه: `contact_form`).
 - `/ext/` برای نامک صفحات ثابت رزرو است.
 
+## صفحه‌های سایت (`site_routes`)
+
+برای صفحه‌ای که باید مثل بقیهٔ سایت زیر پیشوند زبان باشد (`/en/download/`) یا آدرس ثابت بدون پیشوند بخواهد (`/download/latest/`)، به‌جای `public_routes` از `site_routes` استفاده کنید:
+
+```json
+"site_routes": [
+  {"path": "download/",        "view": "views:download"},                         // /<زبان>/download/
+  {"path": "download/latest/", "view": "views:latest", "language_prefix": false}  // /download/latest/
+]
+```
+
+- فقط `GET` و `POST`؛ همان قواعد `public_routes` (خطای ویو مهار می‌شود، پاسخ‌ها پیش‌فرض `private, no-store`).
+- فقط مسیرهای اعلام‌شدهٔ افزونه‌های **فعال** تطبیق می‌خورند و بقیه به صفحه‌های سایت می‌رسند. اولین بخش مسیر نباید از این‌ها باشد: `panel accounts api django-admin static theme-assets media ext registry install healthz jsi18n i18n sitemap robots blog category tag search feed post shop cart checkout`.
+- آدرس بدون پیشوندِ مسیر زبان‌دار (`/download/`) مثل بقیهٔ سایت به آدرس زبان‌دار منتقل می‌شود؛ ۴۰۴ یک مسیر بدون پیشوند ریدایرکت نمی‌شود.
+
+## فایل‌های خصوصی و دانلود
+
+- `api.data_dir()` پوشهٔ خصوصی همین افزونه را برمی‌گرداند (`RAVIX_PLUGIN_DATA_DIR/<slug>`، خارج از media، مجوز ۷۵۰ تا nginx بتواند با `X-Accel-Redirect` بخواند؛ در پشتیبان‌گیری هست).
+- `api.file_response(request, "مسیر/نسبی", filename="x.zip", content_type=...)` فایلی از همان پوشه را دانلود می‌کند: `Content-Disposition: attachment`، `X-Content-Type-Options: nosniff`، نام فایل امن در هدر. مسیر بیرون از پوشه، symlink یا فایل ناموجود ۴۰۴ است.
+- پیش‌فرض Django فایل را stream می‌کند. با `RAVIX_ACCEL_REDIRECT_PREFIX=/_plugin_files/` (که `install.sh` همراه nginx تنظیم می‌کند؛ مکان `internal` با `alias` به `plugin_data` در `deploy/nginx-ravix.conf`) پاسخ فقط هدر `X-Accel-Redirect` دارد و nginx بایت‌ها را می‌فرستد؛ پس دانلودهای زیاد ورکرهای Gunicorn را اشغال نمی‌کنند.
+
 ## تنظیمات افزونه
 
 با `settings` در manifest اعلام می‌شود. هسته فرم صفحهٔ تنظیمات را می‌سازد و **اعتبارسنجی** می‌کند (طول، بازه، فهرست انتخاب، ایمیل، نشانی امن).

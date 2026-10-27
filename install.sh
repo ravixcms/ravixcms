@@ -251,7 +251,7 @@ else
   [ "$NGINX" = 1 ] && { confirm "Add www-data to the group %s (to read the socket/media)?" "$APP_USER" && run usermod -aG "$APP_USER" www-data; }
 fi
 CACHE_DIR=/var/cache/ravix   # file cache shared by the workers (systemd also creates it with CacheDirectory=)
-DIRS=(app media shop_private plugins_installed plugin_backups themes_installed registry_packages update_work update_backups)
+DIRS=(app media shop_private plugin_data plugins_installed plugin_backups themes_installed registry_packages update_work update_backups)
 need_dirs=0; for d in "${DIRS[@]}"; do [ -d "$BASE/$d" ] || need_dirs=1; done
 [ -d "$ENV_DIR" ] && [ -d "$BACKUP_DIR" ] && [ -d "$CACHE_DIR" ] || need_dirs=1
 if [ "$need_dirs" = 1 ]; then
@@ -263,7 +263,7 @@ fi
 if [ "$DRY_RUN" = 0 ]; then
   chown "$APP_USER:$APP_USER" "$BASE"; chmod 750 "$BASE"
   chown "$APP_USER:www-data" "$BASE/media"; chmod 2750 "$BASE/media"
-  for d in shop_private plugins_installed themes_installed registry_packages update_work update_backups; do chown "$APP_USER:$APP_USER" "$BASE/$d"; chmod 750 "$BASE/$d"; done
+  for d in shop_private plugin_data plugins_installed themes_installed registry_packages update_work update_backups; do chown "$APP_USER:$APP_USER" "$BASE/$d"; chmod 750 "$BASE/$d"; done
   chown "$APP_USER:$APP_USER" "$BASE/plugin_backups"; chmod 700 "$BASE/plugin_backups"
   chown "$APP_USER:$APP_USER" "$BACKUP_DIR"; chmod 700 "$BACKUP_DIR"
   chown "$APP_USER:www-data" "$CACHE_DIR"; chmod 750 "$CACHE_DIR"
@@ -284,7 +284,7 @@ else
   if [ "$do_sync" = 1 ]; then
     run rsync -a --exclude='.git' --exclude='.github' --exclude='.venv' --exclude='venv' --exclude='__pycache__' --exclude='*.pyc' \
       --exclude='db.sqlite3' --exclude='*.sqlite3' --exclude='.env' --exclude='.env.*' --exclude='/media' --exclude='/staticfiles' \
-      --exclude='/shop_private' --exclude='/plugins_installed' --exclude='/plugin_backups' --exclude='/themes_installed' \
+      --exclude='/shop_private' --exclude='/plugin_data' --exclude='/plugins_installed' --exclude='/plugin_backups' --exclude='/themes_installed' \
       --exclude='/registry_packages' --exclude='/update_work' --exclude='/update_backups' --exclude='/install_token' \
       --exclude='/dist' --exclude='/keys' --exclude='*.key' --exclude='/certs' "$SRC"/ "$APP_DIR"/
   elif [ ! -f "$APP_DIR/manage.py" ]; then die "The code is required."
@@ -365,6 +365,8 @@ env_set RAVIX_SITE_URL "https://$DOMAIN"
 # the install token only exists until the site is installed: an installed site never gets a new one (and loses an old one)
 if site_installed; then forget_install_token; else env_set RAVIX_INSTALL_TOKEN "$(rand_hex 16)"; fi
 env_set RAVIX_SHOP_PRIVATE_ROOT "$BASE/shop_private"
+env_set RAVIX_PLUGIN_DATA_DIR "$BASE/plugin_data"
+[ "$NGINX" = 1 ] && env_set RAVIX_ACCEL_REDIRECT_PREFIX "/_plugin_files/"   # nginx sends plugin downloads (the internal location in deploy/nginx-ravix.conf)
 env_set RAVIX_PLUGIN_INSTALL_DIR "$BASE/plugins_installed"
 env_set RAVIX_PLUGIN_BACKUP_DIR "$BASE/plugin_backups"
 env_set RAVIX_THEME_INSTALL_DIR "$BASE/themes_installed"

@@ -17,6 +17,14 @@ from django.utils.safestring import mark_safe
 from . import events, state
 
 
+def _attachment(filename: str) -> str:
+    """``attachment`` header with an ASCII fallback name and an RFC 5987 UTF-8 name."""
+    from urllib.parse import quote
+
+    ascii_name = "".join(c if 32 < ord(c) < 127 and c not in '"\\;' else "_" for c in filename) or "download"
+    return f"attachment; filename=\"{ascii_name}\"; filename*=UTF-8''{quote(filename)}"
+
+
 class PluginAPI:
     def __init__(self, slug: str):
         self.slug = slug
@@ -122,6 +130,43 @@ class PluginAPI:
 
         return render_page(request, "page_detail.html", {"page": item, "breadcrumbs": _crumbs((gettext("Home"), "/"), (title, ""))},
                            status=status, seo_factory=seo)
+
+    # --- private files
+    def data_dir(self):
+        """This plugin's private folder (outside the public media; created on first use; owner and group (nginx) only). Returns a ``Path``."""
+        from pathlib import Path
+
+        from django.conf import settings
+
+        path = Path(settings.RAVIX_PLUGIN_DATA_DIR) / self.slug
+        path.mkdir(parents=True, exist_ok=True, mode=0o750)
+        return path
+
+    def file_response(self, request, relative_path: str, *, filename: str, content_type: str = "application/octet-stream"):
+        """Send a file from ``data_dir()`` as a download (``Content-Disposition: attachment`` + ``nosniff``).
+
+        Without ``RAVIX_ACCEL_REDIRECT_PREFIX`` the file is streamed by Django; with it, the response carries ``X-Accel-Redirect`` and
+        nginx sends the bytes, so a busy download does not occupy a Gunicorn worker. Anything that is not a regular file inside
+        ``data_dir()`` raises ``Http404``."""
+        from urllib.parse import quote
+
+        from django.conf import settings
+        from django.http import FileResponse, Http404
+
+        base = self.data_dir().resolve()
+        target = (base / relative_path).resolve()
+        if base not in target.parents or target.is_symlink() or not target.is_file():
+            raise Http404
+        prefix = getattr(settings, "RAVIX_ACCEL_REDIRECT_PREFIX", "") or ""
+        if prefix:
+            response = HttpResponse(content_type=content_type)
+            response["X-Accel-Redirect"] = prefix.rstrip("/") + "/" + quote(f"{self.slug}/{target.relative_to(base).as_posix()}")
+        else:
+            response = FileResponse(open(target, "rb"), content_type=content_type)
+        response["Content-Disposition"] = _attachment(filename)
+        response["X-Content-Type-Options"] = "nosniff"
+        response["Cache-Control"] = "private, no-store"
+        return response
 
     # --- ابزار امنیتی
     def client_ip(self, request) -> str:

@@ -221,6 +221,10 @@ class Command(BaseCommand):
             need(not inside_media, cli_gettext("The digital-files folder is outside the public media"), cli_gettext("RAVIX_SHOP_PRIVATE_ROOT (%(priv)s) is inside the public media; digital files would leak") % {"priv": priv})
             advise(priv.is_dir() and os.access(str(priv), os.W_OK), cli_gettext("The digital-files folder is writable"),
                    cli_gettext("The digital-files folder (%(priv)s) has not been created yet or is not writable (it is created on first upload; include it in backups)") % {"priv": priv})
+        data_dir = Path(settings.RAVIX_PLUGIN_DATA_DIR).resolve()
+        media_root_p = Path(settings.MEDIA_ROOT).resolve()
+        need(not (data_dir == media_root_p or media_root_p in data_dir.parents), cli_gettext("The plugin private-files folder is outside the public media"),
+             cli_gettext("RAVIX_PLUGIN_DATA_DIR (%(path)s) is inside the public media; private plugin files would leak") % {"path": data_dir})
         bad_keys = []
         for item in settings.RAVIX_TRUSTED_PUBLIC_KEYS:
             try:

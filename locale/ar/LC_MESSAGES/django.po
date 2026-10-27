@@ -11911,3 +11911,18 @@ msgstr "لم يُنشر أي مقال بهذه اللغة بعد."
 #: themes/default/templates/post_list.html
 msgid "Read the blog in:"
 msgstr "اقرأ المدونة بـ:"
+
+#: apps/plugins/manifest.py
+msgid "site_routes: a list of at most 10 items is required."
+msgstr "site_routes: مطلوب قائمة من 10 عناصر كحد أقصى."
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.path: invalid, reserved or duplicate (lowercase letters, digits, - _ and /)."
+msgstr "%(where)s.path: غير صالح أو محجوز أو مكرر (أحرف صغيرة وأرقام و - _ و /)."
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.language_prefix: must be true/false."
+msgstr "%(where)s.language_prefix: يجب أن يكون true/false."
+

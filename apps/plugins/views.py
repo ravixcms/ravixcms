@@ -301,6 +301,40 @@ def public_route(request, slug, path=""):
     return response
 
 
+def _site_route(request, route_path, prefixed):
+    found = state.find_site_route(route_path, prefixed)
+    if found is None:
+        raise Http404
+    slug, route = found
+    if request.method not in route["methods"] and not (request.method == "HEAD" and "GET" in route["methods"]):  # HEAD is answered like GET
+        return HttpResponseNotAllowed(route["methods"])
+    loaded = registry.get(slug)
+    if loaded is None:
+        raise Http404
+    try:
+        response = loaded.site_routes[(route["path"], prefixed)](request, loaded.api)
+        if not isinstance(response, HttpResponseBase):
+            raise TypeError(gettext("The view must return an HttpResponse."))
+    except (Http404, PermissionDenied):
+        raise
+    except Exception as exc:  # noqa: BLE001
+        events.record_error(slug, f"site:{route_path.strip('/')}", exc)
+        return HttpResponse(section_error_page(), status=500, content_type="text/html; charset=utf-8")
+    if not response.has_header("Cache-Control"):
+        response["Cache-Control"] = "private, no-store"
+    return response
+
+
+def site_route_localized(request, route_path):
+    """A page a plugin serves under the language prefix of the public site (``/<language>/<path>``)."""
+    return _site_route(request, route_path, True)
+
+
+def site_route_plain(request, route_path):
+    """A URL a plugin serves without a language prefix (``/<path>``), e.g. a stable download link."""
+    return _site_route(request, route_path, False)
+
+
 # ------------------------------------------------------------------ نصب از مخزن / فایل، ارتقا، بازگشت، کلیدها
 def _flash_result(request, kind, slug):
     if kind == "installed":

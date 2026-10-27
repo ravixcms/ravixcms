@@ -965,3 +965,9 @@ msgstr "قالب «%(slug)s» در %(ignored)s استفاده نمی‌شود: %
 
 msgid "The branded HTML part of the email could not be built; sending plain text only."
 msgstr "بخش HTML برنددار ایمیل ساخته نشد؛ فقط متن ساده فرستاده می‌شود."
+
+msgid "The plugin private-files folder is outside the public media"
+msgstr "پوشهٔ فایل‌های خصوصی افزونه‌ها خارج از media عمومی است"
+
+msgid "RAVIX_PLUGIN_DATA_DIR (%(path)s) is inside the public media; private plugin files would leak"
+msgstr "RAVIX_PLUGIN_DATA_DIR (%(path)s) داخل media عمومی است؛ فایل‌های خصوصی افزونه‌ها درز می‌کند"

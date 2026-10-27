@@ -28,6 +28,7 @@ pack() {  # pack <پوشه> <پسوند>
 }
 pack "$MEDIA_DIR" media
 pack "${SHOP_PRIVATE_ROOT:-${RAVIX_SHOP_PRIVATE_ROOT:-$(rav_path /srv/ravix/app/shop_private)}}" shop_private
+pack "${RAVIX_PLUGIN_DATA_DIR:-$(rav_path /srv/ravix/app/plugin_data)}" plugin_data
 pack "${RAVIX_PLUGIN_INSTALL_DIR:-$(rav_path /srv/ravix/app/plugins_installed)}" plugins_installed
 pack "${RAVIX_PLUGIN_BACKUP_DIR:-$(rav_path /srv/ravix/app/plugin_backups)}" plugin_backups
 pack "${RAVIX_THEME_INSTALL_DIR:-$(rav_path /srv/ravix/app/themes_installed)}" themes_installed   # قالب‌های نصب‌شده از پنل
