@@ -1,0 +1,12 @@
+{% extends "layouts/panel.html" %}
+{% load i18n %}
+{% block title %}{% trans "Product attributes" %}{% endblock %}
+{% block page_title %}{% trans "Product attributes" %}{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>{% trans "Product attributes" %}</h1><p>{% trans "Properties such as colour or size that a variable product's variants differ by." %}</p></div><a class="btn" href="{% url 'shop_panel:attribute_create' %}">{% trans "New attribute" %}</a></div>
+<div class="card">{% if attributes %}<div class="table-wrap"><table class="table"><thead><tr><th>{% trans "Name" %}</th><th>{% trans "Values" %}</th><th></th></tr></thead><tbody>
+{% for a in attributes %}<tr><td>{{ a.name }}</td><td>{% for v in a.values.all %}<span class="badge">{{ v.value }}</span> {% endfor %}</td><td>
+  <a class="btn btn-light btn-sm" href="{% url 'shop_panel:attribute_edit' a.pk %}">{% trans "Edit" %}</a>
+  <form method="post" action="{% url 'shop_panel:attribute_delete' a.pk %}" style="display:inline">{% csrf_token %}<button class="btn btn-danger btn-sm" type="submit">{% trans "Delete" %}</button></form></td></tr>{% endfor %}
+</tbody></table></div>{% else %}<div class="empty">{% trans "There is no attribute." %}</div>{% endif %}</div>
+{% endblock %}

@@ -5,6 +5,7 @@ from urllib.parse import urlsplit
 from urllib.parse import urlencode
 
 from django.conf import settings
+from django.contrib import messages
 from apps.core.params import safe_id, safe_int
 from django.core.cache import cache
 from django.core.paginator import Paginator
@@ -30,7 +31,7 @@ from .forms import CheckoutForm
 from apps.core import modules
 
 from . import money
-from .models import Order, Payment, Product, ProductCategory, SandboxTransaction, ShopSettings
+from .models import Order, Payment, Product, ProductCategory, ProductTag, ProductVariant, SandboxTransaction, ShopSettings
 
 
 class ShopView(View):
@@ -102,32 +103,42 @@ def gateway_response(view, request, redirect):
 
 class ProductListView(ShopView):
     def get(self, request):
-        qs = Product.objects.filter(site=self.site, is_active=True).select_related("category")
-        q, cat, kind, sort = (request.GET.get(k, "") for k in ("q", "category", "kind", "sort"))
-        qs = services.search_products(qs, q=q, category=cat, kind=kind, sort=sort)
+        qs = Product.objects.filter(site=self.site, is_active=True).select_related("category").prefetch_related("variants")
+        q, cat, kind, sort, tag = (request.GET.get(k, "") for k in ("q", "category", "kind", "sort", "tag"))
+        qs = services.search_products(qs, q=q, category=cat, kind=kind, sort=sort, tag=tag)
         page = Paginator(qs, settings.SHOP_PAGE_SIZE).get_page(request.GET.get("page"))
-        categories = list(ProductCategory.objects.filter(site=self.site))
-        filtered = bool(q.strip() or cat or kind or sort)
+        categories = services.category_tree(self.site)
+        current_tag = ProductTag.objects.filter(site=self.site, slug=tag[:80]).first() if tag else None
+        filtered = bool(q.strip() or cat or kind or sort or tag)
         suffix = (gettext(" — page %(number)s") % {"number": page.number}) if page.number > 1 else ""
-        return self.render(request, "list.html", {"page": page, "categories": categories, "q": q[:80], "cat": cat, "kind": kind, "sort": sort,
-                                                  "qs": urlencode({k: v for k, v in (("q", q[:80]), ("category", cat), ("kind", kind), ("sort", sort)) if v})},
+        return self.render(request, "list.html", {"page": page, "categories": categories, "q": q[:80], "cat": cat, "kind": kind, "sort": sort, "tag": tag, "current_tag": current_tag,
+                                                  "qs": urlencode({k: v for k, v in (("q", q[:80]), ("category", cat), ("kind", kind), ("sort", sort), ("tag", tag)) if v})},
                            title=(gettext("Shop%(suffix)s") % {"suffix": suffix}), description=gettext("Shop product list"), crumbs=None, robots="noindex,follow" if filtered else "",
                            path=reverse("shop:list") + (f"?page={page.number}" if page.number > 1 and not filtered else ""))
 
 
 class ProductDetailView(ShopView):
     def get(self, request, slug):
-        p = get_object_or_404(Product.objects.select_related("category"), site=self.site, slug=slug, is_active=True)
+        p = get_object_or_404(Product.objects.select_related("category", "category__parent").prefetch_related("variants__options", "tags"), site=self.site, slug=slug, is_active=True)
         gallery = list(p.gallery.all())
+        variants = p.active_variants() if p.is_variable else []
         img = absolute_url(request, p.image.url) if p.image else ""
-        offer_price, offer_currency = money.jsonld_offer(p.final_price, ShopSettings.for_site(self.site).currency)
-        ld = {"@context": "https://schema.org", "@type": "Product", "name": p.name, "description": clip(p.description, 300),
-              "offers": {"@type": "Offer", "price": offer_price, "priceCurrency": offer_currency,
-                         "availability": "https://schema.org/InStock" if p.in_stock else "https://schema.org/OutOfStock",
-                         "url": absolute_url(request, p.get_absolute_url())}}
+        cur = ShopSettings.for_site(self.site).currency
+        low, high = p.price_range
+        offer_price, offer_currency = money.jsonld_offer(low, cur)
+        availability = "https://schema.org/InStock" if p.in_stock else "https://schema.org/OutOfStock"
+        if p.has_price_range:
+            offers = {"@type": "AggregateOffer", "lowPrice": offer_price, "highPrice": money.jsonld_offer(high, cur)[0], "priceCurrency": offer_currency, "offerCount": len(variants),
+                      "availability": availability, "url": absolute_url(request, p.get_absolute_url())}
+        else:
+            offers = {"@type": "Offer", "price": offer_price, "priceCurrency": offer_currency, "availability": availability, "url": absolute_url(request, p.get_absolute_url())}
+        ld = {"@context": "https://schema.org", "@type": "Product", "name": p.name, "description": clip(p.description, 300), "offers": offers}
+        if p.sku:
+            ld["sku"] = p.sku
         if img:
             ld["image"] = [img]
-        return self.render(request, "detail.html", {"p": p, "gallery": gallery}, title=p.name, description=p.description or p.name, jsonld=[ld],
+        crumbs = tuple((c.name, reverse("shop:list") + f"?category={c.slug}") for c in ([*p.category.ancestors(), p.category] if p.category else []))
+        return self.render(request, "detail.html", {"p": p, "gallery": gallery, "variants": variants, "related": services.related_products(p), "tags": list(p.tags.all())}, crumbs=crumbs, title=p.name, description=p.description or p.name, jsonld=[ld],
                            og_image=p.image.url if p.image else "", path=p.get_absolute_url())
 
 
@@ -143,14 +154,24 @@ class CartAddView(ShopView):
     def post(self, request):
         try:
             pid, qty = safe_id(request.POST.get("product", "")), safe_int(request.POST.get("qty", "1"), 1, hi=10**6)
+            vid = safe_id(request.POST.get("variant", "")) if request.POST.get("variant") else None
         except ValueError:
             raise Http404
         if pid is None:
             raise Http404
         p = get_object_or_404(Product, pk=pid, site=self.site, is_active=True)  # محصول سایت دیگر ← ۴۰۴
-        current = int(services.cart_raw(request, self.site).get(str(p.pk), 0))
+        v = None
+        if p.is_variable:
+            v = ProductVariant.objects.filter(pk=vid, product=p, site=self.site, is_active=True).first() if vid else None
+            if v is None:  # a variable product is bought through one of its variants
+                messages.error(request, gettext("Choose an option before adding to the cart."))
+                return redirect(p.get_absolute_url())
+        elif vid:
+            raise Http404
+        key = services.cart_key(p.pk, v.pk if v else None)
+        current = int(services.cart_raw(request, self.site).get(key, 0))
         try:
-            services.cart_set(request, self.site, p.pk, 1 if p.is_digital else max(1, min(current + max(qty, 1), services.MAX_QTY)))
+            services.cart_set(request, self.site, p.pk, 1 if p.is_digital else max(1, min(current + max(qty, 1), services.MAX_QTY)), v.pk if v else None)
         except services.ShopError:
             pass
         return redirect("shop:cart")
@@ -161,13 +182,16 @@ class CartUpdateView(ShopView):
 
     def post(self, request):
         for key, value in request.POST.items():
-            if key.startswith("qty_") and safe_id(key[4:]) is not None:
-                try:
-                    qty = max(-1, min(int(value), 10**6))
-                except ValueError:
-                    continue
-                if Product.objects.filter(pk=safe_id(key[4:]), site=self.site, is_active=True).exists() or qty <= 0:
-                    services.cart_set(request, self.site, safe_id(key[4:]), qty)
+            parsed = services.parse_cart_key(key[4:]) if key.startswith("qty_") else None
+            if parsed is None:
+                continue
+            pid, vid = parsed
+            try:
+                qty = max(-1, min(int(value), 10**6))
+            except ValueError:
+                continue
+            if qty <= 0 or Product.objects.filter(pk=pid, site=self.site, is_active=True).exists():
+                services.cart_set(request, self.site, pid, qty, vid)
         return redirect("shop:cart")
 
 

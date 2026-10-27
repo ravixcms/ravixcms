@@ -16,10 +16,10 @@ from apps.sites.access import can_access_site, panel_site
 
 from . import services
 from . import gateways
-from .forms import CategoryForm, GatewayConfigForm, ProductForm, ProductImageForm, ShopSettingsForm
+from .forms import AttributeForm, BaseVariantFormSet, CategoryForm, GatewayConfigForm, ProductForm, ProductImageForm, ShopSettingsForm, VariantForm
 from .models import GatewayConfig, Payment, ShopSettings
 from .payments import registry, vault
-from .models import Order, OrderEvent, Product, ProductCategory, ProductImage
+from .models import AttributeValue, Order, OrderEvent, Product, ProductAttribute, ProductCategory, ProductImage, ProductVariant
 
 
 class SiteScopedMixin(CapabilityRequiredMixin):
@@ -48,13 +48,46 @@ class GatewaysAdmin(SiteScopedMixin):
 
 class ProductListView(ProductsAdmin, View):
     def get(self, request):
+        from django.db.models import Count, F, Q, Value
+        from django.db.models.functions import Coalesce
+
         q = request.GET.get("q", "").strip()[:100]
-        qs = Product.objects.filter(site=self.site)
+        stock = request.GET.get("stock", "")
+        threshold = ShopSettings.for_site(self.site).low_stock_threshold
+        qs = Product.objects.filter(site=self.site).annotate(variant_count=Count("variants", distinct=True))
+        limit = Coalesce("low_stock_threshold", Value(threshold))
+        simple_low = Q(track_stock=True, stock__gt=0, stock__lte=limit) & ~Q(kind=Product.Kind.VARIABLE)
+        simple_out = Q(track_stock=True, stock__lte=0) & ~Q(kind=Product.Kind.VARIABLE)
+        v_low = Q(kind=Product.Kind.VARIABLE, variants__is_active=True, variants__track_stock=True, variants__stock__gt=0, variants__stock__lte=limit)
+        v_out = Q(kind=Product.Kind.VARIABLE, variants__is_active=True, variants__track_stock=True, variants__stock__lte=0)
         if q:
-            qs = qs.filter(name__icontains=q)
-        page = Paginator(qs, 20).get_page(request.GET.get("page"))
+            qs = qs.filter(Q(name__icontains=q) | Q(sku__iexact=q) | Q(variants__sku__iexact=q)).distinct()
+        if stock == "low":
+            qs = qs.filter(simple_low | v_low).distinct()
+        elif stock == "out":
+            qs = qs.filter(simple_out | v_out).distinct()
+        page = Paginator(qs.order_by("-created_at", "-pk"), 20).get_page(request.GET.get("page"))
+        for p in page:  # badges on the page only (one settings lookup above, not one per row)
+            p.low_flag = p.track_stock and not p.is_variable and 0 < p.stock <= (p.low_stock_threshold if p.low_stock_threshold is not None else threshold)
+            p.out_flag = p.track_stock and not p.is_variable and p.stock <= 0
+        low_total = Product.objects.filter(site=self.site).filter(simple_low | v_low).distinct().count()
+        qd = "&".join(f"{k}={v}" for k, v in (("q", q), ("stock", stock)) if v)
         return render(request, "shop/panel/products.html", {"page_obj": page, "paginator": page.paginator, "is_paginated": page.has_other_pages(),
-                                                           "q": q, "query_string": f"q={q}" if q else "", "site_obj": self.site})
+                                                           "q": q, "stock": stock, "low_total": low_total, "query_string": qd, "site_obj": self.site})
+
+
+def _variant_formset(product, data=None, files=None):
+    from django.forms import modelformset_factory
+
+    fs = modelformset_factory(ProductVariant, form=VariantForm, formset=BaseVariantFormSet, extra=0, can_delete=True)
+    return fs(data, files, queryset=ProductVariant.objects.filter(product=product, site=product.site).prefetch_related("options"), form_kwargs={"product": product}, prefix="variants")
+
+
+def _product_context(obj, form, request=None, variant_formset=None):
+    ctx = {"form": form, "obj": obj, "image_form": ProductImageForm(), "gallery": obj.gallery.all() if obj else []}
+    if obj is not None and obj.is_variable:
+        ctx["variant_formset"] = variant_formset or _variant_formset(obj)
+    return ctx
 
 
 class ProductEditView(ProductsAdmin, View):
@@ -63,8 +96,7 @@ class ProductEditView(ProductsAdmin, View):
 
     def get(self, request, pk=None):
         obj = self._obj(pk)
-        return render(request, "shop/panel/product_form.html", {"form": ProductForm(instance=obj, site=self.site), "obj": obj, "image_form": ProductImageForm(),
-                                                                "gallery": obj.gallery.all() if obj else []})
+        return render(request, "shop/panel/product_form.html", _product_context(obj, ProductForm(instance=obj, site=self.site)))
 
     def post(self, request, pk=None):
         obj = self._obj(pk)
@@ -73,8 +105,58 @@ class ProductEditView(ProductsAdmin, View):
             saved = form.save()
             log_event(request, AuditLog.Action.UPDATE if obj else AuditLog.Action.CREATE, saved, (gettext("Product “%(name)s” was saved") % {"name": saved.name}))
             messages.success(request, gettext("Product saved."))
+            if saved.is_variable:  # variants are managed on the product page
+                return redirect("shop_panel:product_edit", pk=saved.pk)
             return redirect("shop_panel:products")
-        return render(request, "shop/panel/product_form.html", {"form": form, "obj": obj, "image_form": ProductImageForm(), "gallery": obj.gallery.all() if obj else []}, status=400)
+        return render(request, "shop/panel/product_form.html", _product_context(obj, form), status=400)
+
+
+class VariantSaveView(ProductsAdmin, View):
+    http_method_names = ["post"]
+
+    def post(self, request, pk):
+        product = get_object_or_404(Product, pk=pk, site=self.site, kind=Product.Kind.VARIABLE)
+        fs = _variant_formset(product, request.POST, request.FILES)
+        if not fs.is_valid():
+            return render(request, "shop/panel/product_form.html", _product_context(product, ProductForm(instance=product, site=self.site), variant_formset=fs), status=400)
+        fs.save()
+        product.sync_variable_price()
+        log_event(request, AuditLog.Action.UPDATE, product, (gettext("Variants of “%(name)s” were saved") % {"name": product.name}))
+        messages.success(request, gettext("Variants saved."))
+        return redirect("shop_panel:product_edit", pk=product.pk)
+
+
+class VariantGenerateView(ProductsAdmin, View):
+    """Create the variants for every combination of the product's attributes that does not exist yet."""
+
+    http_method_names = ["post"]
+    LIMIT = 100
+
+    def post(self, request, pk):
+        from itertools import product as cartesian
+
+        product = get_object_or_404(Product, pk=pk, site=self.site, kind=Product.Kind.VARIABLE)
+        groups = [list(a.values.all()) for a in product.variation_attributes.order_by("name") if a.values.exists()]
+        if not groups:
+            messages.error(request, gettext("Choose attributes that have values first, then save the product."))
+            return redirect("shop_panel:product_edit", pk=pk)
+        combos = [c for c in cartesian(*groups)]
+        existing = set(product.variants.values_list("options_key", flat=True))
+        todo = [c for c in combos if ProductVariant.key_for([v.pk for v in c]) not in existing]
+        if len(existing) + len(todo) > self.LIMIT:
+            messages.error(request, gettext("That would create more than %(limit)s variants; use fewer attributes or values.") % {"limit": self.LIMIT})
+            return redirect("shop_panel:product_edit", pk=pk)
+        from django.db import transaction
+
+        with transaction.atomic():
+            for combo in todo:
+                variant = ProductVariant(product=product, price=product.price, options_key=ProductVariant.key_for([v.pk for v in combo]))
+                variant.save()
+                variant.options.set(combo)
+        product.sync_variable_price()
+        log_event(request, AuditLog.Action.UPDATE, product, (gettext("Variants of “%(name)s” were generated") % {"name": product.name}))
+        messages.success(request, gettext("%(count)s variant(s) were created.") % {"count": len(todo)})
+        return redirect("shop_panel:product_edit", pk=pk)
 
 
 class ProductDeleteView(ProductsAdmin, View):
@@ -141,7 +223,7 @@ class OrderDetailView(OrdersAdmin, View):
 
 class CategoryListView(ProductsAdmin, View):
     def get(self, request):
-        return render(request, "shop/panel/categories.html", {"categories": ProductCategory.objects.filter(site=self.site), "site_obj": self.site})
+        return render(request, "shop/panel/categories.html", {"categories": services.category_tree(self.site), "site_obj": self.site})
 
 
 class CategoryEditView(ProductsAdmin, View):
@@ -367,3 +449,42 @@ class ShopSettingsView(ProductsAdmin, View):
         log_event(request, AuditLog.Action.UPDATE, saved, (gettext("Shop settings changed: currency %(old)s → %(new)s") % {"old": old[0], "new": saved.currency}))
         messages.success(request, gettext("Shop settings were saved."))
         return redirect("shop_panel:settings")
+
+
+class AttributeListView(ProductsAdmin, View):
+    def get(self, request):
+        return render(request, "shop/panel/attributes.html", {"attributes": ProductAttribute.objects.filter(site=self.site).prefetch_related("values"), "site_obj": self.site})
+
+
+class AttributeEditView(ProductsAdmin, View):
+    def _obj(self, pk):
+        return get_object_or_404(ProductAttribute, pk=pk, site=self.site) if pk else None
+
+    def get(self, request, pk=None):
+        obj = self._obj(pk)
+        return render(request, "shop/panel/attribute_form.html", {"form": AttributeForm(site=self.site, instance=obj), "obj": obj})
+
+    def post(self, request, pk=None):
+        obj = self._obj(pk)
+        form = AttributeForm(request.POST, site=self.site, instance=obj)
+        if form.is_valid():
+            saved = form.save()
+            log_event(request, AuditLog.Action.UPDATE if obj else AuditLog.Action.CREATE, saved, (gettext("Attribute “%(name)s” was saved") % {"name": saved.name}))
+            messages.success(request, gettext("Attribute saved."))
+            return redirect("shop_panel:attributes")
+        return render(request, "shop/panel/attribute_form.html", {"form": form, "obj": obj}, status=400)
+
+
+class AttributeDeleteView(ProductsAdmin, View):
+    http_method_names = ["post"]
+
+    def post(self, request, pk):
+        obj = get_object_or_404(ProductAttribute, pk=pk, site=self.site)
+        if ProductVariant.objects.filter(options__attribute=obj).exists():
+            messages.error(request, gettext("This attribute is used by variants and cannot be deleted."))
+            return redirect("shop_panel:attributes")
+        name = obj.name
+        obj.delete()
+        log_event(request, AuditLog.Action.DELETE, None, (gettext("Attribute “%(name)s” was deleted") % {"name": name}), object_type=gettext("Product attribute"))
+        messages.success(request, gettext("Attribute deleted."))
+        return redirect("shop_panel:attributes")

@@ -20,7 +20,7 @@ from apps.public.seo import absolute_url
 from . import gateways
 from apps.core.recipient import current_language, language_for_order, use_language
 
-from .models import Order, OrderEvent, OrderItem, Payment, PaymentEvent, Product, ShopSettings
+from .models import Order, OrderEvent, OrderItem, Payment, PaymentEvent, Product, ProductCategory, ProductVariant, ShopSettings
 from .payments import TransactionContext, VerifyStatus, vault
 
 logger = logging.getLogger("ravix.shop")
@@ -47,14 +47,28 @@ def cart_raw(request, site) -> dict:
     return data if isinstance(data, dict) else {}
 
 
-def cart_set(request, site, product_id, qty):
+def cart_key(product_id, variant_id=None) -> str:
+    """Cart line key: ``"12"`` for a simple product, ``"12:5"`` for variant 5 of product 12."""
+    return f"{int(product_id)}:{int(variant_id)}" if variant_id else str(int(product_id))
+
+
+def parse_cart_key(key):
+    """``(product_id, variant_id | None)`` or ``None`` for a malformed key (a tampered session never raises)."""
+    head, _, tail = str(key).partition(":")
+    if not head.isdigit() or len(head) > 12 or (tail and (not tail.isdigit() or len(tail) > 12)):
+        return None
+    return int(head), (int(tail) if tail else None)
+
+
+def cart_set(request, site, product_id, qty, variant_id=None):
     data = dict(cart_raw(request, site))
+    key = cart_key(product_id, variant_id)
     if qty <= 0:
-        data.pop(str(product_id), None)
+        data.pop(key, None)
     else:
-        if str(product_id) not in data and len(data) >= MAX_LINES:
+        if key not in data and len(data) >= MAX_LINES:
             raise ShopError(gettext("The cart is too large."))
-        data[str(product_id)] = min(int(qty), MAX_QTY)
+        data[key] = min(int(qty), MAX_QTY)
     request.session[_key(site)] = data
 
 
@@ -63,45 +77,103 @@ def cart_clear(request, site):
 
 
 def cart_lines(request, site):
-    """[{product, qty, unit_price, line_total, line_discount, ok}] فقط محصولات فعالِ **همین سایت**؛ قیمت (با تخفیف) همیشه از دیتابیس."""
+    """[{product, variant, key, qty, unit_price, line_total, line_discount, ok}] — only active products of **this** site; the price (with the discount) always comes from the database."""
     raw = cart_raw(request, site)
-    ids = safe_ids((str(k) for k in raw), 500)
-    products = {p.pk: p for p in Product.objects.filter(site=site, is_active=True, pk__in=ids)}
+    parsed = []
+    for key in list(raw)[:500]:
+        pk = parse_cart_key(key)
+        if pk:
+            parsed.append((str(key), *pk))
+    products = {p.pk: p for p in Product.objects.filter(site=site, is_active=True, pk__in=[pid for _, pid, _ in parsed])}
+    variants = {v.pk: v for v in ProductVariant.objects.filter(site=site, is_active=True, pk__in=[vid for _, _, vid in parsed if vid]).prefetch_related("options")}
     lines = []
-    for pid in ids:
+    for key, pid, vid in sorted(parsed, key=lambda t: (t[1], t[2] or 0)):
         p = products.get(pid)
         if p is None:
             continue
+        v = variants.get(vid) if vid else None
+        if p.is_variable != bool(vid) or (vid and (v is None or v.product_id != p.pk)):
+            continue  # a variable product needs its variant; a simple one must not carry one
         try:
-            qty = max(1, min(int(raw[str(pid)]), MAX_QTY))
+            qty = max(1, min(int(raw[key]), MAX_QTY))
         except (TypeError, ValueError):
             continue
         if p.is_digital:
             qty = 1  # نسخهٔ دیجیتال برای هر خرید یکی است
-        ok = (p.stock >= qty if p.track_stock else True) and (not p.is_digital or bool(p.digital_file))
-        lines.append({"product": p, "qty": qty, "unit_price": p.final_price, "line_total": p.final_price * qty, "line_discount": p.discount_amount * qty,
-                      "line_list": p.price * qty, "ok": ok})
+        buyable = v or p
+        ok = (buyable.stock >= qty if buyable.track_stock else True) and (not p.is_digital or bool(p.digital_file))
+        list_price = buyable.price
+        lines.append({"product": p, "variant": v, "key": key, "qty": qty, "unit_price": buyable.final_price, "line_total": buyable.final_price * qty,
+                      "line_discount": buyable.discount_amount * qty, "line_list": list_price * qty, "line_list_unit": list_price, "ok": ok, "stock": buyable.stock,
+                      "label": v.label if v else "", "sku": (v.sku if v and v.sku else p.sku), "weight": v.weight if v else p.weight_grams})
     return lines, sum(l["line_total"] for l in lines)
 
 
 def cart_summary(lines) -> dict:
     return {"subtotal": sum(l["line_list"] for l in lines), "discount": sum(l["line_discount"] for l in lines), "total": sum(l["line_total"] for l in lines),
-            "needs_shipping": any(l["product"].needs_shipping for l in lines)}
+            "needs_shipping": any(l["product"].needs_shipping for l in lines), "weight": sum(l["weight"] * l["qty"] for l in lines)}
 
 
-def search_products(qs, *, q="", category="", kind="", sort=""):
-    """جست‌وجو/فیلتر/مرتب‌سازی کاتالوگ. ورودی‌ها طول‌محدود و فقط مقادیر مجاز؛ ORM پارامترها را امن می‌کند."""
+def search_products(qs, *, q="", category="", kind="", sort="", tag=""):
+    """جست‌وجو/فیلتر/مرتب‌سازی کاتالوگ. ورودی‌ها طول‌محدود و فقط مقادیر مجاز؛ ORM پارامترها را امن می‌کند.
+    A category filter includes its sub-categories; the search also matches SKUs (product and variant) and tags."""
     from django.db.models import Q
 
     q = (q or "").strip()[:80]
     if q:
-        qs = qs.filter(Q(name__icontains=q) | Q(description__icontains=q) | Q(category__name__icontains=q))
+        qs = qs.filter(Q(name__icontains=q) | Q(description__icontains=q) | Q(category__name__icontains=q) | Q(sku__iexact=q) | Q(variants__sku__iexact=q) | Q(tags__name__icontains=q)).distinct()
     if category:
-        qs = qs.filter(category__slug=category[:90])
+        ids = []
+        for c in ProductCategory.objects.filter(slug=category[:90]):
+            ids += c.descendant_ids()
+        qs = qs.filter(category_id__in=ids)
+    if tag:
+        qs = qs.filter(tags__slug=tag[:80]).distinct()
     if kind in Product.Kind.values:
         qs = qs.filter(kind=kind)
     order = {"price_asc": "price", "price_desc": "-price", "new": "-created_at", "name": "name"}.get(sort)
     return qs.order_by(order, "-id") if order else qs
+
+
+def category_tree(site):
+    """``[(category, depth)]`` depth-first (parents before children, siblings by sort order); a damaged tree can never loop."""
+    cats = list(ProductCategory.objects.filter(site=site))
+    children = {}
+    for c in cats:
+        children.setdefault(c.parent_id, []).append(c)
+    known = {c.pk for c in cats}
+    out, seen = [], set()
+
+    def walk(parent_id, depth):
+        for c in sorted(children.get(parent_id, []), key=lambda c: (c.order, c.name)):
+            if c.pk in seen or depth > ProductCategory.MAX_DEPTH + 1:
+                continue
+            seen.add(c.pk)
+            out.append((c, depth))
+            walk(c.pk, depth + 1)
+
+    walk(None, 0)
+    for c in cats:  # a category whose parent vanished or sits in a cycle is still listed (as top level)
+        if c.pk not in seen and (c.parent_id not in known):
+            seen.add(c.pk)
+            out.append((c, 0))
+            walk(c.pk, 1)
+    return out
+
+
+def related_products(product, limit=4):
+    """Hand-picked related products first (active ones), then others from the same category or sharing a tag; never the product itself."""
+    chosen = list(product.related.filter(site=product.site, is_active=True)[:limit])
+    if len(chosen) < limit:
+        from django.db.models import Q
+
+        have = [p.pk for p in chosen] + [product.pk]
+        cond = Q(tags__in=product.tags.all())
+        if product.category_id:
+            cond |= Q(category_id=product.category_id)
+        extra = Product.objects.filter(site=product.site, is_active=True).filter(cond).exclude(pk__in=have).distinct().order_by("-created_at", "-id")[: limit - len(chosen)]
+        chosen += list(extra)
+    return chosen
 
 
 # ------------------------------------------------------------------ تاریخچه
@@ -125,24 +197,37 @@ def create_order(site, lines, data: dict, user=None) -> Order:
     if not authed and not settings.SHOP_ALLOW_GUEST_CHECKOUT:
         raise ShopError(gettext("You must sign in to buy."))
     fresh = {p.pk: p for p in Product.objects.filter(site=site, is_active=True, pk__in=[l["product"].pk for l in lines])}
+    fresh_variants = {v.pk: v for v in ProductVariant.objects.filter(site=site, is_active=True, pk__in=[l["variant"].pk for l in lines if l.get("variant")]).prefetch_related("options")}
     subtotal = discount = total = 0
     reserved = []
+    crossings = []  # (model, pk, before, after): stock levels that fell to the alert threshold
     for l in lines:
         p = fresh.get(l["product"].pk)
         if p is None:
             raise StockError((gettext("“%(name)s” is no longer available.") % {"name": l['product'].name}))
+        v = None
+        if p.is_variable:
+            v = fresh_variants.get(l["variant"].pk if l.get("variant") else None)
+            if v is None or v.product_id != p.pk:
+                raise StockError((gettext("“%(name)s” is no longer available.") % {"name": p.name}))
+        buyable = v or p
         qty = 1 if p.is_digital else max(1, min(int(l["qty"]), MAX_QTY))
         if p.is_digital and not p.digital_file:
             raise ShopError((gettext("The file for product “%(name)s” is not ready.") % {"name": p.name}))
-        if p.track_stock:
+        if buyable.track_stock:
             # رزرو اتمیک: فقط اگر موجودی کافی باشد کم می‌شود (جلوگیری از فروش بیش از موجودی در درخواست‌های همزمان)
-            if not Product.objects.filter(pk=p.pk, site=site, is_active=True, stock__gte=qty).update(stock=F("stock") - qty):
-                raise StockError((gettext("The stock of “%(name)s” is not sufficient.") % {"name": p.name}))
-        reserved.append((p, qty))
-        subtotal += p.price * qty
-        discount += p.discount_amount * qty
-        total += p.final_price * qty
-    needs_shipping = any(p.needs_shipping for p, _ in reserved)
+            model = ProductVariant if v else Product
+            if not model.objects.filter(pk=buyable.pk, site=site, stock__gte=qty).update(stock=F("stock") - qty):
+                raise StockError((gettext("The stock of “%(name)s” is not sufficient.") % {"name": p.name + (f" ({v.label})" if v else "")}))
+            before, after = buyable.stock, buyable.stock - qty
+            threshold = p.effective_low_stock_threshold
+            if before > 0 and (after <= threshold < before or after == 0):
+                crossings.append(("variant" if v else "product", buyable.pk))
+        reserved.append((p, v, qty))
+        subtotal += buyable.price * qty
+        discount += buyable.discount_amount * qty
+        total += buyable.final_price * qty
+    needs_shipping = any(p.needs_shipping for p, _, _ in reserved)
     data = dict(data)
     if needs_shipping and not (data.get("address") or "").strip():
         raise ShopError(gettext("An address is required for shipping a physical product."))
@@ -151,15 +236,24 @@ def create_order(site, lines, data: dict, user=None) -> Order:
     order = Order.objects.create(site=site, currency=ShopSettings.for_site(site).currency, subtotal=subtotal, discount_total=discount, total=total, needs_shipping=needs_shipping,
                                  user=user if authed else None, language=current_language(), **data)
     OrderItem.objects.bulk_create([
-        OrderItem(order=order, product=p, name=p.name, kind=p.kind, list_price=p.price, unit_discount=p.discount_amount, unit_price=p.final_price,
-                  quantity=q, line_total=p.final_price * q, tracked=p.track_stock) for p, q in reserved])
+        OrderItem(order=order, product=p, variant=v, variant_label=(v.label if v else ""), sku=((v.sku if v and v.sku else p.sku) or ""), weight_grams=(v.weight if v else p.weight_grams),
+                  name=p.name, kind=(Product.Kind.PHYSICAL if p.is_variable else p.kind), list_price=(v or p).price, unit_discount=(v or p).discount_amount, unit_price=(v or p).final_price,
+                  quantity=q, line_total=(v or p).final_price * q, tracked=(v or p).track_stock) for p, v, q in reserved])
+    if crossings:
+        from . import notify  # low-stock alert (email + hook) after the order is safely stored
+
+        transaction.on_commit(lambda: notify.low_stock(site.pk, crossings))
     record_event(order, OrderEvent.Kind.CREATED, message=(gettext("Order placed (%(value)s).") % {"value": (gettext("user") if authed else gettext("guest"))}), to_status=order.status, actor=user if authed else None)
     return order
 
 
 def _restore_stock(order):
-    for item in order.items.select_related("product"):
-        if item.product_id and item.tracked:
+    for item in order.items.select_related("product", "variant"):
+        if not item.tracked:
+            continue
+        if item.variant_id:
+            ProductVariant.objects.filter(pk=item.variant_id, site=order.site).update(stock=F("stock") + item.quantity)
+        elif item.product_id:
             Product.objects.filter(pk=item.product_id, site=order.site).update(stock=F("stock") + item.quantity)
 
 

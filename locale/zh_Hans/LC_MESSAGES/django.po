@@ -11269,3 +11269,256 @@ msgstr "完成"
 #: templates/plugins/module_setup.html
 msgid "Follow these steps to get the store ready. Each step opens the real page and is ticked automatically when it is done. You can skip the guide and open it again later."
 msgstr "按以下步骤准备好商店。每一步都会打开实际页面，完成后自动打勾。您可以跳过向导，之后再打开。"
+
+#: templates/shop/panel/products.html
+#, python-format
+msgid "%(count)s product(s) are at or below their low-stock threshold."
+msgstr "%(count)s 件商品库存已达到或低于低库存阈值。"
+
+#: apps/shop/panel.py
+#, python-format
+msgid "%(count)s variant(s) were created."
+msgstr "已创建 %(count)s 个变体。"
+
+#: templates/shop/public/detail.html
+#, python-format
+msgid "%(count)s variants"
+msgstr "%(count)s 个变体"
+
+#: apps/shop/notify.py
+#, python-format
+msgid "- %(name)s%(sku)s: %(stock)s left (alert at %(threshold)s)"
+msgstr "- %(name)s%(sku)s：剩余 %(stock)s（提醒阈值 %(threshold)s）"
+
+#: templates/shop/panel/products.html
+msgid "All stock levels"
+msgstr "全部库存"
+
+#: apps/shop/forms.py
+msgid "At most 20 tags per product."
+msgstr "每个商品最多 20 个标签。"
+
+#: apps/shop/forms.py
+msgid "At most 50 values per attribute."
+msgstr "每个属性最多 50 个值。"
+
+#: apps/shop/panel.py
+msgid "Attribute deleted."
+msgstr "属性已删除。"
+
+#: apps/shop/forms.py
+msgid "Attribute name"
+msgstr "属性名称"
+
+#: apps/shop/panel.py
+msgid "Attribute saved."
+msgstr "属性已保存。"
+
+#: apps/shop/panel.py
+#, python-format
+msgid "Attribute “%(name)s” was deleted"
+msgstr "已删除属性“%(name)s”"
+
+#: apps/shop/panel.py
+#, python-format
+msgid "Attribute “%(name)s” was saved"
+msgstr "已保存属性“%(name)s”"
+
+#: apps/shop/forms.py
+#, python-format
+msgid "Categories can be nested at most %(levels)s levels deep."
+msgstr "分类最多可嵌套 %(levels)s 级。"
+
+#: apps/shop/views.py
+msgid "Choose an option before adding to the cart."
+msgstr "加入购物车前请先选择一个选项。"
+
+#: templates/shop/public/detail.html
+msgid "Choose an option"
+msgstr "请选择一个选项"
+
+#: apps/shop/forms.py
+msgid "Choose at least one attribute for a variable product."
+msgstr "可变商品至少需要选择一个属性。"
+
+#: templates/shop/panel/product_form.html
+msgid "Choose attributes that have values first, then save the product."
+msgstr "请先选择含有值的属性，然后保存商品。"
+
+#: apps/shop/panel.py
+msgid "Edit attribute"
+msgstr "编辑属性"
+
+#: apps/shop/forms.py
+msgid "Empty = the product's weight."
+msgstr "留空 = 使用商品重量。"
+
+#: apps/shop/forms.py
+msgid "Empty = the shop-wide threshold."
+msgstr "留空 = 使用全店阈值。"
+
+#: apps/shop/forms.py
+msgid "Enter at least one value."
+msgstr "请至少输入一个值。"
+
+#: templates/shop/public/detail.html
+msgid "From"
+msgstr "起"
+
+#: templates/shop/panel/product_form.html
+msgid "Generate variants"
+msgstr "生成变体"
+
+#: templates/shop/panel/products.html
+msgid "Low stock"
+msgstr "库存不足"
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Low stock: %(count)s product(s) need restocking"
+msgstr "库存不足：%(count)s 件商品需要补货"
+
+#: templates/shop/panel/products.html
+msgid "Manage attributes"
+msgstr "管理属性"
+
+#: templates/shop/panel/attributes.html
+msgid "New attribute"
+msgstr "新建属性"
+
+#: templates/shop/panel/product_form.html
+msgid "No variants yet."
+msgstr "暂无变体。"
+
+#: apps/shop/forms.py
+msgid "One value per line, e.g. Red, Green, Blue."
+msgstr "每行一个值，例如：红、绿、蓝。"
+
+#: templates/shop/public/detail.html
+#, python-format
+msgid "Only %(stock)s left"
+msgstr "仅剩 %(stock)s 件"
+
+#: apps/shop/models.py
+msgid "Product attribute"
+msgstr "商品属性"
+
+#: apps/shop/models.py
+msgid "Product attributes"
+msgstr "商品属性"
+
+#: apps/shop/models.py
+msgid "Product tag"
+msgstr "商品标签"
+
+#: apps/shop/models.py
+msgid "Product tags"
+msgstr "商品标签"
+
+#: templates/shop/public/detail.html
+msgid "Related products"
+msgstr "相关商品"
+
+#: apps/shop/models.py
+msgid "SKU"
+msgstr "SKU 编码"
+
+#: templates/shop/panel/product_form.html
+msgid "Save variants"
+msgstr "保存变体"
+
+#: apps/shop/forms.py
+msgid "Separate tags with a comma."
+msgstr "标签之间用逗号分隔。"
+
+#: templates/shop/panel/products.html
+msgid "Show all"
+msgstr "显示全部"
+
+#: templates/shop/panel/products.html
+msgid "Show them"
+msgstr "查看这些商品"
+
+#: templates/shop/panel/attributes.html
+msgid "There is no attribute."
+msgstr "暂无属性。"
+
+#: apps/shop/notify.py
+msgid "These items have reached the low-stock threshold:"
+msgstr "以下商品已达到低库存阈值："
+
+#: apps/shop/forms.py
+#, python-format
+msgid "These values are used by variants and cannot be removed: %(values)s"
+msgstr "这些值已被变体使用，无法移除：%(values)s"
+
+#: apps/shop/forms.py
+msgid "This SKU is already used on this site."
+msgstr "此 SKU 已在本站使用。"
+
+#: apps/shop/panel.py
+msgid "This attribute is used by variants and cannot be deleted."
+msgstr "该属性已被变体使用，无法删除。"
+
+#: templates/shop/panel/attributes.html
+msgid "Value"
+msgstr "值"
+
+#: templates/shop/panel/attributes.html
+msgid "Values"
+msgstr "值"
+
+#: apps/shop/models.py
+msgid "Variable (colour, size ...)"
+msgstr "可变（颜色、尺码…）"
+
+#: apps/shop/models.py
+msgid "Variant"
+msgstr "变体"
+
+#: apps/shop/panel.py
+#, python-format
+msgid "Variants of “%(name)s” were generated"
+msgstr "已生成“%(name)s”的变体"
+
+#: apps/shop/panel.py
+#, python-format
+msgid "Variants of “%(name)s” were saved"
+msgstr "已保存“%(name)s”的变体"
+
+#: apps/shop/panel.py
+msgid "Variants saved."
+msgstr "变体已保存。"
+
+#: apps/shop/models.py
+msgid "Variants"
+msgstr "变体"
+
+#: templates/shop/public/detail.html
+msgid "Varies by"
+msgstr "可选项："
+
+#: apps/shop/forms.py
+msgid "Weight (grams)"
+msgstr "重量（克）"
+
+#: apps/shop/forms.py
+msgid "For a variable product: the attributes its variants differ by (e.g. colour, size)."
+msgstr "用于可变商品：其变体所区别的属性（如颜色、尺码）。"
+
+#: apps/shop/forms.py
+msgid "A category cannot be placed under itself or one of its own sub-categories."
+msgstr "分类不能放在自身或其子分类之下。"
+
+#: apps/shop/panel.py
+#, python-format
+msgid "That would create more than %(limit)s variants; use fewer attributes or values."
+msgstr "这将创建超过 %(limit)s 个变体；请减少属性或值。"
+
+#: templates/shop/panel/attributes.html
+msgid "Properties such as colour or size that a variable product's variants differ by."
+msgstr "可变商品的变体所区别的属性，例如颜色或尺码。"
+
+#: templates/shop/panel/product_form.html
+msgid "Create a variant for every combination of the chosen attributes. Existing variants are kept."
+msgstr "为所选属性的每种组合创建一个变体。现有变体将保留。"

@@ -82,3 +82,50 @@ def order_status_changed(order, old_status, new_status):
     if not modules.is_enabled("shop"):  # switched off: no emails, no hook (the order itself is untouched)
         return
     transaction.on_commit(lambda: _send(order.pk, new_status, old_status))
+
+
+def low_stock(site_id, crossings):
+    """Tell the shop owner that some stock fell to its alert threshold: one email (site language) and one ``shop.low_stock`` hook call per item.
+    ``crossings`` is a list of ``("product" | "variant", pk)``; the levels are read again from the database."""
+    from apps.core import modules
+    from apps.core.models import SiteSettings
+    from apps.sites.models import Site
+
+    from .models import Product, ProductVariant
+
+    if not modules.is_enabled("shop"):
+        return
+    site = Site.objects.filter(pk=site_id).first()
+    if site is None:
+        return
+    rows = []
+    for kind, pk in crossings:
+        obj = (ProductVariant.objects.select_related("product").filter(pk=pk, site=site) if kind == "variant" else Product.objects.filter(pk=pk, site=site)).first()
+        if obj is None:
+            continue
+        product = obj.product if kind == "variant" else obj
+        name = product.name + (f" ({obj.label})" if kind == "variant" else "")
+        rows.append({"kind": kind, "object_id": obj.pk, "product_id": product.pk, "name": name, "sku": (obj.sku or product.sku or ""), "stock": obj.stock,
+                     "threshold": product.effective_low_stock_threshold})
+    if not rows:
+        return
+    cfg = ShopSettings.for_site(site)
+    to = cfg.store_email or getattr(SiteSettings.load(), "admin_email", "")
+    if to:
+        try:
+            with use_language():  # the shop owner reads it: the site language
+                subject = gettext("Low stock: %(count)s product(s) need restocking") % {"count": len(rows)}
+                lines = [gettext("These items have reached the low-stock threshold:"), ""]
+                for r in rows:
+                    sku = f" [{r['sku']}]" if r["sku"] else ""
+                    lines.append(gettext("- %(name)s%(sku)s: %(stock)s left (alert at %(threshold)s)") % {"name": r["name"], "sku": sku, "stock": r["stock"], "threshold": r["threshold"]})
+            build_message(subject, "\n".join(lines), [to], settings.DEFAULT_FROM_EMAIL).send()
+        except Exception:  # noqa: BLE001
+            logger.exception("Sending the low-stock email failed (site %s).", site_id)
+    try:
+        from apps.plugins.hooks import run_action
+
+        for r in rows:
+            run_action("shop.low_stock", **r)
+    except Exception:  # noqa: BLE001
+        logger.exception("The shop.low_stock hook failed (site %s).", site_id)

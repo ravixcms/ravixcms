@@ -11960,3 +11960,256 @@ msgstr "Concluir"
 #: templates/plugins/module_setup.html
 msgid "Follow these steps to get the store ready. Each step opens the real page and is ticked automatically when it is done. You can skip the guide and open it again later."
 msgstr "Siga estes passos para deixar a loja pronta. Cada passo abre a página real e é marcado automaticamente quando concluído. Você pode pular o guia e abri-lo depois."
+
+#: templates/shop/panel/products.html
+#, python-format
+msgid "%(count)s product(s) are at or below their low-stock threshold."
+msgstr "%(count)s produto(s) estão no limite de estoque baixo ou abaixo dele."
+
+#: apps/shop/panel.py
+#, python-format
+msgid "%(count)s variant(s) were created."
+msgstr "%(count)s variante(s) criada(s)."
+
+#: templates/shop/public/detail.html
+#, python-format
+msgid "%(count)s variants"
+msgstr "%(count)s variantes"
+
+#: apps/shop/notify.py
+#, python-format
+msgid "- %(name)s%(sku)s: %(stock)s left (alert at %(threshold)s)"
+msgstr "- %(name)s%(sku)s: restam %(stock)s (alerta em %(threshold)s)"
+
+#: templates/shop/panel/products.html
+msgid "All stock levels"
+msgstr "Todos os níveis de estoque"
+
+#: apps/shop/forms.py
+msgid "At most 20 tags per product."
+msgstr "No máximo 20 etiquetas por produto."
+
+#: apps/shop/forms.py
+msgid "At most 50 values per attribute."
+msgstr "No máximo 50 valores por atributo."
+
+#: apps/shop/panel.py
+msgid "Attribute deleted."
+msgstr "Atributo excluído."
+
+#: apps/shop/forms.py
+msgid "Attribute name"
+msgstr "Nome do atributo"
+
+#: apps/shop/panel.py
+msgid "Attribute saved."
+msgstr "Atributo salvo."
+
+#: apps/shop/panel.py
+#, python-format
+msgid "Attribute “%(name)s” was deleted"
+msgstr "O atributo “%(name)s” foi excluído"
+
+#: apps/shop/panel.py
+#, python-format
+msgid "Attribute “%(name)s” was saved"
+msgstr "O atributo “%(name)s” foi salvo"
+
+#: apps/shop/forms.py
+#, python-format
+msgid "Categories can be nested at most %(levels)s levels deep."
+msgstr "As categorias podem ser aninhadas em no máximo %(levels)s níveis."
+
+#: apps/shop/views.py
+msgid "Choose an option before adding to the cart."
+msgstr "Escolha uma opção antes de adicionar ao carrinho."
+
+#: templates/shop/public/detail.html
+msgid "Choose an option"
+msgstr "Escolha uma opção"
+
+#: apps/shop/forms.py
+msgid "Choose at least one attribute for a variable product."
+msgstr "Escolha pelo menos um atributo para um produto variável."
+
+#: templates/shop/panel/product_form.html
+msgid "Choose attributes that have values first, then save the product."
+msgstr "Escolha primeiro atributos que tenham valores e depois salve o produto."
+
+#: apps/shop/panel.py
+msgid "Edit attribute"
+msgstr "Editar atributo"
+
+#: apps/shop/forms.py
+msgid "Empty = the product's weight."
+msgstr "Vazio = o peso do produto."
+
+#: apps/shop/forms.py
+msgid "Empty = the shop-wide threshold."
+msgstr "Vazio = o limite geral da loja."
+
+#: apps/shop/forms.py
+msgid "Enter at least one value."
+msgstr "Informe pelo menos um valor."
+
+#: templates/shop/public/detail.html
+msgid "From"
+msgstr "A partir de"
+
+#: templates/shop/panel/product_form.html
+msgid "Generate variants"
+msgstr "Gerar variações"
+
+#: templates/shop/panel/products.html
+msgid "Low stock"
+msgstr "Estoque baixo"
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Low stock: %(count)s product(s) need restocking"
+msgstr "Estoque baixo: %(count)s produto(s) precisam de reposição"
+
+#: templates/shop/panel/products.html
+msgid "Manage attributes"
+msgstr "Gerenciar atributos"
+
+#: templates/shop/panel/attributes.html
+msgid "New attribute"
+msgstr "Novo atributo"
+
+#: templates/shop/panel/product_form.html
+msgid "No variants yet."
+msgstr "Ainda não há variações."
+
+#: apps/shop/forms.py
+msgid "One value per line, e.g. Red, Green, Blue."
+msgstr "Um valor por linha, por exemplo: Vermelho, Verde, Azul."
+
+#: templates/shop/public/detail.html
+#, python-format
+msgid "Only %(stock)s left"
+msgstr "Restam apenas %(stock)s"
+
+#: apps/shop/models.py
+msgid "Product attribute"
+msgstr "Atributo do produto"
+
+#: apps/shop/models.py
+msgid "Product attributes"
+msgstr "Atributos do produto"
+
+#: apps/shop/models.py
+msgid "Product tag"
+msgstr "Etiqueta do produto"
+
+#: apps/shop/models.py
+msgid "Product tags"
+msgstr "Etiquetas do produto"
+
+#: templates/shop/public/detail.html
+msgid "Related products"
+msgstr "Produtos relacionados"
+
+#: apps/shop/models.py
+msgid "SKU"
+msgstr "SKU"
+
+#: templates/shop/panel/product_form.html
+msgid "Save variants"
+msgstr "Salvar variações"
+
+#: apps/shop/forms.py
+msgid "Separate tags with a comma."
+msgstr "Separe as etiquetas com vírgulas."
+
+#: templates/shop/panel/products.html
+msgid "Show all"
+msgstr "Mostrar tudo"
+
+#: templates/shop/panel/products.html
+msgid "Show them"
+msgstr "Mostrá-los"
+
+#: templates/shop/panel/attributes.html
+msgid "There is no attribute."
+msgstr "Não há atributos."
+
+#: apps/shop/notify.py
+msgid "These items have reached the low-stock threshold:"
+msgstr "Estes itens atingiram o limite de estoque baixo:"
+
+#: apps/shop/forms.py
+#, python-format
+msgid "These values are used by variants and cannot be removed: %(values)s"
+msgstr "Estes valores são usados por variações e não podem ser removidos: %(values)s"
+
+#: apps/shop/forms.py
+msgid "This SKU is already used on this site."
+msgstr "Este SKU já é usado neste site."
+
+#: apps/shop/panel.py
+msgid "This attribute is used by variants and cannot be deleted."
+msgstr "Este atributo é usado por variações e não pode ser excluído."
+
+#: templates/shop/panel/attributes.html
+msgid "Value"
+msgstr "Valor"
+
+#: templates/shop/panel/attributes.html
+msgid "Values"
+msgstr "Valores"
+
+#: apps/shop/models.py
+msgid "Variable (colour, size ...)"
+msgstr "Variável (cor, tamanho ...)"
+
+#: apps/shop/models.py
+msgid "Variant"
+msgstr "Variação"
+
+#: apps/shop/panel.py
+#, python-format
+msgid "Variants of “%(name)s” were generated"
+msgstr "As variações de “%(name)s” foram geradas"
+
+#: apps/shop/panel.py
+#, python-format
+msgid "Variants of “%(name)s” were saved"
+msgstr "As variações de “%(name)s” foram salvas"
+
+#: apps/shop/panel.py
+msgid "Variants saved."
+msgstr "Variações salvas."
+
+#: apps/shop/models.py
+msgid "Variants"
+msgstr "Variações"
+
+#: templates/shop/public/detail.html
+msgid "Varies by"
+msgstr "Varia conforme"
+
+#: apps/shop/forms.py
+msgid "Weight (grams)"
+msgstr "Peso (gramas)"
+
+#: apps/shop/forms.py
+msgid "For a variable product: the attributes its variants differ by (e.g. colour, size)."
+msgstr "Para um produto variável: os atributos em que suas variações diferem (por exemplo, cor, tamanho)."
+
+#: apps/shop/forms.py
+msgid "A category cannot be placed under itself or one of its own sub-categories."
+msgstr "Uma categoria não pode ser colocada dentro de si mesma nem de uma de suas subcategorias."
+
+#: apps/shop/panel.py
+#, python-format
+msgid "That would create more than %(limit)s variants; use fewer attributes or values."
+msgstr "Isso criaria mais de %(limit)s variações; use menos atributos ou valores."
+
+#: templates/shop/panel/attributes.html
+msgid "Properties such as colour or size that a variable product's variants differ by."
+msgstr "Propriedades como cor ou tamanho em que as variações de um produto variável diferem."
+
+#: templates/shop/panel/product_form.html
+msgid "Create a variant for every combination of the chosen attributes. Existing variants are kept."
+msgstr "Cria uma variação para cada combinação dos atributos escolhidos. As variações existentes são mantidas."

@@ -4,7 +4,7 @@ from django.db.migrations.executor import MigrationExecutor
 from django.test import TransactionTestCase, override_settings
 
 
-class ShopSettingsMigrationTests(TransactionTestCase):
+class MigrationBase(TransactionTestCase):
     before = [("shop", "0005_order_language")]
     after = [("shop", "0006_shop_settings")]
 
@@ -26,6 +26,11 @@ class ShopSettingsMigrationTests(TransactionTestCase):
         Product.objects.create(site=site, name="old", slug="old", price=120000, stock=3)
         Order.objects.create(site=site, number="RV-OLD1", token="t" * 40, customer_name="Old Customer", phone="09123456789", total=120000, subtotal=120000, currency="IRT")
         return site
+
+
+class ShopSettingsMigrationTests(MigrationBase):
+    before = [("shop", "0005_order_language")]
+    after = [("shop", "0006_shop_settings")]
 
     @override_settings(SHOP_CURRENCY_CODE="IRT")
     def test_forward_keeps_data_and_currency(self):
@@ -65,3 +70,29 @@ class ShopSettingsMigrationTests(TransactionTestCase):
         before = new.get_model("shop", "ShopSettings").objects.count()
         step(new, None)
         self.assertEqual(new.get_model("shop", "ShopSettings").objects.count(), before)
+
+
+class CatalogMigrationTests(MigrationBase):
+    """0009: variants, tags, nested categories. Existing products and orders keep working, and the step can be undone."""
+
+    before = [("shop", "0008_enable_module_for_existing_sites")]
+    after = [("shop", "0009_catalog_variants_tags")]
+
+    def test_forward_keeps_products_and_orders(self):
+        site = self.seed(self.migrate(self.before))
+        new = self.migrate(self.after)
+        product = new.get_model("shop", "Product").objects.get(slug="old")
+        self.assertEqual((product.price, product.stock, product.sku, product.weight_grams), (120000, 3, "", 0))
+        self.assertEqual(new.get_model("shop", "Order").objects.get().total, 120000)
+        self.assertEqual(new.get_model("shop", "ProductVariant").objects.count(), 0)
+        # two products without a SKU do not clash on the unique constraint
+        new.get_model("shop", "Product").objects.create(site_id=site.pk, name="b", slug="b", price=1)
+
+    def test_backward_then_forward_is_lossless(self):
+        self.seed(self.migrate(self.before))
+        self.migrate(self.after)
+        back = self.migrate(self.before)
+        self.assertEqual(back.get_model("shop", "Product").objects.get().price, 120000)
+        self.assertEqual(back.get_model("shop", "Order").objects.get().total, 120000)
+        again = self.migrate(self.after)
+        self.assertEqual(again.get_model("shop", "Product").objects.get().stock, 3)

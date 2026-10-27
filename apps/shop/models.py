@@ -23,6 +23,9 @@ class ProductCategory(TimeStampedModel):
     name = models.CharField(gettext_lazy("Category name"), max_length=80)
     slug = models.SlugField(gettext_lazy("Slug"), max_length=90, allow_unicode=True)
     order = models.PositiveSmallIntegerField(gettext_lazy("Sort order"), default=100)
+    parent = models.ForeignKey("self", null=True, blank=True, on_delete=models.SET_NULL, related_name="children", verbose_name=gettext_lazy("Parent category"))
+
+    MAX_DEPTH = 4  # levels, the top level counts as 1
 
     class Meta:
         verbose_name = gettext_lazy("Product category")
@@ -33,11 +36,95 @@ class ProductCategory(TimeStampedModel):
     def __str__(self):
         return self.name
 
+    def ancestors(self):
+        """Parents from the top level down to the direct parent (loops are impossible: the form refuses them; the guard stops a damaged tree)."""
+        chain, node, seen = [], self.parent, {self.pk}
+        while node is not None and node.pk not in seen and len(chain) < self.MAX_DEPTH + 2:
+            chain.append(node)
+            seen.add(node.pk)
+            node = node.parent
+        return list(reversed(chain))
+
+    @property
+    def depth(self) -> int:
+        return len(self.ancestors()) + 1
+
+    @property
+    def path_name(self) -> str:
+        return " › ".join([c.name for c in self.ancestors()] + [self.name])
+
+    def descendant_ids(self) -> list[int]:
+        """This category and everything below it (breadth first, bounded)."""
+        ids, frontier = [self.pk], [self.pk]
+        for _ in range(self.MAX_DEPTH + 1):
+            frontier = list(ProductCategory.objects.filter(site_id=self.site_id, parent_id__in=frontier).exclude(pk__in=ids).values_list("pk", flat=True))
+            if not frontier:
+                break
+            ids += frontier
+        return ids
+
+    def subtree_height(self) -> int:
+        """Levels below this category (0 for a leaf)."""
+        height, frontier, seen = 0, [self.pk], {self.pk}
+        while True:
+            frontier = [c for c in ProductCategory.objects.filter(site_id=self.site_id, parent_id__in=frontier).values_list("pk", flat=True) if c not in seen]
+            if not frontier:
+                return height
+            seen.update(frontier)
+            height += 1
+
+
+class ProductTag(TimeStampedModel):
+    site = models.ForeignKey(Site, on_delete=models.CASCADE, related_name="product_tags")
+    name = models.CharField(gettext_lazy("Tag"), max_length=60)
+    slug = models.SlugField(gettext_lazy("Slug"), max_length=80, allow_unicode=True)
+
+    class Meta:
+        verbose_name = gettext_lazy("Product tag")
+        verbose_name_plural = gettext_lazy("Product tags")
+        ordering = ["name"]
+        constraints = [models.UniqueConstraint(fields=["site", "slug"], name="shop_tag_unique_slug_per_site")]
+
+    def __str__(self):
+        return self.name
+
+
+class ProductAttribute(TimeStampedModel):
+    """A property that varies (colour, size ...). Its values are ``AttributeValue`` rows; a variable product picks the attributes it varies by."""
+
+    site = models.ForeignKey(Site, on_delete=models.CASCADE, related_name="product_attributes")
+    name = models.CharField(gettext_lazy("Attribute name"), max_length=60)
+    slug = models.SlugField(gettext_lazy("Slug"), max_length=80, allow_unicode=True)
+
+    class Meta:
+        verbose_name = gettext_lazy("Product attribute")
+        verbose_name_plural = gettext_lazy("Product attributes")
+        ordering = ["name"]
+        constraints = [models.UniqueConstraint(fields=["site", "slug"], name="shop_attribute_unique_slug_per_site")]
+
+    def __str__(self):
+        return self.name
+
+
+class AttributeValue(models.Model):
+    attribute = models.ForeignKey(ProductAttribute, on_delete=models.CASCADE, related_name="values")
+    value = models.CharField(gettext_lazy("Value"), max_length=80)
+    slug = models.SlugField(max_length=100, allow_unicode=True)
+    order = models.PositiveSmallIntegerField(default=100)
+
+    class Meta:
+        ordering = ["order", "id"]
+        constraints = [models.UniqueConstraint(fields=["attribute", "slug"], name="shop_attrvalue_unique_slug_per_attribute")]
+
+    def __str__(self):
+        return self.value
+
 
 class Product(TimeStampedModel):
     class Kind(models.TextChoices):
         PHYSICAL = "physical", gettext_lazy("Physical")
         DIGITAL = "digital", gettext_lazy("Digital (downloadable)")
+        VARIABLE = "variable", gettext_lazy("Variable (colour, size ...)")
 
     site = models.ForeignKey(Site, on_delete=models.CASCADE, related_name="products")
     kind = models.CharField(gettext_lazy("Type"), max_length=10, choices=Kind.choices, default=Kind.PHYSICAL, db_index=True)
@@ -53,12 +140,19 @@ class Product(TimeStampedModel):
                                     validators=[FileExtensionValidator(DIGITAL_EXTENSIONS)])
     is_active = models.BooleanField(gettext_lazy("Active (visible and purchasable)"), default=True)
     image = models.ImageField(gettext_lazy("Image"), upload_to=RandomUploadPath("shop"), blank=True, validators=[validate_image_file])
+    sku = models.CharField(gettext_lazy("SKU"), max_length=64, blank=True)
+    weight_grams = models.PositiveIntegerField(gettext_lazy("Weight (grams)"), default=0)
+    tags = models.ManyToManyField("ProductTag", blank=True, related_name="products", verbose_name=gettext_lazy("Tags"))
+    related = models.ManyToManyField("self", symmetrical=False, blank=True, related_name="related_from", verbose_name=gettext_lazy("Related products"))
+    low_stock_threshold = models.PositiveIntegerField(gettext_lazy("Low-stock alert at"), null=True, blank=True, help_text=gettext_lazy("Empty = the shop-wide threshold."))
+    variation_attributes = models.ManyToManyField("ProductAttribute", blank=True, related_name="+", verbose_name=gettext_lazy("Varies by"))
 
     class Meta:
         verbose_name = gettext_lazy("Product")
         verbose_name_plural = gettext_lazy("Products")
         ordering = ["-created_at", "-id"]
-        constraints = [models.UniqueConstraint(fields=["site", "slug"], name="shop_product_unique_slug_per_site")]
+        constraints = [models.UniqueConstraint(fields=["site", "slug"], name="shop_product_unique_slug_per_site"),
+                       models.UniqueConstraint(fields=["site", "sku"], condition=~Q(sku=""), name="shop_product_unique_sku_per_site")]
         indexes = [models.Index(fields=["site", "is_active", "-created_at"])]
 
     def __str__(self):
@@ -71,6 +165,10 @@ class Product(TimeStampedModel):
     @property
     def is_digital(self):
         return self.kind == self.Kind.DIGITAL
+
+    @property
+    def is_variable(self):
+        return self.kind == self.Kind.VARIABLE
 
     @property
     def needs_shipping(self):
@@ -91,7 +189,50 @@ class Product(TimeStampedModel):
 
     @property
     def in_stock(self):
+        if self.is_variable:
+            return any(v.in_stock for v in self.active_variants())
         return (self.stock > 0) if self.track_stock else True
+
+    def active_variants(self):
+        """Purchasable variants (a prefetch of ``variants`` is reused when present)."""
+        return [v for v in self.variants.all() if v.is_active]
+
+    @property
+    def price_range(self):
+        """``(lowest, highest)`` final price over the active variants; a simple product returns its own price twice."""
+        if self.is_variable:
+            prices = [v.final_price for v in self.active_variants()]
+            if prices:
+                return min(prices), max(prices)
+        return self.final_price, self.final_price
+
+    @property
+    def has_price_range(self):
+        low, high = self.price_range
+        return low != high
+
+    def sync_variable_price(self):
+        """A variable product's own ``price`` follows its cheapest active variant, so sorting and filtering by price keep working."""
+        if not self.is_variable:
+            return
+        prices = [v.price for v in self.active_variants()]
+        if prices and self.price != min(prices):
+            Product.objects.filter(pk=self.pk).update(price=min(prices))
+            self.price = min(prices)
+
+    @property
+    def effective_low_stock_threshold(self):
+        if self.low_stock_threshold is not None:
+            return self.low_stock_threshold
+        return ShopSettings.for_site(self.site).low_stock_threshold
+
+    @property
+    def is_low_stock(self):
+        return self.track_stock and not self.is_variable and 0 < self.stock <= self.effective_low_stock_threshold
+
+    @property
+    def is_out_of_stock(self):
+        return self.track_stock and not self.is_variable and self.stock <= 0
 
     def clean(self):
         from django.core.exceptions import ValidationError
@@ -115,6 +256,77 @@ class ProductImage(models.Model):
     def save(self, *args, **kwargs):
         optimize_image_field(self.image)
         super().save(*args, **kwargs)
+
+
+class ProductVariant(TimeStampedModel):
+    """One purchasable combination of a variable product (e.g. Red / L) with its own SKU, price, stock, weight and image."""
+
+    site = models.ForeignKey(Site, on_delete=models.CASCADE, related_name="product_variants")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="variants")
+    options = models.ManyToManyField(AttributeValue, related_name="variants", blank=True)
+    options_key = models.CharField(max_length=200, editable=False, default="")  # sorted value ids: one variant per combination
+    sku = models.CharField(gettext_lazy("SKU"), max_length=64, blank=True)
+    price = models.PositiveBigIntegerField(gettext_lazy("Price"), validators=[MinValueValidator(1)])
+    stock = models.PositiveIntegerField(gettext_lazy("Stock"), default=0)
+    track_stock = models.BooleanField(gettext_lazy("Stock control"), default=True)
+    weight_grams = models.PositiveIntegerField(gettext_lazy("Weight (grams)"), null=True, blank=True, help_text=gettext_lazy("Empty = the product's weight."))
+    image = models.ImageField(gettext_lazy("Image"), upload_to=RandomUploadPath("shop"), blank=True, validators=[validate_image_file])
+    is_active = models.BooleanField(gettext_lazy("Active (visible and purchasable)"), default=True)
+
+    class Meta:
+        verbose_name = gettext_lazy("Variant")
+        verbose_name_plural = gettext_lazy("Variants")
+        ordering = ["id"]
+        constraints = [models.UniqueConstraint(fields=["product", "options_key"], name="shop_variant_unique_combination"),
+                       models.UniqueConstraint(fields=["site", "sku"], condition=~Q(sku=""), name="shop_variant_unique_sku_per_site")]
+
+    def __str__(self):
+        return self.label or f"#{self.pk}"
+
+    def save(self, *args, **kwargs):
+        self.site_id = self.product.site_id
+        optimize_image_field(self.image)
+        super().save(*args, **kwargs)
+
+    @property
+    def label(self) -> str:
+        return " / ".join(o.value for o in self.options.all())
+
+    @property
+    def discount_amount(self):
+        return min(self.price * self.product.discount_percent // 100, self.price - 1)
+
+    @property
+    def final_price(self):
+        return self.price - self.discount_amount
+
+    @property
+    def has_discount(self):
+        return self.discount_amount > 0
+
+    @property
+    def in_stock(self):
+        return (self.stock > 0) if self.track_stock else True
+
+    @property
+    def weight(self) -> int:
+        return self.weight_grams if self.weight_grams is not None else self.product.weight_grams
+
+    @property
+    def effective_low_stock_threshold(self):
+        return self.product.effective_low_stock_threshold
+
+    @property
+    def is_low_stock(self):
+        return self.track_stock and 0 < self.stock <= self.effective_low_stock_threshold
+
+    @property
+    def is_out_of_stock(self):
+        return self.track_stock and self.stock <= 0
+
+    @staticmethod
+    def key_for(value_ids) -> str:
+        return "-".join(str(i) for i in sorted(int(v) for v in value_ids))
 
 
 class Order(models.Model):
@@ -190,6 +402,10 @@ class OrderItem(models.Model):
     unit_discount = models.PositiveBigIntegerField(gettext_lazy("Discount per unit"), default=0)
     download_count = models.PositiveSmallIntegerField(default=0)
     tracked = models.BooleanField(gettext_lazy("Its stock has been deducted"), default=True)  # برای برگرداندن دقیق موجودی هنگام لغو/استرداد
+    variant = models.ForeignKey("ProductVariant", null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+    variant_label = models.CharField(gettext_lazy("Variant"), max_length=200, blank=True)  # snapshot: survives deleting the variant
+    sku = models.CharField(gettext_lazy("SKU"), max_length=64, blank=True)
+    weight_grams = models.PositiveIntegerField(default=0)  # snapshot, per unit (shipping cost by weight uses it)
     unit_price = models.PositiveBigIntegerField()
     quantity = models.PositiveIntegerField()
     line_total = models.PositiveBigIntegerField()

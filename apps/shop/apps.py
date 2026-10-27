@@ -14,6 +14,8 @@ class ShopConfig(AppConfig):
                                   capability="shop.manage", module="shop", active_urls=("shop_panel:products", "shop_panel:product_create", "shop_panel:product_edit")))
         register_nav_item(NavItem(key="shop.categories", label=gettext_lazy("Shop categories"), url_name="shop_panel:categories", icon="layers", section="content", order=60,
                                   capability="shop.manage", module="shop", active_urls=("shop_panel:categories", "shop_panel:category_create", "shop_panel:category_edit")))
+        register_nav_item(NavItem(key="shop.attributes", label=gettext_lazy("Product attributes"), url_name="shop_panel:attributes", icon="layers", section="content", order=61,
+                                  capability="shop.manage", module="shop", active_urls=("shop_panel:attributes", "shop_panel:attribute_create", "shop_panel:attribute_edit")))
         register_nav_item(NavItem(key="shop.gateways", label=gettext_lazy("Payment gateways"), url_name="shop_panel:gateways", icon="layers", section="content", order=62,
                                   capability="shop.gateways", module="shop", active_urls=("shop_panel:gateways", "shop_panel:gateway_edit")))
         register_nav_item(NavItem(key="shop.settings", label=gettext_lazy("Shop settings"), url_name="shop_panel:settings", icon="layers", section="content", order=63,

@@ -9,6 +9,24 @@
   <div class="card" style="margin-bottom:1.25rem"><div class="card-body">{% for field in form %}{% include "partials/_field.html" with field=field %}{% endfor %}</div></div>
   <button class="btn" type="submit">{% trans "Save" %}</button> <a class="btn btn-light" href="{% url 'shop_panel:products' %}">{% trans "Cancel" %}</a>
 </form>
+{% if obj and variant_formset %}
+<div class="card" style="margin-top:1.25rem"><div class="card-header"><h2>{% trans "Variants" %}</h2></div><div class="card-body">
+  <form method="post" action="{% url 'shop_panel:variants_generate' obj.pk %}" style="margin-bottom:1rem">{% csrf_token %}
+    <p class="muted">{% trans "Create a variant for every combination of the chosen attributes. Existing variants are kept." %} <a href="{% url 'shop_panel:attributes' %}">{% trans "Manage attributes" %}</a></p>
+    <button class="btn" type="submit">{% trans "Generate variants" %}</button></form>
+  {% if variant_formset.forms %}
+  <form method="post" enctype="multipart/form-data" action="{% url 'shop_panel:variants_save' obj.pk %}" novalidate data-once>{% csrf_token %}
+    {{ variant_formset.management_form }}
+    {% if variant_formset.non_form_errors %}<div class="form-errors" role="alert">{{ variant_formset.non_form_errors }}</div>{% endif %}
+    {% for vf in variant_formset %}
+    <fieldset class="card" style="margin-bottom:.75rem"><legend><strong>{{ vf.instance.label }}</strong>{% if vf.instance.is_low_stock %} <span class="badge badge-warn">{% trans "Low stock" %}</span>{% elif vf.instance.is_out_of_stock %} <span class="badge badge-inactive">{% trans "Out of stock" %}</span>{% endif %}</legend>
+      <div class="card-body">{% for hidden in vf.hidden_fields %}{{ hidden }}{% endfor %}{% for field in vf.visible_fields %}{% include "partials/_field.html" with field=field %}{% endfor %}</div></fieldset>
+    {% endfor %}
+    <button class="btn" type="submit">{% trans "Save variants" %}</button>
+  </form>
+  {% else %}<p class="muted">{% trans "No variants yet." %}</p>{% endif %}
+</div></div>
+{% endif %}
 {% if obj %}
 <div class="card" style="margin-top:1.25rem"><div class="card-header"><h2>{% trans "Image gallery" %}</h2></div><div class="card-body">
   {% for g in gallery %}<form method="post" action="{% url 'shop_panel:gallery_delete' obj.pk g.pk %}" style="display:inline-block;margin:.25rem">{% csrf_token %}

@@ -51,7 +51,7 @@ class ModuleSwitchTests(ShopTestCase):
         self.assertEqual(Client().get("/fa/shop/").status_code, 200)
         self.assertEqual(Client().get("/api/v1/shop/products/").status_code, 200)
         self.assertEqual(self.login(self.superadmin).get(reverse("shop_panel:products")).status_code, 200)
-        self.assertEqual(len(self.shop_nav()), 5)
+        self.assertEqual(len(self.shop_nav()), 6)
 
     def test_second_activation_goes_back_to_the_plugins_page(self):
         modules.set_setup("shop", ModuleState.SETUP_DONE)
@@ -77,7 +77,7 @@ class ModuleSwitchTests(ShopTestCase):
         self.switch(True)
         self.assertEqual(Client().get("/fa/shop/p/book/").status_code, 200)
         self.assertEqual(admin.get(reverse("shop_panel:orders")).status_code, 200)
-        self.assertEqual(len(self.shop_nav()), 5)
+        self.assertEqual(len(self.shop_nav()), 6)
         self.assertEqual((Product.objects.count(), Order.objects.count()), before[:2])
 
     def test_hidden_from_sitemap_and_health_while_off(self):

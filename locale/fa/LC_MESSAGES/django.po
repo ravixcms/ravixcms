@@ -11681,3 +11681,256 @@ msgstr "پایان"
 #: templates/plugins/module_setup.html
 msgid "Follow these steps to get the store ready. Each step opens the real page and is ticked automatically when it is done. You can skip the guide and open it again later."
 msgstr "این گام‌ها را برای آماده‌شدن فروشگاه دنبال کنید. هر گام صفحهٔ اصلی را باز می‌کند و با انجام‌شدن خودکار علامت می‌خورد. می‌توانید راهنما را رد کنید و بعداً دوباره باز کنید."
+
+#: templates/shop/panel/products.html
+#, python-format
+msgid "%(count)s product(s) are at or below their low-stock threshold."
+msgstr "تعداد محصولاتی که به آستانهٔ کمبود موجودی رسیده یا از آن کمترند: %(count)s"
+
+#: apps/shop/panel.py
+#, python-format
+msgid "%(count)s variant(s) were created."
+msgstr "%(count)s تنوع ساخته شد."
+
+#: templates/shop/public/detail.html
+#, python-format
+msgid "%(count)s variants"
+msgstr "%(count)s تنوع"
+
+#: apps/shop/notify.py
+#, python-format
+msgid "- %(name)s%(sku)s: %(stock)s left (alert at %(threshold)s)"
+msgstr "- %(name)s%(sku)s: %(stock)s عدد باقی مانده (هشدار در %(threshold)s)"
+
+#: templates/shop/panel/products.html
+msgid "All stock levels"
+msgstr "همهٔ سطوح موجودی"
+
+#: apps/shop/forms.py
+msgid "At most 20 tags per product."
+msgstr "حداکثر ۲۰ برچسب برای هر محصول."
+
+#: apps/shop/forms.py
+msgid "At most 50 values per attribute."
+msgstr "حداکثر ۵۰ مقدار برای هر ویژگی."
+
+#: apps/shop/panel.py
+msgid "Attribute deleted."
+msgstr "ویژگی حذف شد."
+
+#: apps/shop/forms.py
+msgid "Attribute name"
+msgstr "نام ویژگی"
+
+#: apps/shop/panel.py
+msgid "Attribute saved."
+msgstr "ویژگی ذخیره شد."
+
+#: apps/shop/panel.py
+#, python-format
+msgid "Attribute “%(name)s” was deleted"
+msgstr "ویژگی «%(name)s» حذف شد"
+
+#: apps/shop/panel.py
+#, python-format
+msgid "Attribute “%(name)s” was saved"
+msgstr "ویژگی «%(name)s» ذخیره شد"
+
+#: apps/shop/forms.py
+#, python-format
+msgid "Categories can be nested at most %(levels)s levels deep."
+msgstr "دسته‌ها حداکثر تا %(levels)s سطح تو در تو می‌شوند."
+
+#: apps/shop/views.py
+msgid "Choose an option before adding to the cart."
+msgstr "پیش از افزودن به سبد، یک گزینه را انتخاب کنید."
+
+#: templates/shop/public/detail.html
+msgid "Choose an option"
+msgstr "یک گزینه را انتخاب کنید"
+
+#: apps/shop/forms.py
+msgid "Choose at least one attribute for a variable product."
+msgstr "برای محصول متغیر دست‌کم یک ویژگی انتخاب کنید."
+
+#: templates/shop/panel/product_form.html
+msgid "Choose attributes that have values first, then save the product."
+msgstr "ابتدا ویژگی‌هایی را که مقدار دارند انتخاب کنید و محصول را ذخیره کنید."
+
+#: apps/shop/panel.py
+msgid "Edit attribute"
+msgstr "ویرایش ویژگی"
+
+#: apps/shop/forms.py
+msgid "Empty = the product's weight."
+msgstr "خالی = وزن محصول."
+
+#: apps/shop/forms.py
+msgid "Empty = the shop-wide threshold."
+msgstr "خالی = آستانهٔ کل فروشگاه."
+
+#: apps/shop/forms.py
+msgid "Enter at least one value."
+msgstr "دست‌کم یک مقدار وارد کنید."
+
+#: templates/shop/public/detail.html
+msgid "From"
+msgstr "از"
+
+#: templates/shop/panel/product_form.html
+msgid "Generate variants"
+msgstr "ساخت خودکار تنوع‌ها"
+
+#: templates/shop/panel/products.html
+msgid "Low stock"
+msgstr "کمبود موجودی"
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Low stock: %(count)s product(s) need restocking"
+msgstr "کمبود موجودی: %(count)s محصول نیاز به تأمین دارد"
+
+#: templates/shop/panel/products.html
+msgid "Manage attributes"
+msgstr "مدیریت ویژگی‌ها"
+
+#: templates/shop/panel/attributes.html
+msgid "New attribute"
+msgstr "ویژگی تازه"
+
+#: templates/shop/panel/product_form.html
+msgid "No variants yet."
+msgstr "هنوز تنوعی وجود ندارد."
+
+#: apps/shop/forms.py
+msgid "One value per line, e.g. Red, Green, Blue."
+msgstr "هر مقدار در یک خط، مثلاً قرمز، سبز، آبی."
+
+#: templates/shop/public/detail.html
+#, python-format
+msgid "Only %(stock)s left"
+msgstr "فقط %(stock)s عدد مانده"
+
+#: apps/shop/models.py
+msgid "Product attribute"
+msgstr "ویژگی محصول"
+
+#: apps/shop/models.py
+msgid "Product attributes"
+msgstr "ویژگی‌های محصول"
+
+#: apps/shop/models.py
+msgid "Product tag"
+msgstr "برچسب محصول"
+
+#: apps/shop/models.py
+msgid "Product tags"
+msgstr "برچسب‌های محصول"
+
+#: templates/shop/public/detail.html
+msgid "Related products"
+msgstr "محصولات مرتبط"
+
+#: apps/shop/models.py
+msgid "SKU"
+msgstr "کد کالا (SKU)"
+
+#: templates/shop/panel/product_form.html
+msgid "Save variants"
+msgstr "ذخیرهٔ تنوع‌ها"
+
+#: apps/shop/forms.py
+msgid "Separate tags with a comma."
+msgstr "برچسب‌ها را با ویرگول جدا کنید."
+
+#: templates/shop/panel/products.html
+msgid "Show all"
+msgstr "نمایش همه"
+
+#: templates/shop/panel/products.html
+msgid "Show them"
+msgstr "نمایش آن‌ها"
+
+#: templates/shop/panel/attributes.html
+msgid "There is no attribute."
+msgstr "هیچ ویژگی‌ای وجود ندارد."
+
+#: apps/shop/notify.py
+msgid "These items have reached the low-stock threshold:"
+msgstr "این کالاها به آستانهٔ کمبود موجودی رسیده‌اند:"
+
+#: apps/shop/forms.py
+#, python-format
+msgid "These values are used by variants and cannot be removed: %(values)s"
+msgstr "این مقدارها در تنوع‌ها استفاده شده‌اند و حذف نمی‌شوند: %(values)s"
+
+#: apps/shop/forms.py
+msgid "This SKU is already used on this site."
+msgstr "این کد کالا پیش‌تر در این سایت استفاده شده است."
+
+#: apps/shop/panel.py
+msgid "This attribute is used by variants and cannot be deleted."
+msgstr "این ویژگی در تنوع‌ها استفاده شده و حذف نمی‌شود."
+
+#: templates/shop/panel/attributes.html
+msgid "Value"
+msgstr "مقدار"
+
+#: templates/shop/panel/attributes.html
+msgid "Values"
+msgstr "مقادیر"
+
+#: apps/shop/models.py
+msgid "Variable (colour, size ...)"
+msgstr "متغیر (رنگ، اندازه ...)"
+
+#: apps/shop/models.py
+msgid "Variant"
+msgstr "تنوع"
+
+#: apps/shop/panel.py
+#, python-format
+msgid "Variants of “%(name)s” were generated"
+msgstr "تنوع‌های «%(name)s» ساخته شد"
+
+#: apps/shop/panel.py
+#, python-format
+msgid "Variants of “%(name)s” were saved"
+msgstr "تنوع‌های «%(name)s» ذخیره شد"
+
+#: apps/shop/panel.py
+msgid "Variants saved."
+msgstr "تنوع‌ها ذخیره شد."
+
+#: apps/shop/models.py
+msgid "Variants"
+msgstr "تنوع‌ها"
+
+#: templates/shop/public/detail.html
+msgid "Varies by"
+msgstr "بسته به"
+
+#: apps/shop/forms.py
+msgid "Weight (grams)"
+msgstr "وزن (گرم)"
+
+#: apps/shop/forms.py
+msgid "For a variable product: the attributes its variants differ by (e.g. colour, size)."
+msgstr "برای محصول متغیر: ویژگی‌هایی که تنوع‌ها بر پایهٔ آن‌ها فرق می‌کنند (مثلاً رنگ، اندازه)."
+
+#: apps/shop/forms.py
+msgid "A category cannot be placed under itself or one of its own sub-categories."
+msgstr "یک دسته نمی‌تواند زیر خودش یا یکی از زیردسته‌های خودش قرار بگیرد."
+
+#: apps/shop/panel.py
+#, python-format
+msgid "That would create more than %(limit)s variants; use fewer attributes or values."
+msgstr "این کار بیش از %(limit)s تنوع می‌سازد؛ ویژگی‌ها یا مقدارها را کمتر کنید."
+
+#: templates/shop/panel/attributes.html
+msgid "Properties such as colour or size that a variable product's variants differ by."
+msgstr "ویژگی‌هایی مثل رنگ یا اندازه که تنوع‌های یک محصول متغیر بر پایهٔ آن‌ها فرق می‌کنند."
+
+#: templates/shop/panel/product_form.html
+msgid "Create a variant for every combination of the chosen attributes. Existing variants are kept."
+msgstr "برای هر ترکیب از ویژگی‌های انتخاب‌شده یک تنوع بساز. تنوع‌های موجود حفظ می‌شوند."

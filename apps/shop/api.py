@@ -23,9 +23,11 @@ class Paginator(PageNumberPagination):
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    parent = serializers.SlugRelatedField(slug_field="slug", read_only=True)
+
     class Meta:
         model = ProductCategory
-        fields = ["id", "name", "slug"]
+        fields = ["id", "name", "slug", "parent"]
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -36,11 +38,15 @@ class ProductSerializer(serializers.ModelSerializer):
     final_price = serializers.IntegerField(read_only=True)
     discount_amount = serializers.IntegerField(read_only=True)
     in_stock = serializers.BooleanField(read_only=True)
+    tags = serializers.SlugRelatedField(many=True, slug_field="slug", read_only=True)
+    variants = serializers.SerializerMethodField()
+    price_max = serializers.SerializerMethodField()
+    related = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
         fields = ["id", "name", "slug", "kind", "category", "description", "price", "discount_percent", "discount_amount", "final_price",
-                  "in_stock", "stock", "image", "images", "url"]
+                  "in_stock", "stock", "image", "images", "url", "sku", "weight_grams", "tags", "variants", "price_max", "related"]
 
     def to_representation(self, obj):
         data = super().to_representation(obj)
@@ -57,6 +63,22 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def get_image(self, obj):
         return self.context["request"].build_absolute_uri(obj.image.url) if obj.image else None
+
+    def get_price_max(self, obj):
+        return obj.price_range[1] if obj.is_variable else obj.final_price
+
+    def get_variants(self, obj):
+        if not obj.is_variable:
+            return []
+        req = self.context["request"]
+        return [{"id": v.pk, "sku": v.sku, "options": [{"attribute": o.attribute.slug, "value": o.slug, "label": o.value} for o in v.options.all()], "price": v.price,
+                 "final_price": v.final_price, "discount_amount": v.discount_amount, "in_stock": v.in_stock, "stock": v.stock if v.track_stock else None,
+                 "weight_grams": v.weight, "image": req.build_absolute_uri(v.image.url) if v.image else ""} for v in obj.active_variants()]
+
+    def get_related(self, obj):
+        from .services import related_products
+
+        return [r.slug for r in related_products(obj)]
 
     def get_images(self, obj):
         req = self.context["request"]
@@ -109,8 +131,8 @@ class ProductListAPI(ListAPIView):
         from .services import search_products
 
         p = self.request.query_params
-        return search_products(_catalog(self.request).select_related("category").prefetch_related("gallery"), q=p.get("q", ""), category=p.get("category", ""),
-                               kind=p.get("kind", ""), sort=p.get("sort", ""))
+        return search_products(_catalog(self.request).select_related("category").prefetch_related("gallery", "variants__options__attribute", "tags"), q=p.get("q", ""),
+                               category=p.get("category", ""), kind=p.get("kind", ""), sort=p.get("sort", ""), tag=p.get("tag", ""))
 
 
 class ProductDetailAPI(RetrieveAPIView):
@@ -121,7 +143,7 @@ class ProductDetailAPI(RetrieveAPIView):
     lookup_url_kwarg = "slug"
 
     def get_queryset(self):
-        return _catalog(self.request).select_related("category").prefetch_related("gallery")
+        return _catalog(self.request).select_related("category").prefetch_related("gallery", "variants__options__attribute", "tags")
 
 
 class CanViewOrders(BasePermission):

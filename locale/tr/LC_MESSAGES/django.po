@@ -11845,3 +11845,256 @@ msgstr "Bitir"
 #: templates/plugins/module_setup.html
 msgid "Follow these steps to get the store ready. Each step opens the real page and is ticked automatically when it is done. You can skip the guide and open it again later."
 msgstr "Mağazayı hazırlamak için bu adımları izleyin. Her adım gerçek sayfayı açar ve tamamlandığında otomatik işaretlenir. Rehberi atlayıp daha sonra yeniden açabilirsiniz."
+
+#: templates/shop/panel/products.html
+#, python-format
+msgid "%(count)s product(s) are at or below their low-stock threshold."
+msgstr "%(count)s ürün düşük stok eşiğinde veya altında."
+
+#: apps/shop/panel.py
+#, python-format
+msgid "%(count)s variant(s) were created."
+msgstr "%(count)s varyant oluşturuldu."
+
+#: templates/shop/public/detail.html
+#, python-format
+msgid "%(count)s variants"
+msgstr "%(count)s varyant"
+
+#: apps/shop/notify.py
+#, python-format
+msgid "- %(name)s%(sku)s: %(stock)s left (alert at %(threshold)s)"
+msgstr "- %(name)s%(sku)s: %(stock)s kaldı (uyarı eşiği %(threshold)s)"
+
+#: templates/shop/panel/products.html
+msgid "All stock levels"
+msgstr "Tüm stok düzeyleri"
+
+#: apps/shop/forms.py
+msgid "At most 20 tags per product."
+msgstr "Ürün başına en fazla 20 etiket."
+
+#: apps/shop/forms.py
+msgid "At most 50 values per attribute."
+msgstr "Özellik başına en fazla 50 değer."
+
+#: apps/shop/panel.py
+msgid "Attribute deleted."
+msgstr "Özellik silindi."
+
+#: apps/shop/forms.py
+msgid "Attribute name"
+msgstr "Özellik adı"
+
+#: apps/shop/panel.py
+msgid "Attribute saved."
+msgstr "Özellik kaydedildi."
+
+#: apps/shop/panel.py
+#, python-format
+msgid "Attribute “%(name)s” was deleted"
+msgstr "“%(name)s” özelliği silindi"
+
+#: apps/shop/panel.py
+#, python-format
+msgid "Attribute “%(name)s” was saved"
+msgstr "“%(name)s” özelliği kaydedildi"
+
+#: apps/shop/forms.py
+#, python-format
+msgid "Categories can be nested at most %(levels)s levels deep."
+msgstr "Kategoriler en fazla %(levels)s düzey iç içe olabilir."
+
+#: apps/shop/views.py
+msgid "Choose an option before adding to the cart."
+msgstr "Sepete eklemeden önce bir seçenek belirleyin."
+
+#: templates/shop/public/detail.html
+msgid "Choose an option"
+msgstr "Bir seçenek belirleyin"
+
+#: apps/shop/forms.py
+msgid "Choose at least one attribute for a variable product."
+msgstr "Değişken ürün için en az bir özellik seçin."
+
+#: templates/shop/panel/product_form.html
+msgid "Choose attributes that have values first, then save the product."
+msgstr "Önce değeri olan özellikleri seçin, ardından ürünü kaydedin."
+
+#: apps/shop/panel.py
+msgid "Edit attribute"
+msgstr "Özelliği düzenle"
+
+#: apps/shop/forms.py
+msgid "Empty = the product's weight."
+msgstr "Boş = ürünün ağırlığı."
+
+#: apps/shop/forms.py
+msgid "Empty = the shop-wide threshold."
+msgstr "Boş = mağaza genelindeki eşik."
+
+#: apps/shop/forms.py
+msgid "Enter at least one value."
+msgstr "En az bir değer girin."
+
+#: templates/shop/public/detail.html
+msgid "From"
+msgstr "Başlangıç"
+
+#: templates/shop/panel/product_form.html
+msgid "Generate variants"
+msgstr "Varyantları oluştur"
+
+#: templates/shop/panel/products.html
+msgid "Low stock"
+msgstr "Düşük stok"
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Low stock: %(count)s product(s) need restocking"
+msgstr "Düşük stok: %(count)s ürünün yeniden stoklanması gerekiyor"
+
+#: templates/shop/panel/products.html
+msgid "Manage attributes"
+msgstr "Özellikleri yönet"
+
+#: templates/shop/panel/attributes.html
+msgid "New attribute"
+msgstr "Yeni özellik"
+
+#: templates/shop/panel/product_form.html
+msgid "No variants yet."
+msgstr "Henüz varyant yok."
+
+#: apps/shop/forms.py
+msgid "One value per line, e.g. Red, Green, Blue."
+msgstr "Her satıra bir değer; örn. Kırmızı, Yeşil, Mavi."
+
+#: templates/shop/public/detail.html
+#, python-format
+msgid "Only %(stock)s left"
+msgstr "Yalnızca %(stock)s kaldı"
+
+#: apps/shop/models.py
+msgid "Product attribute"
+msgstr "Ürün özelliği"
+
+#: apps/shop/models.py
+msgid "Product attributes"
+msgstr "Ürün özellikleri"
+
+#: apps/shop/models.py
+msgid "Product tag"
+msgstr "Ürün etiketi"
+
+#: apps/shop/models.py
+msgid "Product tags"
+msgstr "Ürün etiketleri"
+
+#: templates/shop/public/detail.html
+msgid "Related products"
+msgstr "İlgili ürünler"
+
+#: apps/shop/models.py
+msgid "SKU"
+msgstr "Stok kodu (SKU)"
+
+#: templates/shop/panel/product_form.html
+msgid "Save variants"
+msgstr "Varyantları kaydet"
+
+#: apps/shop/forms.py
+msgid "Separate tags with a comma."
+msgstr "Etiketleri virgülle ayırın."
+
+#: templates/shop/panel/products.html
+msgid "Show all"
+msgstr "Tümünü göster"
+
+#: templates/shop/panel/products.html
+msgid "Show them"
+msgstr "Göster"
+
+#: templates/shop/panel/attributes.html
+msgid "There is no attribute."
+msgstr "Özellik yok."
+
+#: apps/shop/notify.py
+msgid "These items have reached the low-stock threshold:"
+msgstr "Bu ürünler düşük stok eşiğine ulaştı:"
+
+#: apps/shop/forms.py
+#, python-format
+msgid "These values are used by variants and cannot be removed: %(values)s"
+msgstr "Bu değerler varyantlarda kullanılıyor ve kaldırılamaz: %(values)s"
+
+#: apps/shop/forms.py
+msgid "This SKU is already used on this site."
+msgstr "Bu stok kodu bu sitede zaten kullanılıyor."
+
+#: apps/shop/panel.py
+msgid "This attribute is used by variants and cannot be deleted."
+msgstr "Bu özellik varyantlarda kullanılıyor ve silinemez."
+
+#: templates/shop/panel/attributes.html
+msgid "Value"
+msgstr "Değer"
+
+#: templates/shop/panel/attributes.html
+msgid "Values"
+msgstr "Değerler"
+
+#: apps/shop/models.py
+msgid "Variable (colour, size ...)"
+msgstr "Değişken (renk, beden ...)"
+
+#: apps/shop/models.py
+msgid "Variant"
+msgstr "Varyant"
+
+#: apps/shop/panel.py
+#, python-format
+msgid "Variants of “%(name)s” were generated"
+msgstr "“%(name)s” varyantları oluşturuldu"
+
+#: apps/shop/panel.py
+#, python-format
+msgid "Variants of “%(name)s” were saved"
+msgstr "“%(name)s” varyantları kaydedildi"
+
+#: apps/shop/panel.py
+msgid "Variants saved."
+msgstr "Varyantlar kaydedildi."
+
+#: apps/shop/models.py
+msgid "Variants"
+msgstr "Varyantlar"
+
+#: templates/shop/public/detail.html
+msgid "Varies by"
+msgstr "Şuna göre değişir:"
+
+#: apps/shop/forms.py
+msgid "Weight (grams)"
+msgstr "Ağırlık (gram)"
+
+#: apps/shop/forms.py
+msgid "For a variable product: the attributes its variants differ by (e.g. colour, size)."
+msgstr "Değişken ürün için: varyantların farklılaştığı özellikler (örn. renk, beden)."
+
+#: apps/shop/forms.py
+msgid "A category cannot be placed under itself or one of its own sub-categories."
+msgstr "Bir kategori kendi altına veya kendi alt kategorilerinden birinin altına yerleştirilemez."
+
+#: apps/shop/panel.py
+#, python-format
+msgid "That would create more than %(limit)s variants; use fewer attributes or values."
+msgstr "Bu işlem %(limit)s varyanttan fazlasını oluşturur; daha az özellik veya değer kullanın."
+
+#: templates/shop/panel/attributes.html
+msgid "Properties such as colour or size that a variable product's variants differ by."
+msgstr "Değişken bir ürünün varyantlarını farklılaştıran renk veya beden gibi özellikler."
+
+#: templates/shop/panel/product_form.html
+msgid "Create a variant for every combination of the chosen attributes. Existing variants are kept."
+msgstr "Seçilen özelliklerin her kombinasyonu için bir varyant oluştur. Mevcut varyantlar korunur."

@@ -4,15 +4,36 @@
   <div>{% if p.image %}<img src="{{ p.image.url }}" alt="{{ p.name }}" width="800" height="600" style="width:100%;height:auto;border-radius:.6rem">{% endif %}
     {% if gallery %}<ul class="thumbs">{% for g in gallery %}<li><img src="{{ g.image.url }}" alt="{{ g.alt|default:p.name }}" loading="lazy" width="200" height="150"></li>{% endfor %}</ul>{% endif %}</div>
   <div>
-    {% if p.category %}<p class="muted">{% trans "Category:" %} <a href="{% url 'shop:list' %}?category={{ p.category.slug }}">{{ p.category.name }}</a></p>{% endif %}
+    {% if p.category %}<p class="muted">{% trans "Category:" %} <a href="{% url 'shop:list' %}?category={{ p.category.slug }}">{{ p.category.path_name }}</a></p>{% endif %}
+    {% if p.sku %}<p class="muted">{% trans "SKU" %}: <span class="ltr">{{ p.sku }}</span></p>{% endif %}
+    {% if p.is_variable %}
+      {% with price_low=p.price_range.0 price_high=p.price_range.1 %}
+      <p class="price" style="font-size:1.4rem">{% if p.has_price_range %}{% price price_low %} – {% price price_high %}{% else %}{% price price_low %}{% endif %}</p>{% endwith %}
+    {% else %}
     <p class="price" style="font-size:1.4rem">{% if p.has_discount %}<del>{% price p.price %}</del> <span class="badge">{% blocktrans trimmed with discount_percent=p.discount_percent|fa_digits %}{{ discount_percent }}% off{% endblocktrans %}</span><br>{% endif %}{% price p.final_price %}</p>
+    {% endif %}
     {% if p.is_digital %}<p class="muted">{% trans "Digital product — after a successful payment, the download link appears on the order page." %}</p>{% endif %}
-    {% if p.in_stock %}{% if p.track_stock %}<p class="muted">{% blocktrans trimmed with stock=p.stock|fa_digits %}In stock: {{ stock }}{% endblocktrans %}</p>{% endif %}
+    {% if p.weight_grams and not p.is_variable %}<p class="muted">{% trans "Weight (grams)" %}: {{ p.weight_grams|fa_digits }}</p>{% endif %}
+    {% if p.in_stock %}
     <form method="post" action="{% url 'shop:cart_add' %}">{% csrf_token %}<input type="hidden" name="product" value="{{ p.pk }}">
-      {% if not p.is_digital %}<p><label for="qty">{% trans "Count" %}</label> <input id="qty" type="number" name="qty" value="1" min="1"{% if p.track_stock %} max="{{ p.stock }}"{% endif %}></p>{% endif %}
+      {% if p.is_variable %}
+      <fieldset class="variants"><legend>{% trans "Choose an option" %}</legend>
+        {% for v in variants %}<p><label><input type="radio" name="variant" value="{{ v.pk }}" required{% if not v.in_stock %} disabled{% endif %}>
+          {{ v.label }} — {% price v.final_price %}{% if v.has_discount %} <del>{% price v.price %}</del>{% endif %}
+          {% if v.sku %}<span class="muted ltr">{{ v.sku }}</span>{% endif %}
+          {% if not v.in_stock %}<span class="badge">{% trans "Out of stock" %}</span>{% elif v.track_stock and v.is_low_stock %}<span class="badge">{% blocktrans trimmed with stock=v.stock|fa_digits %}Only {{ stock }} left{% endblocktrans %}</span>{% endif %}
+          {% if v.image %}<img src="{{ v.image.url }}" alt="{{ v.label }}" loading="lazy" width="40" height="40" style="vertical-align:middle;border-radius:.3rem">{% endif %}</label></p>{% endfor %}
+      </fieldset>
+      {% elif p.track_stock %}<p class="muted">{% blocktrans trimmed with stock=p.stock|fa_digits %}In stock: {{ stock }}{% endblocktrans %}{% if p.is_low_stock %} — <strong>{% trans "Low stock" %}</strong>{% endif %}</p>{% endif %}
+      {% if not p.is_digital %}<p><label for="qty">{% trans "Count" %}</label> <input id="qty" type="number" name="qty" value="1" min="1"{% if p.track_stock and not p.is_variable %} max="{{ p.stock }}"{% endif %}></p>{% endif %}
       <button class="btn btn-primary" type="submit">{% trans "Add to cart" %}</button></form>
     {% else %}<p><span class="badge">{% trans "Out of stock" %}</span></p>{% endif %}
+    {% if tags %}<p class="muted">{% trans "Tags" %}: {% for t in tags %}<a href="{% url 'shop:list' %}?tag={{ t.slug }}">{{ t.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</p>{% endif %}
     {% if p.description %}<div style="margin-top:1rem">{{ p.description|linebreaks }}</div>{% endif %}
   </div>
 </div>
+{% if related %}<section aria-labelledby="related-h"><h2 id="related-h" style="font-size:1.15rem">{% trans "Related products" %}</h2>
+<ul class="grid">{% for r in related %}<li class="card"><a href="{{ r.get_absolute_url }}">
+  {% if r.image %}<img src="{{ r.image.url }}" alt="{{ r.name }}" loading="lazy" width="400" height="300">{% else %}<div class="ph" role="img" aria-label="{% trans "No image" %}"></div>{% endif %}
+  <div class="card-body"><h3 style="font-size:1rem;margin:.2rem 0">{{ r.name }}</h3><p class="price">{% if r.has_price_range %}{% trans "From" %} {% endif %}{% price r.price_range.0 %}</p></div></a></li>{% endfor %}</ul></section>{% endif %}
 <p><a href="{% url 'shop:cart' %}">{% blocktrans trimmed with cart_count=cart_count|fa_digits %}Cart ({{ cart_count }}){% endblocktrans %}</a> · <a href="{% url 'shop:list' %}">{% trans "Continue shopping" %}</a></p>
