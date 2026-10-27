@@ -6,6 +6,7 @@ from django.db import connection
 from django.test import TestCase
 from django.test.utils import CaptureQueriesContext
 
+from apps.plugins import state as plugin_state
 from apps.updater import middleware
 
 
@@ -19,7 +20,8 @@ class MaintenanceCacheStabilityTests(TestCase):
         with CaptureQueriesContext(connection) as first:
             self.client.get("/fa/")
         real = time.monotonic
-        with mock.patch("apps.updater.middleware.time.monotonic", side_effect=lambda: real() + 5):
+        # time moves for the maintenance cache only: the plugin list has its own 3 s cache (checked when public URLs resolve)
+        with mock.patch("apps.updater.middleware.time.monotonic", side_effect=lambda: real() + 5), mock.patch.object(plugin_state, "TTL", 10**6):
             with CaptureQueriesContext(connection) as later:
                 self.client.get("/fa/")
         self.assertEqual(len(first), len(later))
