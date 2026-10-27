@@ -1,7 +1,7 @@
 {% load i18n %}
-{% load ravix_ui %}
+{% load ravix_ui shop_ui %}
 <div class="alert" role="note" style="border-color:#8a5a10;color:inherit">{% trans "⚠ This is a <strong>test payment gateway</strong> page and no money is moved." %}</div>
-<p>{% blocktrans trimmed with number=payment.order.number amount=tx.amount|money currency=currency %}Order {{ number }} — amount: <strong>{{ amount }} {{ currency }}</strong>{% endblocktrans %}</p>
+<p>{% price tx.amount payment as shown_amount %}{% blocktrans trimmed with number=payment.order.number amount=shown_amount %}Order {{ number }} — amount: <strong>{{ amount }}</strong>{% endblocktrans %}</p>
 {% if tx.state == 'pending' %}
 <form method="post">{% csrf_token %}
 <button class="btn btn-primary" name="action" value="pay" type="submit">{% trans "Simulate successful payment" %}</button>

@@ -27,17 +27,8 @@ from apps.sites.middleware import current_site
 
 from . import gateways, services
 from .forms import CheckoutForm
-from .models import Order, Payment, Product, ProductCategory, SandboxTransaction
-
-
-def currency_label() -> str:
-    """Display label of the shop currency. The built-in Persian labels are translated; a custom label is shown as set."""
-    label = settings.SHOP_CURRENCY_LABEL
-    if label == "تومان":
-        return gettext("Toman")
-    if label == "ریال":
-        return gettext("Rial")
-    return label
+from . import money
+from .models import Order, Payment, Product, ProductCategory, SandboxTransaction, ShopSettings
 
 
 class ShopView(View):
@@ -53,7 +44,8 @@ class ShopView(View):
         return super().dispatch(request, *args, **kwargs)
 
     def render(self, request, template, ctx, *, title, description="", robots="", status=200, jsonld=None, og_image="", path=None, crumbs=()):
-        ctx = {**ctx, "currency": currency_label(), "site_obj": self.site, "cart_count": sum(services.cart_raw(request, self.site).values()) if hasattr(request, "session") else 0}
+        shop_settings = ShopSettings.for_site(self.site)
+        ctx = {**ctx, "shop_settings": shop_settings, "currency": shop_settings.currency, "site_obj": self.site, "cart_count": sum(services.cart_raw(request, self.site).values()) if hasattr(request, "session") else 0}
         body = mark_safe('<link rel="stylesheet" href="' + static("shop/shop.css") + '"><div class="container shop">'
                          + render_to_string(f"shop/public/{template}", ctx, request=request) + "</div>")
         item = PageItem(title=title, url=request.path, body_html=body, date_display="", date_iso="", builder=True, show_title=True)
@@ -126,8 +118,9 @@ class ProductDetailView(ShopView):
         p = get_object_or_404(Product.objects.select_related("category"), site=self.site, slug=slug, is_active=True)
         gallery = list(p.gallery.all())
         img = absolute_url(request, p.image.url) if p.image else ""
+        offer_price, offer_currency = money.jsonld_offer(p.final_price, ShopSettings.for_site(self.site).currency)
         ld = {"@context": "https://schema.org", "@type": "Product", "name": p.name, "description": clip(p.description, 300),
-              "offers": {"@type": "Offer", "price": str(p.final_price), "priceCurrency": "IRT" if settings.SHOP_CURRENCY_CODE == "IRT" else "IRR",
+              "offers": {"@type": "Offer", "price": offer_price, "priceCurrency": offer_currency,
                          "availability": "https://schema.org/InStock" if p.in_stock else "https://schema.org/OutOfStock",
                          "url": absolute_url(request, p.get_absolute_url())}}
         if img:

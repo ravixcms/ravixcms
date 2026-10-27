@@ -39,7 +39,7 @@ plugins/my_hello/
 `"models": true` ⇒ اپ با برچسب `plugin_<slug>`؛ جدول‌ها باید `plugin_<slug>_*` باشند و مهاجرت‌ها فقط عملیات ساختاری (نه `RunPython`/`RunSQL`). ساخت مهاجرت (فقط DEBUG): `python manage.py plugin_makemigrations my_plugin`.
 
 ## ۵. hookها
-فقط فهرست رسمی (`apps/plugins/hooks_registry.py`): `public.seo`، `comments.before_save`، `comments.created`، `comments.status_changed`، `content.saved` (رزرو). خروجی filterها محدود و پاک‌سازی می‌شود (مثلاً `public.seo` فقط `title, description, canonical, robots, og_type, og_image`).
+فقط فهرست رسمی (`apps/plugins/hooks_registry.py`): `public.seo`، `comments.before_save`، `comments.created`، `comments.status_changed`، `shop.order_status_changed`، `content.saved` (رزرو). خروجی filterها محدود و پاک‌سازی می‌شود (مثلاً `public.seo` فقط `title, description, canonical, robots, og_type, og_image`).
 
 ## ۶. آزمون و انتشار
 - آزمون افزونه با همان `manage.py test` (نمونه‌ها: `plugins/contact_form`، `plugins/seo_toolkit`).

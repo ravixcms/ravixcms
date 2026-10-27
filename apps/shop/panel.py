@@ -16,8 +16,8 @@ from apps.sites.access import can_access_site, panel_site
 
 from . import services
 from . import gateways
-from .forms import CategoryForm, GatewayConfigForm, ProductForm, ProductImageForm
-from .models import GatewayConfig, Payment
+from .forms import CategoryForm, GatewayConfigForm, ProductForm, ProductImageForm, ShopSettingsForm
+from .models import GatewayConfig, Payment, ShopSettings
 from .payments import registry, vault
 from .models import Order, OrderEvent, Product, ProductCategory, ProductImage
 
@@ -348,3 +348,22 @@ class PaymentInquireView(OrdersAdmin, View):
         (messages.warning if outcome == "unknown" else messages.success)(request, text)
         log_event(request, AuditLog.Action.UPDATE, order, (gettext("Payment status inquiry %(reference)s for order %(number)s: %(outcome)s") % {"reference": payment.reference[:8], "number": order.number, "outcome": outcome}))
         return redirect("shop_panel:order", pk=pk)
+
+
+class ShopSettingsView(ProductsAdmin, View):
+    def _render(self, request, form, status=200):
+        return render(request, "shop/panel/settings.html", {"form": form, "site_obj": self.site}, status=status)
+
+    def get(self, request):
+        return self._render(request, ShopSettingsForm(instance=ShopSettings.for_site(self.site), site=self.site))
+
+    def post(self, request):
+        before = ShopSettings.for_site(self.site)
+        old = (before.currency, before.show_in_toman)
+        form = ShopSettingsForm(request.POST, instance=before, site=self.site)
+        if not form.is_valid():
+            return self._render(request, form, 400)
+        saved = form.save()
+        log_event(request, AuditLog.Action.UPDATE, saved, (gettext("Shop settings changed: currency %(old)s → %(new)s") % {"old": old[0], "new": saved.currency}))
+        messages.success(request, gettext("Shop settings were saved."))
+        return redirect("shop_panel:settings")

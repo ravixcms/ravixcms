@@ -10605,11 +10605,6 @@ msgid ""
 msgstr "⚠ هذه صفحة <strong>بوابة دفع تجريبية</strong> ولا يُنقل فيها أي مال."
 
 #: templates/shop/public/sandbox.html
-#, python-format
-msgid "Order %(number)s — amount: <strong>%(amount)s %(currency)s</strong>"
-msgstr "الطلب %(number)s — المبلغ: <strong>%(amount)s %(currency)s</strong>"
-
-#: templates/shop/public/sandbox.html
 msgid "Simulate successful payment"
 msgstr "محاكاة دفع ناجح"
 
@@ -11380,3 +11375,117 @@ msgstr "عرض الموقع"
 #: templates/layouts/panel.html
 msgid "View site in a new tab"
 msgstr "عرض الموقع في علامة تبويب جديدة"
+
+#: apps/shop/apps.py templates/shop/panel/settings.html
+msgid "Shop settings"
+msgstr "إعدادات المتجر"
+
+#: apps/shop/forms.py
+msgid "Rial is recommended for Iran; USD and EUR are stored in cents."
+msgstr "يُوصى بالريال لإيران؛ يُخزَّن الدولار واليورو بالسنت."
+
+#: apps/shop/forms.py
+msgid "Showing prices in toman is only possible for a rial shop."
+msgstr "عرض الأسعار بالتومان ممكن فقط لمتجر بالريال."
+
+#: apps/shop/forms.py
+msgid "Fixed once the shop has a product or an order."
+msgstr "لا يمكن تغييرها بعد إضافة أول منتج أو طلب."
+
+#: apps/shop/forms.py
+msgid "The price must be greater than zero."
+msgstr "يجب أن يكون السعر أكبر من صفر."
+
+#: apps/shop/models.py
+msgid "Low-stock alert at"
+msgstr "تنبيه نقص المخزون عند"
+
+#: apps/shop/models.py
+msgid "Only for a rial shop: prices are shown and typed in toman, while rials stay stored and are what the gateway receives."
+msgstr "لمتجر بالريال فقط: تُعرض الأسعار وتُدخل بالتومان، بينما يبقى التخزين بالريال وهو المبلغ الذي تستلمه بوابة الدفع."
+
+#: apps/shop/models.py
+msgid "Email customers about order status"
+msgstr "إرسال بريد إلى العملاء بحالة الطلب"
+
+#: apps/shop/models.py
+msgid "Show prices in toman"
+msgstr "عرض الأسعار بالتومان"
+
+#: apps/shop/money.py
+msgid "This currency does not allow that many decimal places."
+msgstr "لا تسمح هذه العملة بهذا العدد من الخانات العشرية."
+
+#: apps/shop/money.py
+msgid "US dollar"
+msgstr "الدولار الأمريكي"
+
+#: apps/shop/money.py
+msgid "Euro"
+msgstr "اليورو"
+
+#: apps/shop/money.py
+msgid "Enter a valid amount."
+msgstr "أدخل مبلغًا صالحًا."
+
+#: apps/shop/notify.py
+msgid "Your order has been shipped."
+msgstr "تم شحن طلبك."
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Order %(number)s: %(status)s"
+msgstr "الطلب %(number)s: %(status)s"
+
+#: apps/shop/notify.py
+msgid "Your order was refunded."
+msgstr "تم استرداد مبلغ طلبك."
+
+#: apps/shop/notify.py
+msgid "Your order was cancelled."
+msgstr "تم إلغاء طلبك."
+
+#: apps/shop/notify.py
+msgid "Your order is being prepared."
+msgstr "طلبك قيد التجهيز."
+
+#: apps/shop/notify.py
+msgid "We received your order. It will be processed once the payment is confirmed."
+msgstr "استلمنا طلبك. ستتم معالجته بعد تأكيد الدفع."
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Grand total: %(total)s"
+msgstr "الإجمالي: %(total)s"
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Order number: %(number)s"
+msgstr "رقم الطلب: %(number)s"
+
+#: apps/shop/notify.py
+msgid "Your payment was confirmed. Thank you!"
+msgstr "تم تأكيد الدفع. شكرًا لك!"
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Track your order: %(url)s"
+msgstr "تتبّع طلبك: %(url)s"
+
+#: apps/shop/notify.py
+msgid "Your order is complete."
+msgstr "اكتمل طلبك."
+
+#: apps/shop/panel.py
+#, python-format
+msgid "Shop settings changed: currency %(old)s → %(new)s"
+msgstr "تم تغيير إعدادات المتجر: العملة %(old)s ← %(new)s"
+
+#: apps/shop/panel.py
+msgid "Shop settings were saved."
+msgstr "تم حفظ إعدادات المتجر."
+
+#: templates/shop/public/sandbox.html
+#, python-format
+msgid "Order %(number)s — amount: <strong>%(amount)s</strong>"
+msgstr "الطلب %(number)s — المبلغ: <strong>%(amount)s</strong>"

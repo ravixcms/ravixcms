@@ -10280,11 +10280,6 @@ msgid ""
 msgstr "⚠ 这是<strong>测试支付网关</strong>页面，不会转移任何资金。"
 
 #: templates/shop/public/sandbox.html
-#, python-format
-msgid "Order %(number)s — amount: <strong>%(amount)s %(currency)s</strong>"
-msgstr "订单 %(number)s — 金额：<strong>%(amount)s %(currency)s</strong>"
-
-#: templates/shop/public/sandbox.html
 msgid "Simulate successful payment"
 msgstr "模拟支付成功"
 
@@ -11019,3 +11014,117 @@ msgstr "查看站点"
 #: templates/layouts/panel.html
 msgid "View site in a new tab"
 msgstr "在新标签页中查看站点"
+
+#: apps/shop/apps.py templates/shop/panel/settings.html
+msgid "Shop settings"
+msgstr "商店设置"
+
+#: apps/shop/forms.py
+msgid "Rial is recommended for Iran; USD and EUR are stored in cents."
+msgstr "伊朗建议使用里亚尔；美元和欧元以分为单位存储。"
+
+#: apps/shop/forms.py
+msgid "Showing prices in toman is only possible for a rial shop."
+msgstr "仅里亚尔商店可以用土曼显示价格。"
+
+#: apps/shop/forms.py
+msgid "Fixed once the shop has a product or an order."
+msgstr "商店有商品或订单后不能再更改。"
+
+#: apps/shop/forms.py
+msgid "The price must be greater than zero."
+msgstr "价格必须大于零。"
+
+#: apps/shop/models.py
+msgid "Low-stock alert at"
+msgstr "库存不足提醒阈值"
+
+#: apps/shop/models.py
+msgid "Only for a rial shop: prices are shown and typed in toman, while rials stay stored and are what the gateway receives."
+msgstr "仅适用于里亚尔商店：价格以土曼显示和输入，但仍以里亚尔存储，支付网关收到的也是里亚尔金额。"
+
+#: apps/shop/models.py
+msgid "Email customers about order status"
+msgstr "向顾客发送订单状态邮件"
+
+#: apps/shop/models.py
+msgid "Show prices in toman"
+msgstr "以土曼显示价格"
+
+#: apps/shop/money.py
+msgid "This currency does not allow that many decimal places."
+msgstr "该货币不允许这么多小数位。"
+
+#: apps/shop/money.py
+msgid "US dollar"
+msgstr "美元"
+
+#: apps/shop/money.py
+msgid "Euro"
+msgstr "欧元"
+
+#: apps/shop/money.py
+msgid "Enter a valid amount."
+msgstr "请输入有效金额。"
+
+#: apps/shop/notify.py
+msgid "Your order has been shipped."
+msgstr "您的订单已发货。"
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Order %(number)s: %(status)s"
+msgstr "订单 %(number)s：%(status)s"
+
+#: apps/shop/notify.py
+msgid "Your order was refunded."
+msgstr "您的订单已退款。"
+
+#: apps/shop/notify.py
+msgid "Your order was cancelled."
+msgstr "您的订单已取消。"
+
+#: apps/shop/notify.py
+msgid "Your order is being prepared."
+msgstr "您的订单正在准备中。"
+
+#: apps/shop/notify.py
+msgid "We received your order. It will be processed once the payment is confirmed."
+msgstr "我们已收到您的订单，付款确认后将开始处理。"
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Grand total: %(total)s"
+msgstr "总计：%(total)s"
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Order number: %(number)s"
+msgstr "订单号：%(number)s"
+
+#: apps/shop/notify.py
+msgid "Your payment was confirmed. Thank you!"
+msgstr "您的付款已确认，谢谢！"
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Track your order: %(url)s"
+msgstr "查看订单：%(url)s"
+
+#: apps/shop/notify.py
+msgid "Your order is complete."
+msgstr "您的订单已完成。"
+
+#: apps/shop/panel.py
+#, python-format
+msgid "Shop settings changed: currency %(old)s → %(new)s"
+msgstr "商店设置已更改：货币 %(old)s → %(new)s"
+
+#: apps/shop/panel.py
+msgid "Shop settings were saved."
+msgstr "商店设置已保存。"
+
+#: templates/shop/public/sandbox.html
+#, python-format
+msgid "Order %(number)s — amount: <strong>%(amount)s</strong>"
+msgstr "订单 %(number)s — 金额：<strong>%(amount)s</strong>"

@@ -1,0 +1,12 @@
+{% extends "layouts/panel.html" %}
+{% load i18n %}
+{% block title %}{% trans "Shop settings" %}{% endblock %}
+{% block page_title %}{% trans "Shop settings" %}{% endblock %}
+{% block content_class %}content-narrow{% endblock %}
+{% block content %}
+<form method="post" novalidate data-once>{% csrf_token %}
+  {% include "partials/_form_errors.html" %}
+  <div class="card" style="margin-bottom:1.25rem"><div class="card-body">{% for field in form %}{% include "partials/_field.html" with field=field %}{% endfor %}</div></div>
+  <button class="btn" type="submit">{% trans "Save" %}</button>
+</form>
+{% endblock %}

@@ -173,6 +173,7 @@ python manage.py plugin_makemigrations my_plugin    # فقط DEBUG: ساخت م�
 | `content.saved` | action | `fn(api, **ctx)` | (رزرو برای نسخه‌های بعد) |
 | `comments.before_save` | filter | `fn(data, api, *, post_id, request)` ← dict | بررسی دیدگاه پیش از ذخیره (مثلاً ضداسپم خارجی). `data` شامل `author_name, author_email, body, status, ip, parent_id` است |
 | `comments.created` | action | `fn(api, *, comment_id, post_id, status, request)` | پس از ثبت دیدگاه عمومی |
+| `shop.order_status_changed` | action | `fn(api, *, order_id, number, old_status, new_status, phone, language, text)` | پس از تغییر وضعیت سفارش فروشگاه (hook پیامک) |
 | `comments.status_changed` | action | `fn(api, *, comment_id, old, new, request)` | پس از تغییر وضعیت توسط مدیر (تأیید، اسپم، زباله، …) |
 
 خروجی `comments.before_save` فقط کلید `status` را می‌تواند تغییر دهد و فقط به `pending` یا `spam`؛ افزونه نمی‌تواند دیدگاه را خودکار تأیید کند یا متن را عوض کند.

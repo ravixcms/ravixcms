@@ -20,7 +20,7 @@ from apps.public.seo import absolute_url
 from . import gateways
 from apps.core.recipient import current_language, language_for_order, use_language
 
-from .models import Order, OrderEvent, OrderItem, Payment, PaymentEvent, Product
+from .models import Order, OrderEvent, OrderItem, Payment, PaymentEvent, Product, ShopSettings
 from .payments import TransactionContext, VerifyStatus, vault
 
 logger = logging.getLogger("ravix.shop")
@@ -106,8 +106,13 @@ def search_products(qs, *, q="", category="", kind="", sort=""):
 
 # ------------------------------------------------------------------ تاریخچه
 def record_event(order, kind, *, message="", from_status="", to_status="", actor=None):
-    return OrderEvent.objects.create(order=order, kind=kind, message=message[:300], from_status=from_status, to_status=to_status,
-                                     actor=actor if getattr(actor, "pk", None) else None)
+    event = OrderEvent.objects.create(order=order, kind=kind, message=message[:300], from_status=from_status, to_status=to_status,
+                                      actor=actor if getattr(actor, "pk", None) else None)
+    if kind in (OrderEvent.Kind.STATUS, OrderEvent.Kind.CREATED) and to_status and from_status != to_status:
+        from . import notify  # customer email + SMS hook
+
+        notify.order_status_changed(order, from_status, to_status)
+    return event
 
 
 # ------------------------------------------------------------------ سفارش
@@ -143,7 +148,7 @@ def create_order(site, lines, data: dict, user=None) -> Order:
         raise ShopError(gettext("An address is required for shipping a physical product."))
     if not needs_shipping:
         data["address"] = ""
-    order = Order.objects.create(site=site, currency=settings.SHOP_CURRENCY_CODE, subtotal=subtotal, discount_total=discount, total=total, needs_shipping=needs_shipping,
+    order = Order.objects.create(site=site, currency=ShopSettings.for_site(site).currency, subtotal=subtotal, discount_total=discount, total=total, needs_shipping=needs_shipping,
                                  user=user if authed else None, language=current_language(), **data)
     OrderItem.objects.bulk_create([
         OrderItem(order=order, product=p, name=p.name, kind=p.kind, list_price=p.price, unit_discount=p.discount_amount, unit_price=p.final_price,

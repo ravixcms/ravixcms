@@ -13,7 +13,7 @@ from . import gateways
 from apps.sites.access import can_access_site, panel_site
 from apps.sites.middleware import current_site
 
-from .models import Order, OrderEvent, OrderItem, Payment, Product, ProductCategory
+from .models import Order, OrderEvent, OrderItem, Payment, Product, ProductCategory, ShopSettings
 
 
 class Paginator(PageNumberPagination):
@@ -44,6 +44,10 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def to_representation(self, obj):
         data = super().to_representation(obj)
+        cache = self.context.setdefault("_shop_currency", {})
+        if obj.site_id not in cache:
+            cache[obj.site_id] = ShopSettings.for_site(obj.site).currency
+        data["currency"] = cache[obj.site_id]  # ISO-like code; amounts are integers in its base unit (IRR rial, IRT toman, USD/EUR cents)
         if not obj.track_stock:
             data["stock"] = None  # موجودی نامحدود
         return data
@@ -154,7 +158,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ["id", "number", "status", "status_label", "customer_name", "phone", "subtotal", "discount_total", "total", "needs_shipping", "created_at", "paid_at"]
+        fields = ["id", "number", "status", "status_label", "customer_name", "phone", "subtotal", "discount_total", "total", "currency", "needs_shipping", "created_at", "paid_at"]
 
 
 class OrderDetailSerializer(OrderSerializer):

@@ -2,6 +2,10 @@
 قالب: [Keep a Changelog](https://keepachangelog.com/)، نسخه‌بندی [SemVer](https://semver.org/).
 
 ## [Unreleased]
+### Added (Ravix Shop ۱: پایه)
+- نام بیرونی «Ravix Shop»؛ مدل `ShopSettings` (ارز هر سایت، نمایش به تومان، آستانهٔ کمبود موجودی، ایمیل به مشتری) با migration `0006` که سایت‌های موجود را با همان ارز قبلی نگه می‌دارد و برگشت‌پذیر است؛ صفحهٔ «تنظیمات فروشگاه» در پنل.
+- چندارزی: ریال، تومان، دلار، یورو با ذخیرهٔ عدد صحیح در واحد پایه و قالب‌بندی درست هر زبان (`apps/shop/money.py`، برچسب `{% price %}`)؛ فرم قیمت محصول به واحد نمایشی؛ `currency` در API؛ تست محافظ اشتباه ۱۰ برابری ریال/تومان.
+- ایمیل وضعیت سفارش به زبان مشتری و hook `shop.order_status_changed` برای پیامک.
 ### Changed (کارایی nginx و Gunicorn، رفتار install.sh)
 - قالب nginx (`deploy/nginx-ravix.conf`): gzip با `Vary` و فهرست نوع‌های کامل‌تر (تصویر/فونت فشرده نمی‌شوند)، keepalive به مرورگر و به Gunicorn (`upstream keepalive`، `proxy_http_version 1.1`)، `/static/` با نام هش‌دار `max-age=31536000, immutable` و نام بدون هش یک ساعت (نگاشت `$ravix_static_cache`)، `/media/` سی‌روزه.
 - `install.sh` بعد از certbot **HTTP/2** را روشن می‌کند (`http2 on;` برای nginx ≥ 1.25.1، وگرنه پارامتر `http2`؛ با نسخهٔ پشتیبان و بازگرداندن در صورت رد شدن توسط `nginx -t`).

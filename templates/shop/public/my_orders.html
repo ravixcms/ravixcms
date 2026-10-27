@@ -1,6 +1,6 @@
-{% load i18n %}
+{% load i18n shop_ui %}
 {% load ravix_ui %}
 {% if orders %}<table><thead><tr><th>{% trans "Number" %}</th><th>{% trans "Date" %}</th><th>{% trans "Status" %}</th><th>{% trans "Amount" %}</th></tr></thead><tbody>
-{% for o in orders %}<tr><td><a href="{{ o.get_public_url }}">{{ o.number }}</a></td><td>{{ o.created_at|date:"Y/m/d" }}</td><td>{{ o.get_status_display }}</td><td>{{ o.total|money }} {{ currency }}</td></tr>{% endfor %}</tbody></table>
+{% for o in orders %}<tr><td><a href="{{ o.get_public_url }}">{{ o.number }}</a></td><td>{{ o.created_at|date:"Y/m/d" }}</td><td>{{ o.get_status_display }}</td><td>{% price o.total o %}</td></tr>{% endfor %}</tbody></table>
 {% else %}<p>{% trans "You have not placed any order yet." %}</p>{% endif %}
 <p><a href="{% url 'shop:list' %}">{% trans "Back to the shop" %}</a></p>

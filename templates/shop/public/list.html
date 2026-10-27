@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n shop_ui %}
 {% load ravix_ui %}
 <form method="get" class="shop-filters" role="search" aria-label="{% trans "Search products" %}">
   <label class="sr-only" for="shop-q">{% trans "Find" %}</label><input id="shop-q" type="search" name="q" value="{{ q }}" maxlength="80" placeholder="{% trans "Product search" %}">
@@ -18,7 +18,7 @@
     {% if p.image %}<img src="{{ p.image.url }}" alt="{{ p.name }}" loading="lazy" width="400" height="300">{% else %}<div class="ph" role="img" aria-label="{% trans "No image" %}"></div>{% endif %}
     <div class="card-body"><h2 style="font-size:1.05rem;margin:.2rem 0">{{ p.name }}</h2>
     {% if p.category %}<p class="muted">{{ p.category.name }}</p>{% endif %}
-    <p class="price">{% if p.has_discount %}<del>{{ p.price|money }}</del> <span class="badge">{% blocktrans trimmed with discount_percent=p.discount_percent|fa_digits %}{{ discount_percent }}% off{% endblocktrans %}</span> {% endif %}{{ p.final_price|money }} {{ currency }}</p>
+    <p class="price">{% if p.has_discount %}<del>{% price p.price %}</del> <span class="badge">{% blocktrans trimmed with discount_percent=p.discount_percent|fa_digits %}{{ discount_percent }}% off{% endblocktrans %}</span> {% endif %}{% price p.final_price %}</p>
     {% if p.is_digital %}<span class="badge">{% trans "Digital" %}</span>{% endif %}{% if not p.in_stock %}<span class="badge">{% trans "Out of stock" %}</span>{% endif %}</div></a></li>
 {% endfor %}
 </ul>

@@ -11088,12 +11088,6 @@ msgstr ""
 "kein Geld bewegt."
 
 #: templates/shop/public/sandbox.html
-#, python-format
-msgid "Order %(number)s — amount: <strong>%(amount)s %(currency)s</strong>"
-msgstr ""
-"Bestellung %(number)s — Betrag: <strong>%(amount)s %(currency)s</strong>"
-
-#: templates/shop/public/sandbox.html
 msgid "Simulate successful payment"
 msgstr "Erfolgreiche Zahlung simulieren"
 
@@ -11893,3 +11887,117 @@ msgstr "Website ansehen"
 #: templates/layouts/panel.html
 msgid "View site in a new tab"
 msgstr "Website in neuem Tab ansehen"
+
+#: apps/shop/apps.py templates/shop/panel/settings.html
+msgid "Shop settings"
+msgstr "Shop-Einstellungen"
+
+#: apps/shop/forms.py
+msgid "Rial is recommended for Iran; USD and EUR are stored in cents."
+msgstr "Für den Iran wird der Rial empfohlen; USD und EUR werden in Cent gespeichert."
+
+#: apps/shop/forms.py
+msgid "Showing prices in toman is only possible for a rial shop."
+msgstr "Preise in Toman anzuzeigen ist nur in einem Rial-Shop möglich."
+
+#: apps/shop/forms.py
+msgid "Fixed once the shop has a product or an order."
+msgstr "Nicht mehr änderbar, sobald der Shop ein Produkt oder eine Bestellung hat."
+
+#: apps/shop/forms.py
+msgid "The price must be greater than zero."
+msgstr "Der Preis muss größer als null sein."
+
+#: apps/shop/models.py
+msgid "Low-stock alert at"
+msgstr "Warnung bei niedrigem Bestand ab"
+
+#: apps/shop/models.py
+msgid "Only for a rial shop: prices are shown and typed in toman, while rials stay stored and are what the gateway receives."
+msgstr "Nur für einen Rial-Shop: Preise werden in Toman angezeigt und eingegeben, gespeichert bleibt in Rial – und das erhält auch das Gateway."
+
+#: apps/shop/models.py
+msgid "Email customers about order status"
+msgstr "Kunden per E-Mail über den Bestellstatus informieren"
+
+#: apps/shop/models.py
+msgid "Show prices in toman"
+msgstr "Preise in Toman anzeigen"
+
+#: apps/shop/money.py
+msgid "This currency does not allow that many decimal places."
+msgstr "Diese Währung erlaubt nicht so viele Nachkommastellen."
+
+#: apps/shop/money.py
+msgid "US dollar"
+msgstr "US-Dollar"
+
+#: apps/shop/money.py
+msgid "Euro"
+msgstr "Euro"
+
+#: apps/shop/money.py
+msgid "Enter a valid amount."
+msgstr "Geben Sie einen gültigen Betrag ein."
+
+#: apps/shop/notify.py
+msgid "Your order has been shipped."
+msgstr "Ihre Bestellung wurde versandt."
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Order %(number)s: %(status)s"
+msgstr "Bestellung %(number)s: %(status)s"
+
+#: apps/shop/notify.py
+msgid "Your order was refunded."
+msgstr "Ihre Bestellung wurde erstattet."
+
+#: apps/shop/notify.py
+msgid "Your order was cancelled."
+msgstr "Ihre Bestellung wurde storniert."
+
+#: apps/shop/notify.py
+msgid "Your order is being prepared."
+msgstr "Ihre Bestellung wird vorbereitet."
+
+#: apps/shop/notify.py
+msgid "We received your order. It will be processed once the payment is confirmed."
+msgstr "Wir haben Ihre Bestellung erhalten. Sie wird bearbeitet, sobald die Zahlung bestätigt ist."
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Grand total: %(total)s"
+msgstr "Gesamtsumme: %(total)s"
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Order number: %(number)s"
+msgstr "Bestellnummer: %(number)s"
+
+#: apps/shop/notify.py
+msgid "Your payment was confirmed. Thank you!"
+msgstr "Ihre Zahlung wurde bestätigt. Vielen Dank!"
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Track your order: %(url)s"
+msgstr "Bestellung verfolgen: %(url)s"
+
+#: apps/shop/notify.py
+msgid "Your order is complete."
+msgstr "Ihre Bestellung ist abgeschlossen."
+
+#: apps/shop/panel.py
+#, python-format
+msgid "Shop settings changed: currency %(old)s → %(new)s"
+msgstr "Shop-Einstellungen geändert: Währung %(old)s → %(new)s"
+
+#: apps/shop/panel.py
+msgid "Shop settings were saved."
+msgstr "Die Shop-Einstellungen wurden gespeichert."
+
+#: templates/shop/public/sandbox.html
+#, python-format
+msgid "Order %(number)s — amount: <strong>%(amount)s</strong>"
+msgstr "Bestellung %(number)s — Betrag: <strong>%(amount)s</strong>"

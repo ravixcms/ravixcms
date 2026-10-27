@@ -10909,11 +10909,6 @@ msgstr ""
 "nenhum dinheiro é movimentado."
 
 #: templates/shop/public/sandbox.html
-#, python-format
-msgid "Order %(number)s — amount: <strong>%(amount)s %(currency)s</strong>"
-msgstr "Pedido %(number)s — valor: <strong>%(amount)s %(currency)s</strong>"
-
-#: templates/shop/public/sandbox.html
 msgid "Simulate successful payment"
 msgstr "Simular pagamento bem-sucedido"
 
@@ -11710,3 +11705,117 @@ msgstr "Ver site"
 #: templates/layouts/panel.html
 msgid "View site in a new tab"
 msgstr "Ver site em uma nova aba"
+
+#: apps/shop/apps.py templates/shop/panel/settings.html
+msgid "Shop settings"
+msgstr "Configurações da loja"
+
+#: apps/shop/forms.py
+msgid "Rial is recommended for Iran; USD and EUR are stored in cents."
+msgstr "Para o Irã, recomenda-se o rial; USD e EUR são armazenados em centavos."
+
+#: apps/shop/forms.py
+msgid "Showing prices in toman is only possible for a rial shop."
+msgstr "Exibir preços em tomans só é possível em uma loja em riais."
+
+#: apps/shop/forms.py
+msgid "Fixed once the shop has a product or an order."
+msgstr "Não pode ser alterada depois que a loja tiver um produto ou um pedido."
+
+#: apps/shop/forms.py
+msgid "The price must be greater than zero."
+msgstr "O preço deve ser maior que zero."
+
+#: apps/shop/models.py
+msgid "Low-stock alert at"
+msgstr "Alerta de estoque baixo em"
+
+#: apps/shop/models.py
+msgid "Only for a rial shop: prices are shown and typed in toman, while rials stay stored and are what the gateway receives."
+msgstr "Somente para loja em riais: os preços são exibidos e digitados em tomans, mas continuam armazenados em riais, que é o valor recebido pelo gateway."
+
+#: apps/shop/models.py
+msgid "Email customers about order status"
+msgstr "Enviar e-mail aos clientes sobre o status do pedido"
+
+#: apps/shop/models.py
+msgid "Show prices in toman"
+msgstr "Exibir preços em tomans"
+
+#: apps/shop/money.py
+msgid "This currency does not allow that many decimal places."
+msgstr "Esta moeda não permite tantas casas decimais."
+
+#: apps/shop/money.py
+msgid "US dollar"
+msgstr "Dólar americano"
+
+#: apps/shop/money.py
+msgid "Euro"
+msgstr "Euro"
+
+#: apps/shop/money.py
+msgid "Enter a valid amount."
+msgstr "Informe um valor válido."
+
+#: apps/shop/notify.py
+msgid "Your order has been shipped."
+msgstr "Seu pedido foi enviado."
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Order %(number)s: %(status)s"
+msgstr "Pedido %(number)s: %(status)s"
+
+#: apps/shop/notify.py
+msgid "Your order was refunded."
+msgstr "Seu pedido foi reembolsado."
+
+#: apps/shop/notify.py
+msgid "Your order was cancelled."
+msgstr "Seu pedido foi cancelado."
+
+#: apps/shop/notify.py
+msgid "Your order is being prepared."
+msgstr "Seu pedido está sendo preparado."
+
+#: apps/shop/notify.py
+msgid "We received your order. It will be processed once the payment is confirmed."
+msgstr "Recebemos seu pedido. Ele será processado assim que o pagamento for confirmado."
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Grand total: %(total)s"
+msgstr "Total geral: %(total)s"
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Order number: %(number)s"
+msgstr "Número do pedido: %(number)s"
+
+#: apps/shop/notify.py
+msgid "Your payment was confirmed. Thank you!"
+msgstr "Seu pagamento foi confirmado. Obrigado!"
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Track your order: %(url)s"
+msgstr "Acompanhe seu pedido: %(url)s"
+
+#: apps/shop/notify.py
+msgid "Your order is complete."
+msgstr "Seu pedido foi concluído."
+
+#: apps/shop/panel.py
+#, python-format
+msgid "Shop settings changed: currency %(old)s → %(new)s"
+msgstr "Configurações da loja alteradas: moeda %(old)s → %(new)s"
+
+#: apps/shop/panel.py
+msgid "Shop settings were saved."
+msgstr "As configurações da loja foram salvas."
+
+#: templates/shop/public/sandbox.html
+#, python-format
+msgid "Order %(number)s — amount: <strong>%(amount)s</strong>"
+msgstr "Pedido %(number)s — valor: <strong>%(amount)s</strong>"

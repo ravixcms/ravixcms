@@ -6,7 +6,8 @@ from django import forms
 from django.conf import settings
 from django.core.exceptions import ValidationError
 
-from .models import DIGITAL_EXTENSIONS, Product, ProductCategory, ProductImage
+from . import money
+from .models import DIGITAL_EXTENSIONS, Product, ProductCategory, ProductImage, ShopSettings
 
 PHONE_RE = re.compile(r"^(\+98|0098|0)?9\d{9}$|^0\d{2,3}\d{7,8}$")
 _FA = str.maketrans("۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩", "01234567890123456789")
@@ -56,6 +57,12 @@ class ProductForm(forms.ModelForm):
     def __init__(self, *args, site, **kwargs):
         super().__init__(*args, **kwargs)
         self.site = site
+        self.shop = ShopSettings.for_site(site)
+        # The price is typed in the unit the panel shows (toman for a rial shop in toman mode, dollars for USD ...) and stored in the base unit.
+        shown = "IRT" if self.shop.toman_display else self.shop.currency
+        self.fields["price"] = forms.CharField(label=gettext("Price") + " (" + str(money.CURRENCIES[shown].name) + ")", widget=forms.TextInput(attrs={"dir": "ltr", "inputmode": "decimal"}))
+        if self.instance.pk:
+            self.initial["price"] = money.input_value(self.instance.price, self.shop.currency, show_toman=self.shop.toman_display)
         self.fields["slug"].required = False
         self.fields["slug"].help_text = gettext("If left empty, it is generated from the name.")
         self.fields["category"].queryset = ProductCategory.objects.filter(site=site)  # دستهٔ سایت دیگر قابل انتخاب نیست
@@ -64,6 +71,16 @@ class ProductForm(forms.ModelForm):
         self.fields["discount_percent"].required = False
         self.fields["stock"].required = False  # برای محصول بدون پیگیری موجودی لازم نیست
         self.fields["digital_file"].help_text = gettext("For digital products only. The file is stored in a private location and can be downloaded only after payment.")
+
+    def clean_price(self):
+        raw = str(self.cleaned_data["price"]).translate(_FA).replace("\u066c", "").replace(",", "").replace("\u066b", ".")
+        try:
+            value = money.parse_amount(raw, self.shop.currency, show_toman=self.shop.toman_display)
+        except ValueError as exc:
+            raise ValidationError(str(exc)) from None
+        if value < 1:
+            raise ValidationError(gettext("The price must be greater than zero."))
+        return value
 
     def clean(self):
         data = super().clean()
@@ -175,3 +192,30 @@ class GatewayConfigForm(forms.Form):
             if value and f.type == "choice" and value not in {c[0] for c in f.choices}:
                 self.add_error(f"cfg_{f.key}", gettext("The value is not allowed."))
         return data
+
+
+class ShopSettingsForm(forms.ModelForm):
+    """Currency can be chosen until the first product or order exists; after that it is read-only (stored amounts would change meaning)."""
+
+    class Meta:
+        model = ShopSettings
+        fields = ["currency", "show_in_toman", "low_stock_threshold", "notify_customers"]
+
+    def __init__(self, *args, site, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.site = site
+        self.locked = self.instance.currency_locked() if self.instance.site_id else False
+        self.fields["currency"] = forms.ChoiceField(label=gettext("Currency"), choices=money.CHOICES, disabled=self.locked,
+                                                    help_text=gettext("Fixed once the shop has a product or an order.") if self.locked else gettext("Rial is recommended for Iran; USD and EUR are stored in cents."))
+        self.fields["show_in_toman"].required = False
+
+    def clean(self):
+        data = super().clean()
+        currency = self.instance.currency if self.locked else data.get("currency")
+        if data.get("show_in_toman") and currency != "IRR":
+            self.add_error("show_in_toman", gettext("Showing prices in toman is only possible for a rial shop."))
+        return data
+
+    def save(self, commit=True):
+        self.instance.site = self.site
+        return super().save(commit)

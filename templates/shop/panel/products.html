@@ -1,5 +1,5 @@
 {% extends "layouts/panel.html" %}
-{% load i18n %}
+{% load i18n shop_ui %}
 {% load ravix_ui %}
 {% block title %}{% trans "Products" %}{% endblock %}
 {% block page_title %}{% trans "Products" %}{% endblock %}
@@ -8,7 +8,7 @@
 <div class="card">
   <form method="get" class="toolbar" role="search"><input type="search" name="q" value="{{ q }}" class="input grow" placeholder="{% trans "Search by name" %}" aria-label="{% trans "Search" %}"><button class="btn">{% icon "search" 18 %} {% trans "Search" %}</button></form>
   {% if page_obj %}<div class="table-wrap"><table class="table"><thead><tr><th>{% trans "Name" %}</th><th>{% trans "Price" %}</th><th>{% trans "Stock" %}</th><th>{% trans "Status" %}</th><th></th></tr></thead><tbody>
-  {% for p in page_obj %}<tr><td>{{ p.name }}</td><td>{{ p.price|money }}</td><td>{{ p.stock|fa_digits }}</td>
+  {% for p in page_obj %}<tr><td>{{ p.name }}</td><td>{% price p.price %}</td><td>{{ p.stock|fa_digits }}</td>
     <td><span class="badge {% if p.is_active %}badge-published{% else %}badge-draft{% endif %}">{% if p.is_active %}{% trans "Active" %}{% else %}{% trans "Inactive" %}{% endif %}</span></td>
     <td style="display:flex;gap:.4rem"><a class="btn btn-light btn-sm" href="{% url 'shop_panel:product_edit' p.pk %}">{% trans "Edit" %}</a>
     <form method="post" action="{% url 'shop_panel:product_delete' p.pk %}">{% csrf_token %}<button class="btn btn-danger btn-sm" type="submit">{% trans "Delete" %}</button></form></td></tr>{% endfor %}

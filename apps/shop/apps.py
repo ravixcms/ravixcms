@@ -5,7 +5,7 @@ from django.apps import AppConfig
 class ShopConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "apps.shop"
-    verbose_name = gettext_lazy("Shop")
+    verbose_name = "Ravix Shop"
 
     def ready(self):
         from apps.core.navigation import NavItem, register_nav_item
@@ -16,6 +16,8 @@ class ShopConfig(AppConfig):
                                   capability="shop.manage", active_urls=("shop_panel:categories", "shop_panel:category_create", "shop_panel:category_edit")))
         register_nav_item(NavItem(key="shop.gateways", label=gettext_lazy("Payment gateways"), url_name="shop_panel:gateways", icon="layers", section="content", order=62,
                                   capability="shop.gateways", active_urls=("shop_panel:gateways", "shop_panel:gateway_edit")))
+        register_nav_item(NavItem(key="shop.settings", label=gettext_lazy("Shop settings"), url_name="shop_panel:settings", icon="layers", section="content", order=63,
+                                  capability="shop.manage", active_urls=("shop_panel:settings",)))
         from . import gateways  # noqa: F401 - ثبت درگاه آزمایشی داخلی
         register_nav_item(NavItem(key="shop.orders", label=gettext_lazy("Orders"), url_name="shop_panel:orders", icon="list", section="content", order=61,
                                   capability="shop.orders", active_urls=("shop_panel:orders", "shop_panel:order")))

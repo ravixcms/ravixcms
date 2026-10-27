@@ -1,16 +1,16 @@
-{% load i18n %}
+{% load i18n shop_ui %}
 {% load ravix_ui %}
 {% if lines %}
 <form method="post" action="{% url 'shop:cart_update' %}">{% csrf_token %}
 <table><thead><tr><th>{% trans "Product" %}</th><th>{% trans "Price" %}</th><th>{% trans "Count" %}</th><th>{% trans "Total" %}</th></tr></thead><tbody>
 {% for l in lines %}<tr>
   <td><a href="{{ l.product.get_absolute_url }}">{{ l.product.name }}</a>{% if l.product.is_digital %} <span class="badge">{% trans "Digital" %}</span>{% endif %}{% if not l.ok %}<br><span class="errors">{% if l.product.is_digital and not l.product.digital_file %}{% trans "The product file is not ready" %}{% else %}{% blocktrans trimmed with stock=l.product.stock|fa_digits %}Not enough stock (available: {{ stock }}){% endblocktrans %}{% endif %}</span>{% endif %}</td>
-  <td>{% if l.product.has_discount %}<del>{{ l.product.price|money }}</del><br>{% endif %}{{ l.unit_price|money }}</td>
+  <td>{% if l.product.has_discount %}<del>{% price l.product.price %}</del><br>{% endif %}{% price l.unit_price %}</td>
   <td>{% if l.product.is_digital %}{% trans "1" %}{% else %}<label class="sr-only" for="q{{ l.product.pk }}">{% blocktrans trimmed with name=l.product.name %}Quantity of {{ name }}{% endblocktrans %}</label><input id="q{{ l.product.pk }}" type="number" name="qty_{{ l.product.pk }}" value="{{ l.qty }}" min="0" max="20">{% endif %}</td>
-  <td>{{ l.line_total|money }}</td></tr>{% endfor %}
+  <td>{% price l.line_total %}</td></tr>{% endfor %}
 </tbody><tfoot>
-{% if summary.discount %}<tr><th colspan="3">{% trans "Total before discount" %}</th><td>{{ summary.subtotal|money }}</td></tr><tr><th colspan="3">{% trans "Discount" %}</th><td>{{ summary.discount|money }}</td></tr>{% endif %}
-<tr><th colspan="3">{% trans "Final amount (calculated by the server)" %}</th><th>{{ total|money }} {{ currency }}</th></tr></tfoot></table>
+{% if summary.discount %}<tr><th colspan="3">{% trans "Total before discount" %}</th><td>{% price summary.subtotal %}</td></tr><tr><th colspan="3">{% trans "Discount" %}</th><td>{% price summary.discount %}</td></tr>{% endif %}
+<tr><th colspan="3">{% trans "Final amount (calculated by the server)" %}</th><th>{% price total %}</th></tr></tfoot></table>
 <p><button class="btn" type="submit">{% trans "Update cart (quantity 0 = remove)" %}</button> <a class="btn btn-primary" href="{% url 'shop:checkout' %}">{% trans "Continue and place order" %}</a></p>
 </form>
 {% else %}<p>{% trans "Your cart is empty." %}</p><p><a class="btn" href="{% url 'shop:list' %}">{% trans "View products" %}</a></p>{% endif %}

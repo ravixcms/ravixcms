@@ -1,8 +1,8 @@
-{% load i18n %}
+{% load i18n shop_ui %}
 {% load ravix_ui %}
 {% if gateway_error %}<div class="alert" role="alert">{{ gateway_error }}</div>{% endif %}
-<table><tbody>{% for l in lines %}<tr><td>{{ l.product.name }} × {{ l.qty|fa_digits }}</td><td>{{ l.line_total|money }}</td></tr>{% endfor %}</tbody>
-<tfoot>{% if summary.discount %}<tr><th>{% trans "Discount" %}</th><td>{{ summary.discount|money }}</td></tr>{% endif %}<tr><th>{% trans "Final amount" %}</th><th>{{ total|money }} {{ currency }}</th></tr></tfoot></table>
+<table><tbody>{% for l in lines %}<tr><td>{{ l.product.name }} × {{ l.qty|fa_digits }}</td><td>{% price l.line_total %}</td></tr>{% endfor %}</tbody>
+<tfoot>{% if summary.discount %}<tr><th>{% trans "Discount" %}</th><td>{% price summary.discount %}</td></tr>{% endif %}<tr><th>{% trans "Final amount" %}</th><th>{% price total %}</th></tr></tfoot></table>
 {% if not summary.needs_shipping %}<p class="muted">{% trans "Your order contains only digital products; no address is needed." %}</p>{% endif %}
 {% if not user.is_authenticated %}<p class="muted">{% trans "Guest purchase: keep the order page address for tracking." %}</p>{% endif %}
 <form method="post" novalidate>{% csrf_token %}

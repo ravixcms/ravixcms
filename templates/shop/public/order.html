@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n shop_ui %}
 {% load ravix_ui %}
 <p>{% blocktrans trimmed with number=order.number %}Order number: <strong>{{ number }}</strong> — status:{% endblocktrans %} <span class="badge">{{ order.get_status_display }}</span></p>
 {% if order.status == 'pending_payment' %}<p class="errors">{% trans "Payment for this order has not been confirmed yet." %}</p>
@@ -7,7 +7,7 @@
 {% elif order.status == 'refunded' %}<p>{% trans "This order was refunded; the download is no longer active." %}</p>
 {% elif can_download %}<p>{% trans "Your payment was confirmed successfully. Thank you." %}</p>{% endif %}
 <table><thead><tr><th>{% trans "Product" %}</th><th>{% trans "Count" %}</th><th>{% trans "Total" %}</th></tr></thead><tbody>
-{% for i in items %}<tr><td>{{ i.name }}{% if i.kind == 'digital' and can_download %} — <a href="{% url 'shop:download' order.number order.token i.pk %}" rel="nofollow">{% trans "Download" %}</a>{% endif %}</td><td>{{ i.quantity|fa_digits }}</td><td>{{ i.line_total|money }}</td></tr>{% endfor %}</tbody>
-<tfoot>{% if order.discount_total %}<tr><th colspan="2">{% trans "Discount" %}</th><td>{{ order.discount_total|money }}</td></tr>{% endif %}<tr><th colspan="2">{% trans "Grand total" %}</th><th>{{ order.total|money }} {{ currency }}</th></tr></tfoot></table>
+{% for i in items %}<tr><td>{{ i.name }}{% if i.kind == 'digital' and can_download %} — <a href="{% url 'shop:download' order.number order.token i.pk %}" rel="nofollow">{% trans "Download" %}</a>{% endif %}</td><td>{{ i.quantity|fa_digits }}</td><td>{% price i.line_total order %}</td></tr>{% endfor %}</tbody>
+<tfoot>{% if order.discount_total %}<tr><th colspan="2">{% trans "Discount" %}</th><td>{% price order.discount_total order %}</td></tr>{% endif %}<tr><th colspan="2">{% trans "Grand total" %}</th><th>{% price order.total order %}</th></tr></tfoot></table>
 {% if events %}<h2 style="font-size:1.05rem">{% trans "Order history" %}</h2><ul>{% for e in events %}<li>{{ e.created_at|date:"Y/m/d H:i" }} — {{ e.message|default:e.get_kind_display }}</li>{% endfor %}</ul>{% endif %}
 <p class="muted">{% trans "Keep this address to track the order; anyone who has the address can see the order." %}</p>

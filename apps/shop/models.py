@@ -303,3 +303,37 @@ class GatewayConfig(TimeStampedModel):
 
     def __str__(self):
         return f"{self.gateway}@{self.site_id}"
+
+
+class ShopSettings(TimeStampedModel):
+    """Ravix Shop settings of one site. The currency is chosen once: it is locked as soon as the site has a product or an order,
+    because every stored amount is an integer in that currency's base unit (see ``money.py``)."""
+
+    site = models.OneToOneField("sites.Site", on_delete=models.CASCADE, related_name="shop_settings")
+    currency = models.CharField(gettext_lazy("Currency"), max_length=3, default="IRT")
+    show_in_toman = models.BooleanField(gettext_lazy("Show prices in toman"), default=False,
+                                        help_text=gettext_lazy("Only for a rial shop: prices are shown and typed in toman, while rials stay stored and are what the gateway receives."))
+    low_stock_threshold = models.PositiveIntegerField(gettext_lazy("Low-stock alert at"), default=3)
+    notify_customers = models.BooleanField(gettext_lazy("Email customers about order status"), default=True)
+
+    class Meta:
+        verbose_name = "Ravix Shop"
+
+    def __str__(self):
+        return f"shop-settings@{self.site_id}"
+
+    @classmethod
+    def for_site(cls, site):
+        """The site's settings; a site that never saved any gets the deployment default (``RAVIX_SHOP_CURRENCY_CODE``) without writing a row."""
+        found = cls.objects.filter(site=site).first()
+        if found is not None:
+            return found
+        code = str(getattr(settings, "SHOP_CURRENCY_CODE", "IRT")).upper()
+        return cls(site=site, currency=code if code in ("IRR", "IRT", "USD", "EUR") else "IRT")
+
+    @property
+    def toman_display(self) -> bool:
+        return self.show_in_toman and self.currency == "IRR"
+
+    def currency_locked(self) -> bool:
+        return Product.objects.filter(site_id=self.site_id).exists() or Order.objects.filter(site_id=self.site_id).exists()

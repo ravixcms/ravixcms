@@ -11095,12 +11095,6 @@ msgstr ""
 "aucun argent n’est déplacé."
 
 #: templates/shop/public/sandbox.html
-#, python-format
-msgid "Order %(number)s — amount: <strong>%(amount)s %(currency)s</strong>"
-msgstr ""
-"Commande %(number)s — montant : <strong>%(amount)s %(currency)s</strong>"
-
-#: templates/shop/public/sandbox.html
 msgid "Simulate successful payment"
 msgstr "Simuler un paiement réussi"
 
@@ -11903,3 +11897,117 @@ msgstr "Voir le site"
 #: templates/layouts/panel.html
 msgid "View site in a new tab"
 msgstr "Voir le site dans un nouvel onglet"
+
+#: apps/shop/apps.py templates/shop/panel/settings.html
+msgid "Shop settings"
+msgstr "Réglages de la boutique"
+
+#: apps/shop/forms.py
+msgid "Rial is recommended for Iran; USD and EUR are stored in cents."
+msgstr "Le rial est recommandé pour l’Iran ; USD et EUR sont stockés en centimes."
+
+#: apps/shop/forms.py
+msgid "Showing prices in toman is only possible for a rial shop."
+msgstr "L’affichage des prix en tomans n’est possible que pour une boutique en rials."
+
+#: apps/shop/forms.py
+msgid "Fixed once the shop has a product or an order."
+msgstr "Non modifiable dès que la boutique a un produit ou une commande."
+
+#: apps/shop/forms.py
+msgid "The price must be greater than zero."
+msgstr "Le prix doit être supérieur à zéro."
+
+#: apps/shop/models.py
+msgid "Low-stock alert at"
+msgstr "Alerte de stock bas à"
+
+#: apps/shop/models.py
+msgid "Only for a rial shop: prices are shown and typed in toman, while rials stay stored and are what the gateway receives."
+msgstr "Uniquement pour une boutique en rials : les prix sont affichés et saisis en tomans, mais les rials restent stockés et sont ce que reçoit la passerelle."
+
+#: apps/shop/models.py
+msgid "Email customers about order status"
+msgstr "Envoyer aux clients un e-mail sur l’état de la commande"
+
+#: apps/shop/models.py
+msgid "Show prices in toman"
+msgstr "Afficher les prix en tomans"
+
+#: apps/shop/money.py
+msgid "This currency does not allow that many decimal places."
+msgstr "Cette devise n’admet pas autant de décimales."
+
+#: apps/shop/money.py
+msgid "US dollar"
+msgstr "Dollar américain"
+
+#: apps/shop/money.py
+msgid "Euro"
+msgstr "Euro"
+
+#: apps/shop/money.py
+msgid "Enter a valid amount."
+msgstr "Saisissez un montant valide."
+
+#: apps/shop/notify.py
+msgid "Your order has been shipped."
+msgstr "Votre commande a été expédiée."
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Order %(number)s: %(status)s"
+msgstr "Commande %(number)s : %(status)s"
+
+#: apps/shop/notify.py
+msgid "Your order was refunded."
+msgstr "Votre commande a été remboursée."
+
+#: apps/shop/notify.py
+msgid "Your order was cancelled."
+msgstr "Votre commande a été annulée."
+
+#: apps/shop/notify.py
+msgid "Your order is being prepared."
+msgstr "Votre commande est en cours de préparation."
+
+#: apps/shop/notify.py
+msgid "We received your order. It will be processed once the payment is confirmed."
+msgstr "Nous avons bien reçu votre commande. Elle sera traitée dès que le paiement sera confirmé."
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Grand total: %(total)s"
+msgstr "Total : %(total)s"
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Order number: %(number)s"
+msgstr "Numéro de commande : %(number)s"
+
+#: apps/shop/notify.py
+msgid "Your payment was confirmed. Thank you!"
+msgstr "Votre paiement a été confirmé. Merci !"
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Track your order: %(url)s"
+msgstr "Suivre votre commande : %(url)s"
+
+#: apps/shop/notify.py
+msgid "Your order is complete."
+msgstr "Votre commande est terminée."
+
+#: apps/shop/panel.py
+#, python-format
+msgid "Shop settings changed: currency %(old)s → %(new)s"
+msgstr "Réglages de la boutique modifiés : devise %(old)s → %(new)s"
+
+#: apps/shop/panel.py
+msgid "Shop settings were saved."
+msgstr "Les réglages de la boutique ont été enregistrés."
+
+#: templates/shop/public/sandbox.html
+#, python-format
+msgid "Order %(number)s — amount: <strong>%(amount)s</strong>"
+msgstr "Commande %(number)s — montant : <strong>%(amount)s</strong>"

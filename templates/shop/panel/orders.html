@@ -1,5 +1,5 @@
 {% extends "layouts/panel.html" %}
-{% load i18n %}
+{% load i18n shop_ui %}
 {% load ravix_ui %}
 {% block title %}{% trans "Orders" %}{% endblock %}
 {% block page_title %}{% trans "Orders" %}{% endblock %}
@@ -11,7 +11,7 @@
     <select name="who" class="input" aria-label="{% trans "Buyer type" %}"><option value="">{% trans "Users and guests" %}</option><option value="user" {% if who == "user" %}selected{% endif %}>{% trans "Registered users" %}</option><option value="guest" {% if who == "guest" %}selected{% endif %}>{% trans "Guest" %}</option></select>
     <button class="btn">{% icon "search" 18 %} {% trans "Actions" %}</button></form>
   {% if page_obj %}<div class="table-wrap"><table class="table"><thead><tr><th>{% trans "Number" %}</th><th>{% trans "Customer" %}</th><th>{% trans "Type" %}</th><th>{% trans "Amount" %}</th><th>{% trans "Status" %}</th><th>{% trans "Time" %}</th><th></th></tr></thead><tbody>
-  {% for o in page_obj %}<tr><td class="ltr">{{ o.number }}</td><td>{{ o.customer_name }}</td><td>{% if o.user %}{% trans "Member" %}{% else %}{% trans "Guest" %}{% endif %}</td><td>{{ o.total|money }}</td>
+  {% for o in page_obj %}<tr><td class="ltr">{{ o.number }}</td><td>{{ o.customer_name }}</td><td>{% if o.user %}{% trans "Member" %}{% else %}{% trans "Guest" %}{% endif %}</td><td>{% price o.total o %}</td>
     <td><span class="badge {% if o.status == 'paid' or o.status == 'completed' %}badge-published{% elif o.status == 'cancelled' %}badge-inactive{% else %}badge-warn{% endif %}">{{ o.get_status_display }}</span></td>
     <td>{{ o.created_at|jalali_datetime }}</td><td><a class="btn btn-light btn-sm" href="{% url 'shop_panel:order' o.pk %}">{% trans "Details" %}</a></td></tr>{% endfor %}
   </tbody></table></div>{% include "partials/_pagination.html" %}{% else %}<div class="empty">{% trans "There is no order." %}</div>{% endif %}

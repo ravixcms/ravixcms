@@ -10646,11 +10646,6 @@ msgstr ""
 "نمی‌شود."
 
 #: templates/shop/public/sandbox.html
-#, python-format
-msgid "Order %(number)s — amount: <strong>%(amount)s %(currency)s</strong>"
-msgstr "سفارش %(number)s — مبلغ: <strong>%(amount)s %(currency)s</strong>"
-
-#: templates/shop/public/sandbox.html
 msgid "Simulate successful payment"
 msgstr "شبیه‌سازی پرداخت موفق"
 
@@ -11431,3 +11426,117 @@ msgstr "مشاهدهٔ سایت"
 #: templates/layouts/panel.html
 msgid "View site in a new tab"
 msgstr "مشاهدهٔ سایت در تب جدید"
+
+#: apps/shop/apps.py templates/shop/panel/settings.html
+msgid "Shop settings"
+msgstr "تنظیمات فروشگاه"
+
+#: apps/shop/forms.py
+msgid "Rial is recommended for Iran; USD and EUR are stored in cents."
+msgstr "برای ایران ریال پیشنهاد می‌شود؛ دلار و یورو به‌صورت سنت ذخیره می‌شوند."
+
+#: apps/shop/forms.py
+msgid "Showing prices in toman is only possible for a rial shop."
+msgstr "نمایش قیمت به تومان فقط برای فروشگاه ریالی ممکن است."
+
+#: apps/shop/forms.py
+msgid "Fixed once the shop has a product or an order."
+msgstr "بعد از ثبت اولین محصول یا سفارش دیگر قابل تغییر نیست."
+
+#: apps/shop/forms.py
+msgid "The price must be greater than zero."
+msgstr "قیمت باید بیشتر از صفر باشد."
+
+#: apps/shop/models.py
+msgid "Low-stock alert at"
+msgstr "هشدار کمبود موجودی در"
+
+#: apps/shop/models.py
+msgid "Only for a rial shop: prices are shown and typed in toman, while rials stay stored and are what the gateway receives."
+msgstr "فقط برای فروشگاه ریالی: قیمت‌ها به تومان نمایش داده و وارد می‌شوند، اما ذخیره به ریال می‌ماند و همان مبلغ ریالی به درگاه ارسال می‌شود."
+
+#: apps/shop/models.py
+msgid "Email customers about order status"
+msgstr "ایمیل وضعیت سفارش به مشتری"
+
+#: apps/shop/models.py
+msgid "Show prices in toman"
+msgstr "نمایش قیمت‌ها به تومان"
+
+#: apps/shop/money.py
+msgid "This currency does not allow that many decimal places."
+msgstr "این ارز این تعداد رقم اعشار را نمی‌پذیرد."
+
+#: apps/shop/money.py
+msgid "US dollar"
+msgstr "دلار آمریکا"
+
+#: apps/shop/money.py
+msgid "Euro"
+msgstr "یورو"
+
+#: apps/shop/money.py
+msgid "Enter a valid amount."
+msgstr "مبلغ معتبر وارد کنید."
+
+#: apps/shop/notify.py
+msgid "Your order has been shipped."
+msgstr "سفارش شما ارسال شد."
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Order %(number)s: %(status)s"
+msgstr "سفارش %(number)s: %(status)s"
+
+#: apps/shop/notify.py
+msgid "Your order was refunded."
+msgstr "سفارش شما مسترد شد."
+
+#: apps/shop/notify.py
+msgid "Your order was cancelled."
+msgstr "سفارش شما لغو شد."
+
+#: apps/shop/notify.py
+msgid "Your order is being prepared."
+msgstr "سفارش شما در حال آماده‌سازی است."
+
+#: apps/shop/notify.py
+msgid "We received your order. It will be processed once the payment is confirmed."
+msgstr "سفارش شما ثبت شد. پس از تأیید پرداخت پردازش می‌شود."
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Grand total: %(total)s"
+msgstr "جمع کل: %(total)s"
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Order number: %(number)s"
+msgstr "شمارهٔ سفارش: %(number)s"
+
+#: apps/shop/notify.py
+msgid "Your payment was confirmed. Thank you!"
+msgstr "پرداخت شما تأیید شد. سپاسگزاریم!"
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Track your order: %(url)s"
+msgstr "پیگیری سفارش: %(url)s"
+
+#: apps/shop/notify.py
+msgid "Your order is complete."
+msgstr "سفارش شما تکمیل شد."
+
+#: apps/shop/panel.py
+#, python-format
+msgid "Shop settings changed: currency %(old)s → %(new)s"
+msgstr "تنظیمات فروشگاه تغییر کرد: ارز %(old)s ← %(new)s"
+
+#: apps/shop/panel.py
+msgid "Shop settings were saved."
+msgstr "تنظیمات فروشگاه ذخیره شد."
+
+#: templates/shop/public/sandbox.html
+#, python-format
+msgid "Order %(number)s — amount: <strong>%(amount)s</strong>"
+msgstr "سفارش %(number)s — مبلغ: <strong>%(amount)s</strong>"

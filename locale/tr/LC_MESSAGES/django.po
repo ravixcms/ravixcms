@@ -10798,11 +10798,6 @@ msgstr ""
 "olmaz."
 
 #: templates/shop/public/sandbox.html
-#, python-format
-msgid "Order %(number)s — amount: <strong>%(amount)s %(currency)s</strong>"
-msgstr "Sipariş %(number)s — tutar: <strong>%(amount)s %(currency)s</strong>"
-
-#: templates/shop/public/sandbox.html
 msgid "Simulate successful payment"
 msgstr "Başarılı ödemeyi simüle et"
 
@@ -11595,3 +11590,117 @@ msgstr "Siteyi görüntüle"
 #: templates/layouts/panel.html
 msgid "View site in a new tab"
 msgstr "Siteyi yeni sekmede görüntüle"
+
+#: apps/shop/apps.py templates/shop/panel/settings.html
+msgid "Shop settings"
+msgstr "Mağaza ayarları"
+
+#: apps/shop/forms.py
+msgid "Rial is recommended for Iran; USD and EUR are stored in cents."
+msgstr "İran için Rial önerilir; USD ve EUR sent olarak saklanır."
+
+#: apps/shop/forms.py
+msgid "Showing prices in toman is only possible for a rial shop."
+msgstr "Fiyatları toman olarak göstermek yalnızca rial kullanan mağazalarda mümkündür."
+
+#: apps/shop/forms.py
+msgid "Fixed once the shop has a product or an order."
+msgstr "İlk ürün veya sipariş oluşturulduktan sonra değiştirilemez."
+
+#: apps/shop/forms.py
+msgid "The price must be greater than zero."
+msgstr "Fiyat sıfırdan büyük olmalıdır."
+
+#: apps/shop/models.py
+msgid "Low-stock alert at"
+msgstr "Düşük stok uyarısı eşiği"
+
+#: apps/shop/models.py
+msgid "Only for a rial shop: prices are shown and typed in toman, while rials stay stored and are what the gateway receives."
+msgstr "Yalnızca rial mağazası için: fiyatlar toman olarak gösterilir ve girilir; saklanan ve ödeme geçidine gönderilen tutar rial olarak kalır."
+
+#: apps/shop/models.py
+msgid "Email customers about order status"
+msgstr "Müşterilere sipariş durumu e-postası gönder"
+
+#: apps/shop/models.py
+msgid "Show prices in toman"
+msgstr "Fiyatları toman olarak göster"
+
+#: apps/shop/money.py
+msgid "This currency does not allow that many decimal places."
+msgstr "Bu para birimi bu kadar ondalık basamağa izin vermez."
+
+#: apps/shop/money.py
+msgid "US dollar"
+msgstr "ABD doları"
+
+#: apps/shop/money.py
+msgid "Euro"
+msgstr "Euro"
+
+#: apps/shop/money.py
+msgid "Enter a valid amount."
+msgstr "Geçerli bir tutar girin."
+
+#: apps/shop/notify.py
+msgid "Your order has been shipped."
+msgstr "Siparişiniz kargoya verildi."
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Order %(number)s: %(status)s"
+msgstr "Sipariş %(number)s: %(status)s"
+
+#: apps/shop/notify.py
+msgid "Your order was refunded."
+msgstr "Siparişinizin ücreti iade edildi."
+
+#: apps/shop/notify.py
+msgid "Your order was cancelled."
+msgstr "Siparişiniz iptal edildi."
+
+#: apps/shop/notify.py
+msgid "Your order is being prepared."
+msgstr "Siparişiniz hazırlanıyor."
+
+#: apps/shop/notify.py
+msgid "We received your order. It will be processed once the payment is confirmed."
+msgstr "Siparişinizi aldık. Ödeme onaylandıktan sonra işleme alınacaktır."
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Grand total: %(total)s"
+msgstr "Genel toplam: %(total)s"
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Order number: %(number)s"
+msgstr "Sipariş numarası: %(number)s"
+
+#: apps/shop/notify.py
+msgid "Your payment was confirmed. Thank you!"
+msgstr "Ödemeniz onaylandı. Teşekkür ederiz!"
+
+#: apps/shop/notify.py
+#, python-format
+msgid "Track your order: %(url)s"
+msgstr "Siparişinizi takip edin: %(url)s"
+
+#: apps/shop/notify.py
+msgid "Your order is complete."
+msgstr "Siparişiniz tamamlandı."
+
+#: apps/shop/panel.py
+#, python-format
+msgid "Shop settings changed: currency %(old)s → %(new)s"
+msgstr "Mağaza ayarları değişti: para birimi %(old)s → %(new)s"
+
+#: apps/shop/panel.py
+msgid "Shop settings were saved."
+msgstr "Mağaza ayarları kaydedildi."
+
+#: templates/shop/public/sandbox.html
+#, python-format
+msgid "Order %(number)s — amount: <strong>%(amount)s</strong>"
+msgstr "Sipariş %(number)s — tutar: <strong>%(amount)s</strong>"

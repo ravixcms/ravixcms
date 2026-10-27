@@ -15,6 +15,7 @@ urlpatterns = [
     path("shop/categories/new/", panel.CategoryEditView.as_view(), name="category_create"),
     path("shop/categories/<int:pk>/", panel.CategoryEditView.as_view(), name="category_edit"),
     path("shop/categories/<int:pk>/delete/", panel.CategoryDeleteView.as_view(), name="category_delete"),
+    path("shop/settings/", panel.ShopSettingsView.as_view(), name="settings"),
     path("shop/gateways/", panel.GatewayListView.as_view(), name="gateways"),
     path("shop/gateways/<str:name>/", panel.GatewayEditView.as_view(), name="gateway_edit"),
     path("shop/gateways/<str:name>/toggle/", panel.GatewayToggleView.as_view(), name="gateway_toggle"),
