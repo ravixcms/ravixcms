@@ -72,13 +72,15 @@ class UploadTests(MediaBase):
         self.assertContains(r, "بارگذاری انجام نشد")
 
     def test_dangerous_files_rejected_through_the_view(self):
+        # the media folder is shared by the whole test run: compare with what was there before, do not expect it empty
+        before = {os.path.join(d, p) for d, _, files in os.walk(self._media_dir) for p in files}
         for name, content in (("a.exe", b"MZ"), ("a.php", b"<?php"), ("a.svg", b"<svg onload=alert(1)>"),
                               ("a.html", b"<script>"), ("x.php.jpg", jpeg_bytes()), ("fake.png", b"MZ\x90\x00" + b"0" * 50)):
             r = self.upload(self.author, SimpleUploadedFile(name, content))
             self.assertEqual(r.status_code, 200, name)
         self.assertEqual(Media.objects.count(), 0)
-        leftovers = [p for _, _, files in os.walk(self._media_dir) for p in files]
-        self.assertEqual(leftovers, [])
+        after = {os.path.join(d, p) for d, _, files in os.walk(self._media_dir) for p in files}
+        self.assertEqual(sorted(after - before), [])
 
     def test_too_many_files(self):
         files = [SimpleUploadedFile(f"{i}.txt", b"x") for i in range(MAX_FILES_PER_UPLOAD + 1)]

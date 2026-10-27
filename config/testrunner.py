@@ -36,6 +36,10 @@ class RavixTestRunner(DiscoverRunner):
             maintenance.reset_cache()
             maintenance._cache["on"] = False
             plugin_state.invalidate()
+            # "is Ravix installed?" is remembered for the life of the process, but every test's database is rolled back
+            from apps.installer import services as installer_services
+
+            installer_services.reset_cache()
             return self._setup_and_call(case, result, debug)
 
         SimpleTestCase._setup_and_call = setup_and_call
