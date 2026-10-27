@@ -5,6 +5,7 @@ from pathlib import Path
 from django.test import Client, override_settings
 
 from apps.plugins import services
+from apps.plugins import state as plugin_state
 from apps.plugins.manifest import ManifestError, parse_manifest
 
 from .helpers import PluginTestCase, base_manifest
@@ -91,6 +92,10 @@ class SiteRouteServingTests(PluginTestCase):
         self.addCleanup(ov.disable)
         self.write_plugin("demo", manifest(), files={"templates/pub.html": "<p>inside the site frame</p>"}, views=VIEWS)
         self.install_activate("demo")
+
+    def test_test_runs_keep_the_plugin_list_cache_stable(self):
+        # Public URLs consult the plugin list; a 3 s cache ending between two requests made query-counting tests flaky in CI.
+        self.assertGreaterEqual(plugin_state.TTL, 3600)
 
     def test_public_page_is_noindex_unless_the_plugin_asks_for_indexing(self):
         hidden = Client().get("/en/shown/").content.decode()

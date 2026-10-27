@@ -24,11 +24,18 @@ class RavixTestRunner(DiscoverRunner):
 
         self._maintenance_ttl = maintenance.TTL
         maintenance.TTL = 3600.0
+        # Same story for the list of active plugins (3 s per process; public URLs consult it to find plugin site routes): a long TTL
+        # and an empty cache at the start of every test. Saving a plugin row still invalidates it through its signal.
+        from apps.plugins import state as plugin_state
+
+        self._plugin_ttl = plugin_state.TTL
+        plugin_state.TTL = 3600.0
         self._setup_and_call = SimpleTestCase._setup_and_call
 
         def setup_and_call(case, result, debug=False):
             maintenance.reset_cache()
             maintenance._cache["on"] = False
+            plugin_state.invalidate()
             return self._setup_and_call(case, result, debug)
 
         SimpleTestCase._setup_and_call = setup_and_call
@@ -42,6 +49,9 @@ class RavixTestRunner(DiscoverRunner):
         from apps.updater import middleware as maintenance
 
         maintenance.TTL = self._maintenance_ttl
+        from apps.plugins import state as plugin_state
+
+        plugin_state.TTL = self._plugin_ttl
         SimpleTestCase._setup_and_call = self._setup_and_call
         settings.MEDIA_ROOT = self._media_before
         settings.BUILTIN_MODULES_DEFAULT_ON = self._modules_default
