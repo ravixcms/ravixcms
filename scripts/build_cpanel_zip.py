@@ -25,7 +25,7 @@ sys.path.insert(0, str(ROOT))
 VPS_ONLY = ("deploy", "docker", "Dockerfile", "docker-compose.yml", "docker-compose.tls.yml", "install.sh", ".dockerignore", "scripts/vps_smoke.sh",
             "scripts/vps_smoke_check_log.sh", ".env.example", "requirements.lock", ".bandit-baseline.json", ".gitleaks.toml", ".well-known")
 FORBIDDEN = re.compile(r"(^|/)(\.env(\..+)?|.*\.sqlite3?|.*\.pem|.*\.key|id_rsa.*|\.git|\.venv|__pycache__|.*\.pyc|tests?|test_[^/]*\.py)(/|$)|^media/|^themes_installed/|^plugins_installed/")
-PRIVATE_NAMES = ("ravixcms-site", "ravix_releases", "ravix_ai_pro", "ravixcms-private")
+PRIVATE_NAMES = tuple(n for n in os.environ.get("RAVIX_PRIVATE_NAMES", "").split(",") if n)  # names that must never reach the package (set by the maintainer)
 SECRET = re.compile(rb"-----BEGIN (RSA |EC |DSA |OPENSSH |PGP )?PRIVATE KEY-----|AKIA[0-9A-Z]{16}|gh[pousr]_[A-Za-z0-9]{30,}")
 README = """Ravix for cPanel shared hosting
 ================================
@@ -112,7 +112,7 @@ def main() -> int:
                     problems.append(f"forbidden file: {rel}")
                     continue
                 blob = path.read_bytes()
-                if any(n.encode() in blob for n in PRIVATE_NAMES) or rel.startswith(tuple(PRIVATE_NAMES)):
+                if PRIVATE_NAMES and (any(n.encode() in blob for n in PRIVATE_NAMES) or rel.startswith(PRIVATE_NAMES)):
                     problems.append(f"private name inside: {rel}")
                 if SECRET.search(blob):
                     problems.append(f"secret-looking content: {rel}")
