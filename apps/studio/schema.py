@@ -254,7 +254,7 @@ def validate_document(raw, *, strict: bool = False, can_html: bool = True, exist
     _check_keys(raw, {"schema_version", "meta", "sections"}, "$", errs)
     try:
         size = len(json.dumps(raw, ensure_ascii=False))
-    except (TypeError, ValueError):
+    except (TypeError, ValueError, RecursionError):  # RecursionError: absurdly deep nesting (Python 3.11's encoder hits its limit first)
         raise DocumentInvalid([("$", gettext("Invalid JSON."))])
     if size > LIMITS["max_json_bytes"]:
         raise DocumentInvalid([("$", gettext("The data size exceeds the limit."))])
