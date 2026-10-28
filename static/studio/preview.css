@@ -1,0 +1,18 @@
+/* Ravix Studio — only inside the editor's preview frame */
+.st-preview [data-st-id] { position: relative; }
+.st-preview .st-hover { outline: 1px dashed #4f46e5; outline-offset: -1px; }
+.st-preview .st-selected { outline: 2px solid #4f46e5 !important; outline-offset: -2px; }
+.st-preview .st-handle {
+  position: absolute; z-index: 50; top: 0; inset-inline-start: 0; display: none; align-items: center; gap: 4px;
+  padding: 2px 8px; font: 600 11px/18px system-ui, sans-serif; color: #fff; background: #4f46e5; border: 0; border-radius: 0 0 6px 0;
+  cursor: grab; white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis;
+}
+[dir="rtl"] .st-preview .st-handle { border-radius: 0 0 0 6px; }
+.st-preview .st-selected > .st-handle, .st-preview .st-hover > .st-handle { display: inline-flex; }
+.st-preview .st-hover:has(.st-hover) > .st-handle { display: none; }
+.st-preview .sortable-ghost { opacity: .35; }
+.st-preview .sortable-chosen { cursor: grabbing; }
+.st-drop-line { position: fixed; z-index: 9999; height: 3px; background: #4f46e5; border-radius: 2px; pointer-events: none; box-shadow: 0 0 0 2px rgba(79,70,229,.25); }
+.st-preview .st-drop-ok { outline: 2px dashed #4f46e5; outline-offset: -2px; }
+.st-preview a, .st-preview button, .st-preview iframe { pointer-events: auto; }
+body.st-dragging iframe { pointer-events: none; }

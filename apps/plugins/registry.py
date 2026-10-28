@@ -50,6 +50,7 @@ class Loaded:
     routes: dict = field(default_factory=dict)
     site_routes: dict = field(default_factory=dict)
     hooks: dict = field(default_factory=dict)
+    studio_widgets: dict = field(default_factory=dict)
     verified_at: float = 0.0
     app_label: str = ""
 
@@ -202,6 +203,8 @@ def _do_load(slug, info, root, fp) -> Loaded:
         loaded.site_routes[(r["path"], r["language_prefix"])] = _resolve(pkg_name, r["view"])
     for h in m.hooks:
         loaded.hooks.setdefault(h["name"], []).append((h["priority"], _resolve(pkg_name, h["handler"])))
+    for w in m.studio_widgets:
+        loaded.studio_widgets[w["type"]] = _resolve(pkg_name, w["render"])
     for fns in loaded.hooks.values():
         fns.sort(key=lambda x: x[0])
     return loaded

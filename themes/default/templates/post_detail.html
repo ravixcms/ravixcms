@@ -17,7 +17,7 @@
       </ul>
     </header>
     {% if post.image_url %}<figure class="article-cover"><img src="{{ post.image_url }}" alt="" decoding="async" fetchpriority="high"></figure>{% endif %}
-    <div class="prose" itemprop="articleBody">{{ post.body_html }}</div>
+    <div class="{% if post.builder %}studio-body{% else %}prose{% endif %}" itemprop="articleBody">{{ post.body_html }}</div>
     {% if post.tags %}
     <footer class="article-foot">
       <p class="footer-head">{% trans "Tags" %}</p>

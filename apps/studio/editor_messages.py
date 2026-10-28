@@ -1,0 +1,41 @@
+"""Every text the editor's JavaScript shows. They are gettext strings so the 10 interface languages work; the page passes them as JSON."""
+from django.utils.translation import gettext as _
+
+
+def messages() -> dict:
+    return {
+        "loading": _("Loading…"), "saved": _("Saved"), "saving": _("Saving…"), "unsaved": _("Unsaved changes"), "saveFailed": _("Could not save."),
+        "undo": _("Undo"), "redo": _("Redo"), "duplicate": _("Duplicate"), "delete": _("Delete"), "moveUp": _("Move up"), "moveDown": _("Move down"),
+        "moveIn": _("Move into the next column"), "moveOut": _("Move into the previous column"),
+        "add": _("Add"), "addSection": _("Add section"), "addColumn": _("Add column"),
+        "section": _("Section"), "column": _("Column"), "widget": _("Widget"), "innerSection": _("Inner section"),
+        "navigator": _("Layers"), "settings": _("Settings"), "widgets": _("Widgets"), "structure": _("Structure"),
+        "content": _("Content"), "style": _("Style"), "layout": _("Layout"), "advanced": _("Advanced"),
+        "desktop": _("Desktop"), "tablet": _("Tablet"), "mobile": _("Mobile"),
+        "inheritsFrom": _("Empty = same as the larger screen"), "reset": _("Reset"), "clear": _("Clear"),
+        "chooseImage": _("Choose an image"), "chooseVideo": _("Choose a video"), "change": _("Change"), "remove": _("Remove"),
+        "noMedia": _("No file found."), "search": _("Search"), "more": _("More"), "close": _("Close"), "cancel": _("Cancel"),
+        "emptyPage": _("The page is empty. Add a section to begin."), "emptyColumn": _("Drop a widget here"),
+        "selected": _("Selected: %s"), "added": _("Added: %s"), "movedTo": _("Moved"), "deleted": _("Deleted"), "duplicated": _("Duplicated"),
+        "dragHint": _("Drag a widget onto the page, or press Enter on it to add it to the selected column."),
+        "save": _("Save"), "versions": _("Versions"), "publish": _("Publish"), "submit": _("Submit for review"), "approve": _("Approve and publish"),
+        "reject": _("Reject"), "restore": _("Restore"), "rollback": _("Make live again"), "unpublish": _("Unpublish"),
+        "saveVersion": _("Save new version"), "noteOptional": _("Note (optional)"), "live": _("Live"), "pending": _("Awaiting approval"),
+        "conflictTitle": _("This page was changed elsewhere"),
+        "conflictBody": _("Another editor saved a newer draft. What do you want to do?"),
+        "conflictLoad": _("Load their draft (discard my changes)"), "conflictOverwrite": _("Keep my changes (their draft is saved as a version first)"),
+        "otherEditor": _("%s has this page open in the editor right now."),
+        "importFile": _("Import"), "exportPage": _("Export page"), "exportSection": _("Export section"), "importAppend": _("Add to the end of the page"),
+        "importReplace": _("Replace the page"), "importDone": _("Imported."), "importCleared": _("%s media references from the other site were cleared."),
+        "invalid": _("The layout has problems"), "confirmDelete": _("Delete this item and everything inside it?"),
+        "viewSite": _("View on site"), "classic": _("Classic editor"), "back": _("Back to the list"),
+        "keyboard": _("Keyboard: arrows move in the layers panel, Alt+arrows move the item, Enter edits, Delete removes, Ctrl+D duplicates, Ctrl+Z undo, Ctrl+S saves."),
+        "template": _("Page template"), "pageSettings": _("Page settings"), "hiddenOnThis": _("Hidden on this screen size"),
+        "adminOnly": _("Administrators only"), "unavailable": _("This widget is not available (its plugin is off)."),
+        "addItem": _("Add item"), "item": _("Item"), "columnsWidth": _("Column width"), "layoutPresets": _("Column layout"),
+        "oneColumn": _("1 column"), "twoColumns": _("2 columns"), "threeColumns": _("3 columns"), "fourColumns": _("4 columns"),
+        "uploadMedia": _("Upload to the media library"), "yes": _("Yes"), "no": _("No"), "none": _("None"),
+        "loadingPreview": _("Updating the preview…"), "previewFailed": _("The preview could not be drawn."),
+        "fixErrors": _("Fix these problems first"), "ok": _("OK"),
+        "catBasic": _("Basic"), "catMedia": _("Media"), "catContent": _("Content"), "catLayout": _("Layout"), "catPlugin": _("From plugins"),
+    }

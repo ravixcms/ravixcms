@@ -157,6 +157,10 @@ def inbox(request, api):
 - فقط مسیرهای اعلام‌شدهٔ افزونه‌های **فعال** تطبیق می‌خورند و بقیه به صفحه‌های سایت می‌رسند. اولین بخش مسیر نباید از این‌ها باشد: `panel accounts api django-admin static theme-assets media ext registry install healthz jsi18n i18n sitemap robots blog category tag search feed post shop cart checkout`.
 - آدرس بدون پیشوندِ مسیر زبان‌دار (`/download/`) مثل بقیهٔ سایت به آدرس زبان‌دار منتقل می‌شود؛ ۴۰۴ یک مسیر بدون پیشوند ریدایرکت نمی‌شود.
 
+## ویجت برای Ravix Studio (`studio_widgets`)
+
+افزونه می‌تواند تا ۱۰ ویجت برای صفحه‌ساز اعلام کند (نوع، عنوان، نماد، فیلدها، تابع `render` و CSS کوچک). جزئیات و نمونه: [studio-widgets.md](studio-widgets.md).
+
 ## فایل‌های خصوصی و دانلود
 
 - `api.data_dir()` پوشهٔ خصوصی همین افزونه را برمی‌گرداند (`RAVIX_PLUGIN_DATA_DIR/<slug>`، خارج از media، مجوز ۷۵۰ تا nginx بتواند با `X-Accel-Redirect` بخواند؛ در پشتیبان‌گیری هست).

@@ -11999,3 +11999,790 @@ msgstr "خط %(line)s: عنوان حداکثر ۶۰ نویسه می‌تواند
 #, python-format
 msgid "Line %(line)s: there is no page or category with the slug “%(slug)s”."
 msgstr "خط %(line)s: برگه یا دسته‌ای با نامک «%(slug)s» وجود ندارد."
+
+#: apps/accounts/permissions.py
+msgid "Design pages and posts with Ravix Studio, the visual page builder"
+msgstr "طراحی صفحه‌ها و نوشته‌ها با Ravix Studio، صفحه‌ساز بصری"
+
+#: apps/accounts/permissions.py
+msgid "Approve and publish Ravix Studio layouts"
+msgstr "تأیید و انتشار چیدمان‌های Ravix Studio"
+
+#: apps/accounts/permissions.py
+msgid "Use the custom HTML widget in Ravix Studio (administrators only)"
+msgstr "استفاده از ویجت HTML سفارشی در Ravix Studio (فقط مدیران)"
+
+#: apps/builder/apps.py
+msgid "Page builder (legacy)"
+msgstr "صفحه‌ساز (قدیمی)"
+
+#: apps/studio/apps.py
+msgid "Ravix Studio"
+msgstr "Ravix Studio"
+
+#: apps/core/builtin_modules.py
+msgid "A visual page builder: design pages and posts with drag and drop, with responsive settings, revisions and an approval flow. Published pages are saved as plain HTML and keep working when the module is off."
+msgstr "صفحه‌ساز بصری: صفحه‌ها و نوشته‌ها را با کشیدن و رها کردن، تنظیمات واکنش‌گرا، نسخه‌ها و روند تأیید طراحی کنید. صفحه‌های منتشرشده به‌صورت HTML ساده ذخیره می‌شوند و با خاموش شدن ماژول هم نمایش داده می‌شوند."
+
+#: apps/core/builtin_modules.py
+msgid "The server has switched Ravix Studio off (RAVIX_STUDIO_ENABLED=false in ravix.env). Ask the server administrator to remove that line, then restart once. Pages that were already published keep showing."
+msgstr "سرور Ravix Studio را خاموش کرده است (RAVIX_STUDIO_ENABLED=false در ravix.env). از مدیر سرور بخواهید آن خط را بردارد و یک بار راه‌اندازی مجدد کند. صفحه‌های منتشرشده همچنان نمایش داده می‌شوند."
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.fields: a list of at most 20 items is required."
+msgstr "%(where)s.fields: فهرستی حداکثر با ۲۰ مورد لازم است."
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.title: text of 1 to 60 characters is required."
+msgstr "%(where)s.title: متنی با ۱ تا ۶۰ نویسه لازم است."
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.icon: invalid icon name."
+msgstr "%(where)s.icon: نام نماد نامعتبر است."
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s: invalid field (name, kind and label are required; kinds: %(kinds)s)."
+msgstr "%(where)s: فیلد نامعتبر است (نام، نوع و برچسب لازم است؛ نوع‌ها: %(kinds)s)."
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.css: text of at most 8000 characters is required."
+msgstr "%(where)s.css: متنی حداکثر با ۸۰۰۰ نویسه لازم است."
+
+#: apps/plugins/manifest.py
+msgid "studio_widgets: a list of at most 10 items is required."
+msgstr "studio_widgets: فهرستی حداکثر با ۱۰ مورد لازم است."
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.type: invalid or duplicate (lowercase letters, digits and _)."
+msgstr "%(where)s.type: نامعتبر یا تکراری است (حروف کوچک، رقم و _)."
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.render: must look like “module:function”."
+msgstr "%(where)s.render: باید به شکل «module:function» باشد."
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s: an object with the keys type/title/icon/fields/render/css is required."
+msgstr "%(where)s: شیئی با کلیدهای type/title/icon/fields/render/css لازم است."
+
+#: apps/studio/editor_messages.py
+msgid "Inner section"
+msgstr "بخش داخلی"
+
+#: apps/studio/editor_messages.py
+msgid "Remove"
+msgstr "حذف"
+
+#: apps/studio/editor_messages.py
+msgid "Move into the previous column"
+msgstr "انتقال به ستون قبلی"
+
+#: apps/studio/editor_messages.py
+msgid "Move into the next column"
+msgstr "انتقال به ستون بعدی"
+
+#: apps/studio/editor_messages.py
+msgid "Column width"
+msgstr "پهنای ستون"
+
+#: apps/studio/editor_messages.py
+msgid "No file found."
+msgstr "فایلی پیدا نشد."
+
+#: apps/studio/editor_messages.py
+msgid "Make live again"
+msgstr "دوباره زنده کن"
+
+#: apps/studio/editor_messages.py
+msgid "Page template"
+msgstr "قالب صفحه"
+
+#: apps/studio/editor_messages.py
+msgid "Administrators only"
+msgstr "فقط مدیران"
+
+#: apps/studio/editor_messages.py
+msgid "Layers"
+msgstr "لایه‌ها"
+
+#: apps/studio/editor_messages.py
+msgid "Advanced"
+msgstr "پیشرفته"
+
+#: apps/studio/editor_messages.py
+msgid "Basic"
+msgstr "پایه"
+
+#: apps/studio/editor_messages.py
+msgid "Add section"
+msgstr "افزودن بخش"
+
+#: apps/studio/editor_messages.py
+msgid "Unsaved changes"
+msgstr "تغییرات ذخیره‌نشده"
+
+#: apps/studio/editor_messages.py
+msgid "View on site"
+msgstr "دیدن در سایت"
+
+#: apps/studio/editor_messages.py
+msgid "Submit for review"
+msgstr "ارسال برای بررسی"
+
+#: apps/studio/editor_messages.py
+msgid "Add item"
+msgstr "افزودن مورد"
+
+#: apps/studio/editor_messages.py
+msgid "Yes"
+msgstr "بله"
+
+#: apps/studio/editor_messages.py
+msgid "%s media references from the other site were cleared."
+msgstr "%s ارجاع رسانه از سایت دیگر پاک شد."
+
+#: apps/studio/editor_messages.py
+msgid "Duplicate"
+msgstr "تکثیر"
+
+#: apps/studio/editor_messages.py
+msgid "%s has this page open in the editor right now."
+msgstr "%s همین حالا این صفحه را در ویرایشگر باز کرده است."
+
+#: apps/studio/editor_messages.py
+msgid "Fix these problems first"
+msgstr "اول این مشکل‌ها را رفع کنید"
+
+#: apps/studio/editor_messages.py
+msgid "Reset"
+msgstr "بازنشانی"
+
+#: apps/studio/editor_messages.py
+msgid "Choose a video"
+msgstr "انتخاب ویدیو"
+
+#: apps/studio/editor_messages.py
+msgid "Choose an image"
+msgstr "انتخاب تصویر"
+
+#: apps/studio/editor_messages.py
+msgid "Unpublish"
+msgstr "لغو انتشار"
+
+#: apps/studio/editor_messages.py
+msgid "Export section"
+msgstr "خروجی گرفتن از بخش"
+
+#: apps/studio/editor_messages.py
+msgid "Export page"
+msgstr "خروجی گرفتن از صفحه"
+
+#: apps/studio/editor_messages.py
+msgid "Imported."
+msgstr "وارد شد."
+
+#: apps/studio/editor_messages.py
+msgid "Approve and publish"
+msgstr "تأیید و انتشار"
+
+#: apps/studio/editor_messages.py
+msgid "Added: %s"
+msgstr "افزوده شد: %s"
+
+#: apps/studio/editor_messages.py
+msgid "Widget"
+msgstr "ویجت"
+
+#: apps/studio/editor_messages.py
+msgid "Widgets"
+msgstr "ویجت‌ها"
+
+#: apps/studio/editor_messages.py
+msgid "Add to the end of the page"
+msgstr "افزودن به پایان صفحه"
+
+#: apps/studio/editor_messages.py
+msgid "Classic editor"
+msgstr "ویرایشگر کلاسیک"
+
+#: apps/studio/editor_messages.py
+msgid "Selected: %s"
+msgstr "انتخاب‌شده: %s"
+
+#: apps/studio/editor_messages.py
+msgid "1 column"
+msgstr "۱ ستون"
+
+#: apps/studio/editor_messages.py
+msgid "2 columns"
+msgstr "۲ ستون"
+
+#: apps/studio/editor_messages.py
+msgid "3 columns"
+msgstr "۳ ستون"
+
+#: apps/studio/editor_messages.py
+msgid "4 columns"
+msgstr "۴ ستون"
+
+#: apps/studio/editor_messages.py
+msgid "Deleted"
+msgstr "حذف شد"
+
+#: apps/studio/editor_messages.py
+msgid "The page is empty. Add a section to begin."
+msgstr "صفحه خالی است. برای شروع یک بخش اضافه کنید."
+
+#: apps/studio/editor_messages.py
+msgid "Saving…"
+msgstr "در حال ذخیره…"
+
+#: apps/studio/editor_messages.py
+msgid "Load their draft (discard my changes)"
+msgstr "بارگذاری پیش‌نویس او (کنار گذاشتن تغییرات من)"
+
+#: apps/studio/editor_messages.py
+msgid "Page settings"
+msgstr "تنظیمات صفحه"
+
+#: apps/studio/editor_messages.py
+msgid "Upload to the media library"
+msgstr "بارگذاری در کتابخانهٔ رسانه"
+
+#: apps/studio/editor_messages.py
+msgid "Clear"
+msgstr "پاک کردن"
+
+#: apps/studio/editor_messages.py
+msgid "Add column"
+msgstr "افزودن ستون"
+
+#: apps/studio/editor_messages.py
+msgid "Hidden on this screen size"
+msgstr "در این اندازهٔ صفحه نمایش پنهان است"
+
+#: apps/studio/editor_messages.py
+msgid "Another editor saved a newer draft. What do you want to do?"
+msgstr "ویرایشگر دیگری پیش‌نویس جدیدتری ذخیره کرده است. چه می‌خواهید بکنید؟"
+
+#: apps/studio/editor_messages.py
+msgid "Delete this item and everything inside it?"
+msgstr "این مورد و هر چه داخل آن است حذف شود؟"
+
+#: apps/studio/editor_messages.py
+msgid "Restore"
+msgstr "بازگردانی"
+
+#: apps/studio/editor_messages.py
+msgid "Reject"
+msgstr "رد کردن"
+
+#: apps/studio/editor_messages.py
+msgid "From plugins"
+msgstr "از افزونه‌ها"
+
+#: apps/studio/editor_messages.py
+msgid "Move up"
+msgstr "انتقال به بالا"
+
+#: apps/studio/editor_messages.py
+msgid "Move down"
+msgstr "انتقال به پایین"
+
+#: apps/studio/editor_messages.py
+msgid "Live"
+msgstr "زنده"
+
+#: apps/studio/editor_messages.py
+msgid "Keyboard: arrows move in the layers panel, Alt+arrows move the item, Enter edits, Delete removes, Ctrl+D duplicates, Ctrl+Z undo, Ctrl+S saves."
+msgstr "صفحه‌کلید: کلیدهای جهت‌دار در پنل لایه‌ها حرکت می‌کنند، Alt+جهت‌دار مورد را جابه‌جا می‌کند، Enter ویرایش، Delete حذف، Ctrl+D تکثیر، Ctrl+Z واگرد و Ctrl+S ذخیره."
+
+#: apps/studio/editor_messages.py
+msgid "Drag a widget onto the page, or press Enter on it to add it to the selected column."
+msgstr "یک ویجت را روی صفحه بکشید یا روی آن Enter بزنید تا به ستون انتخاب‌شده اضافه شود."
+
+#: apps/studio/editor_messages.py
+msgid "Empty = same as the larger screen"
+msgstr "خالی = مانند صفحهٔ بزرگ‌تر"
+
+#: apps/studio/editor_messages.py
+msgid "Duplicated"
+msgstr "تکثیر شد"
+
+#: apps/studio/editor_messages.py
+msgid "The layout has problems"
+msgstr "چیدمان مشکل دارد"
+
+#: apps/studio/editor_messages.py
+msgid "This widget is not available (its plugin is off)."
+msgstr "این ویجت در دسترس نیست (افزونهٔ آن خاموش است)."
+
+#: apps/studio/editor_messages.py
+msgid "None"
+msgstr "هیچ‌کدام"
+
+#: apps/studio/editor_messages.py
+msgid "Column layout"
+msgstr "چیدمان ستون‌ها"
+
+#: apps/studio/editor_messages.py
+msgid "The preview could not be drawn."
+msgstr "پیش‌نمایش ساخته نشد."
+
+#: apps/studio/editor_messages.py
+msgid "Could not save."
+msgstr "ذخیره نشد."
+
+#: apps/studio/editor_messages.py
+msgid "OK"
+msgstr "تأیید"
+
+#: apps/studio/editor_messages.py
+msgid "Keep my changes (their draft is saved as a version first)"
+msgstr "تغییرات من بماند (پیش‌نویس او ابتدا به‌عنوان نسخه ذخیره می‌شود)"
+
+#: apps/studio/editor_messages.py
+msgid "Moved"
+msgstr "جابه‌جا شد"
+
+#: apps/studio/editor_messages.py
+msgid "Import"
+msgstr "درون‌ریزی"
+
+#: apps/studio/editor_messages.py
+msgid "Replace the page"
+msgstr "جایگزینی صفحه"
+
+#: apps/studio/editor_messages.py
+msgid "This page was changed elsewhere"
+msgstr "این صفحه جای دیگری تغییر کرده است"
+
+#: apps/studio/editor_messages.py
+msgid "Updating the preview…"
+msgstr "در حال به‌روزرسانی پیش‌نمایش…"
+
+#: apps/studio/editor_messages.py
+msgid "Drop a widget here"
+msgstr "ویجت را اینجا رها کنید"
+
+#: apps/studio/fields.py
+msgid "Only administrators can add or change custom HTML."
+msgstr "فقط مدیران می‌توانند HTML سفارشی اضافه یا تغییر دهند."
+
+#: apps/studio/fields.py
+msgid "Gradient angle (degrees)"
+msgstr "زاویهٔ گرادیان (درجه)"
+
+#: apps/studio/fields.py
+msgid "Inner spacing"
+msgstr "فاصلهٔ داخلی"
+
+#: apps/studio/fields.py
+msgid "Outer spacing"
+msgstr "فاصلهٔ بیرونی"
+
+#: apps/studio/fields.py
+msgid "Cover"
+msgstr "پوشاندن (cover)"
+
+#: apps/studio/fields.py
+msgid "Contain"
+msgstr "جا دادن (contain)"
+
+#: apps/studio/fields.py
+msgid "Original size"
+msgstr "اندازهٔ اصلی"
+
+#: apps/studio/fields.py
+msgid "bottom"
+msgstr "پایین"
+
+#: apps/studio/fields.py
+msgid "top"
+msgstr "بالا"
+
+#: apps/studio/fields.py
+msgid "start side"
+msgstr "سمت آغاز"
+
+#: apps/studio/fields.py
+msgid "end side"
+msgstr "سمت پایان"
+
+#: apps/studio/fields.py
+msgid "Shadow"
+msgstr "سایه"
+
+#: apps/studio/fields.py
+msgid "Background image position"
+msgstr "جایگاه تصویر پس‌زمینه"
+
+#: apps/studio/fields.py
+msgid "Background image size"
+msgstr "اندازهٔ تصویر پس‌زمینه"
+
+#: apps/studio/fields.py
+msgid "Hide on this screen size"
+msgstr "پنهان در این اندازهٔ صفحه"
+
+#: apps/studio/fields.py
+msgid "Minimum height (px)"
+msgstr "کمترین ارتفاع (px)"
+
+#: apps/studio/fields.py
+#, python-format
+msgid "“%(label)s” may only contain lowercase letters, digits and hyphens, and must start with a letter."
+msgstr "«%(label)s» فقط می‌تواند شامل حروف کوچک، رقم و خط تیره باشد و باید با حرف شروع شود."
+
+#: apps/studio/fields.py
+msgid "Gradient start color"
+msgstr "رنگ آغاز گرادیان"
+
+#: apps/studio/fields.py
+msgid "Gradient end color"
+msgstr "رنگ پایان گرادیان"
+
+#: apps/studio/fields.py
+#, python-format
+msgid "“%(label)s” must be a YouTube, Vimeo or Aparat video link."
+msgstr "«%(label)s» باید پیوند ویدیوی یوتیوب، Vimeo یا آپارات باشد."
+
+#: apps/studio/fields.py
+msgid "Inherit"
+msgstr "ارث‌بری"
+
+#: apps/studio/models.py
+#, python-format
+msgid "Layout of “%(title)s”"
+msgstr "چیدمان «%(title)s»"
+
+#: apps/studio/models.py
+msgid "Studio layout"
+msgstr "چیدمان Studio"
+
+#: apps/studio/models.py
+msgid "Studio layouts"
+msgstr "چیدمان‌های Studio"
+
+#: apps/studio/schema.py
+msgid "Maximum content width (px)"
+msgstr "بیشترین پهنای محتوا (px)"
+
+#: apps/studio/schema.py
+msgid "Anchor ID (for in-page links)"
+msgstr "شناسهٔ لنگر (برای پیوند درون صفحه)"
+
+#: apps/studio/schema.py
+msgid "The widget type is not allowed."
+msgstr "این نوع ویجت مجاز نیست."
+
+#: apps/studio/schema.py
+msgid "Vertical alignment in the row"
+msgstr "تراز عمودی در ردیف"
+
+#: apps/studio/schema.py
+msgid "Full width (no sidebar)"
+msgstr "تمام‌عرض (بدون نوار کناری)"
+
+#: apps/studio/schema.py
+msgid "Lowercase letters, digits and hyphens. Link to it with #your-id."
+msgstr "حروف کوچک، رقم و خط تیره. با #your-id به آن پیوند دهید."
+
+#: apps/studio/schema.py
+#, python-format
+msgid "Sections can be nested at most %(n)s levels deep."
+msgstr "بخش‌ها را تا حداکثر %(n)s سطح می‌توان تو در تو کرد."
+
+#: apps/studio/schema.py
+msgid "Theme default"
+msgstr "پیش‌فرض پوسته"
+
+#: apps/studio/services.py
+#, python-format
+msgid "Version %(number)s was made live again."
+msgstr "نسخهٔ %(number)s دوباره زنده شد."
+
+#: apps/studio/services.py
+msgid "This is not a Ravix Studio file."
+msgstr "این پروندهٔ Ravix Studio نیست."
+
+#: apps/studio/services.py
+msgid "This version cannot be made live."
+msgstr "این نسخه را نمی‌توان زنده کرد."
+
+#: apps/studio/services.py
+msgid "Automatic: before an import"
+msgstr "خودکار: پیش از درون‌ریزی"
+
+#: apps/studio/services.py
+#, python-format
+msgid "Version %(number)s of the layout was saved."
+msgstr "نسخهٔ %(number)s چیدمان ذخیره شد."
+
+#: apps/studio/services.py
+msgid "Rolled back"
+msgstr "بازگردانده شد"
+
+#: apps/studio/services.py
+msgid "Automatic: before another save overwrote this draft"
+msgstr "خودکار: پیش از آنکه ذخیره‌ای دیگر این پیش‌نویس را بازنویسی کند"
+
+#: apps/studio/services.py
+msgid "Section not found."
+msgstr "بخش پیدا نشد."
+
+#: apps/studio/services.py
+msgid "A layout file was imported into the draft."
+msgstr "یک پروندهٔ چیدمان در پیش‌نویس درون‌ریزی شد."
+
+#: apps/studio/templatetags/studio_ui.py
+msgid "Edit with Ravix Studio"
+msgstr "ویرایش با Ravix Studio"
+
+#: apps/studio/views.py
+msgid "The file is not a valid Studio layout."
+msgstr "این پرونده یک چیدمان معتبر Studio نیست."
+
+#: apps/studio/widgets.py
+msgid "HTML"
+msgstr "HTML"
+
+#: apps/studio/widgets.py
+msgid "Line style"
+msgstr "سبک خط"
+
+#: apps/studio/widgets.py
+msgid "Cover image (optional)"
+msgstr "تصویر جلد (اختیاری)"
+
+#: apps/studio/widgets.py
+msgid "Only administrators can use this widget. The HTML is cleaned: scripts, styles, frames, forms and event attributes are removed."
+msgstr "فقط مدیران می‌توانند از این ویجت استفاده کنند. HTML پاک‌سازی می‌شود: اسکریپت، سبک، قاب، فرم و ویژگی‌های رویداد حذف می‌شوند."
+
+#: apps/studio/widgets.py
+msgid "Icon (optional)"
+msgstr "نماد (اختیاری)"
+
+#: apps/studio/widgets.py
+msgid "Caption (optional)"
+msgstr "زیرنویس (اختیاری)"
+
+#: apps/studio/widgets.py
+msgid "YouTube, Vimeo or Aparat link"
+msgstr "پیوند یوتیوب، Vimeo یا آپارات"
+
+#: apps/studio/widgets.py
+msgid "Line height (%)"
+msgstr "ارتفاع خط (٪)"
+
+#: apps/studio/widgets.py
+msgid "Title (for screen readers)"
+msgstr "عنوان (برای صفحه‌خوان‌ها)"
+
+#: apps/studio/widgets.py
+msgid "Gallery"
+msgstr "گالری"
+
+#: apps/studio/widgets.py
+msgid "Button text (optional)"
+msgstr "متن دکمه (اختیاری)"
+
+#: apps/studio/widgets.py
+msgid "Font weight"
+msgstr "ضخامت قلم"
+
+#: apps/studio/widgets.py
+msgid "Images"
+msgstr "تصاویر"
+
+#: apps/studio/widgets.py
+msgid "Accessible label (optional)"
+msgstr "برچسب دسترس‌پذیری (اختیاری)"
+
+#: apps/studio/widgets.py
+msgid "Button link"
+msgstr "پیوند دکمه"
+
+#: apps/studio/widgets.py
+msgid "Divider"
+msgstr "جداکننده"
+
+#: apps/studio/widgets.py
+msgid "A video from the media library"
+msgstr "ویدیو از کتابخانهٔ رسانه"
+
+#: apps/studio/widgets.py
+msgid "Aspect ratio"
+msgstr "نسبت تصویر"
+
+#: apps/studio/widgets.py
+msgid "Icon size (px)"
+msgstr "اندازهٔ نماد (px)"
+
+#: apps/studio/widgets.py
+msgid "Columns"
+msgstr "ستون‌ها"
+
+#: apps/studio/widgets.py
+msgid "Video file"
+msgstr "پروندهٔ ویدیو"
+
+#: apps/studio/widgets.py
+msgid "Source (optional)"
+msgstr "منبع (اختیاری)"
+
+#: apps/studio/widgets.py
+msgid "Read by screen readers. Leave empty for a decorative icon."
+msgstr "صفحه‌خوان‌ها آن را می‌خوانند. برای نماد تزئینی خالی بگذارید."
+
+#: apps/studio/widgets.py
+msgid "Display width hint (sizes attribute)"
+msgstr "راهنمای پهنای نمایش (ویژگی sizes)"
+
+#: apps/studio/widgets.py
+msgid "Icon list"
+msgstr "فهرست نماد"
+
+#: apps/studio/widgets.py
+msgid "Advanced. Helps the browser pick the right file size, for example “(max-width: 767px) 100vw, 560px”."
+msgstr "پیشرفته. به مرورگر کمک می‌کند اندازهٔ درست پرونده را برگزیند، مثلاً «(max-width: 767px) 100vw, 560px»."
+
+#: apps/studio/widgets.py
+msgid "Video source"
+msgstr "منبع ویدیو"
+
+#: apps/studio/widgets.py
+msgid "Height (px)"
+msgstr "ارتفاع (px)"
+
+#: apps/studio/widgets.py
+msgid "Width (percent)"
+msgstr "پهنا (درصد)"
+
+#: apps/studio/widgets.py
+msgid "Paste a YouTube, Vimeo or Aparat link. The player loads only after a click."
+msgstr "پیوند یوتیوب، Vimeo یا آپارات را بچسبانید. پخش‌کننده فقط پس از کلیک بارگذاری می‌شود."
+
+#: apps/studio/widgets.py
+msgid "Accent color"
+msgstr "رنگ تأکید"
+
+#: apps/studio/widgets.py
+msgid "Markdown: **bold**, *italic*, lists and [links](https://example.com). Raw HTML is not allowed."
+msgstr "Markdown: **پررنگ**، *کج*، فهرست‌ها و [پیوندها](https://example.com). HTML خام مجاز نیست."
+
+#: apps/studio/widgets.py
+msgid "Line color"
+msgstr "رنگ خط"
+
+#: apps/studio/widgets.py
+msgid "Open the full image when clicked"
+msgstr "با کلیک، تصویر کامل باز شود"
+
+#: apps/studio/widgets.py
+msgid "Link (optional)"
+msgstr "پیوند (اختیاری)"
+
+#: apps/studio/widgets.py
+msgid "Icon color"
+msgstr "رنگ نماد"
+
+#: apps/studio/widgets.py
+msgid "Icon"
+msgstr "نماد"
+
+#: apps/studio/widgets.py
+msgid "Card title"
+msgstr "عنوان کارت"
+
+#: apps/studio/widgets.py
+msgid "Spacer"
+msgstr "فاصله‌انداز"
+
+#: apps/studio/widgets.py
+msgid "Card"
+msgstr "کارت"
+
+#: apps/studio/widgets.py
+msgid "Line thickness (px)"
+msgstr "ضخامت خط (px)"
+
+#: apps/studio/widgets.py
+msgid "Gap (px)"
+msgstr "فاصله (px)"
+
+#: apps/studio/widgets.py
+msgid "Default icon"
+msgstr "نمادِ پیش‌فرض"
+
+#: apps/studio/widgets.py
+msgid "A short, memorable quote."
+msgstr "یک نقل‌قول کوتاه و به‌یادماندنی."
+
+#: apps/studio/widgets.py
+msgid "Image (optional)"
+msgstr "تصویر (اختیاری)"
+
+#: apps/studio/widgets.py
+msgid "Video link"
+msgstr "پیوند ویدیو"
+
+#: apps/studio/widgets.py
+msgid "Gap between items (px)"
+msgstr "فاصله میان موردها (px)"
+
+#: apps/studio/widgets.py
+msgid "Custom HTML"
+msgstr "HTML سفارشی"
+
+#: apps/studio/widgets.py
+msgid "Heading"
+msgstr "عنوان"
+
+#: templates/studio/editor.html
+msgid "Notices"
+msgstr "اعلان‌ها"
+
+#: templates/studio/editor.html
+msgid "Import / Export"
+msgstr "درون‌ریزی / برون‌ریزی"
+
+#: templates/studio/editor.html
+msgid "Page preview"
+msgstr "پیش‌نمایش صفحه"
+
+#: templates/studio/editor.html
+msgid "Screen size"
+msgstr "اندازهٔ صفحه نمایش"
+
+#: templates/studio/editor.html
+#, python-format
+msgid "Ravix Studio — %(title)s"
+msgstr "Ravix Studio — %(title)s"
+
+#: templates/studio/editor.html
+msgid "History"
+msgstr "تاریخچه"
+
+#: templates/studio/list.html
+msgid "Nothing was found."
+msgstr "چیزی پیدا نشد."
+
+#: templates/studio/list.html
+msgid "Design pages and posts visually with sections, columns and widgets."
+msgstr "صفحه‌ها و نوشته‌ها را بصری با بخش، ستون و ویجت طراحی کنید."
+
+#: templates/studio/list.html
+msgid "Search by title or slug"
+msgstr "جست‌وجو با عنوان یا نامک"
+
+#: templates/studio/editor.html
+msgid "Redo (Ctrl+Shift+Z)"
+msgstr "ازنو (Ctrl+Shift+Z)"

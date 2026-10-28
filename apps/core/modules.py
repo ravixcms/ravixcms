@@ -43,6 +43,7 @@ class ModuleDef:
     hook_prefixes: tuple[str, ...] = ()  # plugin hooks that stop firing while disabled
     lock_hint: object = ""  # how the server forces it off (shown when the switch is locked)
     settings_url_name: str = ""
+    lock_setting: str = ""  # a Django setting (bool): when false the server locks the module off even though its app stays installed (its stored data must keep working)
     wizard_steps: Callable | None = None  # (request) -> list[WizardStep]; None = no setup guide
 
 
@@ -63,7 +64,9 @@ def get_module(key: str) -> ModuleDef | None:
 
 def is_installed(key: str) -> bool:
     mod = _registry.get(key)
-    return bool(mod) and django_apps.is_installed(f"apps.{mod.app_label}")
+    if not mod or not django_apps.is_installed(f"apps.{mod.app_label}"):
+        return False
+    return bool(getattr(settings, mod.lock_setting, True)) if mod.lock_setting else True
 
 
 def server_locked(key: str) -> bool:

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load i18n static ravix_ui %}
+{% block title %}{% blocktrans with title=target.title %}Ravix Studio — {{ title }}{% endblocktrans %}{% endblock %}
+{% block body_class %}studio-body-page{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'studio/studio.css' %}">{% endblock %}
+{% block body %}
+<div class="stu" id="stu" data-state="loading">
+  <header class="stu-bar" role="banner">
+    <a class="stu-btn stu-icon-btn" href="{% url 'studio:list' %}" id="stu-back" title="{% trans "Back to the list" %}" aria-label="{% trans "Back to the list" %}">{% icon "arrow-left" 18 %}</a>
+    <h1 class="stu-title" title="{{ target.title }}">{{ target.title }}</h1>
+    <div class="stu-group" role="group" aria-label="{% trans "Screen size" %}" id="stu-devices">
+      <button type="button" class="stu-btn stu-icon-btn" data-device="desktop" aria-pressed="true" title="{% trans "Desktop" %}" aria-label="{% trans "Desktop" %}">{% icon "monitor" 18 %}</button>
+      <button type="button" class="stu-btn stu-icon-btn" data-device="tablet" aria-pressed="false" title="{% trans "Tablet" %}" aria-label="{% trans "Tablet" %}">{% icon "tablet" 18 %}</button>
+      <button type="button" class="stu-btn stu-icon-btn" data-device="mobile" aria-pressed="false" title="{% trans "Mobile" %}" aria-label="{% trans "Mobile" %}">{% icon "phone" 18 %}</button>
+    </div>
+    <div class="stu-group" role="group" aria-label="{% trans "History" %}">
+      <button type="button" class="stu-btn stu-icon-btn" id="stu-undo" disabled title="{% trans "Undo (Ctrl+Z)" %}" aria-label="{% trans "Undo" %}">{% icon "undo" 18 %}</button>
+      <button type="button" class="stu-btn stu-icon-btn" id="stu-redo" disabled title="{% trans "Redo (Ctrl+Shift+Z)" %}" aria-label="{% trans "Redo" %}">{% icon "redo" 18 %}</button>
+    </div>
+    <span class="stu-status" id="stu-status" role="status" aria-live="polite"></span>
+    <span class="stu-spacer"></span>
+    <a class="stu-btn" href="{{ config.urls.classicEdit }}" id="stu-classic">{% icon "edit" 16 %}<span>{% trans "Classic editor" %}</span></a>
+    <button type="button" class="stu-btn" id="stu-io" aria-haspopup="dialog">{% icon "upload" 16 %}<span>{% trans "Import / Export" %}</span></button>
+    <button type="button" class="stu-btn" id="stu-versions" aria-haspopup="dialog">{% icon "history" 16 %}<span>{% trans "Versions" %}</span></button>
+    <button type="button" class="stu-btn" id="stu-save-version" title="{% trans "Save new version" %}">{% icon "save" 16 %}<span>{% trans "Save new version" %}</span></button>
+    <button type="button" class="stu-btn stu-primary" id="stu-publish"></button>
+  </header>
+  <div class="stu-banners" id="stu-banners" role="region" aria-label="{% trans "Notices" %}"></div>
+  <div class="stu-main">
+    <aside class="stu-side stu-left" aria-label="{% trans "Widgets" %}">
+      <div class="stu-tabs" role="tablist" id="stu-left-tabs">
+        <button type="button" role="tab" id="tab-widgets" aria-selected="true" aria-controls="panel-widgets" data-tab="widgets">{% trans "Widgets" %}</button>
+        <button type="button" role="tab" id="tab-layers" aria-selected="false" aria-controls="panel-layers" data-tab="layers" tabindex="-1">{% trans "Layers" %}</button>
+      </div>
+      <div class="stu-panel" id="panel-widgets" role="tabpanel" aria-labelledby="tab-widgets">
+        <p class="stu-hint" id="stu-drag-hint"></p>
+        <div id="stu-palette"></div>
+      </div>
+      <div class="stu-panel" id="panel-layers" role="tabpanel" aria-labelledby="tab-layers" hidden>
+        <div id="stu-tree" role="tree" aria-label="{% trans "Layers" %}" aria-multiselectable="false"></div>
+        <p class="stu-hint" id="stu-keys"></p>
+      </div>
+    </aside>
+    <section class="stu-stage" aria-label="{% trans "Preview" %}">
+      <div class="stu-frame-wrap" id="stu-frame-wrap" data-device="desktop">
+        <iframe id="stu-frame" title="{% trans "Page preview" %}" src="about:blank"></iframe>
+      </div>
+      <div class="stu-loading" id="stu-preview-busy" hidden>{% trans "Updating the preview…" %}</div>
+    </section>
+    <aside class="stu-side stu-right" aria-label="{% trans "Settings" %}">
+      <div class="stu-insp-head"><h2 id="stu-insp-title"></h2><div class="stu-group" id="stu-insp-actions"></div></div>
+      <div class="stu-tabs" role="tablist" id="stu-right-tabs"></div>
+      <div class="stu-panel" id="stu-inspector" role="tabpanel"></div>
+    </aside>
+  </div>
+  <div class="stu-live" id="stu-live" role="status" aria-live="polite" aria-atomic="true"></div>
+</div>
+<dialog class="stu-dialog" id="stu-dialog" aria-labelledby="stu-dialog-title"><form method="dialog"><h2 id="stu-dialog-title"></h2><div id="stu-dialog-body"></div><div class="stu-dialog-foot" id="stu-dialog-foot"></div></form></dialog>
+{{ config|json_script:"studio-config" }}
+{% endblock %}
+{% block scripts %}
+<script src="{{ config.static.sortable }}"></script>
+<script src="{% static 'studio/js/core.js' %}"></script>
+<script src="{% static 'studio/js/inspector.js' %}"></script>
+<script src="{% static 'studio/js/editor.js' %}"></script>
+{% endblock %}

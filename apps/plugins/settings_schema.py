@@ -78,7 +78,7 @@ class SettingField:
             except ValidationError:
                 raise ValidationError((gettext("“%(label)s” is not a valid email.") % {"label": self.label}))
         elif t == "url":
-            from apps.builder.schema import is_safe_url
+            from apps.core.safeurl import is_safe_url
 
             if not is_safe_url(value):
                 raise ValidationError((gettext("“%(label)s” must be a permitted address (an internal path or http/https).") % {"label": self.label}))

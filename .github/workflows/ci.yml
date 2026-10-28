@@ -31,7 +31,7 @@ jobs:
         run: python manage.py check
 
   test:
-    name: Test (py${{ matrix.python }}, ${{ matrix.db }}${{ matrix.shop == 'false' && ', بدون فروشگاه' || '' }})
+    name: Test (py${{ matrix.python }}, ${{ matrix.db }}${{ matrix.shop == 'false' && ', بدون فروشگاه' || '' }}${{ matrix.studio == 'false' && ', بدون Studio' || '' }})
     runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:
@@ -40,8 +40,10 @@ jobs:
         python: ["3.12", "3.13"]
         db: [sqlite, postgres]
         shop: ["true"]
+        studio: ["true"]
         include:
-          - { python: "3.13", db: sqlite, shop: "false" }   # ماژول فروشگاه اختیاری است؛ بدون آن هم باید سالم باشد
+          - { python: "3.13", db: sqlite, shop: "false", studio: "true" }   # ماژول فروشگاه اختیاری است؛ بدون آن هم باید سالم باشد
+          - { python: "3.13", db: sqlite, shop: "true", studio: "false" }   # Ravix Studio اختیاری است؛ بدون آن هم باید سالم باشد
     services:
       postgres:
         image: postgres:16
@@ -51,6 +53,7 @@ jobs:
           --health-cmd "pg_isready -U ravix" --health-interval 5s --health-timeout 5s --health-retries 10
     env:
       RAVIX_SHOP_ENABLED: ${{ matrix.shop }}
+      RAVIX_STUDIO_ENABLED: ${{ matrix.studio }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -104,6 +107,20 @@ jobs:
       - run: pip install -r requirements.lock
       - run: python scripts/e2e_backup_restore.py
       - run: python scripts/e2e_updater.py
+
+  e2e-studio:
+    name: "E2E مرورگر (Ravix Studio، Chromium)"
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.13", cache: pip, cache-dependency-path: requirements.lock }
+      - run: pip install -r requirements.lock playwright
+      - run: playwright install --with-deps chromium
+      - run: python scripts/e2e_studio.py
+      - name: Lighthouse موبایل (صفحهٔ نمونهٔ Studio، حداقل ۹۰)
+        run: python scripts/lighthouse_studio.py
 
   security:
     name: امنیت (pip-audit، bandit، check --deploy)

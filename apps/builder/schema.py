@@ -1,19 +1,4 @@
-"""
-تعریف ساختار سند صفحه‌ساز، «فهرست مجاز» عناصر/ویژگی‌ها و اعتبارسنجی داده‌ی دریافتی از مرورگر.
-
-اصل طراحی: **یک منبع حقیقت**. جدول ``SPECS`` هم برای اعتبارسنجی سمت سرور، هم برای ساخت فرم پنل تنظیمات در مرورگر
-(از طریق ``client_specs``) و هم برای تولید CSS (هم در ``render.py`` و هم در جاوااسکریپت ویرایشگر) استفاده می‌شود؛
-بنابراین پیش‌نمایش ویرایشگر و خروجی سایت از یک قاعده پیروی می‌کنند و هیچ ویژگی‌ای بدون تعریف اینجا قبول یا رندر نمی‌شود.
-
-شکل سند (نسخه ۱)::
-
-    {"schema_version": 1, "meta": {"show_title": true},
-     "sections": [{"id": "a1b2", "props": {...}, "rows": [{"id": ..., "props": {...}, "columns": [
-         {"id": ..., "props": {...}, "elements": [{"id": ..., "type": "heading", "props": {...}}]}]}]}]}
-
-هیچ مقدار آزاد (HTML، CSS، JavaScript، رویداد) پذیرفته نمی‌شود؛ فقط عدد در بازه، انتخاب از فهرست، رنگ هگز، نشانی
-امن، شناسه‌ی رسانه و متن ساده (که هنگام رندر escape می‌شود).
-"""
+"""Legacy: the schema-1 document shape, kept because the old migrations import it. New work lives in apps.studio."""
 from django.utils.translation import gettext, gettext_lazy
 import re
 import secrets
@@ -218,23 +203,7 @@ class _Collector:
         return len(self.errors) >= MAX_ERRORS
 
 
-def is_safe_url(value: str) -> bool:
-    """فقط مسیر داخلی، http/https، mailto، tel و لنگر (#). javascript:/data: و نشانی‌های نسبت‌به‌پروتکل (//) رد می‌شوند."""
-    if not value or len(value) > 500 or not _URL_CHARS_RE.match(value):
-        return False
-    if value.startswith("//"):
-        return False
-    if value.startswith(("/", "#")):
-        return True
-    try:
-        parts = urlsplit(value)
-    except ValueError:
-        return False
-    if parts.scheme in ("http", "https"):
-        return bool(parts.netloc) and "@" not in parts.netloc
-    if parts.scheme in ("mailto", "tel"):
-        return bool(parts.path)
-    return False
+from apps.core.safeurl import is_safe_url  # noqa: E402,F401  (kept for older imports)
 
 
 def _clean_text(value: str, multiline: bool) -> str:

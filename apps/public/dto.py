@@ -80,6 +80,7 @@ class PostItem:
     tags: tuple = field(default_factory=tuple)
     reading_time: str = ""
     body_html: str = ""  # فقط در صفحه خود نوشته پر می‌شود؛ خروجی پاک‌سازی‌شده (nh3)
+    builder: bool = False  # true: body_html is a Ravix Studio layout (safe HTML with its own style), not Markdown prose
 
 
 @dataclass(frozen=True)
@@ -92,6 +93,7 @@ class PageItem:
     excerpt: str = ""
     builder: bool = False  # true: body_html خروجی صفحه‌ساز است (HTML امن + <style> خودش)؛ قالب می‌تواند تمام‌عرض نشانش دهد
     show_title: bool = True  # فقط برای صفحات صفحه‌ساز: عنوان صفحه بالای محتوا دیده شود؟
+    full_width: bool = True  # Ravix Studio page: show it edge to edge (the page asked for the full-width template and the theme supports it)
 
 
 @dataclass(frozen=True)

@@ -43,8 +43,9 @@ CAPABILITIES = {
     "audit.view": gettext_lazy("View the admin event log"),
     "themes.manage": gettext_lazy("Manage the theme and site appearance"),
     "themes.install": gettext_lazy("Upload and install a theme from a ZIP file (superadmin only)"),
-    "builder.edit": gettext_lazy("Design pages with the visual page builder"),
-    "builder.publish": gettext_lazy("Approve and publish page builder layouts"),
+    "studio.edit": gettext_lazy("Design pages and posts with Ravix Studio, the visual page builder"),
+    "studio.publish": gettext_lazy("Approve and publish Ravix Studio layouts"),
+    "studio.html": gettext_lazy("Use the custom HTML widget in Ravix Studio (administrators only)"),
     "plugins.manage": gettext_lazy("Manage plugins (install, activate, settings)"),
     "modules.manage": gettext_lazy("Switch built-in modules such as Ravix Shop on and off (superadmin only)"),
     "plugins.trust": gettext_lazy("Manage trusted plugin signing keys (root of trust; superadmin only)"),
@@ -74,8 +75,9 @@ _ADMIN = _BASIC | {
     "media.manage",
     "audit.view",
     "themes.manage",
-    "builder.edit",
-    "builder.publish",
+    "studio.edit",
+    "studio.publish",
+    "studio.html",
     "plugins.manage",
     "shop.manage",
     "shop.orders",
@@ -85,7 +87,7 @@ _ADMIN = _BASIC | {
 
 ROLE_CAPABILITIES = {
     Role.USER: frozenset(_BASIC),
-    Role.AUTHOR: frozenset(_BASIC | {"content.write", "media.upload", "builder.edit"}),
+    Role.AUTHOR: frozenset(_BASIC | {"content.write", "media.upload", "studio.edit"}),
     Role.ADMIN: frozenset(_ADMIN),
     Role.SUPER_ADMIN: frozenset(CAPABILITIES),
 }

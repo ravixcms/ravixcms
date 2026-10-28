@@ -29,7 +29,7 @@ _ROUTE_RE = re.compile(r"^(?:[a-z0-9][-a-z0-9_]*(?:/[a-z0-9][-a-z0-9_]*)*/?)?$")
 SITE_ROUTE_RESERVED = frozenset({"panel", "accounts", "api", "django-admin", "static", "theme-assets", "media", "ext", "registry", "install",
                                  "healthz", "jsi18n", "i18n", "sitemap", "robots", "blog", "category", "tag", "search", "feed", "post", "shop", "cart", "checkout"})
 TOP_KEYS = {"slug", "name", "version", "description", "author", "homepage", "api_version", "ravix", "requires", "capabilities",
-            "settings", "admin_pages", "public_routes", "site_routes", "hooks", "models", "category", "license"}
+            "settings", "admin_pages", "public_routes", "site_routes", "hooks", "models", "category", "license", "studio_widgets"}
 
 
 class ManifestError(Exception):
@@ -56,6 +56,7 @@ class Manifest:
     hooks: tuple
     models: bool
     site_routes: tuple = ()
+    studio_widgets: tuple = ()  # Ravix Studio widgets: ({"type", "title", "icon", "fields", "render", "css"}, ...)
     names: dict = field(default_factory=dict)  # multilingual «name»: {language code: text} (empty for a plain string)
     descriptions: dict = field(default_factory=dict)
     category: str = ""  # نامک دستهٔ مخزن (اختیاری)
@@ -88,6 +89,7 @@ class Manifest:
             "admin_pages": [dict(p) for p in self.admin_pages], "public_routes": [dict(r) for r in self.public_routes],
             "site_routes": [dict(r) for r in self.site_routes],
             "hooks": [dict(h) for h in self.hooks], "models": self.models,
+            "studio_widgets": [{**w, "fields": [dict(f) for f in w["fields"]]} for w in self.studio_widgets],
             "category": self.category, "license": self.license,
         }
 
@@ -102,7 +104,7 @@ class Manifest:
 
     def module_refs(self):
         """همهٔ ارجاع‌های «ماژول:نام» (برای import یکجا هنگام بارگذاری تأییدشده)."""
-        refs = [p["view"] for p in self.admin_pages] + [r["view"] for r in self.public_routes] + [r["view"] for r in self.site_routes] + [h["handler"] for h in self.hooks]
+        refs = [p["view"] for p in self.admin_pages] + [r["view"] for r in self.public_routes] + [r["view"] for r in self.site_routes] + [h["handler"] for h in self.hooks] + [w["render"] for w in self.studio_widgets]
         return refs
 
 
@@ -316,6 +318,8 @@ def parse_manifest(raw, *, expected_slug: str | None = None) -> Manifest:
             continue
         hooks.append({"name": h["name"], "handler": h["handler"], "priority": prio})
 
+    studio_widgets = _parse_studio_widgets(raw, errors)
+
     models = raw.get("models", False)
     if not isinstance(models, bool):
         errors.append(gettext("models: must be true/false."))
@@ -328,7 +332,65 @@ def parse_manifest(raw, *, expected_slug: str | None = None) -> Manifest:
         raise ManifestError(errors)
     return Manifest(slug=slug, name=name, version=version, description=description, author=author, homepage=homepage, api_version=api,
                     ravix=ravix, requires=dict(requires), capabilities={k: v.strip() for k, v in caps.items()}, settings=tuple(schema),
-                    admin_pages=tuple(pages), public_routes=tuple(routes), site_routes=tuple(site_routes), hooks=tuple(hooks), models=models, names=names, descriptions=descriptions, category=category, license=license_)
+                    admin_pages=tuple(pages), public_routes=tuple(routes), site_routes=tuple(site_routes), hooks=tuple(hooks), studio_widgets=tuple(studio_widgets), models=models, names=names, descriptions=descriptions, category=category, license=license_)
+
+
+_WIDGET_TYPE_RE = re.compile(r"^[a-z][a-z0-9_]{0,29}$")
+_WIDGET_FIELD_KINDS = {"text", "textarea", "markdown", "color", "int", "choice", "bool", "media", "url", "icon"}
+_WIDGET_KEYS = {"type", "title", "icon", "fields", "render", "css"}
+_WIDGET_FIELD_KEYS = {"name", "kind", "label", "default", "min", "max", "choices", "max_len", "required", "help", "unit", "media_kind"}
+
+
+def _parse_studio_widgets(raw, errors):
+    """``studio_widgets``: at most 10 widgets, each with typed settings (``fields``), a ``render`` function and plain ``css``."""
+    raw_list = raw.get("studio_widgets", [])
+    if not isinstance(raw_list, list) or len(raw_list) > 10:
+        errors.append(gettext("studio_widgets: a list of at most 10 items is required."))
+        return []
+    out, seen = [], set()
+    for i, w in enumerate(raw_list):
+        where = f"studio_widgets[{i}]"
+        if not isinstance(w, dict) or set(w) - _WIDGET_KEYS:
+            errors.append((gettext("%(where)s: an object with the keys type/title/icon/fields/render/css is required.") % {"where": where}))
+            continue
+        wtype, title = w.get("type"), w.get("title")
+        if not isinstance(wtype, str) or not _WIDGET_TYPE_RE.match(wtype) or wtype in seen:
+            errors.append((gettext("%(where)s.type: invalid or duplicate (lowercase letters, digits and _).") % {"where": where}))
+            continue
+        if not isinstance(title, str) or not title.strip() or len(title) > 60:
+            errors.append((gettext("%(where)s.title: text of 1 to 60 characters is required.") % {"where": where}))
+            continue
+        icon = w.get("icon", "puzzle")
+        if not isinstance(icon, str) or not re.match(r"^[a-z][a-z0-9-]{0,29}$", icon):
+            errors.append((gettext("%(where)s.icon: invalid icon name.") % {"where": where}))
+            continue
+        render = w.get("render")
+        if not isinstance(render, str) or not _MODULE_REF.match(render):
+            errors.append((gettext("%(where)s.render: must look like “module:function”.") % {"where": where}))
+            continue
+        css = w.get("css", "")
+        if not isinstance(css, str) or len(css) > 8000:
+            errors.append((gettext("%(where)s.css: text of at most 8000 characters is required.") % {"where": where}))
+            continue
+        fields_raw = w.get("fields", [])
+        if not isinstance(fields_raw, list) or len(fields_raw) > 20:
+            errors.append((gettext("%(where)s.fields: a list of at most 20 items is required.") % {"where": where}))
+            continue
+        fields, names, bad = [], set(), False
+        for j, f in enumerate(fields_raw):
+            fwhere = f"{where}.fields[{j}]"
+            if (not isinstance(f, dict) or set(f) - _WIDGET_FIELD_KEYS or not isinstance(f.get("name"), str) or not _KEY_RE.match(f["name"])
+                    or f["name"] in names or f.get("kind") not in _WIDGET_FIELD_KINDS or not isinstance(f.get("label", ""), str)):
+                errors.append((gettext("%(where)s: invalid field (name, kind and label are required; kinds: %(kinds)s).") % {"where": fwhere, "kinds": ", ".join(sorted(_WIDGET_FIELD_KINDS))}))
+                bad = True
+                break
+            names.add(f["name"])
+            fields.append(dict(f))
+        if bad:
+            continue
+        seen.add(wtype)
+        out.append({"type": wtype, "title": title.strip(), "icon": icon, "fields": fields, "render": render, "css": css})
+    return out
 
 
 def read_manifest(directory: Path, *, expected_slug: str | None = None) -> Manifest:

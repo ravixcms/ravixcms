@@ -13,7 +13,7 @@ from django.urls import reverse
 from django.views import View
 
 from apps.accounts.mixins import CapabilityRequiredMixin
-from apps.builder.public import published_body
+from apps.studio.public import published_body
 from apps.content.models import Category, Post, Tag
 from apps.plugins.hooks import apply_filter
 from apps.themes.models import ThemeConfig  # noqa: F401  (برای وابستگی مهاجرت)
@@ -130,7 +130,10 @@ class PostDetailView(PublicView):
         return self.render_post(request, post, notice=request.GET.get("cm", ""), reply_to=safe_id(reply) or 0)
 
     def render_post(self, request, post, *, state=None, notice="", reply_to=0, status=200):
-        item = b.post_item(post, full=True)
+        built = published_body(post)
+        item = b.post_item(post, full=True, body_html=built.html if built is not None else None)
+        if built is not None:
+            request.csp_frame_hosts = set(built.frame_hosts)
         category_ids = [c.pk for c in post.categories.all()]
         related = ()
         if category_ids:
@@ -252,8 +255,9 @@ class PageDetailView(PublicView):
             return moved
         item = b.page_item(page)
         built = published_body(page)
-        if built is not None:  # صفحه طرح منتشرشده‌ی صفحه‌ساز دارد؛ همان صفحه/نشانی/سئو، فقط بدنه از صفحه‌ساز
-            item = b.page_item(page, body_html=built[0], builder=True, show_title=built[1])
+        if built is not None:  # the page has a published Ravix Studio layout: same page, URL and SEO; only the body comes from Studio
+            item = b.page_item(page, body_html=built.html, builder=True, show_title=built.show_title, full_width=built.template == "full_width")
+            request.csp_frame_hosts = set(built.frame_hosts)
 
         def seo(site):
             data = make_seo(request, site, title=page.effective_title_tag, description=page.seo_description or item.excerpt, path=item.url, alternates=not b.separated_language())

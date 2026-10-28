@@ -34,6 +34,14 @@ def env_bool(name: str, default: bool = False) -> bool:
     return value.strip().lower() in {"1", "true", "yes", "on"}
 
 
+def env_int(name: str, default: int, *, lo: int = 0) -> int:
+    value = _raw(name)
+    try:
+        return max(lo, int(value)) if value is not None else default
+    except ValueError:
+        return default
+
+
 def env_list(name: str, default: str = "") -> list[str]:
     value = _raw(name)
     return [item.strip() for item in (default if value is None else value).split(",") if item.strip()]
@@ -68,6 +76,9 @@ THIRD_PARTY_APPS = [
 # ماژول‌های Ravix؛ ماژول‌های آینده (محتوا، رسانه، افزونه‌ها و ...) اینجا اضافه می‌شوند.
 # Built-in modules without a saved on/off row: off (a new module waits for its first activation in Plugins). Tests turn it on.
 BUILTIN_MODULES_DEFAULT_ON = env_bool("RAVIX_BUILTIN_MODULES_DEFAULT_ON", False)
+STUDIO_ENABLED = env_bool("RAVIX_STUDIO_ENABLED", True)  # false: Ravix Studio's editor is locked off (pages already published keep showing)
+STUDIO_MAX_VERSIONS = env_int("RAVIX_STUDIO_MAX_VERSIONS", 50)  # versions kept per page/post (the published one and a pending one are never removed)
+STUDIO_INLINE_CSS_MAX = env_int("RAVIX_STUDIO_INLINE_CSS_MAX", 50_000)  # bytes; bigger CSS is served as a hashed file
 SHOP_ENABLED = env_bool("RAVIX_SHOP_ENABLED", True)  # false: ماژول فروشگاه اصلاً نصب/بارگذاری نمی‌شود (جدول، مسیر، منو، API ندارد)
 
 LOCAL_APPS = [
@@ -78,7 +89,8 @@ LOCAL_APPS = [
     "apps.comments",
     "apps.media_library",
     "apps.themes",
-    "apps.builder",
+    "apps.builder",  # legacy page builder: only its tables remain, to import them into Studio
+    "apps.studio",
     "apps.plugins",
     "apps.sites",
     "apps.pluginhub",

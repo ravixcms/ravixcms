@@ -11587,3 +11587,790 @@ msgstr "第 %(line)s 行：标题最多 60 个字符。"
 #, python-format
 msgid "Line %(line)s: there is no page or category with the slug “%(slug)s”."
 msgstr "第 %(line)s 行：没有别名为“%(slug)s”的页面或分类。"
+
+#: apps/accounts/permissions.py
+msgid "Design pages and posts with Ravix Studio, the visual page builder"
+msgstr "使用可视化页面构建器 Ravix Studio 设计页面和文章"
+
+#: apps/accounts/permissions.py
+msgid "Approve and publish Ravix Studio layouts"
+msgstr "审核并发布 Ravix Studio 布局"
+
+#: apps/accounts/permissions.py
+msgid "Use the custom HTML widget in Ravix Studio (administrators only)"
+msgstr "在 Ravix Studio 中使用自定义 HTML 组件（仅管理员）"
+
+#: apps/builder/apps.py
+msgid "Page builder (legacy)"
+msgstr "页面构建器（旧版）"
+
+#: apps/studio/apps.py
+msgid "Ravix Studio"
+msgstr "Ravix Studio"
+
+#: apps/core/builtin_modules.py
+msgid "A visual page builder: design pages and posts with drag and drop, with responsive settings, revisions and an approval flow. Published pages are saved as plain HTML and keep working when the module is off."
+msgstr "可视化页面构建器：通过拖放设计页面和文章，支持响应式设置、版本记录和审核流程。已发布的页面以普通 HTML 保存，模块关闭后仍可正常显示。"
+
+#: apps/core/builtin_modules.py
+msgid "The server has switched Ravix Studio off (RAVIX_STUDIO_ENABLED=false in ravix.env). Ask the server administrator to remove that line, then restart once. Pages that were already published keep showing."
+msgstr "服务器已关闭 Ravix Studio（ravix.env 中的 RAVIX_STUDIO_ENABLED=false）。请让服务器管理员删除该行并重启一次。已发布的页面仍会继续显示。"
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.fields: a list of at most 20 items is required."
+msgstr "%(where)s.fields：需要最多包含 20 项的列表。"
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.title: text of 1 to 60 characters is required."
+msgstr "%(where)s.title：需要 1 到 60 个字符的文本。"
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.icon: invalid icon name."
+msgstr "%(where)s.icon：图标名称无效。"
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s: invalid field (name, kind and label are required; kinds: %(kinds)s)."
+msgstr "%(where)s：字段无效（必须提供名称、类型和标签；类型：%(kinds)s）。"
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.css: text of at most 8000 characters is required."
+msgstr "%(where)s.css：需要不超过 8000 个字符的文本。"
+
+#: apps/plugins/manifest.py
+msgid "studio_widgets: a list of at most 10 items is required."
+msgstr "studio_widgets：需要最多包含 10 项的列表。"
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.type: invalid or duplicate (lowercase letters, digits and _)."
+msgstr "%(where)s.type：无效或重复（小写字母、数字和 _）。"
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.render: must look like “module:function”."
+msgstr "%(where)s.render：必须形如“module:function”。"
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s: an object with the keys type/title/icon/fields/render/css is required."
+msgstr "%(where)s：需要包含 type/title/icon/fields/render/css 键的对象。"
+
+#: apps/studio/editor_messages.py
+msgid "Inner section"
+msgstr "嵌套区块"
+
+#: apps/studio/editor_messages.py
+msgid "Remove"
+msgstr "移除"
+
+#: apps/studio/editor_messages.py
+msgid "Move into the previous column"
+msgstr "移到上一列"
+
+#: apps/studio/editor_messages.py
+msgid "Move into the next column"
+msgstr "移到下一列"
+
+#: apps/studio/editor_messages.py
+msgid "Column width"
+msgstr "列宽"
+
+#: apps/studio/editor_messages.py
+msgid "No file found."
+msgstr "未找到文件。"
+
+#: apps/studio/editor_messages.py
+msgid "Make live again"
+msgstr "重新上线"
+
+#: apps/studio/editor_messages.py
+msgid "Page template"
+msgstr "页面模板"
+
+#: apps/studio/editor_messages.py
+msgid "Administrators only"
+msgstr "仅管理员"
+
+#: apps/studio/editor_messages.py
+msgid "Layers"
+msgstr "图层"
+
+#: apps/studio/editor_messages.py
+msgid "Advanced"
+msgstr "高级"
+
+#: apps/studio/editor_messages.py
+msgid "Basic"
+msgstr "基础"
+
+#: apps/studio/editor_messages.py
+msgid "Add section"
+msgstr "添加区块"
+
+#: apps/studio/editor_messages.py
+msgid "Unsaved changes"
+msgstr "未保存的更改"
+
+#: apps/studio/editor_messages.py
+msgid "View on site"
+msgstr "在网站上查看"
+
+#: apps/studio/editor_messages.py
+msgid "Submit for review"
+msgstr "提交审核"
+
+#: apps/studio/editor_messages.py
+msgid "Add item"
+msgstr "添加项目"
+
+#: apps/studio/editor_messages.py
+msgid "Yes"
+msgstr "是"
+
+#: apps/studio/editor_messages.py
+msgid "%s media references from the other site were cleared."
+msgstr "已清除来自其他站点的 %s 个媒体引用。"
+
+#: apps/studio/editor_messages.py
+msgid "Duplicate"
+msgstr "复制"
+
+#: apps/studio/editor_messages.py
+msgid "%s has this page open in the editor right now."
+msgstr "%s 正在编辑器中打开此页面。"
+
+#: apps/studio/editor_messages.py
+msgid "Fix these problems first"
+msgstr "请先修复这些问题"
+
+#: apps/studio/editor_messages.py
+msgid "Reset"
+msgstr "重置"
+
+#: apps/studio/editor_messages.py
+msgid "Choose a video"
+msgstr "选择视频"
+
+#: apps/studio/editor_messages.py
+msgid "Choose an image"
+msgstr "选择图片"
+
+#: apps/studio/editor_messages.py
+msgid "Unpublish"
+msgstr "取消发布"
+
+#: apps/studio/editor_messages.py
+msgid "Export section"
+msgstr "导出区块"
+
+#: apps/studio/editor_messages.py
+msgid "Export page"
+msgstr "导出页面"
+
+#: apps/studio/editor_messages.py
+msgid "Imported."
+msgstr "已导入。"
+
+#: apps/studio/editor_messages.py
+msgid "Approve and publish"
+msgstr "批准并发布"
+
+#: apps/studio/editor_messages.py
+msgid "Added: %s"
+msgstr "已添加：%s"
+
+#: apps/studio/editor_messages.py
+msgid "Widget"
+msgstr "组件"
+
+#: apps/studio/editor_messages.py
+msgid "Widgets"
+msgstr "组件"
+
+#: apps/studio/editor_messages.py
+msgid "Add to the end of the page"
+msgstr "添加到页面末尾"
+
+#: apps/studio/editor_messages.py
+msgid "Classic editor"
+msgstr "经典编辑器"
+
+#: apps/studio/editor_messages.py
+msgid "Selected: %s"
+msgstr "已选择：%s"
+
+#: apps/studio/editor_messages.py
+msgid "1 column"
+msgstr "1 列"
+
+#: apps/studio/editor_messages.py
+msgid "2 columns"
+msgstr "2 列"
+
+#: apps/studio/editor_messages.py
+msgid "3 columns"
+msgstr "3 列"
+
+#: apps/studio/editor_messages.py
+msgid "4 columns"
+msgstr "4 列"
+
+#: apps/studio/editor_messages.py
+msgid "Deleted"
+msgstr "已删除"
+
+#: apps/studio/editor_messages.py
+msgid "The page is empty. Add a section to begin."
+msgstr "页面为空。添加一个区块开始吧。"
+
+#: apps/studio/editor_messages.py
+msgid "Saving…"
+msgstr "正在保存…"
+
+#: apps/studio/editor_messages.py
+msgid "Load their draft (discard my changes)"
+msgstr "载入对方的草稿（放弃我的更改）"
+
+#: apps/studio/editor_messages.py
+msgid "Page settings"
+msgstr "页面设置"
+
+#: apps/studio/editor_messages.py
+msgid "Upload to the media library"
+msgstr "上传到媒体库"
+
+#: apps/studio/editor_messages.py
+msgid "Clear"
+msgstr "清除"
+
+#: apps/studio/editor_messages.py
+msgid "Add column"
+msgstr "添加列"
+
+#: apps/studio/editor_messages.py
+msgid "Hidden on this screen size"
+msgstr "在此屏幕尺寸下隐藏"
+
+#: apps/studio/editor_messages.py
+msgid "Another editor saved a newer draft. What do you want to do?"
+msgstr "另一位编辑者保存了更新的草稿。你想怎么做？"
+
+#: apps/studio/editor_messages.py
+msgid "Delete this item and everything inside it?"
+msgstr "删除此项目及其中的全部内容？"
+
+#: apps/studio/editor_messages.py
+msgid "Restore"
+msgstr "恢复"
+
+#: apps/studio/editor_messages.py
+msgid "Reject"
+msgstr "驳回"
+
+#: apps/studio/editor_messages.py
+msgid "From plugins"
+msgstr "来自插件"
+
+#: apps/studio/editor_messages.py
+msgid "Move up"
+msgstr "上移"
+
+#: apps/studio/editor_messages.py
+msgid "Move down"
+msgstr "下移"
+
+#: apps/studio/editor_messages.py
+msgid "Live"
+msgstr "已上线"
+
+#: apps/studio/editor_messages.py
+msgid "Keyboard: arrows move in the layers panel, Alt+arrows move the item, Enter edits, Delete removes, Ctrl+D duplicates, Ctrl+Z undo, Ctrl+S saves."
+msgstr "键盘：方向键在图层面板中移动，Alt+方向键移动项目，Enter 编辑，Delete 删除，Ctrl+D 复制，Ctrl+Z 撤销，Ctrl+S 保存。"
+
+#: apps/studio/editor_messages.py
+msgid "Drag a widget onto the page, or press Enter on it to add it to the selected column."
+msgstr "将组件拖到页面上，或在组件上按 Enter 把它添加到所选列。"
+
+#: apps/studio/editor_messages.py
+msgid "Empty = same as the larger screen"
+msgstr "留空 = 与较大屏幕相同"
+
+#: apps/studio/editor_messages.py
+msgid "Duplicated"
+msgstr "已复制"
+
+#: apps/studio/editor_messages.py
+msgid "The layout has problems"
+msgstr "布局存在问题"
+
+#: apps/studio/editor_messages.py
+msgid "This widget is not available (its plugin is off)."
+msgstr "此组件不可用（其插件已关闭）。"
+
+#: apps/studio/editor_messages.py
+msgid "None"
+msgstr "无"
+
+#: apps/studio/editor_messages.py
+msgid "Column layout"
+msgstr "列布局"
+
+#: apps/studio/editor_messages.py
+msgid "The preview could not be drawn."
+msgstr "无法生成预览。"
+
+#: apps/studio/editor_messages.py
+msgid "Could not save."
+msgstr "无法保存。"
+
+#: apps/studio/editor_messages.py
+msgid "OK"
+msgstr "确定"
+
+#: apps/studio/editor_messages.py
+msgid "Keep my changes (their draft is saved as a version first)"
+msgstr "保留我的更改（对方草稿会先保存为一个版本）"
+
+#: apps/studio/editor_messages.py
+msgid "Moved"
+msgstr "已移动"
+
+#: apps/studio/editor_messages.py
+msgid "Import"
+msgstr "导入"
+
+#: apps/studio/editor_messages.py
+msgid "Replace the page"
+msgstr "替换页面"
+
+#: apps/studio/editor_messages.py
+msgid "This page was changed elsewhere"
+msgstr "此页面已在别处被修改"
+
+#: apps/studio/editor_messages.py
+msgid "Updating the preview…"
+msgstr "正在更新预览…"
+
+#: apps/studio/editor_messages.py
+msgid "Drop a widget here"
+msgstr "把组件拖放到这里"
+
+#: apps/studio/fields.py
+msgid "Only administrators can add or change custom HTML."
+msgstr "只有管理员可以添加或修改自定义 HTML。"
+
+#: apps/studio/fields.py
+msgid "Gradient angle (degrees)"
+msgstr "渐变角度（度）"
+
+#: apps/studio/fields.py
+msgid "Inner spacing"
+msgstr "内边距"
+
+#: apps/studio/fields.py
+msgid "Outer spacing"
+msgstr "外边距"
+
+#: apps/studio/fields.py
+msgid "Cover"
+msgstr "覆盖（cover）"
+
+#: apps/studio/fields.py
+msgid "Contain"
+msgstr "包含（contain）"
+
+#: apps/studio/fields.py
+msgid "Original size"
+msgstr "原始大小"
+
+#: apps/studio/fields.py
+msgid "bottom"
+msgstr "底部"
+
+#: apps/studio/fields.py
+msgid "top"
+msgstr "顶部"
+
+#: apps/studio/fields.py
+msgid "start side"
+msgstr "起始侧"
+
+#: apps/studio/fields.py
+msgid "end side"
+msgstr "结束侧"
+
+#: apps/studio/fields.py
+msgid "Shadow"
+msgstr "阴影"
+
+#: apps/studio/fields.py
+msgid "Background image position"
+msgstr "背景图片位置"
+
+#: apps/studio/fields.py
+msgid "Background image size"
+msgstr "背景图片大小"
+
+#: apps/studio/fields.py
+msgid "Hide on this screen size"
+msgstr "在此屏幕尺寸下隐藏"
+
+#: apps/studio/fields.py
+msgid "Minimum height (px)"
+msgstr "最小高度（px）"
+
+#: apps/studio/fields.py
+#, python-format
+msgid "“%(label)s” may only contain lowercase letters, digits and hyphens, and must start with a letter."
+msgstr "“%(label)s”只能包含小写字母、数字和连字符，并且必须以字母开头。"
+
+#: apps/studio/fields.py
+msgid "Gradient start color"
+msgstr "渐变起始颜色"
+
+#: apps/studio/fields.py
+msgid "Gradient end color"
+msgstr "渐变结束颜色"
+
+#: apps/studio/fields.py
+#, python-format
+msgid "“%(label)s” must be a YouTube, Vimeo or Aparat video link."
+msgstr "“%(label)s”必须是 YouTube、Vimeo 或 Aparat 的视频链接。"
+
+#: apps/studio/fields.py
+msgid "Inherit"
+msgstr "继承"
+
+#: apps/studio/models.py
+#, python-format
+msgid "Layout of “%(title)s”"
+msgstr "“%(title)s”的布局"
+
+#: apps/studio/models.py
+msgid "Studio layout"
+msgstr "Studio 布局"
+
+#: apps/studio/models.py
+msgid "Studio layouts"
+msgstr "Studio 布局"
+
+#: apps/studio/schema.py
+msgid "Maximum content width (px)"
+msgstr "内容最大宽度（px）"
+
+#: apps/studio/schema.py
+msgid "Anchor ID (for in-page links)"
+msgstr "锚点 ID（用于页内链接）"
+
+#: apps/studio/schema.py
+msgid "The widget type is not allowed."
+msgstr "不允许此组件类型。"
+
+#: apps/studio/schema.py
+msgid "Vertical alignment in the row"
+msgstr "行内垂直对齐"
+
+#: apps/studio/schema.py
+msgid "Full width (no sidebar)"
+msgstr "全宽（无侧边栏）"
+
+#: apps/studio/schema.py
+msgid "Lowercase letters, digits and hyphens. Link to it with #your-id."
+msgstr "小写字母、数字和连字符。使用 #your-id 链接到它。"
+
+#: apps/studio/schema.py
+#, python-format
+msgid "Sections can be nested at most %(n)s levels deep."
+msgstr "区块最多可嵌套 %(n)s 层。"
+
+#: apps/studio/schema.py
+msgid "Theme default"
+msgstr "主题默认"
+
+#: apps/studio/services.py
+#, python-format
+msgid "Version %(number)s was made live again."
+msgstr "版本 %(number)s 已重新上线。"
+
+#: apps/studio/services.py
+msgid "This is not a Ravix Studio file."
+msgstr "这不是 Ravix Studio 文件。"
+
+#: apps/studio/services.py
+msgid "This version cannot be made live."
+msgstr "此版本无法上线。"
+
+#: apps/studio/services.py
+msgid "Automatic: before an import"
+msgstr "自动：导入之前"
+
+#: apps/studio/services.py
+#, python-format
+msgid "Version %(number)s of the layout was saved."
+msgstr "布局的版本 %(number)s 已保存。"
+
+#: apps/studio/services.py
+msgid "Rolled back"
+msgstr "已回滚"
+
+#: apps/studio/services.py
+msgid "Automatic: before another save overwrote this draft"
+msgstr "自动：在另一次保存覆盖此草稿之前"
+
+#: apps/studio/services.py
+msgid "Section not found."
+msgstr "未找到区块。"
+
+#: apps/studio/services.py
+msgid "A layout file was imported into the draft."
+msgstr "已将布局文件导入草稿。"
+
+#: apps/studio/templatetags/studio_ui.py
+msgid "Edit with Ravix Studio"
+msgstr "使用 Ravix Studio 编辑"
+
+#: apps/studio/views.py
+msgid "The file is not a valid Studio layout."
+msgstr "该文件不是有效的 Studio 布局。"
+
+#: apps/studio/widgets.py
+msgid "HTML"
+msgstr "HTML"
+
+#: apps/studio/widgets.py
+msgid "Line style"
+msgstr "线条样式"
+
+#: apps/studio/widgets.py
+msgid "Cover image (optional)"
+msgstr "封面图片（可选）"
+
+#: apps/studio/widgets.py
+msgid "Only administrators can use this widget. The HTML is cleaned: scripts, styles, frames, forms and event attributes are removed."
+msgstr "仅管理员可使用此组件。HTML 会被清理：脚本、样式、框架、表单和事件属性都会被移除。"
+
+#: apps/studio/widgets.py
+msgid "Icon (optional)"
+msgstr "图标（可选）"
+
+#: apps/studio/widgets.py
+msgid "Caption (optional)"
+msgstr "说明文字（可选）"
+
+#: apps/studio/widgets.py
+msgid "YouTube, Vimeo or Aparat link"
+msgstr "YouTube、Vimeo 或 Aparat 链接"
+
+#: apps/studio/widgets.py
+msgid "Line height (%)"
+msgstr "行高（%）"
+
+#: apps/studio/widgets.py
+msgid "Title (for screen readers)"
+msgstr "标题（供屏幕阅读器使用）"
+
+#: apps/studio/widgets.py
+msgid "Gallery"
+msgstr "图库"
+
+#: apps/studio/widgets.py
+msgid "Button text (optional)"
+msgstr "按钮文字（可选）"
+
+#: apps/studio/widgets.py
+msgid "Font weight"
+msgstr "字重"
+
+#: apps/studio/widgets.py
+msgid "Images"
+msgstr "图片"
+
+#: apps/studio/widgets.py
+msgid "Accessible label (optional)"
+msgstr "无障碍标签（可选）"
+
+#: apps/studio/widgets.py
+msgid "Button link"
+msgstr "按钮链接"
+
+#: apps/studio/widgets.py
+msgid "Divider"
+msgstr "分隔线"
+
+#: apps/studio/widgets.py
+msgid "A video from the media library"
+msgstr "来自媒体库的视频"
+
+#: apps/studio/widgets.py
+msgid "Aspect ratio"
+msgstr "宽高比"
+
+#: apps/studio/widgets.py
+msgid "Icon size (px)"
+msgstr "图标大小（px）"
+
+#: apps/studio/widgets.py
+msgid "Columns"
+msgstr "列数"
+
+#: apps/studio/widgets.py
+msgid "Video file"
+msgstr "视频文件"
+
+#: apps/studio/widgets.py
+msgid "Source (optional)"
+msgstr "来源（可选）"
+
+#: apps/studio/widgets.py
+msgid "Read by screen readers. Leave empty for a decorative icon."
+msgstr "屏幕阅读器会朗读。装饰性图标请留空。"
+
+#: apps/studio/widgets.py
+msgid "Display width hint (sizes attribute)"
+msgstr "显示宽度提示（sizes 属性）"
+
+#: apps/studio/widgets.py
+msgid "Icon list"
+msgstr "图标列表"
+
+#: apps/studio/widgets.py
+msgid "Advanced. Helps the browser pick the right file size, for example “(max-width: 767px) 100vw, 560px”."
+msgstr "高级。帮助浏览器选择合适的文件尺寸，例如“(max-width: 767px) 100vw, 560px”。"
+
+#: apps/studio/widgets.py
+msgid "Video source"
+msgstr "视频来源"
+
+#: apps/studio/widgets.py
+msgid "Height (px)"
+msgstr "高度（px）"
+
+#: apps/studio/widgets.py
+msgid "Width (percent)"
+msgstr "宽度（百分比）"
+
+#: apps/studio/widgets.py
+msgid "Paste a YouTube, Vimeo or Aparat link. The player loads only after a click."
+msgstr "粘贴 YouTube、Vimeo 或 Aparat 链接。播放器仅在点击后加载。"
+
+#: apps/studio/widgets.py
+msgid "Accent color"
+msgstr "强调色"
+
+#: apps/studio/widgets.py
+msgid "Markdown: **bold**, *italic*, lists and [links](https://example.com). Raw HTML is not allowed."
+msgstr "Markdown：**粗体**、*斜体*、列表和[链接](https://example.com)。不允许原始 HTML。"
+
+#: apps/studio/widgets.py
+msgid "Line color"
+msgstr "线条颜色"
+
+#: apps/studio/widgets.py
+msgid "Open the full image when clicked"
+msgstr "点击时打开完整图片"
+
+#: apps/studio/widgets.py
+msgid "Link (optional)"
+msgstr "链接（可选）"
+
+#: apps/studio/widgets.py
+msgid "Icon color"
+msgstr "图标颜色"
+
+#: apps/studio/widgets.py
+msgid "Icon"
+msgstr "图标"
+
+#: apps/studio/widgets.py
+msgid "Card title"
+msgstr "卡片标题"
+
+#: apps/studio/widgets.py
+msgid "Spacer"
+msgstr "间距"
+
+#: apps/studio/widgets.py
+msgid "Card"
+msgstr "卡片"
+
+#: apps/studio/widgets.py
+msgid "Line thickness (px)"
+msgstr "线条粗细（px）"
+
+#: apps/studio/widgets.py
+msgid "Gap (px)"
+msgstr "间隙（px）"
+
+#: apps/studio/widgets.py
+msgid "Default icon"
+msgstr "默认图标"
+
+#: apps/studio/widgets.py
+msgid "A short, memorable quote."
+msgstr "一句简短而难忘的引语。"
+
+#: apps/studio/widgets.py
+msgid "Image (optional)"
+msgstr "图片（可选）"
+
+#: apps/studio/widgets.py
+msgid "Video link"
+msgstr "视频链接"
+
+#: apps/studio/widgets.py
+msgid "Gap between items (px)"
+msgstr "项目间距（px）"
+
+#: apps/studio/widgets.py
+msgid "Custom HTML"
+msgstr "自定义 HTML"
+
+#: apps/studio/widgets.py
+msgid "Heading"
+msgstr "标题"
+
+#: templates/studio/editor.html
+msgid "Notices"
+msgstr "通知"
+
+#: templates/studio/editor.html
+msgid "Import / Export"
+msgstr "导入 / 导出"
+
+#: templates/studio/editor.html
+msgid "Page preview"
+msgstr "页面预览"
+
+#: templates/studio/editor.html
+msgid "Screen size"
+msgstr "屏幕尺寸"
+
+#: templates/studio/editor.html
+#, python-format
+msgid "Ravix Studio — %(title)s"
+msgstr "Ravix Studio — %(title)s"
+
+#: templates/studio/editor.html
+msgid "History"
+msgstr "历史"
+
+#: templates/studio/list.html
+msgid "Nothing was found."
+msgstr "未找到任何内容。"
+
+#: templates/studio/list.html
+msgid "Design pages and posts visually with sections, columns and widgets."
+msgstr "通过区块、列和组件以可视化方式设计页面和文章。"
+
+#: templates/studio/list.html
+msgid "Search by title or slug"
+msgstr "按标题或 slug 搜索"
+
+#: templates/studio/editor.html
+msgid "Redo (Ctrl+Shift+Z)"
+msgstr "重做 (Ctrl+Shift+Z)"

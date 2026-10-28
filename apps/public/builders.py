@@ -142,14 +142,14 @@ def tag_item(tag) -> TagItem:
     return TagItem(name=tag.name, url=tag_url(tag))
 
 
-def post_item(post, *, full: bool = False) -> PostItem:
+def post_item(post, *, full: bool = False, body_html: str | None = None) -> PostItem:
     when = post.publish_at or post.created_at
-    body = post.body_html if full else ""
+    body = (post.body_html if body_html is None else body_html) if full else ""
     head = body if full else getattr(post, "body_head", "")
     return PostItem(
         title=post.title,
         url=post_url(post),
-        excerpt=excerpt_from(post.excerpt, head),
+        excerpt=excerpt_from(post.excerpt, _STYLE_BLOCK.sub("", head)),
         image_url=post.featured_image.url if post.featured_image else "",
         author_name=author_name(post),
         date_display=date_display(when),
@@ -157,15 +157,17 @@ def post_item(post, *, full: bool = False) -> PostItem:
         categories=tuple(category_item(c, 0) for c in post.categories.all()),
         tags=tuple(tag_item(t) for t in post.tags.all()),
         reading_time=reading_time(post.body_html) if full else "",
+        builder=body_html is not None and full,
         body_html=mark_safe(body),  # خروجی nh3 هنگام ذخیره؛ امن
     )
 
 
-def page_item(page, *, body_html: str | None = None, builder: bool = False, show_title: bool = True) -> PageItem:
+def page_item(page, *, body_html: str | None = None, builder: bool = False, show_title: bool = True, full_width: bool = True) -> PageItem:
     """``body_html`` را فقط کد سرور (خروجی رندر امن صفحه‌ساز) می‌دهد؛ پیش‌فرض همان HTML پاک‌سازی‌شده‌ی Markdown است."""
     return PageItem(
         builder=builder,
         show_title=show_title,
+        full_width=full_width,
         title=page.title,
         url=page_url(page),
         body_html=mark_safe(page.body_html if body_html is None else body_html),

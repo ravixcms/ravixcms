@@ -1,6 +1,6 @@
 {% extends "layouts/panel.html" %}
 {% load i18n %}
-{% load ravix_ui %}
+{% load ravix_ui studio_ui %}
 {% block title %}{% trans "Posts" %}{% endblock %}
 {% block page_title %}{% trans "Posts" %}{% endblock %}
 {% block content %}
@@ -53,7 +53,8 @@
           <td>
             <a class="btn btn-light btn-sm" href="{% url 'content:post_detail' post.pk %}">{% icon "eye" 16 %}</a>
             {% if post.pk in editable_ids %}
-              <a class="btn btn-light btn-sm" href="{% url 'content:post_update' post.pk %}" title="{% trans "Edit" %}">{% icon "edit" 16 %}</a>
+              {% studio_edit_button "post" post "btn btn-light btn-sm" %}
+          <a class="btn btn-light btn-sm" href="{% url 'content:post_update' post.pk %}" title="{% trans "Edit" %}">{% icon "edit" 16 %}</a>
               <a class="btn btn-light btn-sm" href="{% url 'content:post_delete' post.pk %}" title="{% trans "Delete" %}">{% icon "trash" 16 %}</a>
             {% endif %}
           </td>

@@ -5,7 +5,9 @@
 نوار مدیر)، هدرهای امنیتی و کش، و بازگشت خودکار به قالب پیش‌فرض اگر قالب فعال ناموجود یا خراب باشد.
 """
 from apps.core.clilang import cli_gettext
+import dataclasses
 import logging
+import re
 from dataclasses import dataclass
 
 from django.conf import settings
@@ -207,8 +209,14 @@ def _unavailable() -> HttpResponse:
     )
 
 
+def _csp_for(request) -> str:
+    """The page CSP; a page with a lite video player also allows its (privacy-friendly) player hosts as frames, nothing else."""
+    hosts = sorted(h for h in (getattr(request, "csp_frame_hosts", None) or ()) if re.fullmatch(r"[a-z0-9.\-]+", h))
+    return CSP + ("; frame-src 'self' " + " ".join(f"https://{h}" for h in hosts) if hosts else "")
+
+
 def _apply_headers(response, request, resolved: Resolved, *, embedded: bool, status: int):
-    response["Content-Security-Policy"] = CSP
+    response["Content-Security-Policy"] = _csp_for(request)
     response["X-Content-Type-Options"] = "nosniff"
     if embedded:
         response["X-Frame-Options"] = "SAMEORIGIN"
@@ -238,6 +246,9 @@ def render_page(request, template: str, context: dict, *, status: int = 200, emb
     base = base_context(request, resolved, embedded=embedded, edit_url=edit_url)
     extra = context(resolved, base) if callable(context) else context
     ctx = {**base, **extra}
+    page = ctx.get("page")
+    if getattr(page, "builder", False) and getattr(page, "full_width", False) and not getattr(resolved.theme, "studio_full_width", False):
+        ctx["page"] = dataclasses.replace(page, full_width=False)  # the theme did not declare a full-width layout for Studio pages
     ctx["seo"] = seo_factory(ctx["site"]) if seo_factory else {"title": ctx["site"]["name"]}
     try:
         html = engine.render(resolved.theme, template, ctx)

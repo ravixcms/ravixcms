@@ -13,7 +13,7 @@
     "pt-br": "Nova",
     "zh-hans": "Nova 新星"
   },
-  "version": "1.1.0",
+  "version": "1.2.0",
   "author": "Ravix",
   "homepage": "https://ravixcms.com",
   "description": {
@@ -30,6 +30,7 @@
   },
   "screenshot": "screenshot.png",
   "supports": {
+    "studio_full_width": true,
     "home_sections": [
       "hero",
       "features",

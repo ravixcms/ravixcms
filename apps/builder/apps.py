@@ -1,16 +1,10 @@
-from django.utils.translation import gettext_lazy
 from django.apps import AppConfig
+from django.utils.translation import gettext_lazy
 
 
 class BuilderConfig(AppConfig):
+    """The first page builder. Only its tables remain (Ravix Studio imports them during migration and keeps them as the rollback source)."""
+
     default_auto_field = "django.db.models.BigAutoField"
     name = "apps.builder"
-    verbose_name = gettext_lazy("Page builder")
-
-    def ready(self):
-        from apps.core.navigation import NavItem, register_nav_item
-
-        register_nav_item(NavItem(
-            "builder.pages", gettext_lazy("Page builder"), "builder:list", "layout", "appearance", 5, "builder.edit",
-            ("builder:list", "builder:editor"),
-        ))
+    verbose_name = gettext_lazy("Page builder (legacy)")

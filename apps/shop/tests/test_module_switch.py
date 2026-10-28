@@ -214,29 +214,29 @@ class GenericModuleTests(ShopTestCase):
 
     def setUp(self):
         super().setUp()
-        self.mod = modules.ModuleDef(key="studio", name="Ravix Studio", description="x", version="0.1.0", app_label="shop", namespaces=("studio_ns",),
-                                     path_prefixes=("/api/v1/studio/",), hook_prefixes=("studio.",))
+        self.mod = modules.ModuleDef(key="demomod", name="Demo module", description="x", version="0.1.0", app_label="shop", namespaces=("demomod_ns",),
+                                     path_prefixes=("/api/v1/demomod/",), hook_prefixes=("demomod.",))
         modules.register_module(self.mod)
-        self.addCleanup(modules._registry.pop, "studio", None)
+        self.addCleanup(modules._registry.pop, "demomod", None)
 
     def test_registered_module_is_gated_by_path_hook_and_state(self):
-        self.assertIs(modules.module_for_path("/api/v1/studio/x"), self.mod)
-        self.assertIs(modules.module_for_namespaces(["studio_ns"]), self.mod)
-        modules.set_enabled("studio", False)
-        self.assertFalse(modules.hook_allowed("studio.saved"))
-        self.assertEqual(Client().get("/api/v1/studio/anything/").status_code, 404)
-        modules.set_enabled("studio", True)
-        self.assertTrue(modules.hook_allowed("studio.saved"))
+        self.assertIs(modules.module_for_path("/api/v1/demomod/x"), self.mod)
+        self.assertIs(modules.module_for_namespaces(["demomod_ns"]), self.mod)
+        modules.set_enabled("demomod", False)
+        self.assertFalse(modules.hook_allowed("demomod.saved"))
+        self.assertEqual(Client().get("/api/v1/demomod/anything/").status_code, 404)
+        modules.set_enabled("demomod", True)
+        self.assertTrue(modules.hook_allowed("demomod.saved"))
 
     def test_nav_item_with_module_key_follows_the_switch(self):
         from apps.core.navigation import NavItem, _registry, register_nav_item
 
-        register_nav_item(NavItem(key="studio.home", label="Studio", url="/panel/studio/", module="studio"))
-        self.addCleanup(_registry.pop, "studio.home", None)
-        modules.set_enabled("studio", False)
-        self.assertNotIn("studio.home", [i.key for i in get_nav_items()])
-        modules.set_enabled("studio", True)
-        self.assertIn("studio.home", [i.key for i in get_nav_items()])
+        register_nav_item(NavItem(key="demomod.home", label="Demo", url="/panel/demomod/", module="demomod"))
+        self.addCleanup(_registry.pop, "demomod.home", None)
+        modules.set_enabled("demomod", False)
+        self.assertNotIn("demomod.home", [i.key for i in get_nav_items()])
+        modules.set_enabled("demomod", True)
+        self.assertIn("demomod.home", [i.key for i in get_nav_items()])
 
     def test_card_appears_on_the_plugins_page(self):
         c = Client()

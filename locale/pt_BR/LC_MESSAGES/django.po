@@ -12278,3 +12278,790 @@ msgstr "Linha %(line)s: o título pode ter até 60 caracteres."
 #, python-format
 msgid "Line %(line)s: there is no page or category with the slug “%(slug)s”."
 msgstr "Linha %(line)s: não há página ou categoria com o slug “%(slug)s”."
+
+#: apps/accounts/permissions.py
+msgid "Design pages and posts with Ravix Studio, the visual page builder"
+msgstr "Criar páginas e posts com o Ravix Studio, o construtor visual de páginas"
+
+#: apps/accounts/permissions.py
+msgid "Approve and publish Ravix Studio layouts"
+msgstr "Aprovar e publicar layouts do Ravix Studio"
+
+#: apps/accounts/permissions.py
+msgid "Use the custom HTML widget in Ravix Studio (administrators only)"
+msgstr "Usar o widget de HTML personalizado no Ravix Studio (somente administradores)"
+
+#: apps/builder/apps.py
+msgid "Page builder (legacy)"
+msgstr "Construtor de páginas (legado)"
+
+#: apps/studio/apps.py
+msgid "Ravix Studio"
+msgstr "Ravix Studio"
+
+#: apps/core/builtin_modules.py
+msgid "A visual page builder: design pages and posts with drag and drop, with responsive settings, revisions and an approval flow. Published pages are saved as plain HTML and keep working when the module is off."
+msgstr "Um construtor visual de páginas: crie páginas e posts arrastando e soltando, com ajustes responsivos, revisões e fluxo de aprovação. As páginas publicadas são salvas como HTML simples e continuam funcionando com o módulo desligado."
+
+#: apps/core/builtin_modules.py
+msgid "The server has switched Ravix Studio off (RAVIX_STUDIO_ENABLED=false in ravix.env). Ask the server administrator to remove that line, then restart once. Pages that were already published keep showing."
+msgstr "O servidor desativou o Ravix Studio (RAVIX_STUDIO_ENABLED=false em ravix.env). Peça ao administrador do servidor para remover essa linha e reiniciar uma vez. As páginas já publicadas continuam sendo exibidas."
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.fields: a list of at most 20 items is required."
+msgstr "%(where)s.fields: é necessária uma lista com no máximo 20 itens."
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.title: text of 1 to 60 characters is required."
+msgstr "%(where)s.title: é necessário um texto de 1 a 60 caracteres."
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.icon: invalid icon name."
+msgstr "%(where)s.icon: nome de ícone inválido."
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s: invalid field (name, kind and label are required; kinds: %(kinds)s)."
+msgstr "%(where)s: campo inválido (nome, tipo e rótulo são obrigatórios; tipos: %(kinds)s)."
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.css: text of at most 8000 characters is required."
+msgstr "%(where)s.css: é necessário um texto de no máximo 8000 caracteres."
+
+#: apps/plugins/manifest.py
+msgid "studio_widgets: a list of at most 10 items is required."
+msgstr "studio_widgets: é necessária uma lista com no máximo 10 itens."
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.type: invalid or duplicate (lowercase letters, digits and _)."
+msgstr "%(where)s.type: inválido ou duplicado (minúsculas, dígitos e _)."
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.render: must look like “module:function”."
+msgstr "%(where)s.render: deve ter a forma “module:function”."
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s: an object with the keys type/title/icon/fields/render/css is required."
+msgstr "%(where)s: é necessário um objeto com as chaves type/title/icon/fields/render/css."
+
+#: apps/studio/editor_messages.py
+msgid "Inner section"
+msgstr "Seção interna"
+
+#: apps/studio/editor_messages.py
+msgid "Remove"
+msgstr "Remover"
+
+#: apps/studio/editor_messages.py
+msgid "Move into the previous column"
+msgstr "Mover para a coluna anterior"
+
+#: apps/studio/editor_messages.py
+msgid "Move into the next column"
+msgstr "Mover para a próxima coluna"
+
+#: apps/studio/editor_messages.py
+msgid "Column width"
+msgstr "Largura da coluna"
+
+#: apps/studio/editor_messages.py
+msgid "No file found."
+msgstr "Nenhum arquivo encontrado."
+
+#: apps/studio/editor_messages.py
+msgid "Make live again"
+msgstr "Colocar no ar novamente"
+
+#: apps/studio/editor_messages.py
+msgid "Page template"
+msgstr "Modelo de página"
+
+#: apps/studio/editor_messages.py
+msgid "Administrators only"
+msgstr "Somente administradores"
+
+#: apps/studio/editor_messages.py
+msgid "Layers"
+msgstr "Camadas"
+
+#: apps/studio/editor_messages.py
+msgid "Advanced"
+msgstr "Avançado"
+
+#: apps/studio/editor_messages.py
+msgid "Basic"
+msgstr "Básico"
+
+#: apps/studio/editor_messages.py
+msgid "Add section"
+msgstr "Adicionar seção"
+
+#: apps/studio/editor_messages.py
+msgid "Unsaved changes"
+msgstr "Alterações não salvas"
+
+#: apps/studio/editor_messages.py
+msgid "View on site"
+msgstr "Ver no site"
+
+#: apps/studio/editor_messages.py
+msgid "Submit for review"
+msgstr "Enviar para revisão"
+
+#: apps/studio/editor_messages.py
+msgid "Add item"
+msgstr "Adicionar item"
+
+#: apps/studio/editor_messages.py
+msgid "Yes"
+msgstr "Sim"
+
+#: apps/studio/editor_messages.py
+msgid "%s media references from the other site were cleared."
+msgstr "%s referências de mídia do outro site foram removidas."
+
+#: apps/studio/editor_messages.py
+msgid "Duplicate"
+msgstr "Duplicar"
+
+#: apps/studio/editor_messages.py
+msgid "%s has this page open in the editor right now."
+msgstr "%s está com esta página aberta no editor agora."
+
+#: apps/studio/editor_messages.py
+msgid "Fix these problems first"
+msgstr "Corrija primeiro estes problemas"
+
+#: apps/studio/editor_messages.py
+msgid "Reset"
+msgstr "Redefinir"
+
+#: apps/studio/editor_messages.py
+msgid "Choose a video"
+msgstr "Escolher um vídeo"
+
+#: apps/studio/editor_messages.py
+msgid "Choose an image"
+msgstr "Escolher uma imagem"
+
+#: apps/studio/editor_messages.py
+msgid "Unpublish"
+msgstr "Cancelar publicação"
+
+#: apps/studio/editor_messages.py
+msgid "Export section"
+msgstr "Exportar seção"
+
+#: apps/studio/editor_messages.py
+msgid "Export page"
+msgstr "Exportar página"
+
+#: apps/studio/editor_messages.py
+msgid "Imported."
+msgstr "Importado."
+
+#: apps/studio/editor_messages.py
+msgid "Approve and publish"
+msgstr "Aprovar e publicar"
+
+#: apps/studio/editor_messages.py
+msgid "Added: %s"
+msgstr "Adicionado: %s"
+
+#: apps/studio/editor_messages.py
+msgid "Widget"
+msgstr "Widget"
+
+#: apps/studio/editor_messages.py
+msgid "Widgets"
+msgstr "Widgets"
+
+#: apps/studio/editor_messages.py
+msgid "Add to the end of the page"
+msgstr "Adicionar ao final da página"
+
+#: apps/studio/editor_messages.py
+msgid "Classic editor"
+msgstr "Editor clássico"
+
+#: apps/studio/editor_messages.py
+msgid "Selected: %s"
+msgstr "Selecionado: %s"
+
+#: apps/studio/editor_messages.py
+msgid "1 column"
+msgstr "1 coluna"
+
+#: apps/studio/editor_messages.py
+msgid "2 columns"
+msgstr "2 colunas"
+
+#: apps/studio/editor_messages.py
+msgid "3 columns"
+msgstr "3 colunas"
+
+#: apps/studio/editor_messages.py
+msgid "4 columns"
+msgstr "4 colunas"
+
+#: apps/studio/editor_messages.py
+msgid "Deleted"
+msgstr "Excluído"
+
+#: apps/studio/editor_messages.py
+msgid "The page is empty. Add a section to begin."
+msgstr "A página está vazia. Adicione uma seção para começar."
+
+#: apps/studio/editor_messages.py
+msgid "Saving…"
+msgstr "Salvando…"
+
+#: apps/studio/editor_messages.py
+msgid "Load their draft (discard my changes)"
+msgstr "Carregar o rascunho deles (descartar minhas alterações)"
+
+#: apps/studio/editor_messages.py
+msgid "Page settings"
+msgstr "Configurações da página"
+
+#: apps/studio/editor_messages.py
+msgid "Upload to the media library"
+msgstr "Enviar para a biblioteca de mídia"
+
+#: apps/studio/editor_messages.py
+msgid "Clear"
+msgstr "Limpar"
+
+#: apps/studio/editor_messages.py
+msgid "Add column"
+msgstr "Adicionar coluna"
+
+#: apps/studio/editor_messages.py
+msgid "Hidden on this screen size"
+msgstr "Oculto neste tamanho de tela"
+
+#: apps/studio/editor_messages.py
+msgid "Another editor saved a newer draft. What do you want to do?"
+msgstr "Outro editor salvou um rascunho mais recente. O que você quer fazer?"
+
+#: apps/studio/editor_messages.py
+msgid "Delete this item and everything inside it?"
+msgstr "Excluir este item e tudo o que há dentro dele?"
+
+#: apps/studio/editor_messages.py
+msgid "Restore"
+msgstr "Restaurar"
+
+#: apps/studio/editor_messages.py
+msgid "Reject"
+msgstr "Rejeitar"
+
+#: apps/studio/editor_messages.py
+msgid "From plugins"
+msgstr "De plugins"
+
+#: apps/studio/editor_messages.py
+msgid "Move up"
+msgstr "Mover para cima"
+
+#: apps/studio/editor_messages.py
+msgid "Move down"
+msgstr "Mover para baixo"
+
+#: apps/studio/editor_messages.py
+msgid "Live"
+msgstr "No ar"
+
+#: apps/studio/editor_messages.py
+msgid "Keyboard: arrows move in the layers panel, Alt+arrows move the item, Enter edits, Delete removes, Ctrl+D duplicates, Ctrl+Z undo, Ctrl+S saves."
+msgstr "Teclado: as setas se movem no painel de camadas, Alt+setas move o item, Enter edita, Delete remove, Ctrl+D duplica, Ctrl+Z desfaz, Ctrl+S salva."
+
+#: apps/studio/editor_messages.py
+msgid "Drag a widget onto the page, or press Enter on it to add it to the selected column."
+msgstr "Arraste um widget para a página ou pressione Enter nele para adicioná-lo à coluna selecionada."
+
+#: apps/studio/editor_messages.py
+msgid "Empty = same as the larger screen"
+msgstr "Vazio = igual à tela maior"
+
+#: apps/studio/editor_messages.py
+msgid "Duplicated"
+msgstr "Duplicado"
+
+#: apps/studio/editor_messages.py
+msgid "The layout has problems"
+msgstr "O layout tem problemas"
+
+#: apps/studio/editor_messages.py
+msgid "This widget is not available (its plugin is off)."
+msgstr "Este widget não está disponível (o plugin dele está desligado)."
+
+#: apps/studio/editor_messages.py
+msgid "None"
+msgstr "Nenhum"
+
+#: apps/studio/editor_messages.py
+msgid "Column layout"
+msgstr "Layout de colunas"
+
+#: apps/studio/editor_messages.py
+msgid "The preview could not be drawn."
+msgstr "Não foi possível desenhar a pré-visualização."
+
+#: apps/studio/editor_messages.py
+msgid "Could not save."
+msgstr "Não foi possível salvar."
+
+#: apps/studio/editor_messages.py
+msgid "OK"
+msgstr "OK"
+
+#: apps/studio/editor_messages.py
+msgid "Keep my changes (their draft is saved as a version first)"
+msgstr "Manter minhas alterações (o rascunho deles é salvo antes como versão)"
+
+#: apps/studio/editor_messages.py
+msgid "Moved"
+msgstr "Movido"
+
+#: apps/studio/editor_messages.py
+msgid "Import"
+msgstr "Importar"
+
+#: apps/studio/editor_messages.py
+msgid "Replace the page"
+msgstr "Substituir a página"
+
+#: apps/studio/editor_messages.py
+msgid "This page was changed elsewhere"
+msgstr "Esta página foi alterada em outro lugar"
+
+#: apps/studio/editor_messages.py
+msgid "Updating the preview…"
+msgstr "Atualizando a pré-visualização…"
+
+#: apps/studio/editor_messages.py
+msgid "Drop a widget here"
+msgstr "Solte um widget aqui"
+
+#: apps/studio/fields.py
+msgid "Only administrators can add or change custom HTML."
+msgstr "Somente administradores podem adicionar ou alterar HTML personalizado."
+
+#: apps/studio/fields.py
+msgid "Gradient angle (degrees)"
+msgstr "Ângulo do gradiente (graus)"
+
+#: apps/studio/fields.py
+msgid "Inner spacing"
+msgstr "Espaçamento interno"
+
+#: apps/studio/fields.py
+msgid "Outer spacing"
+msgstr "Espaçamento externo"
+
+#: apps/studio/fields.py
+msgid "Cover"
+msgstr "Cobrir (cover)"
+
+#: apps/studio/fields.py
+msgid "Contain"
+msgstr "Conter (contain)"
+
+#: apps/studio/fields.py
+msgid "Original size"
+msgstr "Tamanho original"
+
+#: apps/studio/fields.py
+msgid "bottom"
+msgstr "inferior"
+
+#: apps/studio/fields.py
+msgid "top"
+msgstr "superior"
+
+#: apps/studio/fields.py
+msgid "start side"
+msgstr "lado inicial"
+
+#: apps/studio/fields.py
+msgid "end side"
+msgstr "lado final"
+
+#: apps/studio/fields.py
+msgid "Shadow"
+msgstr "Sombra"
+
+#: apps/studio/fields.py
+msgid "Background image position"
+msgstr "Posição da imagem de fundo"
+
+#: apps/studio/fields.py
+msgid "Background image size"
+msgstr "Tamanho da imagem de fundo"
+
+#: apps/studio/fields.py
+msgid "Hide on this screen size"
+msgstr "Ocultar neste tamanho de tela"
+
+#: apps/studio/fields.py
+msgid "Minimum height (px)"
+msgstr "Altura mínima (px)"
+
+#: apps/studio/fields.py
+#, python-format
+msgid "“%(label)s” may only contain lowercase letters, digits and hyphens, and must start with a letter."
+msgstr "“%(label)s” só pode conter letras minúsculas, dígitos e hífens, e deve começar com uma letra."
+
+#: apps/studio/fields.py
+msgid "Gradient start color"
+msgstr "Cor inicial do gradiente"
+
+#: apps/studio/fields.py
+msgid "Gradient end color"
+msgstr "Cor final do gradiente"
+
+#: apps/studio/fields.py
+#, python-format
+msgid "“%(label)s” must be a YouTube, Vimeo or Aparat video link."
+msgstr "“%(label)s” deve ser um link de vídeo do YouTube, Vimeo ou Aparat."
+
+#: apps/studio/fields.py
+msgid "Inherit"
+msgstr "Herdar"
+
+#: apps/studio/models.py
+#, python-format
+msgid "Layout of “%(title)s”"
+msgstr "Layout de “%(title)s”"
+
+#: apps/studio/models.py
+msgid "Studio layout"
+msgstr "Layout do Studio"
+
+#: apps/studio/models.py
+msgid "Studio layouts"
+msgstr "Layouts do Studio"
+
+#: apps/studio/schema.py
+msgid "Maximum content width (px)"
+msgstr "Largura máxima do conteúdo (px)"
+
+#: apps/studio/schema.py
+msgid "Anchor ID (for in-page links)"
+msgstr "ID da âncora (para links dentro da página)"
+
+#: apps/studio/schema.py
+msgid "The widget type is not allowed."
+msgstr "Este tipo de widget não é permitido."
+
+#: apps/studio/schema.py
+msgid "Vertical alignment in the row"
+msgstr "Alinhamento vertical na linha"
+
+#: apps/studio/schema.py
+msgid "Full width (no sidebar)"
+msgstr "Largura total (sem barra lateral)"
+
+#: apps/studio/schema.py
+msgid "Lowercase letters, digits and hyphens. Link to it with #your-id."
+msgstr "Letras minúsculas, dígitos e hífens. Crie o link com #your-id."
+
+#: apps/studio/schema.py
+#, python-format
+msgid "Sections can be nested at most %(n)s levels deep."
+msgstr "As seções podem ser aninhadas em no máximo %(n)s níveis."
+
+#: apps/studio/schema.py
+msgid "Theme default"
+msgstr "Padrão do tema"
+
+#: apps/studio/services.py
+#, python-format
+msgid "Version %(number)s was made live again."
+msgstr "A versão %(number)s foi colocada no ar novamente."
+
+#: apps/studio/services.py
+msgid "This is not a Ravix Studio file."
+msgstr "Este não é um arquivo do Ravix Studio."
+
+#: apps/studio/services.py
+msgid "This version cannot be made live."
+msgstr "Esta versão não pode ser colocada no ar."
+
+#: apps/studio/services.py
+msgid "Automatic: before an import"
+msgstr "Automático: antes de uma importação"
+
+#: apps/studio/services.py
+#, python-format
+msgid "Version %(number)s of the layout was saved."
+msgstr "A versão %(number)s do layout foi salva."
+
+#: apps/studio/services.py
+msgid "Rolled back"
+msgstr "Revertido"
+
+#: apps/studio/services.py
+msgid "Automatic: before another save overwrote this draft"
+msgstr "Automático: antes de outro salvamento sobrescrever este rascunho"
+
+#: apps/studio/services.py
+msgid "Section not found."
+msgstr "Seção não encontrada."
+
+#: apps/studio/services.py
+msgid "A layout file was imported into the draft."
+msgstr "Um arquivo de layout foi importado para o rascunho."
+
+#: apps/studio/templatetags/studio_ui.py
+msgid "Edit with Ravix Studio"
+msgstr "Editar com o Ravix Studio"
+
+#: apps/studio/views.py
+msgid "The file is not a valid Studio layout."
+msgstr "O arquivo não é um layout do Studio válido."
+
+#: apps/studio/widgets.py
+msgid "HTML"
+msgstr "HTML"
+
+#: apps/studio/widgets.py
+msgid "Line style"
+msgstr "Estilo da linha"
+
+#: apps/studio/widgets.py
+msgid "Cover image (optional)"
+msgstr "Imagem de capa (opcional)"
+
+#: apps/studio/widgets.py
+msgid "Only administrators can use this widget. The HTML is cleaned: scripts, styles, frames, forms and event attributes are removed."
+msgstr "Somente administradores podem usar este widget. O HTML é limpo: scripts, estilos, frames, formulários e atributos de evento são removidos."
+
+#: apps/studio/widgets.py
+msgid "Icon (optional)"
+msgstr "Ícone (opcional)"
+
+#: apps/studio/widgets.py
+msgid "Caption (optional)"
+msgstr "Legenda (opcional)"
+
+#: apps/studio/widgets.py
+msgid "YouTube, Vimeo or Aparat link"
+msgstr "Link do YouTube, Vimeo ou Aparat"
+
+#: apps/studio/widgets.py
+msgid "Line height (%)"
+msgstr "Altura da linha (%)"
+
+#: apps/studio/widgets.py
+msgid "Title (for screen readers)"
+msgstr "Título (para leitores de tela)"
+
+#: apps/studio/widgets.py
+msgid "Gallery"
+msgstr "Galeria"
+
+#: apps/studio/widgets.py
+msgid "Button text (optional)"
+msgstr "Texto do botão (opcional)"
+
+#: apps/studio/widgets.py
+msgid "Font weight"
+msgstr "Peso da fonte"
+
+#: apps/studio/widgets.py
+msgid "Images"
+msgstr "Imagens"
+
+#: apps/studio/widgets.py
+msgid "Accessible label (optional)"
+msgstr "Rótulo de acessibilidade (opcional)"
+
+#: apps/studio/widgets.py
+msgid "Button link"
+msgstr "Link do botão"
+
+#: apps/studio/widgets.py
+msgid "Divider"
+msgstr "Divisor"
+
+#: apps/studio/widgets.py
+msgid "A video from the media library"
+msgstr "Um vídeo da biblioteca de mídia"
+
+#: apps/studio/widgets.py
+msgid "Aspect ratio"
+msgstr "Proporção"
+
+#: apps/studio/widgets.py
+msgid "Icon size (px)"
+msgstr "Tamanho do ícone (px)"
+
+#: apps/studio/widgets.py
+msgid "Columns"
+msgstr "Colunas"
+
+#: apps/studio/widgets.py
+msgid "Video file"
+msgstr "Arquivo de vídeo"
+
+#: apps/studio/widgets.py
+msgid "Source (optional)"
+msgstr "Fonte (opcional)"
+
+#: apps/studio/widgets.py
+msgid "Read by screen readers. Leave empty for a decorative icon."
+msgstr "Lido por leitores de tela. Deixe vazio para um ícone decorativo."
+
+#: apps/studio/widgets.py
+msgid "Display width hint (sizes attribute)"
+msgstr "Dica de largura de exibição (atributo sizes)"
+
+#: apps/studio/widgets.py
+msgid "Icon list"
+msgstr "Lista de ícones"
+
+#: apps/studio/widgets.py
+msgid "Advanced. Helps the browser pick the right file size, for example “(max-width: 767px) 100vw, 560px”."
+msgstr "Avançado. Ajuda o navegador a escolher o tamanho certo do arquivo, por exemplo “(max-width: 767px) 100vw, 560px”."
+
+#: apps/studio/widgets.py
+msgid "Video source"
+msgstr "Fonte do vídeo"
+
+#: apps/studio/widgets.py
+msgid "Height (px)"
+msgstr "Altura (px)"
+
+#: apps/studio/widgets.py
+msgid "Width (percent)"
+msgstr "Largura (porcentagem)"
+
+#: apps/studio/widgets.py
+msgid "Paste a YouTube, Vimeo or Aparat link. The player loads only after a click."
+msgstr "Cole um link do YouTube, Vimeo ou Aparat. O player só carrega após um clique."
+
+#: apps/studio/widgets.py
+msgid "Accent color"
+msgstr "Cor de destaque"
+
+#: apps/studio/widgets.py
+msgid "Markdown: **bold**, *italic*, lists and [links](https://example.com). Raw HTML is not allowed."
+msgstr "Markdown: **negrito**, *itálico*, listas e [links](https://example.com). HTML bruto não é permitido."
+
+#: apps/studio/widgets.py
+msgid "Line color"
+msgstr "Cor da linha"
+
+#: apps/studio/widgets.py
+msgid "Open the full image when clicked"
+msgstr "Abrir a imagem completa ao clicar"
+
+#: apps/studio/widgets.py
+msgid "Link (optional)"
+msgstr "Link (opcional)"
+
+#: apps/studio/widgets.py
+msgid "Icon color"
+msgstr "Cor do ícone"
+
+#: apps/studio/widgets.py
+msgid "Icon"
+msgstr "Ícone"
+
+#: apps/studio/widgets.py
+msgid "Card title"
+msgstr "Título do cartão"
+
+#: apps/studio/widgets.py
+msgid "Spacer"
+msgstr "Espaçador"
+
+#: apps/studio/widgets.py
+msgid "Card"
+msgstr "Cartão"
+
+#: apps/studio/widgets.py
+msgid "Line thickness (px)"
+msgstr "Espessura da linha (px)"
+
+#: apps/studio/widgets.py
+msgid "Gap (px)"
+msgstr "Espaço (px)"
+
+#: apps/studio/widgets.py
+msgid "Default icon"
+msgstr "Ícone padrão"
+
+#: apps/studio/widgets.py
+msgid "A short, memorable quote."
+msgstr "Uma citação curta e memorável."
+
+#: apps/studio/widgets.py
+msgid "Image (optional)"
+msgstr "Imagem (opcional)"
+
+#: apps/studio/widgets.py
+msgid "Video link"
+msgstr "Link do vídeo"
+
+#: apps/studio/widgets.py
+msgid "Gap between items (px)"
+msgstr "Espaço entre itens (px)"
+
+#: apps/studio/widgets.py
+msgid "Custom HTML"
+msgstr "HTML personalizado"
+
+#: apps/studio/widgets.py
+msgid "Heading"
+msgstr "Título"
+
+#: templates/studio/editor.html
+msgid "Notices"
+msgstr "Avisos"
+
+#: templates/studio/editor.html
+msgid "Import / Export"
+msgstr "Importar / Exportar"
+
+#: templates/studio/editor.html
+msgid "Page preview"
+msgstr "Pré-visualização da página"
+
+#: templates/studio/editor.html
+msgid "Screen size"
+msgstr "Tamanho da tela"
+
+#: templates/studio/editor.html
+#, python-format
+msgid "Ravix Studio — %(title)s"
+msgstr "Ravix Studio — %(title)s"
+
+#: templates/studio/editor.html
+msgid "History"
+msgstr "Histórico"
+
+#: templates/studio/list.html
+msgid "Nothing was found."
+msgstr "Nada foi encontrado."
+
+#: templates/studio/list.html
+msgid "Design pages and posts visually with sections, columns and widgets."
+msgstr "Crie páginas e posts visualmente com seções, colunas e widgets."
+
+#: templates/studio/list.html
+msgid "Search by title or slug"
+msgstr "Buscar por título ou slug"
+
+#: templates/studio/editor.html
+msgid "Redo (Ctrl+Shift+Z)"
+msgstr "Refazer (Ctrl+Shift+Z)"

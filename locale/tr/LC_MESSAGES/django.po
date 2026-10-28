@@ -12163,3 +12163,790 @@ msgstr "Satır %(line)s: başlık en fazla 60 karakter olabilir."
 #, python-format
 msgid "Line %(line)s: there is no page or category with the slug “%(slug)s”."
 msgstr "Satır %(line)s: “%(slug)s” kısa adına sahip sayfa veya kategori yok."
+
+#: apps/accounts/permissions.py
+msgid "Design pages and posts with Ravix Studio, the visual page builder"
+msgstr "Görsel sayfa oluşturucu Ravix Studio ile sayfa ve yazı tasarlama"
+
+#: apps/accounts/permissions.py
+msgid "Approve and publish Ravix Studio layouts"
+msgstr "Ravix Studio düzenlerini onaylama ve yayımlama"
+
+#: apps/accounts/permissions.py
+msgid "Use the custom HTML widget in Ravix Studio (administrators only)"
+msgstr "Ravix Studio'da özel HTML bileşenini kullanma (yalnızca yöneticiler)"
+
+#: apps/builder/apps.py
+msgid "Page builder (legacy)"
+msgstr "Sayfa oluşturucu (eski)"
+
+#: apps/studio/apps.py
+msgid "Ravix Studio"
+msgstr "Ravix Studio"
+
+#: apps/core/builtin_modules.py
+msgid "A visual page builder: design pages and posts with drag and drop, with responsive settings, revisions and an approval flow. Published pages are saved as plain HTML and keep working when the module is off."
+msgstr "Görsel sayfa oluşturucu: sayfa ve yazıları sürükle-bırak, duyarlı ayarlar, sürümler ve onay akışıyla tasarlayın. Yayımlanan sayfalar düz HTML olarak saklanır ve modül kapalıyken de çalışır."
+
+#: apps/core/builtin_modules.py
+msgid "The server has switched Ravix Studio off (RAVIX_STUDIO_ENABLED=false in ravix.env). Ask the server administrator to remove that line, then restart once. Pages that were already published keep showing."
+msgstr "Sunucu Ravix Studio'yu kapattı (ravix.env içinde RAVIX_STUDIO_ENABLED=false). Sunucu yöneticisinden bu satırı silmesini ve bir kez yeniden başlatmasını isteyin. Daha önce yayımlanan sayfalar görünmeye devam eder."
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.fields: a list of at most 20 items is required."
+msgstr "%(where)s.fields: en çok 20 öğeli bir liste gerekli."
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.title: text of 1 to 60 characters is required."
+msgstr "%(where)s.title: 1 ile 60 karakter arasında metin gerekli."
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.icon: invalid icon name."
+msgstr "%(where)s.icon: geçersiz simge adı."
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s: invalid field (name, kind and label are required; kinds: %(kinds)s)."
+msgstr "%(where)s: geçersiz alan (ad, tür ve etiket gerekli; türler: %(kinds)s)."
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.css: text of at most 8000 characters is required."
+msgstr "%(where)s.css: en çok 8000 karakterlik metin gerekli."
+
+#: apps/plugins/manifest.py
+msgid "studio_widgets: a list of at most 10 items is required."
+msgstr "studio_widgets: en çok 10 öğeli bir liste gerekli."
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.type: invalid or duplicate (lowercase letters, digits and _)."
+msgstr "%(where)s.type: geçersiz veya yinelenen (küçük harf, rakam ve _)."
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s.render: must look like “module:function”."
+msgstr "%(where)s.render: “module:function” biçiminde olmalı."
+
+#: apps/plugins/manifest.py
+#, python-format
+msgid "%(where)s: an object with the keys type/title/icon/fields/render/css is required."
+msgstr "%(where)s: type/title/icon/fields/render/css anahtarlarına sahip bir nesne gerekli."
+
+#: apps/studio/editor_messages.py
+msgid "Inner section"
+msgstr "İç bölüm"
+
+#: apps/studio/editor_messages.py
+msgid "Remove"
+msgstr "Kaldır"
+
+#: apps/studio/editor_messages.py
+msgid "Move into the previous column"
+msgstr "Önceki sütuna taşı"
+
+#: apps/studio/editor_messages.py
+msgid "Move into the next column"
+msgstr "Sonraki sütuna taşı"
+
+#: apps/studio/editor_messages.py
+msgid "Column width"
+msgstr "Sütun genişliği"
+
+#: apps/studio/editor_messages.py
+msgid "No file found."
+msgstr "Dosya bulunamadı."
+
+#: apps/studio/editor_messages.py
+msgid "Make live again"
+msgstr "Yeniden yayına al"
+
+#: apps/studio/editor_messages.py
+msgid "Page template"
+msgstr "Sayfa şablonu"
+
+#: apps/studio/editor_messages.py
+msgid "Administrators only"
+msgstr "Yalnızca yöneticiler"
+
+#: apps/studio/editor_messages.py
+msgid "Layers"
+msgstr "Katmanlar"
+
+#: apps/studio/editor_messages.py
+msgid "Advanced"
+msgstr "Gelişmiş"
+
+#: apps/studio/editor_messages.py
+msgid "Basic"
+msgstr "Temel"
+
+#: apps/studio/editor_messages.py
+msgid "Add section"
+msgstr "Bölüm ekle"
+
+#: apps/studio/editor_messages.py
+msgid "Unsaved changes"
+msgstr "Kaydedilmemiş değişiklikler"
+
+#: apps/studio/editor_messages.py
+msgid "View on site"
+msgstr "Sitede görüntüle"
+
+#: apps/studio/editor_messages.py
+msgid "Submit for review"
+msgstr "İncelemeye gönder"
+
+#: apps/studio/editor_messages.py
+msgid "Add item"
+msgstr "Öğe ekle"
+
+#: apps/studio/editor_messages.py
+msgid "Yes"
+msgstr "Evet"
+
+#: apps/studio/editor_messages.py
+msgid "%s media references from the other site were cleared."
+msgstr "Diğer siteden gelen %s medya bağlantısı temizlendi."
+
+#: apps/studio/editor_messages.py
+msgid "Duplicate"
+msgstr "Çoğalt"
+
+#: apps/studio/editor_messages.py
+msgid "%s has this page open in the editor right now."
+msgstr "%s şu anda bu sayfayı düzenleyicide açık tutuyor."
+
+#: apps/studio/editor_messages.py
+msgid "Fix these problems first"
+msgstr "Önce bu sorunları düzeltin"
+
+#: apps/studio/editor_messages.py
+msgid "Reset"
+msgstr "Sıfırla"
+
+#: apps/studio/editor_messages.py
+msgid "Choose a video"
+msgstr "Video seç"
+
+#: apps/studio/editor_messages.py
+msgid "Choose an image"
+msgstr "Görsel seç"
+
+#: apps/studio/editor_messages.py
+msgid "Unpublish"
+msgstr "Yayından kaldır"
+
+#: apps/studio/editor_messages.py
+msgid "Export section"
+msgstr "Bölümü dışa aktar"
+
+#: apps/studio/editor_messages.py
+msgid "Export page"
+msgstr "Sayfayı dışa aktar"
+
+#: apps/studio/editor_messages.py
+msgid "Imported."
+msgstr "İçe aktarıldı."
+
+#: apps/studio/editor_messages.py
+msgid "Approve and publish"
+msgstr "Onayla ve yayımla"
+
+#: apps/studio/editor_messages.py
+msgid "Added: %s"
+msgstr "Eklendi: %s"
+
+#: apps/studio/editor_messages.py
+msgid "Widget"
+msgstr "Bileşen"
+
+#: apps/studio/editor_messages.py
+msgid "Widgets"
+msgstr "Bileşenler"
+
+#: apps/studio/editor_messages.py
+msgid "Add to the end of the page"
+msgstr "Sayfanın sonuna ekle"
+
+#: apps/studio/editor_messages.py
+msgid "Classic editor"
+msgstr "Klasik düzenleyici"
+
+#: apps/studio/editor_messages.py
+msgid "Selected: %s"
+msgstr "Seçili: %s"
+
+#: apps/studio/editor_messages.py
+msgid "1 column"
+msgstr "1 sütun"
+
+#: apps/studio/editor_messages.py
+msgid "2 columns"
+msgstr "2 sütun"
+
+#: apps/studio/editor_messages.py
+msgid "3 columns"
+msgstr "3 sütun"
+
+#: apps/studio/editor_messages.py
+msgid "4 columns"
+msgstr "4 sütun"
+
+#: apps/studio/editor_messages.py
+msgid "Deleted"
+msgstr "Silindi"
+
+#: apps/studio/editor_messages.py
+msgid "The page is empty. Add a section to begin."
+msgstr "Sayfa boş. Başlamak için bir bölüm ekleyin."
+
+#: apps/studio/editor_messages.py
+msgid "Saving…"
+msgstr "Kaydediliyor…"
+
+#: apps/studio/editor_messages.py
+msgid "Load their draft (discard my changes)"
+msgstr "Onların taslağını yükle (değişikliklerimi at)"
+
+#: apps/studio/editor_messages.py
+msgid "Page settings"
+msgstr "Sayfa ayarları"
+
+#: apps/studio/editor_messages.py
+msgid "Upload to the media library"
+msgstr "Medya kütüphanesine yükle"
+
+#: apps/studio/editor_messages.py
+msgid "Clear"
+msgstr "Temizle"
+
+#: apps/studio/editor_messages.py
+msgid "Add column"
+msgstr "Sütun ekle"
+
+#: apps/studio/editor_messages.py
+msgid "Hidden on this screen size"
+msgstr "Bu ekran boyutunda gizli"
+
+#: apps/studio/editor_messages.py
+msgid "Another editor saved a newer draft. What do you want to do?"
+msgstr "Başka bir düzenleyici daha yeni bir taslak kaydetti. Ne yapmak istersiniz?"
+
+#: apps/studio/editor_messages.py
+msgid "Delete this item and everything inside it?"
+msgstr "Bu öğe ve içindeki her şey silinsin mi?"
+
+#: apps/studio/editor_messages.py
+msgid "Restore"
+msgstr "Geri yükle"
+
+#: apps/studio/editor_messages.py
+msgid "Reject"
+msgstr "Reddet"
+
+#: apps/studio/editor_messages.py
+msgid "From plugins"
+msgstr "Eklentilerden"
+
+#: apps/studio/editor_messages.py
+msgid "Move up"
+msgstr "Yukarı taşı"
+
+#: apps/studio/editor_messages.py
+msgid "Move down"
+msgstr "Aşağı taşı"
+
+#: apps/studio/editor_messages.py
+msgid "Live"
+msgstr "Yayında"
+
+#: apps/studio/editor_messages.py
+msgid "Keyboard: arrows move in the layers panel, Alt+arrows move the item, Enter edits, Delete removes, Ctrl+D duplicates, Ctrl+Z undo, Ctrl+S saves."
+msgstr "Klavye: oklar katmanlar panelinde gezinir, Alt+oklar öğeyi taşır, Enter düzenler, Delete siler, Ctrl+D çoğaltır, Ctrl+Z geri alır, Ctrl+S kaydeder."
+
+#: apps/studio/editor_messages.py
+msgid "Drag a widget onto the page, or press Enter on it to add it to the selected column."
+msgstr "Bir bileşeni sayfaya sürükleyin ya da seçili sütuna eklemek için üzerinde Enter'a basın."
+
+#: apps/studio/editor_messages.py
+msgid "Empty = same as the larger screen"
+msgstr "Boş = büyük ekranla aynı"
+
+#: apps/studio/editor_messages.py
+msgid "Duplicated"
+msgstr "Çoğaltıldı"
+
+#: apps/studio/editor_messages.py
+msgid "The layout has problems"
+msgstr "Düzenin sorunları var"
+
+#: apps/studio/editor_messages.py
+msgid "This widget is not available (its plugin is off)."
+msgstr "Bu bileşen kullanılamıyor (eklentisi kapalı)."
+
+#: apps/studio/editor_messages.py
+msgid "None"
+msgstr "Yok"
+
+#: apps/studio/editor_messages.py
+msgid "Column layout"
+msgstr "Sütun düzeni"
+
+#: apps/studio/editor_messages.py
+msgid "The preview could not be drawn."
+msgstr "Önizleme çizilemedi."
+
+#: apps/studio/editor_messages.py
+msgid "Could not save."
+msgstr "Kaydedilemedi."
+
+#: apps/studio/editor_messages.py
+msgid "OK"
+msgstr "Tamam"
+
+#: apps/studio/editor_messages.py
+msgid "Keep my changes (their draft is saved as a version first)"
+msgstr "Değişikliklerimi koru (onların taslağı önce sürüm olarak kaydedilir)"
+
+#: apps/studio/editor_messages.py
+msgid "Moved"
+msgstr "Taşındı"
+
+#: apps/studio/editor_messages.py
+msgid "Import"
+msgstr "İçe aktar"
+
+#: apps/studio/editor_messages.py
+msgid "Replace the page"
+msgstr "Sayfanın yerine koy"
+
+#: apps/studio/editor_messages.py
+msgid "This page was changed elsewhere"
+msgstr "Bu sayfa başka yerde değiştirildi"
+
+#: apps/studio/editor_messages.py
+msgid "Updating the preview…"
+msgstr "Önizleme güncelleniyor…"
+
+#: apps/studio/editor_messages.py
+msgid "Drop a widget here"
+msgstr "Bir bileşeni buraya bırakın"
+
+#: apps/studio/fields.py
+msgid "Only administrators can add or change custom HTML."
+msgstr "Özel HTML'yi yalnızca yöneticiler ekleyebilir veya değiştirebilir."
+
+#: apps/studio/fields.py
+msgid "Gradient angle (degrees)"
+msgstr "Gradyan açısı (derece)"
+
+#: apps/studio/fields.py
+msgid "Inner spacing"
+msgstr "İç boşluk"
+
+#: apps/studio/fields.py
+msgid "Outer spacing"
+msgstr "Dış boşluk"
+
+#: apps/studio/fields.py
+msgid "Cover"
+msgstr "Kapla (cover)"
+
+#: apps/studio/fields.py
+msgid "Contain"
+msgstr "Sığdır (contain)"
+
+#: apps/studio/fields.py
+msgid "Original size"
+msgstr "Özgün boyut"
+
+#: apps/studio/fields.py
+msgid "bottom"
+msgstr "alt"
+
+#: apps/studio/fields.py
+msgid "top"
+msgstr "üst"
+
+#: apps/studio/fields.py
+msgid "start side"
+msgstr "başlangıç tarafı"
+
+#: apps/studio/fields.py
+msgid "end side"
+msgstr "bitiş tarafı"
+
+#: apps/studio/fields.py
+msgid "Shadow"
+msgstr "Gölge"
+
+#: apps/studio/fields.py
+msgid "Background image position"
+msgstr "Arka plan görseli konumu"
+
+#: apps/studio/fields.py
+msgid "Background image size"
+msgstr "Arka plan görseli boyutu"
+
+#: apps/studio/fields.py
+msgid "Hide on this screen size"
+msgstr "Bu ekran boyutunda gizle"
+
+#: apps/studio/fields.py
+msgid "Minimum height (px)"
+msgstr "En az yükseklik (px)"
+
+#: apps/studio/fields.py
+#, python-format
+msgid "“%(label)s” may only contain lowercase letters, digits and hyphens, and must start with a letter."
+msgstr "“%(label)s” yalnızca küçük harf, rakam ve tire içerebilir ve harfle başlamalıdır."
+
+#: apps/studio/fields.py
+msgid "Gradient start color"
+msgstr "Gradyan başlangıç rengi"
+
+#: apps/studio/fields.py
+msgid "Gradient end color"
+msgstr "Gradyan bitiş rengi"
+
+#: apps/studio/fields.py
+#, python-format
+msgid "“%(label)s” must be a YouTube, Vimeo or Aparat video link."
+msgstr "“%(label)s” bir YouTube, Vimeo veya Aparat video bağlantısı olmalıdır."
+
+#: apps/studio/fields.py
+msgid "Inherit"
+msgstr "Devral"
+
+#: apps/studio/models.py
+#, python-format
+msgid "Layout of “%(title)s”"
+msgstr "“%(title)s” düzeni"
+
+#: apps/studio/models.py
+msgid "Studio layout"
+msgstr "Studio düzeni"
+
+#: apps/studio/models.py
+msgid "Studio layouts"
+msgstr "Studio düzenleri"
+
+#: apps/studio/schema.py
+msgid "Maximum content width (px)"
+msgstr "En fazla içerik genişliği (px)"
+
+#: apps/studio/schema.py
+msgid "Anchor ID (for in-page links)"
+msgstr "Çapa kimliği (sayfa içi bağlantılar için)"
+
+#: apps/studio/schema.py
+msgid "The widget type is not allowed."
+msgstr "Bu bileşen türüne izin verilmiyor."
+
+#: apps/studio/schema.py
+msgid "Vertical alignment in the row"
+msgstr "Satırda dikey hizalama"
+
+#: apps/studio/schema.py
+msgid "Full width (no sidebar)"
+msgstr "Tam genişlik (kenar çubuğu yok)"
+
+#: apps/studio/schema.py
+msgid "Lowercase letters, digits and hyphens. Link to it with #your-id."
+msgstr "Küçük harf, rakam ve tire. #your-id ile bağlantı verin."
+
+#: apps/studio/schema.py
+#, python-format
+msgid "Sections can be nested at most %(n)s levels deep."
+msgstr "Bölümler en fazla %(n)s düzey iç içe olabilir."
+
+#: apps/studio/schema.py
+msgid "Theme default"
+msgstr "Tema varsayılanı"
+
+#: apps/studio/services.py
+#, python-format
+msgid "Version %(number)s was made live again."
+msgstr "%(number)s numaralı sürüm yeniden yayına alındı."
+
+#: apps/studio/services.py
+msgid "This is not a Ravix Studio file."
+msgstr "Bu bir Ravix Studio dosyası değil."
+
+#: apps/studio/services.py
+msgid "This version cannot be made live."
+msgstr "Bu sürüm yayına alınamaz."
+
+#: apps/studio/services.py
+msgid "Automatic: before an import"
+msgstr "Otomatik: içe aktarmadan önce"
+
+#: apps/studio/services.py
+#, python-format
+msgid "Version %(number)s of the layout was saved."
+msgstr "Düzenin %(number)s numaralı sürümü kaydedildi."
+
+#: apps/studio/services.py
+msgid "Rolled back"
+msgstr "Geri alındı"
+
+#: apps/studio/services.py
+msgid "Automatic: before another save overwrote this draft"
+msgstr "Otomatik: başka bir kayıt bu taslağın üzerine yazmadan önce"
+
+#: apps/studio/services.py
+msgid "Section not found."
+msgstr "Bölüm bulunamadı."
+
+#: apps/studio/services.py
+msgid "A layout file was imported into the draft."
+msgstr "Bir düzen dosyası taslağa aktarıldı."
+
+#: apps/studio/templatetags/studio_ui.py
+msgid "Edit with Ravix Studio"
+msgstr "Ravix Studio ile düzenle"
+
+#: apps/studio/views.py
+msgid "The file is not a valid Studio layout."
+msgstr "Bu dosya geçerli bir Studio düzeni değil."
+
+#: apps/studio/widgets.py
+msgid "HTML"
+msgstr "HTML"
+
+#: apps/studio/widgets.py
+msgid "Line style"
+msgstr "Çizgi stili"
+
+#: apps/studio/widgets.py
+msgid "Cover image (optional)"
+msgstr "Kapak görseli (isteğe bağlı)"
+
+#: apps/studio/widgets.py
+msgid "Only administrators can use this widget. The HTML is cleaned: scripts, styles, frames, forms and event attributes are removed."
+msgstr "Bu bileşeni yalnızca yöneticiler kullanabilir. HTML temizlenir: betikler, stiller, çerçeveler, formlar ve olay öznitelikleri kaldırılır."
+
+#: apps/studio/widgets.py
+msgid "Icon (optional)"
+msgstr "Simge (isteğe bağlı)"
+
+#: apps/studio/widgets.py
+msgid "Caption (optional)"
+msgstr "Alt yazı (isteğe bağlı)"
+
+#: apps/studio/widgets.py
+msgid "YouTube, Vimeo or Aparat link"
+msgstr "YouTube, Vimeo veya Aparat bağlantısı"
+
+#: apps/studio/widgets.py
+msgid "Line height (%)"
+msgstr "Satır yüksekliği (%)"
+
+#: apps/studio/widgets.py
+msgid "Title (for screen readers)"
+msgstr "Başlık (ekran okuyucular için)"
+
+#: apps/studio/widgets.py
+msgid "Gallery"
+msgstr "Galeri"
+
+#: apps/studio/widgets.py
+msgid "Button text (optional)"
+msgstr "Düğme metni (isteğe bağlı)"
+
+#: apps/studio/widgets.py
+msgid "Font weight"
+msgstr "Yazı tipi kalınlığı"
+
+#: apps/studio/widgets.py
+msgid "Images"
+msgstr "Görseller"
+
+#: apps/studio/widgets.py
+msgid "Accessible label (optional)"
+msgstr "Erişilebilirlik etiketi (isteğe bağlı)"
+
+#: apps/studio/widgets.py
+msgid "Button link"
+msgstr "Düğme bağlantısı"
+
+#: apps/studio/widgets.py
+msgid "Divider"
+msgstr "Ayırıcı"
+
+#: apps/studio/widgets.py
+msgid "A video from the media library"
+msgstr "Medya kütüphanesinden bir video"
+
+#: apps/studio/widgets.py
+msgid "Aspect ratio"
+msgstr "En boy oranı"
+
+#: apps/studio/widgets.py
+msgid "Icon size (px)"
+msgstr "Simge boyutu (px)"
+
+#: apps/studio/widgets.py
+msgid "Columns"
+msgstr "Sütunlar"
+
+#: apps/studio/widgets.py
+msgid "Video file"
+msgstr "Video dosyası"
+
+#: apps/studio/widgets.py
+msgid "Source (optional)"
+msgstr "Kaynak (isteğe bağlı)"
+
+#: apps/studio/widgets.py
+msgid "Read by screen readers. Leave empty for a decorative icon."
+msgstr "Ekran okuyucular tarafından okunur. Süs simgesi için boş bırakın."
+
+#: apps/studio/widgets.py
+msgid "Display width hint (sizes attribute)"
+msgstr "Görüntü genişliği ipucu (sizes özniteliği)"
+
+#: apps/studio/widgets.py
+msgid "Icon list"
+msgstr "Simge listesi"
+
+#: apps/studio/widgets.py
+msgid "Advanced. Helps the browser pick the right file size, for example “(max-width: 767px) 100vw, 560px”."
+msgstr "Gelişmiş. Tarayıcının doğru dosya boyutunu seçmesine yardım eder, örneğin “(max-width: 767px) 100vw, 560px”."
+
+#: apps/studio/widgets.py
+msgid "Video source"
+msgstr "Video kaynağı"
+
+#: apps/studio/widgets.py
+msgid "Height (px)"
+msgstr "Yükseklik (px)"
+
+#: apps/studio/widgets.py
+msgid "Width (percent)"
+msgstr "Genişlik (yüzde)"
+
+#: apps/studio/widgets.py
+msgid "Paste a YouTube, Vimeo or Aparat link. The player loads only after a click."
+msgstr "Bir YouTube, Vimeo veya Aparat bağlantısı yapıştırın. Oynatıcı yalnızca tıklamadan sonra yüklenir."
+
+#: apps/studio/widgets.py
+msgid "Accent color"
+msgstr "Vurgu rengi"
+
+#: apps/studio/widgets.py
+msgid "Markdown: **bold**, *italic*, lists and [links](https://example.com). Raw HTML is not allowed."
+msgstr "Markdown: **kalın**, *italik*, listeler ve [bağlantılar](https://example.com). Ham HTML'ye izin verilmez."
+
+#: apps/studio/widgets.py
+msgid "Line color"
+msgstr "Çizgi rengi"
+
+#: apps/studio/widgets.py
+msgid "Open the full image when clicked"
+msgstr "Tıklanınca tam görseli aç"
+
+#: apps/studio/widgets.py
+msgid "Link (optional)"
+msgstr "Bağlantı (isteğe bağlı)"
+
+#: apps/studio/widgets.py
+msgid "Icon color"
+msgstr "Simge rengi"
+
+#: apps/studio/widgets.py
+msgid "Icon"
+msgstr "Simge"
+
+#: apps/studio/widgets.py
+msgid "Card title"
+msgstr "Kart başlığı"
+
+#: apps/studio/widgets.py
+msgid "Spacer"
+msgstr "Boşluk"
+
+#: apps/studio/widgets.py
+msgid "Card"
+msgstr "Kart"
+
+#: apps/studio/widgets.py
+msgid "Line thickness (px)"
+msgstr "Çizgi kalınlığı (px)"
+
+#: apps/studio/widgets.py
+msgid "Gap (px)"
+msgstr "Boşluk (px)"
+
+#: apps/studio/widgets.py
+msgid "Default icon"
+msgstr "Varsayılan simge"
+
+#: apps/studio/widgets.py
+msgid "A short, memorable quote."
+msgstr "Kısa, akılda kalıcı bir alıntı."
+
+#: apps/studio/widgets.py
+msgid "Image (optional)"
+msgstr "Görsel (isteğe bağlı)"
+
+#: apps/studio/widgets.py
+msgid "Video link"
+msgstr "Video bağlantısı"
+
+#: apps/studio/widgets.py
+msgid "Gap between items (px)"
+msgstr "Öğeler arası boşluk (px)"
+
+#: apps/studio/widgets.py
+msgid "Custom HTML"
+msgstr "Özel HTML"
+
+#: apps/studio/widgets.py
+msgid "Heading"
+msgstr "Başlık"
+
+#: templates/studio/editor.html
+msgid "Notices"
+msgstr "Bildirimler"
+
+#: templates/studio/editor.html
+msgid "Import / Export"
+msgstr "İçe / Dışa aktar"
+
+#: templates/studio/editor.html
+msgid "Page preview"
+msgstr "Sayfa önizlemesi"
+
+#: templates/studio/editor.html
+msgid "Screen size"
+msgstr "Ekran boyutu"
+
+#: templates/studio/editor.html
+#, python-format
+msgid "Ravix Studio — %(title)s"
+msgstr "Ravix Studio — %(title)s"
+
+#: templates/studio/editor.html
+msgid "History"
+msgstr "Geçmiş"
+
+#: templates/studio/list.html
+msgid "Nothing was found."
+msgstr "Hiçbir şey bulunamadı."
+
+#: templates/studio/list.html
+msgid "Design pages and posts visually with sections, columns and widgets."
+msgstr "Sayfa ve yazıları bölümler, sütunlar ve bileşenlerle görsel olarak tasarlayın."
+
+#: templates/studio/list.html
+msgid "Search by title or slug"
+msgstr "Başlık veya kısa adla ara"
+
+#: templates/studio/editor.html
+msgid "Redo (Ctrl+Shift+Z)"
+msgstr "Yinele (Ctrl+Shift+Z)"

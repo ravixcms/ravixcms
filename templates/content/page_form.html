@@ -1,10 +1,10 @@
 {% extends "layouts/panel.html" %}
 {% load i18n %}
-{% load ravix_ui %}
+{% load ravix_ui studio_ui %}
 {% block title %}{{ heading }}{% endblock %}
 {% block page_title %}{{ heading }}{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>{{ heading }}</h1></div></div>
+<div class="page-head"><div><h1>{{ heading }}</h1></div>{% studio_edit_button "page" object "btn" %}</div>
 <form method="post" novalidate data-once>
   {% csrf_token %}
   {% include "partials/_form_errors.html" %}

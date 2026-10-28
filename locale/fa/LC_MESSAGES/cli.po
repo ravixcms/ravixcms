@@ -701,10 +701,6 @@ msgid "The old timer %(old_unit)s is active; migrate to %(unit)s (docs/upgrade.m
 msgstr "تایمر قدیمی %(old_unit)s فعال است؛ به %(unit)s مهاجرت کنید (docs/upgrade.md). نام قدیمی در 2.0 حذف می‌شود"
 
 #, python-format
-msgid "The page-builder document was invalid at render time and was not displayed: %s"
-msgstr "سند صفحه‌ساز هنگام رندر نامعتبر بود و نمایش داده نشد: %s"
-
-#, python-format
 msgid "The path %(target)s already exists."
 msgstr "مسیر %(target)s از قبل وجود دارد."
 
@@ -971,3 +967,13 @@ msgstr "پوشهٔ فایل‌های خصوصی افزونه‌ها خارج ا�
 
 msgid "RAVIX_PLUGIN_DATA_DIR (%(path)s) is inside the public media; private plugin files would leak"
 msgstr "RAVIX_PLUGIN_DATA_DIR (%(path)s) داخل media عمومی است؛ فایل‌های خصوصی افزونه‌ها درز می‌کند"
+
+msgid "Draw the published Ravix Studio pages again (after a widget changed, or to refresh image files). Without options only pages made by an older renderer are rebuilt."
+msgstr "صفحه‌های منتشرشدهٔ Ravix Studio را دوباره می‌سازد (پس از تغییر یک ویجت یا برای تازه‌سازی پرونده‌های تصویر). بدون گزینه فقط صفحه‌هایی که رندرکنندهٔ قدیمی ساخته بازسازی می‌شوند."
+
+msgid "Rebuild every published page, not only the stale ones."
+msgstr "همهٔ صفحه‌های منتشرشده را بازسازی کن، نه فقط کهنه‌ها را."
+
+#, python-format
+msgid "Renderer version %(v)s: %(done)s of %(total)s published page(s) rebuilt (%(stale)s were stale)."
+msgstr "نسخهٔ رندرکننده %(v)s: %(done)s از %(total)s صفحهٔ منتشرشده بازسازی شد (%(stale)s مورد کهنه بود)."

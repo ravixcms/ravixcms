@@ -41,6 +41,7 @@ python manage.py startheme my-theme --name "قالب من" --author "نام شم
 | `slug` | بله | دقیقاً هم‌نام پوشه. |
 | `name`، `version`، `author` | بله | `version` به شکل `1.2.3`. هر بار CSS/JS را تغییر دادید، نسخه را بالا ببرید تا کش مرورگرها نو شود. |
 | `description`، `screenshot` | خیر | تصویر باید داخل `static/` و png/jpg/webp باشد (پیشنهاد: ۶۴۰×۴۰۰). |
+| `supports.studio_full_width` | خیر | `true` یعنی قالب چیدمان تمام‌عرض (بدون نوار کناری) برای صفحه‌های Ravix Studio دارد؛ بدون آن Studio از چیدمان معمول قالب استفاده می‌کند. |
 | `supports.home_sections` | خیر | نوع بخش‌های صفحهٔ اصلی که قالب نمایش می‌دهد (پیش‌فرض: همه). |
 
 ### گام ۳ – ظاهر را بسازید

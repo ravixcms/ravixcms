@@ -24,7 +24,9 @@ urlpatterns = [
     path("panel/", include("apps.content.urls")),
     path("panel/", include("apps.comments.urls")),
     path("panel/", include("apps.themes.urls")),
-    path("panel/builder/", include("apps.builder.urls")),
+    path("panel/builder/", include("apps.studio.legacy_urls")),  # the first page builder's old addresses: redirected to Ravix Studio
+    path("panel/studio/", include("apps.studio.urls")),
+    path("studio-assets/", include("apps.studio.public_urls")),
     path("panel/media/", include("apps.media_library.urls")),
     path("panel/audit/", include("apps.audit.urls")),
     path("panel/", include("apps.sites.urls")),

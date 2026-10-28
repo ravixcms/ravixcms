@@ -1,0 +1,42 @@
+{% extends "layouts/panel.html" %}
+{% load i18n ravix_ui %}
+{% block title %}{% trans "Ravix Studio" %}{% endblock %}
+{% block page_title %}{% trans "Ravix Studio" %}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1>{% trans "Ravix Studio" %}</h1><p>{% trans "Design pages and posts visually with sections, columns and widgets." %}</p></div>
+</div>
+<div class="card">
+  <form method="get" class="toolbar" role="search">
+    <select name="kind" class="input" aria-label="{% trans "Type" %}">
+      <option value="page" {% if kind == "page" %}selected{% endif %}>{% trans "Pages" %}</option>
+      <option value="post" {% if kind == "post" %}selected{% endif %}>{% trans "Posts" %}</option>
+    </select>
+    <input type="search" name="q" value="{{ q }}" class="input grow" placeholder="{% trans "Search by title or slug" %}" aria-label="{% trans "Search" %}">
+    <label class="check"><input type="checkbox" name="pending" value="1" {% if only_pending %}checked{% endif %}> {% trans "Awaiting approval" %}</label>
+    <button type="submit" class="btn">{% icon "search" 18 %} {% trans "Search" %}</button>
+  </form>
+  {% if rows %}
+  <div class="table-wrap"><table class="table">
+    <thead><tr><th>{% trans "Title" %}</th><th>{% trans "Slug" %}</th><th>{% trans "Ravix Studio" %}</th><th>{% trans "Last edit" %}</th><th></th></tr></thead>
+    <tbody>
+    {% for row in rows %}
+      <tr>
+        <td><strong>{{ row.obj.title }}</strong></td>
+        <td class="ltr">{{ row.obj.slug }}</td>
+        <td>
+          {% if row.live %}<span class="badge badge-published">{% trans "Live" %}</span>{% elif row.doc %}<span class="badge">{% trans "Draft" %}</span>{% else %}<span class="muted">—</span>{% endif %}
+          {% if row.pending %}<span class="badge badge-warning">{% trans "Awaiting approval" %}</span>{% endif %}
+        </td>
+        <td>{{ row.obj.updated_at|jalali_datetime }}</td>
+        <td><a class="btn btn-sm" href="{% url 'studio:editor' kind row.obj.pk %}">{% icon "layout" 16 %} {% trans "Edit with Ravix Studio" %}</a></td>
+      </tr>
+    {% endfor %}
+    </tbody></table></div>
+  <div class="pagination">
+    {% if has_prev %}<a class="btn btn-light btn-sm" href="?kind={{ kind }}&q={{ q|urlencode }}{% if only_pending %}&pending=1{% endif %}&page={{ page_no|add:'-1' }}">{% icon "chevron_left" 16 %}</a>{% endif %}
+    {% if has_next %}<a class="btn btn-light btn-sm" href="?kind={{ kind }}&q={{ q|urlencode }}{% if only_pending %}&pending=1{% endif %}&page={{ page_no|add:'1' }}">{% icon "chevron_right" 16 %}</a>{% endif %}
+  </div>
+  {% else %}<div class="empty">{% trans "Nothing was found." %}</div>{% endif %}
+</div>
+{% endblock %}

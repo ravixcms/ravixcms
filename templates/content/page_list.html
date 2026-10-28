@@ -1,6 +1,6 @@
 {% extends "layouts/panel.html" %}
 {% load i18n %}
-{% load ravix_ui %}
+{% load ravix_ui studio_ui %}
 {% block title %}{% trans "Pages" %}{% endblock %}
 {% block page_title %}{% trans "Pages" %}{% endblock %}
 {% block content %}
@@ -35,6 +35,7 @@
         <td>{{ page.updated_at|jalali_datetime }}</td>
         <td>
           <a class="btn btn-light btn-sm" href="{% url 'content:page_detail' page.pk %}">{% icon "eye" 16 %}</a>
+          {% studio_edit_button "page" page "btn btn-light btn-sm" %}
           <a class="btn btn-light btn-sm" href="{% url 'content:page_update' page.pk %}" title="{% trans "Edit" %}">{% icon "edit" 16 %}</a>
           <a class="btn btn-light btn-sm" href="{% url 'content:page_delete' page.pk %}" title="{% trans "Delete" %}">{% icon "trash" 16 %}</a>
         </td>

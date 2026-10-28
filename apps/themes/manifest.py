@@ -51,6 +51,7 @@ class ThemeInfo:
     screenshot: str = ""
     home_sections: tuple[str, ...] = tuple(HOME_SECTION_TYPES)
     ravix: str = ""  # بازهٔ سازگاری با هسته (اختیاری)، مثل ">=0.6,<1.0"
+    studio_full_width: bool = False  # supports.studio_full_width: the theme has a full-width / no-sidebar layout for Ravix Studio pages
     errors: tuple[str, ...] = field(default_factory=tuple)
 
     @property
@@ -210,6 +211,7 @@ def inspect_theme_dir(theme_dir: Path) -> ThemeInfo:
     names: dict = {}
     descriptions: dict = {}
     home_sections = tuple(HOME_SECTION_TYPES)
+    studio_full_width = False
     if data:
         if data.get("api_version") != API_VERSION:
             errors.append((gettext("api_version must be %(API_VERSION)s (the theme was built for another version of the contract).") % {"API_VERSION": API_VERSION}))
@@ -247,6 +249,8 @@ def inspect_theme_dir(theme_dir: Path) -> ThemeInfo:
             declared = tuple(s for s in supports["home_sections"] if s in HOME_SECTION_TYPES)
             if declared:
                 home_sections = declared
+        if isinstance(supports, dict):
+            studio_full_width = supports.get("studio_full_width") is True
 
     if theme_dir.is_dir():
         if not (theme_dir / "templates").is_dir():
@@ -270,5 +274,6 @@ def inspect_theme_dir(theme_dir: Path) -> ThemeInfo:
         screenshot=screenshot,
         home_sections=home_sections,
         ravix=ravix,
+        studio_full_width=studio_full_width,
         errors=tuple(dict.fromkeys(errors)),
     )

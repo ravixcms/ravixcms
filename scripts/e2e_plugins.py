@@ -6,7 +6,7 @@
 تنظیم سئوی یک صفحه و دیدن اثرش در صفحهٔ عمومی، سپس دستکاری فایل یک افزونهٔ فعال و اطمینان از توقف فوری آن،
 و ایزوله‌بودن خطا (افزونهٔ خراب پنل را از کار نمی‌اندازد).
 دیتابیس موقت می‌سازد و به دیتابیس پروژه دست نمی‌زند.
-اجرا: python scripts/e2e_plugins.py   (متغیرها مثل e2e_builder.py: RAVIX_PYTHON, CHROMIUM_PATH, HEADED)
+اجرا: python scripts/e2e_plugins.py   (متغیرها مثل e2e_studio.py: RAVIX_PYTHON, CHROMIUM_PATH, HEADED)
 """
 import json
 import os

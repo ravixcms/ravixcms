@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load ravix_theme %}
-{% block body_class %}page-static{% if page.builder %} page-built{% endif %}{% endblock %}
+{% block body_class %}page-static{% if page.builder and page.full_width %} page-built{% endif %}{% endblock %}
 {% block content %}
-{% if page.builder %}
+{% if page.builder and page.full_width %}
 {# A page made with the page builder: its body is full width and self-contained (safe HTML + its own <style>); the theme only renders the title and breadcrumbs. #}
 {% if page.show_title %}
 <div class="container">
@@ -16,8 +16,8 @@
 <div class="container">
   {% include "partials/breadcrumbs.html" %}
   <article class="article">
-    <header class="article-head"><h1 dir="auto">{{ page.title }}</h1></header>
-    <div class="prose">{{ page.body_html }}</div>
+    {% if not page.builder or page.show_title %}<header class="article-head"><h1 dir="auto">{{ page.title }}</h1></header>{% else %}<h1 class="sr-only">{{ page.title }}</h1>{% endif %}
+    <div class="{% if page.builder %}studio-body{% else %}prose{% endif %}">{{ page.body_html }}</div>
     <p class="muted updated">{% trans "Last updated:" %} <time datetime="{{ page.date_iso }}">{{ page.date_display }}</time></p>
   </article>
 </div>

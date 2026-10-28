@@ -24,7 +24,7 @@ def _iter_handlers(name):
 
 def sanitize_seo(original: dict, result) -> dict:
     """فقط کلیدهای مجاز و مقادیر معتبر پذیرفته می‌شود؛ هر چیز دیگر نادیده گرفته می‌شود (افزونه نمی‌تواند چیز خطرناکی در <head> بگذارد)."""
-    from apps.builder.schema import is_safe_url
+    from apps.core.safeurl import is_safe_url
 
     if not isinstance(result, dict):
         return original
@@ -69,7 +69,7 @@ def _lastmod(value) -> str:
 def sanitize_sitemap(original: list, result, language: str = "") -> list:
     """Extra sitemap URLs from plugins, cleaned: only paths of this language (``/<language>/…``) that are plain, safe local paths are kept;
     ``lastmod`` must be a real date; at most MAX_SITEMAP_ENTRIES_PER_PLUGIN entries are taken from one answer. Anything else is dropped."""
-    from apps.builder.schema import is_safe_url
+    from apps.core.safeurl import is_safe_url
 
     if not isinstance(result, (list, tuple)):
         return original
