@@ -187,6 +187,17 @@ class PublicPrefixTests(TestCase):
         self.assertEqual(links["x-default"], "http://testserver/fa/blog/first/")
         self.assertNotIn("/panel/", body)
 
+    def test_home_and_blog_in_every_language_sitemap_carry_hreflang_for_all_languages(self):
+        ns = {"s": "http://www.sitemaps.org/schemas/sitemap/0.9", "x": "http://www.w3.org/1999/xhtml"}
+        for code in ("fa", "en", "zh-hans"):
+            root = ET.fromstring(self.client.get(f"/{code}/sitemap.xml").content)
+            by_loc = {u.findtext("s:loc", namespaces=ns): u for u in root.findall("s:url", ns)}
+            for tail in ("", "blog/"):
+                links = {l.get("hreflang"): l.get("href") for l in by_loc[f"http://testserver/{code}/{tail}"].findall("x:link", ns)}
+                self.assertEqual(len(links), len(LANGS) + 1, (code, tail))
+                self.assertEqual(links["x-default"], f"http://testserver/fa/{tail}")
+                self.assertEqual(links["pt-BR"], f"http://testserver/pt-br/{tail}")
+
     def test_robots_points_to_the_index_and_blocks_internal_urls_in_every_language(self):
         text = self.client.get("/robots.txt").content.decode()
         self.assertIn("Sitemap: http://testserver/sitemap.xml", text)

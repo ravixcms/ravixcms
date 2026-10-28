@@ -48,6 +48,46 @@ def sanitize_seo(original: dict, result) -> dict:
     return out
 
 
+MAX_SITEMAP_ENTRIES_PER_PLUGIN = 1000
+
+
+def _lastmod(value) -> str:
+    import datetime
+
+    if isinstance(value, datetime.datetime):
+        return value.date().isoformat()
+    if isinstance(value, datetime.date):
+        return value.isoformat()
+    if isinstance(value, str):
+        try:
+            return datetime.date.fromisoformat(value[:10]).isoformat()
+        except ValueError:
+            return ""
+    return ""
+
+
+def sanitize_sitemap(original: list, result, language: str = "") -> list:
+    """Extra sitemap URLs from plugins, cleaned: only paths of this language (``/<language>/…``) that are plain, safe local paths are kept;
+    ``lastmod`` must be a real date; at most MAX_SITEMAP_ENTRIES_PER_PLUGIN entries are taken from one answer. Anything else is dropped."""
+    from apps.builder.schema import is_safe_url
+
+    if not isinstance(result, (list, tuple)):
+        return original
+    out = list(original)
+    seen = {e["path"] for e in out}
+    prefix = f"/{language}/" if language else "/"
+    for item in list(result)[:MAX_SITEMAP_ENTRIES_PER_PLUGIN]:
+        if not isinstance(item, dict):
+            continue
+        path = item.get("path")
+        if (not isinstance(path, str) or not path.startswith(prefix) or len(path) > 500 or path.startswith("//") or "?" in path or "#" in path
+                or any(c.isspace() for c in path) or not is_safe_url(path) or path in seen):
+            continue
+        seen.add(path)
+        out.append({"path": path, "lastmod": _lastmod(item.get("lastmod")), "alternates": item.get("alternates", True) is not False})
+    return out
+
+
 COMMENT_STATUSES = {"pending", "spam"}  # افزونه فقط می‌تواند سخت‌گیرتر کند؛ تأیید خودکار ممنوع است
 
 
@@ -76,7 +116,10 @@ def apply_filter(name, value, **ctx):
         except Exception as exc:  # noqa: BLE001
             events.record_error(loaded.slug, f"hook {name}", exc)
             continue
-        value = _SANITIZERS[name](value, new) if name in _SANITIZERS else new
+        if name == "public.sitemap":
+            value = sanitize_sitemap(value, new, ctx.get("language", ""))
+        else:
+            value = _SANITIZERS[name](value, new) if name in _SANITIZERS else new
     return value
 
 

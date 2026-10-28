@@ -320,12 +320,20 @@ class SitemapView(View):
                 entries.append((reverse("shop:list"), None, True))
                 for pr in Product.objects.filter(site=site, is_active=True).only("slug", "updated_at"):
                     entries.append((pr.get_absolute_url(), pr.updated_at, True))
+        # pages that active plugins serve to the public (their own routes), for this language
+        from django.utils.translation import get_language
+
+        from apps.plugins import hooks as plugin_hooks
+
+        extra = plugin_hooks.apply_filter("public.sitemap", [], language=get_language() or "", request=request)
+        known = {path for path, _m, _a in entries}
+        entries.extend((e["path"], e["lastmod"] or None, e["alternates"]) for e in extra if e["path"] not in known)
         languages = [code for code, _name in language_choices()]
         default = regional_for(load_site_settings(request))[0]
         lines = ['<?xml version="1.0" encoding="UTF-8"?>',
                  '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">']
         for path, modified, with_alternates in entries[: self.LIMIT]:
-            lastmod = f"<lastmod>{modified.date().isoformat()}</lastmod>" if modified else ""
+            lastmod = (f"<lastmod>{modified if isinstance(modified, str) else modified.date().isoformat()}</lastmod>") if modified else ""
             alternates = ""
             if with_alternates and swap_language_prefix(path, "fa") is not None:
                 links = [(hreflang(code), swap_language_prefix(path, code)) for code in languages]

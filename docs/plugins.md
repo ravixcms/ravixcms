@@ -191,6 +191,7 @@ python manage.py plugin_makemigrations my_plugin    # فقط DEBUG: ساخت م�
 | نام | نوع | امضا | کاربرد |
 |---|---|---|---|
 | `public.seo` | filter | `fn(seo, api, *, kind, obj_id, site, request)` ← dict | تغییر سئوی صفحه (`kind` = `page`/`post`) |
+| `public.sitemap` | filter | `fn(entries, api, language, request)` ← list | افزودن صفحه‌های عمومی افزونه به sitemap همان زبان (فقط وقتی افزونه فعال است). هر مورد: `{"path": "/en/page/", "lastmod": date/datetime/"YYYY-MM-DD" (اختیاری), "alternates": true}`؛ `alternates` (پیش‌فرض true) برای hreflang همهٔ زبان‌هاست. هسته فقط مسیرهای محلی با پیشوند همان زبان، بدون query، بدون تکرار و حداکثر ۱۰۰۰ مورد را می‌پذیرد |
 | `content.saved` | action | `fn(api, **ctx)` | (رزرو برای نسخه‌های بعد) |
 | `comments.before_save` | filter | `fn(data, api, *, post_id, request)` ← dict | بررسی دیدگاه پیش از ذخیره (مثلاً ضداسپم خارجی). `data` شامل `author_name, author_email, body, status, ip, parent_id` است |
 | `comments.created` | action | `fn(api, *, comment_id, post_id, status, request)` | پس از ثبت دیدگاه عمومی |
