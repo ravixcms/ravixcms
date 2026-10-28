@@ -7,7 +7,13 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.development")
+    # Shared-hosting packages carry a marker file next to manage.py; then the hosting settings are the default (a VPS never has it).
+    from pathlib import Path
+
+    here = Path(__file__).resolve().parent
+    shared = (here / "ravix-hosting.marker").exists() or os.environ.get("RAVIX_HOSTING", "").strip().lower() in {"shared", "cpanel", "1", "true"}
+    default = "config.settings.hosting" if shared else "config.settings.development"
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", default)
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

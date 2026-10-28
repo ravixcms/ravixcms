@@ -91,12 +91,81 @@ class PostgresBackend:
         self._run(["pg_restore", "--clean", "--if-exists", "--no-owner", *self.args, str(src)], gettext("Database restore"))
 
 
+class MysqlBackend:
+    """MySQL/MariaDB: ``mysqldump``/``mariadb-dump`` + ``mysql`` when the host has them (the password goes through MYSQL_PWD, never an argument);
+    otherwise a portable JSON dump written by Django itself (gzip) that ``loaddata`` can read back. Both formats are recognised on restore."""
+
+    name = "mysql"
+
+    def __init__(self):
+        s = connection.settings_dict
+        self.name_db = str(s["NAME"])
+        self.args = ["-h", str(s.get("HOST") or "localhost"), "-P", str(s.get("PORT") or 3306), "-u", str(s.get("USER") or "")]
+        self.env = {**os.environ, "MYSQL_PWD": str(s.get("PASSWORD") or "")}
+
+    @staticmethod
+    def _tool(*names):
+        for n in names:
+            found = shutil.which(n)
+            if found:
+                return found
+        return None
+
+    def backup(self, dest: Path):
+        tool = self._tool("mysqldump", "mariadb-dump")
+        if tool:
+            cmd = [tool, *self.args, "--single-transaction", "--quick", "--no-tablespaces", "--default-character-set=utf8mb4", f"--result-file={dest}", self.name_db]
+            r = subprocess.run(cmd, env=self.env, capture_output=True, text=True, timeout=3600)
+            if r.returncode == 0:
+                return
+        self._json_dump(dest)
+
+    def _json_dump(self, dest: Path):
+        import gzip
+        import io
+
+        from django.core.management import call_command
+
+        buf = io.StringIO()
+        call_command("dumpdata", "--natural-foreign", "--natural-primary", "-e", "contenttypes", "-e", "auth.permission", "-e", "sessions", stdout=buf)
+        with gzip.open(dest, "wt", encoding="utf-8") as fh:
+            fh.write(buf.getvalue())
+
+    def restore(self, src: Path):
+        connection.close()
+        with open(src, "rb") as fh:
+            magic = fh.read(2)
+        if magic == b"\x1f\x8b":
+            import gzip
+            import tempfile
+
+            from django.core.management import call_command
+
+            call_command("flush", interactive=False, verbosity=0)
+            with gzip.open(src, "rb") as zin, tempfile.NamedTemporaryFile(suffix=".json", delete=False) as tmp:
+                shutil.copyfileobj(zin, tmp)
+            try:
+                call_command("loaddata", tmp.name, verbosity=0)
+            finally:
+                os.unlink(tmp.name)
+            return
+        tool = self._tool("mysql", "mariadb")
+        if not tool:
+            raise UpdateError(gettext("The mysql client tool is not installed on the server; the restore was not possible."))
+        with open(src, "rb") as fh:
+            r = subprocess.run([tool, *self.args, "--default-character-set=utf8mb4", self.name_db], env=self.env, stdin=fh, capture_output=True, timeout=3600)
+        if r.returncode != 0:
+            raise UpdateError((gettext("Database restore failed: %(sanitize)s") % {"sanitize": sanitize(r.stderr.decode("utf-8", "replace"), 500)}))
+
+
 def default_db_backend():
     vendor = connection.vendor
     if vendor == "sqlite":
         return SqliteBackend()
     if vendor == "postgresql":
         return PostgresBackend()
+    if vendor == "mysql":
+        return MysqlBackend()
     raise UpdateError((gettext("Automatic backup is not supported for the “%(vendor)s” database.") % {"vendor": vendor}))
 
 

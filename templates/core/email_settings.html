@@ -1,0 +1,40 @@
+{% extends "layouts/panel.html" %}
+{% load i18n %}
+{% load ravix_ui %}
+{% block title %}{% trans "Email" %}{% endblock %}
+{% block page_title %}{% trans "Email" %}{% endblock %}
+{% block content_class %}content-narrow{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>{% trans "Email" %}</h1><p>{% trans "How the site sends email (password resets, notifications). Use your hosting’s mailbox or an outside service." %}</p></div></div>
+<form method="post" novalidate data-once>
+  {% csrf_token %}
+  {% include "partials/_form_errors.html" %}
+  <div class="card" style="margin-bottom:1.25rem">
+    <div class="card-header"><h2>{% trans "SMTP server" %}</h2></div>
+    <div class="card-body form-grid">
+      <div class="span-2">{% include "partials/_field.html" with field=form.enabled %}</div>
+      <div>{% include "partials/_field.html" with field=form.host %}</div>
+      <div>{% include "partials/_field.html" with field=form.port %}</div>
+      <div>{% include "partials/_field.html" with field=form.security %}</div>
+      <div>{% include "partials/_field.html" with field=form.from_email %}</div>
+      <div>{% include "partials/_field.html" with field=form.username %}</div>
+      <div>{% include "partials/_field.html" with field=form.password %}{% if has_password %}<p class="help">{% trans "A password is saved (stored encrypted)." %}</p>{% include "partials/_field.html" with field=form.clear_password %}{% endif %}</div>
+    </div>
+  </div>
+  {% if not dedicated_key %}<p class="help">{% trans "The password is encrypted with a key derived from the site’s secret key." %}</p>{% endif %}
+  <button type="submit" class="btn">{% icon "check" 18 %} {% trans "Save" %}</button>
+</form>
+<div class="card" style="margin-top:1.25rem">
+  <div class="card-header"><h2>{% trans "Test" %}</h2></div>
+  <div class="card-body">
+    {% if test_email_to %}
+    <form method="post" action="{% url 'core:site_health_test_email' %}">
+      {% csrf_token %}<input type="hidden" name="back" value="email">
+      <p class="help">{% blocktrans trimmed with to=test_email_to %}Save first, then send a test message to {{ to }}. Errors are shown here, not hidden.{% endblocktrans %}</p>
+      <button type="submit" class="btn btn-light">{% trans "Send a test email" %}</button>
+    </form>
+    {% else %}<p class="help">{% trans "Your account has no email address; add one in your profile to send a test." %}</p>{% endif %}
+    <p class="help" style="margin-top:.75rem">{% blocktrans trimmed with n=queued %}Messages waiting to be retried: {{ n }}.{% endblocktrans %}</p>
+  </div>
+</div>
+{% endblock %}

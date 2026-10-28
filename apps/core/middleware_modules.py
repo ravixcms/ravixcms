@@ -14,7 +14,7 @@ class ModuleGateMiddleware:
 
     def process_view(self, request, view_func, view_args, view_kwargs):
         match = getattr(request, "resolver_match", None)
-        mod = modules.module_for_namespaces(match.namespaces if match else ()) or modules.module_for_path(request.path)
+        mod = modules.module_for_namespaces(match.namespaces if match else ()) or modules.module_for_path(request.path_info)
         if mod is not None and not modules.is_enabled(mod.key):
             raise Http404("module disabled")
         return None

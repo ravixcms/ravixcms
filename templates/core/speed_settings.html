@@ -1,0 +1,25 @@
+{% extends "layouts/panel.html" %}
+{% load i18n %}
+{% load ravix_ui %}
+{% block title %}{% trans "Speed" %}{% endblock %}
+{% block page_title %}{% trans "Speed" %}{% endblock %}
+{% block content_class %}content-narrow{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>{% trans "Speed" %}</h1><p>{% trans "Settings that make the site answer faster on modest hosting." %}</p></div></div>
+<form method="post" novalidate data-once>
+  {% csrf_token %}
+  {% include "partials/_form_errors.html" %}
+  <div class="card" style="margin-bottom:1.25rem">
+    <div class="card-header"><h2>{% trans "Page cache" %}</h2></div>
+    <div class="card-body">
+      <p class="help">{% if cache_active %}{% trans "The page cache is working now." %}{% else %}{% trans "The page cache is off now." %}{% endif %}</p>
+      {% include "partials/_field.html" with field=form.page_cache %}
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:1.25rem">
+    <div class="card-header"><h2>{% trans "Scheduled job" %}</h2></div>
+    <div class="card-body">{% include "partials/_field.html" with field=form.keep_alive %}</div>
+  </div>
+  <button type="submit" class="btn">{% icon "check" 18 %} {% trans "Save" %}</button>
+</form>
+{% endblock %}

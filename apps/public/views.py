@@ -395,7 +395,7 @@ class RobotsView(View):
 # ------------------------------------------------------------------ ۴۰۴ با ظاهر سایت
 def render_not_found(request):
     """صفحه ۴۰۴ با قالب فعال؛ فقط برای مسیرهای سایت عمومی (نه پنل/API). خطا در قالب هرگز به ۵۰۰ تبدیل نمی‌شود."""
-    if request.path.startswith(ADMIN_PREFIXES):
+    if request.path_info.startswith(ADMIN_PREFIXES):
         return None
 
     def seo(site):

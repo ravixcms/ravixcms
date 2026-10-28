@@ -58,15 +58,22 @@ def _restore_table(model, rows):
     cols = _columns(model)
     fields = [f for f in model._meta.concrete_fields if f.column in cols]
     with connection.cursor() as c:
-        c.execute(f"DELETE FROM {qn(model._meta.db_table)}")
-        for r in rows:
-            names, vals = [], []
-            for f in fields:
-                if f.attname in r:
-                    names.append(qn(f.column))
-                    vals.append(f.get_db_prep_save(r[f.attname], connection))
-            if names:
-                c.execute(f"INSERT INTO {qn(model._meta.db_table)} ({', '.join(names)}) VALUES ({', '.join(['%s'] * len(names))})", vals)
+        mysql = connection.vendor == "mysql"
+        if mysql:  # InnoDB checks a self-referencing foreign key row by row (the other databases defer it to the end of the statement)
+            c.execute("SET FOREIGN_KEY_CHECKS=0")
+        try:
+            c.execute(f"DELETE FROM {qn(model._meta.db_table)}")
+            for r in rows:
+                names, vals = [], []
+                for f in fields:
+                    if f.attname in r:
+                        names.append(qn(f.column))
+                        vals.append(f.get_db_prep_save(r[f.attname], connection))
+                if names:
+                    c.execute(f"INSERT INTO {qn(model._meta.db_table)} ({', '.join(names)}) VALUES ({', '.join(['%s'] * len(names))})", vals)
+        finally:
+            if mysql:
+                c.execute("SET FOREIGN_KEY_CHECKS=1")
         # PostgreSQL: درج با شناسهٔ صریح، sequence را جلو نمی‌برد؛ بدون این، ردیف بعدی با کلید تکراری شکست می‌خورد
         for sql in connection.ops.sequence_reset_sql(no_style(), [model]):
             c.execute(sql)
@@ -325,6 +332,15 @@ def reverse_swap(root: Path, old_dir: Path, done):
             os.replace(old_dir / e, cur)
 
 
+def _restart_hosting_app() -> bool:
+    """Shared hosting: touch tmp/restart.txt (Passenger and LiteSpeed both watch it), so the owner does not need a terminal. VPS: nothing."""
+    if not getattr(settings, "RAVIX_HOSTING", False):
+        return False
+    from apps.core import hosting
+
+    return hosting.restart_app()
+
+
 def _history_snapshot():
     return list(UpdateRun.objects.all().values())
 
@@ -459,8 +475,11 @@ def _apply_core_files(run, holder, root: Path, tree: Path, work: Path, runner, d
             raise
         raise UpdateError((gettext("The upgrade failed (%(status)s): %(err)s") % {"status": run.get_status_display(), "err": err})) from None
     shutil.rmtree(old_dir, ignore_errors=True)
-    run.restart_required = True
-    run.recovery = gettext("The upgrade succeeded. Restart the web service to load the new code. If there is a problem: `python manage.py ravix_update rollback --run %d`.") % run.pk
+    run.restart_required = not _restart_hosting_app()
+    if run.restart_required:
+        run.recovery = gettext("The upgrade succeeded. Restart the web service to load the new code. If there is a problem: `python manage.py ravix_update rollback --run %d`.") % run.pk
+    else:
+        run.recovery = gettext("The upgrade succeeded and the application was restarted. If there is a problem: `python manage.py ravix_update rollback --run %d`.") % run.pk
     finish(run, UpdateRun.Status.SUCCEEDED)
     try:
         backups.prune(settings.RAVIX_UPDATE_BACKUPS_KEEP)
@@ -571,7 +590,7 @@ def rollback_run(run_id: int, user=None, *, confirm_data_loss: bool = False, run
                 raise UpdateError((gettext("The rollback failed; manual recovery required: %(err)s") % {"err": err})) from None
             Parent = UpdateRun.objects.filter(pk=parent.pk)
             Parent.update(status=UpdateRun.Status.REVERTED)
-            run.restart_required = True
+            run.restart_required = not _restart_hosting_app()
             run.recovery = gettext("Rollback completed. Restart the web service.")
             finish(run, UpdateRun.Status.SUCCEEDED)
             _clear_caches()
@@ -674,7 +693,7 @@ def apply_theme(slug: str, version: str | None = None, user=None, *, source=None
                 if isinstance(exc, (KeyboardInterrupt, SystemExit)):
                     raise
                 raise UpdateError((gettext("The theme upgrade failed (%(status)s): %(err)s") % {"status": run.get_status_display(), "err": err})) from None
-            run.restart_required = True
+            run.restart_required = not _restart_hosting_app()
             run.recovery = gettext("The theme was updated. Restart the service to apply it in all processes.")
             finish(run, UpdateRun.Status.SUCCEEDED)
             backups.prune(settings.RAVIX_UPDATE_BACKUPS_KEEP)

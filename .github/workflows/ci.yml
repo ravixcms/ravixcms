@@ -37,7 +37,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python: ["3.12", "3.13"]
+        python: ["3.11", "3.12", "3.13"]   # 3.11 = the oldest version a shared host offers; 3.10 is end of life
         db: [sqlite, postgres]
         shop: ["true"]
         studio: ["true"]
@@ -82,6 +82,69 @@ jobs:
           export RAVIX_CACHE_DIR="$RUNNER_TEMP/ravix-cache"; mkdir -p "$RAVIX_CACHE_DIR"
           python manage.py migrate --noinput -v 0
           python manage.py ravix_preflight --ci
+
+  test-mariadb:
+    name: Test (py3.13, MariaDB 10.11)
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    services:
+      mariadb:
+        image: mariadb:10.11
+        env: { MARIADB_ROOT_PASSWORD: ci-only-password, MARIADB_DATABASE: ravix }
+        ports: ["3306:3306"]
+        options: >-
+          --health-cmd "healthcheck.sh --connect --innodb_initialized" --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      DATABASE_URL: mysql://root:ci-only-password@127.0.0.1:3306/ravix
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.13", cache: pip, cache-dependency-path: requirements.lock }
+      - run: pip install -r requirements.lock
+      - run: mkdir -p plugins_installed plugin_backups media staticfiles
+      - name: Database engine
+        run: python manage.py shell -c "from django.db import connection as c; print(c.vendor, c.mysql_server_info)"
+      - name: Tests (utf8mb4, index lengths, emulated conditional uniques)
+        run: python manage.py test --verbosity 1
+
+  shared-hosting:
+    name: "Shared hosting (py3.11, MariaDB, no root, no Redis, no systemd)"
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      mariadb:
+        image: mariadb:10.11
+        env: { MARIADB_ROOT_PASSWORD: ci-only-password }
+        ports: ["3306:3306"]
+        options: >-
+          --health-cmd "healthcheck.sh --connect --innodb_initialized" --health-interval 5s --health-timeout 5s --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      # What a cPanel "Setup Python App" gives: only the packages of requirements-cpanel.txt, wheels only (no compiler on a shared host).
+      - name: Install like a shared host (wheels only, no gunicorn, no psycopg)
+        run: |
+          python -m venv "$RUNNER_TEMP/host-venv"
+          "$RUNNER_TEMP/host-venv/bin/pip" install --only-binary=:all: -r requirements-cpanel.txt
+          if "$RUNNER_TEMP/host-venv/bin/pip" list | grep -i -E '^(gunicorn|psycopg)'; then echo "VPS-only packages leaked into the cPanel requirements"; exit 1; fi
+      - name: Database and user (like cPanel MySQL Databases)
+        run: |
+          mysql -h127.0.0.1 -uroot -pci-only-password -e "CREATE DATABASE ravix_e2e CHARACTER SET utf8mb4; CREATE USER 'ravix'@'%' IDENTIFIED BY 'ci-only-password'; GRANT ALL ON ravix_e2e.* TO 'ravix'@'%'; FLUSH PRIVILEGES;"
+      - name: Build the cPanel package
+        run: |
+          "$RUNNER_TEMP/host-venv/bin/python" scripts/build_cpanel_zip.py --out "$RUNNER_TEMP/dist"
+          ls -l "$RUNNER_TEMP/dist"
+      # Runs as an ordinary user, through passenger_wsgi.py (a Passenger-like supervisor), web installer end to end, ravix_cron, the page cache.
+      - name: End-to-end (web installer, ravix_cron, cache, privacy)
+        run: |
+          sudo useradd -m hostuser
+          sudo chmod -R a+rX "$GITHUB_WORKSPACE" "$RUNNER_TEMP"
+          sudo -u hostuser "$RUNNER_TEMP/host-venv/bin/python" scripts/e2e_shared_hosting.py --zip "$RUNNER_TEMP"/dist/ravix-*-cpanel.zip --db "mysql://ravix:ci-only-password@127.0.0.1:3306/ravix_e2e"
+      - name: End-to-end in a sub-folder (example.com/site/)
+        run: |
+          mysql -h127.0.0.1 -uroot -pci-only-password -e "DROP DATABASE ravix_e2e; CREATE DATABASE ravix_e2e CHARACTER SET utf8mb4;"
+          sudo -u hostuser "$RUNNER_TEMP/host-venv/bin/python" scripts/e2e_shared_hosting.py --zip "$RUNNER_TEMP"/dist/ravix-*-cpanel.zip --mount /site --db "mysql://ravix:ci-only-password@127.0.0.1:3306/ravix_e2e"
 
   e2e-postgres:
     name: "E2E (PostgreSQL 16؛ پشتیبان/بازیابی و به‌روزرسانی)"

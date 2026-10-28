@@ -218,6 +218,8 @@ def check_code_dirs() -> list[Check]:
 
 
 def check_timers(now=None) -> list[Check]:
+    if getattr(settings, "RAVIX_HOSTING", False):
+        return check_cron(now)
     from .management.commands.ravix_preflight import _ENABLED_OK, systemd_unit_state
 
     g = gettext("Scheduled jobs")
@@ -246,6 +248,82 @@ def check_timers(now=None) -> list[Check]:
         out.append(_c("scheduled_overdue", g, gettext("Overdue scheduled posts"), RECOMMENDED,
                       (gettext("%(overdue)s posts are past their publish time but are still “scheduled” (they are shown to visitors but the timer has not run).") % {"overdue": overdue}),
                       gettext("Check the ravix-publish-scheduled timer or run manage.py publish_scheduled.")))
+    return out
+
+
+# ------------------------------------------------------------------ shared hosting (cron, cache, backup in the user's home)
+CRON_WARN_MINUTES = 20
+CRON_CRIT_HOURS = 6
+
+
+def check_cron(now=None) -> list[Check]:
+    """Shared hosting has no systemd timers: the single cPanel cron job (manage.py ravix_cron) does everything."""
+    from . import hosting
+    from .models import CronRun
+
+    g = gettext("Scheduled jobs")
+    now = now or timezone.now()
+    last = CronRun.objects.order_by("-started_at").first()
+    fix = gettext("In cPanel ▸ Cron Jobs add this line (every 5 minutes): %(cmd)s") % {"cmd": hosting.cron_command()}
+    if last is None:
+        return [_c("cron", g, gettext("Scheduled job (cron)"), CRITICAL, gettext("The scheduled job has never run. Scheduled posts, queued email and backups wait for it."), fix)]
+    age = (now - last.started_at).total_seconds() / 60
+    when_txt = timezone.localtime(last.started_at).strftime("%Y-%m-%d %H:%M")
+    if age > CRON_CRIT_HOURS * 60:
+        return [_c("cron", g, gettext("Scheduled job (cron)"), CRITICAL, (gettext("The scheduled job last ran %(hours)s hours ago (%(when)s).") % {"hours": int(age // 60), "when": when_txt}), fix)]
+    if age > CRON_WARN_MINUTES:
+        return [_c("cron", g, gettext("Scheduled job (cron)"), RECOMMENDED, (gettext("The scheduled job last ran %(minutes)s minutes ago (%(when)s); it should run every 5 minutes.") % {"minutes": int(age), "when": when_txt}), fix)]
+    if not last.ok:
+        return [_c("cron", g, gettext("Scheduled job (cron)"), RECOMMENDED, (gettext("The last run (%(when)s) reported a problem: %(summary)s") % {"when": when_txt, "summary": ", ".join(f"{k}={v}" for k, v in (last.summary or {}).items() if str(v).startswith("failed"))[:200]}), "")]
+    return [_c("cron", g, gettext("Scheduled job (cron)"), GOOD, (gettext("Last run: %(when)s.") % {"when": when_txt}))]
+
+
+def check_host_backup(now=None) -> list[Check]:
+    from . import hostbackup
+
+    g = gettext("Backups")
+    when = hostbackup.latest_backup_time()
+    if when is None:
+        return [_c("backup", g, gettext("Backup"), RECOMMENDED, gettext("No backup has been made yet. The scheduled job makes one every day."), gettext("Check that the cron job in cPanel is set up."))]
+    age = ((now or timezone.now()) - when).total_seconds() / 3600
+    when_txt = timezone.localtime(when).strftime("%Y-%m-%d %H:%M")
+    if age > BACKUP_CRIT_HOURS:
+        return [_c("backup", g, gettext("Backup"), CRITICAL, (gettext("The last backup was %(value)s days ago (%(when_txt)s).") % {"value": int(age // 24), "when_txt": when_txt}), gettext("Check the cron job."))]
+    if age > BACKUP_WARN_HOURS:
+        return [_c("backup", g, gettext("Backup"), RECOMMENDED, (gettext("The last backup was %(age)s hours ago (%(when_txt)s).") % {"age": int(age), "when_txt": when_txt}), gettext("Check the cron job."))]
+    return [_c("backup", g, gettext("Backup"), GOOD, (gettext("Last backup: %(when_txt)s. Download a copy now and then (File Manager ▸ the ravix-data/backups folder).") % {"when_txt": when_txt}))]
+
+
+def check_hosting() -> list[Check]:
+    """Checks that only make sense on shared hosting: the page cache really works, the mail queue, the database, Python."""
+    from django.core.cache import cache
+
+    from . import hosting, pagecache
+    from .models import QueuedEmail
+
+    out: list[Check] = []
+    g = gettext("Shared hosting")
+    if hosting.python_ok():
+        out.append(_c("host_python", g, gettext("Python version"), GOOD, (gettext("Python %(v)s.") % {"v": ".".join(map(str, sys.version_info[:3]))})))
+    else:
+        out.append(_c("host_python", g, gettext("Python version"), CRITICAL, gettext("This Python version is not supported."), gettext("Choose Python 3.11 or newer in Setup Python App.")))
+    if pagecache.enabled():
+        probe = "ravix:pc:probe"
+        cache.set(probe, "1", 30)
+        works = cache.get(probe) == "1"
+        cache.delete(probe)
+        out.append(_c("host_cache", g, gettext("Page cache"), GOOD if works else RECOMMENDED,
+                      gettext("The page cache is on and its storage works.") if works else gettext("The page cache is on but its storage does not answer."),
+                      "" if works else gettext("Make sure the cache folder in the private data folder is writable.")))
+    else:
+        out.append(_c("host_cache", g, gettext("Page cache"), RECOMMENDED, gettext("The page cache is off, so every visit runs the application."), gettext("Turn it on in Speed settings.")))
+    waiting = QueuedEmail.objects.count()
+    out.append(_c("host_mail_queue", g, gettext("Email queue"), GOOD if waiting < 20 else RECOMMENDED,
+                  (gettext("%(n)s messages are waiting to be retried.") % {"n": waiting}) if waiting else gettext("No messages are waiting."),
+                  "" if waiting < 20 else gettext("Check the SMTP settings (Email page) and press “Send a test email”.")))
+    if settings.DATABASES["default"]["ENGINE"].endswith("sqlite3"):
+        out.append(_c("host_sqlite", g, gettext("Database"), RECOMMENDED, gettext("The site uses SQLite. That is fine for a small site, but several editors at once or a busy site run better on MySQL/MariaDB."),
+                      gettext("Create a MySQL database in cPanel and ask for help moving to it in the documentation.")))
     return out
 
 
@@ -278,6 +356,8 @@ def latest_backup_time(dirs=None) -> tuple[datetime | None, bool]:
 
 def check_backup(dirs=None, now=None) -> list[Check]:
     g = gettext("Backups")
+    if getattr(settings, "RAVIX_HOSTING", False) and dirs is None:
+        return check_host_backup(now)
     when, readable = latest_backup_time(dirs)
     if when is None:
         if not readable:
@@ -375,12 +455,16 @@ def check_content() -> list[Check]:
                gettext("Run python manage.py ravix_fix_slugs: it renames the address, adds a 301 redirect and logs the change."))]
 
 
-GROUP_ORDER = [gettext_lazy("Security and HTTPS"), gettext_lazy("Email"), gettext_lazy("Cache and storage"), gettext_lazy("Scheduled jobs"), gettext_lazy("Backups"), gettext_lazy("Versions"), gettext_lazy("Content")]
+GROUP_ORDER = [gettext_lazy("Security and HTTPS"), gettext_lazy("Email"), gettext_lazy("Cache and storage"), gettext_lazy("Scheduled jobs"), gettext_lazy("Backups"), gettext_lazy("Shared hosting"), gettext_lazy("Versions"), gettext_lazy("Content")]
+
+
+def check_hosting_if_active() -> list[Check]:
+    return check_hosting() if getattr(settings, "RAVIX_HOSTING", False) else []
 
 
 def run_all(request=None) -> list[Check]:
     checks: list[Check] = []
-    for fn in (lambda: check_https(request), lambda: check_client_ip(request), check_email, check_cache, check_database, check_code_dirs, check_timers, check_backup, check_versions, check_content):
+    for fn in (lambda: check_https(request), lambda: check_client_ip(request), check_email, check_cache, check_database, check_code_dirs, check_timers, check_backup, check_hosting_if_active, check_versions, check_content):
         try:
             checks.extend(fn())
         except Exception as exc:  # noqa: BLE001 — یک بررسی خراب نباید کل صفحه را بیندازد

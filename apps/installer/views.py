@@ -34,6 +34,10 @@ def _checks():
 @never_cache
 @require_http_methods(["GET", "POST"])
 def install(request):
+    if getattr(settings, "RAVIX_HOSTING", False):  # shared hosting (cPanel): its own flow, with the one-time install code
+        from .hosting_views import install as hosting_install
+
+        return hosting_install(request)
     if not settings.RAVIX_INSTALLER_ENABLED or services.is_installed():
         raise Http404
     checks = _checks()

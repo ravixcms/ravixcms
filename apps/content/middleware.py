@@ -14,7 +14,7 @@ class RedirectFallbackMiddleware:
         if response.status_code != 404 or request.method not in ("GET", "HEAD"):
             return response
         path = request.path  # رمزگشایی‌شده، مثل old_path ذخیره‌شده
-        if path.startswith(RESERVED_REDIRECT_PREFIXES):
+        if request.path_info.startswith(RESERVED_REDIRECT_PREFIXES):
             return response
         from apps.core.regional import split_language_prefix
 

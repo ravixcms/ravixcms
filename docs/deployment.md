@@ -1,5 +1,7 @@
 # راهنمای استقرار روی Ubuntu (۲۲٫۰۴ / ۲۴٫۰۴)
 
+> هاست اشتراکی cPanel (بدون root): [`cpanel.fa.md`](cpanel.fa.md).
+
 > نصب خودکار: `sudo ./install.sh` (همین مراحل را با پرسش انجام می‌دهد) یا Docker Compose — [`installer.md`](installer.md). این راهنما شرح دستیِ همان مراحل است.
 
 معماری: **Nginx (HTTPS) → Gunicorn (سوکت یونیکس) → Django → PostgreSQL**. استاتیک با WhiteNoise/Nginx، مدیا با Nginx.

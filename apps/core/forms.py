@@ -2,7 +2,7 @@ from django.conf import settings
 from django.utils.translation import gettext, gettext_lazy
 from django import forms
 
-from .models import SiteSettings
+from .models import MailSettings, SiteSettings
 from .regional import language_choices, timezone_choices
 
 
@@ -114,3 +114,40 @@ class SiteSettingsForm(StyledFormMixin, forms.ModelForm):
         if not name:
             raise forms.ValidationError(gettext("The site name cannot be empty."))
         return name
+
+
+class SpeedSettingsForm(StyledFormMixin, forms.ModelForm):
+    class Meta:
+        model = SiteSettings
+        fields = ("page_cache", "keep_alive")
+        widgets = {"page_cache": forms.RadioSelect}
+
+
+class EmailSettingsForm(StyledFormMixin, forms.ModelForm):
+    password = forms.CharField(label=gettext_lazy("Password"), required=False, strip=False, widget=forms.PasswordInput(render_value=False, attrs={"dir": "ltr", "autocomplete": "new-password"}),
+                               help_text=gettext_lazy("Leave empty to keep the saved password."))
+    clear_password = forms.BooleanField(label=gettext_lazy("Remove the saved password"), required=False)
+
+    class Meta:
+        model = MailSettings
+        fields = ("enabled", "host", "port", "security", "username", "from_email")
+        widgets = {"host": forms.TextInput(attrs={"dir": "ltr"}), "username": forms.TextInput(attrs={"dir": "ltr", "autocomplete": "off"}),
+                   "from_email": forms.TextInput(attrs={"dir": "ltr"})}
+
+    def clean(self):
+        data = super().clean()
+        if data.get("enabled") and not (data.get("host") or "").strip():
+            self.add_error("host", gettext("Enter the SMTP server name."))
+        return data
+
+    def save(self, commit=True):
+        from . import secretbox
+
+        obj = super().save(commit=False)
+        if self.cleaned_data.get("clear_password"):
+            obj.password_encrypted = ""
+        elif self.cleaned_data.get("password"):
+            obj.password_encrypted = secretbox.encrypt(self.cleaned_data["password"])
+        if commit:
+            obj.save()
+        return obj

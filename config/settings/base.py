@@ -7,7 +7,7 @@ from apps.core.clilang import cli_gettext
 import os
 import re
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import unquote, urlparse
 
 from dotenv import load_dotenv
 
@@ -107,6 +107,7 @@ MIDDLEWARE = [
     # فشرده‌سازی پاسخ‌های HTML (سرعت بارگذاری). توکن CSRF جنگو در هر پاسخ ماسک می‌شود و حمله BREACH را خنثی می‌کند.
     "django.middleware.gzip.GZipMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
+    "apps.core.pagecache.PageCacheMiddleware",  # ready-made pages for visitors who are not logged in (off unless enabled; see apps/core/pagecache.py)
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "apps.installer.middleware.InstallGateMiddleware",  # تا پایان نصب همه‌چیز را به /install/ می‌برد
@@ -180,6 +181,26 @@ def _database_from_env() -> dict:
             "HOST": parsed.hostname or "localhost",
             "PORT": str(parsed.port or 5432),
             "CONN_MAX_AGE": int(env("DB_CONN_MAX_AGE", "60")),
+        }
+    if parsed.scheme in {"mysql", "mariadb"}:
+        # Shared hosting: MySQL/MariaDB through PyMySQL (pure Python; mysqlclient usually cannot be compiled there).
+        import pymysql
+
+        pymysql.install_as_MySQLdb()
+        query = dict(part.split("=", 1) for part in parsed.query.split("&") if "=" in part)
+        options = {"charset": "utf8mb4", "init_command": "SET sql_mode='STRICT_TRANS_TABLES'"}
+        if query.get("unix_socket"):
+            options["unix_socket"] = unquote(query["unix_socket"])
+        return {
+            "ENGINE": "django.db.backends.mysql",
+            "NAME": unquote(parsed.path.lstrip("/")),
+            "USER": unquote(parsed.username or ""),
+            "PASSWORD": unquote(parsed.password or ""),
+            "HOST": parsed.hostname or "localhost",
+            "PORT": str(parsed.port or 3306),
+            "CONN_MAX_AGE": int(env("DB_CONN_MAX_AGE", "60")),
+            "OPTIONS": options,
+            "TEST": {"CHARSET": "utf8mb4", "COLLATION": "utf8mb4_unicode_ci"},
         }
     if parsed.scheme == "sqlite":
         path = parsed.path.lstrip("/") or "db.sqlite3"
@@ -298,6 +319,8 @@ RAVIX_THEME_DIRS = [BASE_DIR / "themes"] + [Path(p) for p in env_list("RAVIX_EXT
 # نشانی اصلی سایت (مثلاً https://example.com) برای canonical، sitemap و Open Graph؛ اگر خالی باشد از Host درخواست ساخته می‌شود.
 SITE_URL = env("RAVIX_SITE_URL", "").rstrip("/")
 RAVIX_FEED_ITEMS = int(env("RAVIX_FEED_ITEMS", "20"))  # تعداد مورد در هر فید RSS/Atom (۱ تا ۱۰۰)
+RAVIX_PAGE_CACHE = env("RAVIX_PAGE_CACHE", "off").lower()  # on|off server default; the panel (Site settings ▸ Speed) can override it
+RAVIX_PAGE_CACHE_TTL = int(env("RAVIX_PAGE_CACHE_TTL", "900"))
 PUBLIC_PAGE_SIZE = int(env("RAVIX_PUBLIC_PAGE_SIZE", "9"))
 # مدت کش مرورگر/CDN برای صفحات عمومی بازدیدکنندگان ناشناس (ثانیه). ۰ یعنی همیشه با ETag بازبینی شود.
 PUBLIC_CACHE_SECONDS = int(env("RAVIX_PUBLIC_CACHE_SECONDS", "0"))

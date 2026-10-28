@@ -12,6 +12,7 @@ pillow==13.0.0
 psycopg==3.3.6
 psycopg-binary==3.3.6
 pycparser==3.11
+pymysql==1.2.3
 python-dotenv==1.2.4
 sqlparse==0.6.0
 whitenoise==6.12.0

@@ -44,6 +44,7 @@ docker compose up -d --build
 |---|---|
 | **برای مدیر سایت** (زبان ساده: نصب، نوشتن، رسانه، قالب، افزونه، پشتیبان، به‌روزرسانی) | [`docs/admin/`](docs/admin/README.md) |
 | **برای توسعه‌دهنده** (ساخت قالب، ساخت افزونه، API) | [`docs/developer/`](docs/developer/README.md) |
+| **نصب روی هاست اشتراکی cPanel** (مثل وردپرس، بدون root؛ fa / en / ۸ زبان دیگر) | [`docs/cpanel.fa.md`](docs/cpanel.fa.md)، [`docs/cpanel.md`](docs/cpanel.md) |
 | فهرست همهٔ مستندات (استقرار، امنیت، فروشگاه، انتشار…) | [`docs/README.md`](docs/README.md) |
 
 ## توسعه و مشارکت

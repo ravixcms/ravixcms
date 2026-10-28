@@ -12374,3 +12374,619 @@ msgstr "按标题或 slug 搜索"
 #: templates/studio/editor.html
 msgid "Redo (Ctrl+Shift+Z)"
 msgstr "重做 (Ctrl+Shift+Z)"
+
+#: apps/core/apps.py
+msgid "Speed"
+msgstr "速度"
+
+#: apps/core/forms.py
+msgid "Enter the SMTP server name."
+msgstr "请输入 SMTP 服务器名称。"
+
+#: apps/core/forms.py
+msgid "Remove the saved password"
+msgstr "删除已保存的密码"
+
+#: apps/core/forms.py
+msgid "Leave empty to keep the saved password."
+msgstr "留空则保留已保存的密码。"
+
+#: apps/core/mailbackend.py
+msgid "the mail service did not accept the message"
+msgstr "邮件服务未接受该邮件"
+
+#: apps/core/models.py
+msgid "Keep the application awake from the scheduled job"
+msgstr "通过计划任务保持应用唤醒"
+
+#: apps/core/models.py
+msgid "SSL/TLS (usually port 465)"
+msgstr "SSL/TLS（通常端口 465）"
+
+#: apps/core/models.py
+msgid "SMTP server"
+msgstr "SMTP 服务器"
+
+#: apps/core/models.py
+msgid "Scheduled-job run"
+msgstr "计划任务运行"
+
+#: apps/core/models.py
+msgid "Off"
+msgstr "关闭"
+
+#: apps/core/models.py
+msgid "Queued emails"
+msgstr "队列中的邮件"
+
+#: apps/core/models.py
+msgid "Page cache for visitors"
+msgstr "访客页面缓存"
+
+#: apps/core/models.py
+msgid "Queued email"
+msgstr "队列中的邮件"
+
+#: apps/core/models.py
+msgid "STARTTLS (usually port 587)"
+msgstr "STARTTLS（通常端口 587）"
+
+#: apps/core/models.py
+msgid "No encryption (not recommended)"
+msgstr "不加密（不推荐）"
+
+#: apps/core/models.py
+msgid "Visitors who are not logged in get ready-made pages without database queries. It is cleared automatically whenever content changes. Logged-in users, carts, forms and pages with a security token are never served from it."
+msgstr "未登录的访客会得到无需查询数据库的现成页面。内容变化时会自动清除。已登录用户、购物车、表单以及带安全令牌的页面绝不会使用它。"
+
+#: apps/core/models.py
+msgid "Encryption"
+msgstr "加密"
+
+#: apps/core/models.py
+msgid "Automatic (on for shared hosting, off for a VPS)"
+msgstr "自动（共享主机开启，VPS 关闭）"
+
+#: apps/core/models.py
+msgid "On"
+msgstr "开启"
+
+#: apps/core/models.py
+msgid "Scheduled-job runs"
+msgstr "计划任务运行记录"
+
+#: apps/core/models.py
+msgid "Port"
+msgstr "端口"
+
+#: apps/core/models.py
+msgid "The scheduled job opens the home page each time it runs so the first visitor does not wait for the application to start (shared hosting)."
+msgstr "计划任务每次运行都会打开首页，这样第一位访客就不必等待应用启动（共享主机）。"
+
+#: apps/core/models.py
+msgid "Email settings"
+msgstr "电子邮件设置"
+
+#: apps/core/models.py
+msgid "Use these SMTP settings"
+msgstr "使用这些 SMTP 设置"
+
+#: apps/core/sitehealth.py
+msgid "This Python version is not supported."
+msgstr "不支持此 Python 版本。"
+
+#: apps/core/sitehealth.py
+#, python-format
+msgid "The last run (%(when)s) reported a problem: %(summary)s"
+msgstr "上次运行（%(when)s）报告了问题：%(summary)s"
+
+#: apps/core/sitehealth.py
+msgid "Turn it on in Speed settings."
+msgstr "请在“速度”设置中开启。"
+
+#: apps/core/sitehealth.py
+msgid "The page cache is on but its storage does not answer."
+msgstr "页面缓存已开启，但其存储没有响应。"
+
+#: apps/core/sitehealth.py
+#, python-format
+msgid "Last run: %(when)s."
+msgstr "上次运行：%(when)s。"
+
+#: apps/core/sitehealth.py
+msgid "Page cache"
+msgstr "页面缓存"
+
+#: apps/core/sitehealth.py
+msgid "Create a MySQL database in cPanel and ask for help moving to it in the documentation."
+msgstr "请在 cPanel 中创建 MySQL 数据库，并参阅文档了解如何迁移。"
+
+#: apps/core/sitehealth.py
+msgid "The scheduled job has never run. Scheduled posts, queued email and backups wait for it."
+msgstr "计划任务从未运行。定时发布、队列邮件和备份都在等待它。"
+
+#: apps/core/sitehealth.py
+msgid "The page cache is off, so every visit runs the application."
+msgstr "页面缓存已关闭，因此每次访问都会运行应用。"
+
+#: apps/core/sitehealth.py
+msgid "No backup has been made yet. The scheduled job makes one every day."
+msgstr "尚未创建备份。计划任务每天会创建一份。"
+
+#: apps/core/sitehealth.py
+#, python-format
+msgid "The scheduled job last ran %(hours)s hours ago (%(when)s)."
+msgstr "计划任务上次运行在 %(hours)s 小时前（%(when)s）。"
+
+#: apps/core/sitehealth.py
+msgid "Check the SMTP settings (Email page) and press “Send a test email”."
+msgstr "请检查 SMTP 设置（电子邮件页面），并点击“发送测试邮件”。"
+
+#: apps/core/sitehealth.py
+#, python-format
+msgid "In cPanel ▸ Cron Jobs add this line (every 5 minutes): %(cmd)s"
+msgstr "在 cPanel ▸ Cron Jobs 中添加这一行（每 5 分钟）：%(cmd)s"
+
+#: apps/core/sitehealth.py
+msgid "Choose Python 3.11 or newer in Setup Python App."
+msgstr "请在 Setup Python App 中选择 Python 3.11 或更高版本。"
+
+#: apps/core/sitehealth.py
+#, python-format
+msgid "%(n)s messages are waiting to be retried."
+msgstr "有 %(n)s 封邮件等待重试。"
+
+#: apps/core/sitehealth.py
+#, python-format
+msgid "Last backup: %(when_txt)s. Download a copy now and then (File Manager ▸ the ravix-data/backups folder)."
+msgstr "上次备份：%(when_txt)s。请不时下载一份副本（File Manager ▸ ravix-data/backups 文件夹）。"
+
+#: apps/core/sitehealth.py
+#, python-format
+msgid "Python %(v)s."
+msgstr "Python %(v)s。"
+
+#: apps/core/sitehealth.py
+msgid "The site uses SQLite. That is fine for a small site, but several editors at once or a busy site run better on MySQL/MariaDB."
+msgstr "网站使用 SQLite。小型网站没问题，但多位编辑同时工作或访问量大的网站在 MySQL/MariaDB 上更好。"
+
+#: apps/core/sitehealth.py
+#, python-format
+msgid "The scheduled job last ran %(minutes)s minutes ago (%(when)s); it should run every 5 minutes."
+msgstr "计划任务上次运行在 %(minutes)s 分钟前（%(when)s）；它应该每 5 分钟运行一次。"
+
+#: apps/core/sitehealth.py
+msgid "The page cache is on and its storage works."
+msgstr "页面缓存已开启，其存储工作正常。"
+
+#: apps/core/sitehealth.py
+msgid "Check the cron job."
+msgstr "请检查 cron 任务。"
+
+#: apps/core/sitehealth.py
+msgid "Email queue"
+msgstr "邮件队列"
+
+#: apps/core/sitehealth.py
+msgid "Shared hosting"
+msgstr "共享主机"
+
+#: apps/core/sitehealth.py
+msgid "Scheduled job (cron)"
+msgstr "计划任务（cron）"
+
+#: apps/core/sitehealth.py
+msgid "Python version"
+msgstr "Python 版本"
+
+#: apps/core/sitehealth.py
+msgid "Make sure the cache folder in the private data folder is writable."
+msgstr "请确保私有数据文件夹中的 cache 文件夹可写。"
+
+#: apps/core/sitehealth.py
+msgid "No messages are waiting."
+msgstr "没有等待中的邮件。"
+
+#: apps/core/sitehealth.py
+msgid "Check that the cron job in cPanel is set up."
+msgstr "请确认已在 cPanel 中设置 cron 任务。"
+
+#: apps/core/views.py
+msgid "Email settings were edited."
+msgstr "电子邮件设置已编辑。"
+
+#: apps/core/views.py
+msgid "Speed settings were edited."
+msgstr "速度设置已编辑。"
+
+#: apps/core/views.py
+msgid "Email settings were saved. Use “Send a test email” to check them."
+msgstr "电子邮件设置已保存。请用“发送测试邮件”进行检查。"
+
+#: apps/core/views.py
+msgid "Speed settings were saved."
+msgstr "速度设置已保存。"
+
+#: apps/installer/forms.py
+msgid "Database name"
+msgstr "数据库名称"
+
+#: apps/installer/forms.py
+msgid "The code is in the file install-key.txt in your private data folder (next to the application folder, outside public_html). Open it with cPanel ▸ File Manager."
+msgstr "代码位于您的私有数据文件夹中的 install-key.txt 文件内（在应用文件夹旁边，位于 public_html 之外）。请用 cPanel ▸ File Manager 打开。"
+
+#: apps/installer/forms.py
+msgid "Database type"
+msgstr "数据库类型"
+
+#: apps/installer/forms.py
+msgid "Database password"
+msgstr "数据库密码"
+
+#: apps/installer/forms.py
+msgid "Enter a host name such as localhost."
+msgstr "请输入主机名，例如 localhost。"
+
+#: apps/installer/forms.py
+msgid "Database host"
+msgstr "数据库主机"
+
+#: apps/installer/forms.py
+msgid "This field is required."
+msgstr "此字段为必填项。"
+
+#: apps/installer/forms.py
+msgid "MySQL / MariaDB (recommended)"
+msgstr "MySQL / MariaDB（推荐）"
+
+#: apps/installer/forms.py
+msgid "Database user"
+msgstr "数据库用户"
+
+#: apps/installer/forms.py
+msgid "SQLite (small sites)"
+msgstr "SQLite（小型网站）"
+
+#: apps/installer/forms.py
+msgid "In cPanel the name starts with your account name, for example myaccount_ravix."
+msgstr "在 cPanel 中，名称以您的账户名开头，例如 myaccount_ravix。"
+
+#: apps/installer/forms.py
+msgid "Install code"
+msgstr "安装码"
+
+#: apps/installer/hosting_views.py
+msgid "The install code is not correct."
+msgstr "安装码不正确。"
+
+#: apps/installer/hosting_views.py
+msgid "Site and administrator"
+msgstr "网站与管理员"
+
+#: apps/installer/hosting_views.py
+msgid "Installing"
+msgstr "正在安装"
+
+#: apps/installer/hosting_views.py
+msgid "Host check"
+msgstr "主机检查"
+
+#: apps/installer/hostinstall.py
+#, python-format
+msgid "This database server (%(v)s) is too old. Ravix needs MariaDB 10.5+ or MySQL 8.0+."
+msgstr "此数据库服务器（%(v)s）太旧。Ravix 需要 MariaDB 10.5+ 或 MySQL 8.0+。"
+
+#: apps/installer/hostinstall.py
+#, python-format
+msgid "Python %(v)s is too old"
+msgstr "Python %(v)s 太旧"
+
+#: apps/installer/hostinstall.py
+#, python-format
+msgid "Application server: %(name)s"
+msgstr "应用服务器：%(name)s"
+
+#: apps/installer/hostinstall.py
+msgid "Upload limit"
+msgstr "上传限制"
+
+#: apps/installer/hostinstall.py
+msgid "Private data folder is writable"
+msgstr "私有数据文件夹可写"
+
+#: apps/installer/hostinstall.py
+#, python-format
+msgid "Only %(mb)s MB of memory is available to your account"
+msgstr "您的账户仅有 %(mb)s MB 内存可用"
+
+#: apps/installer/hostinstall.py
+msgid "Install the requirements again (pip install -r requirements-cpanel.txt) or choose SQLite."
+msgstr "请重新安装依赖（pip install -r requirements-cpanel.txt），或选择 SQLite。"
+
+#: apps/installer/hostinstall.py
+#, python-format
+msgid "Make this folder writable by your account, or create it in File Manager: %(path)s"
+msgstr "请让您的账户可写入此文件夹，或在 File Manager 中创建它：%(path)s"
+
+#: apps/installer/hostinstall.py
+msgid "MySQL/MariaDB driver (PyMySQL) is installed"
+msgstr "已安装 MySQL/MariaDB 驱动（PyMySQL）"
+
+#: apps/installer/hostinstall.py
+msgid "The database driver for this choice is not installed on the host."
+msgstr "主机上未安装此选择所需的数据库驱动。"
+
+#: apps/installer/hostinstall.py
+msgid "This page is served over plain HTTP"
+msgstr "此页面通过普通 HTTP 提供"
+
+#: apps/installer/hostinstall.py
+msgid "The private data folder is not writable"
+msgstr "私有数据文件夹不可写"
+
+#: apps/installer/hostinstall.py
+msgid "Memory limit could not be detected"
+msgstr "无法检测内存限制"
+
+#: apps/installer/hostinstall.py
+msgid "The media folder is not writable; uploading files will not work"
+msgstr "media 文件夹不可写；无法上传文件"
+
+#: apps/installer/hostinstall.py
+msgid "The static files folder is writable"
+msgstr "静态文件文件夹可写"
+
+#: apps/installer/hostinstall.py
+#, python-format
+msgid "Package %(name)s is installed"
+msgstr "已安装软件包 %(name)s"
+
+#: apps/installer/hostinstall.py
+#, python-format
+msgid "Memory available: %(mb)s MB"
+msgstr "可用内存：%(mb)s MB"
+
+#: apps/installer/hostinstall.py
+#, python-format
+msgid "Could not connect to the database: %(err)s"
+msgstr "无法连接数据库：%(err)s"
+
+#: apps/installer/hostinstall.py
+msgid "Turn on AutoSSL / Let’s Encrypt in cPanel (SSL/TLS Status) so logins are encrypted. Ravix switches to HTTPS automatically once the certificate works."
+msgstr "请在 cPanel（SSL/TLS Status）中开启 AutoSSL / Let’s Encrypt，使登录得到加密。证书生效后 Ravix 会自动切换到 HTTPS。"
+
+#: apps/installer/hostinstall.py
+msgid "Ravix runs best with at least 512 MB. Installation may fail on such a small limit."
+msgstr "Ravix 在至少 512 MB 内存下运行最佳。限制过小时安装可能失败。"
+
+#: apps/installer/hostinstall.py
+msgid "Ravix needs Python 3.11 or newer (Python 3.10 reached end of life and is not supported). In cPanel open “Setup Python App”, edit the application and choose a newer Python version."
+msgstr "Ravix 需要 Python 3.11 或更高版本（Python 3.10 已终止支持）。请在 cPanel 中打开“Setup Python App”，编辑应用并选择更新的 Python 版本。"
+
+#: apps/installer/hostinstall.py
+msgid "The tmp folder is not writable, so the application cannot restart itself after an update"
+msgstr "tmp 文件夹不可写，因此更新后应用无法自行重启"
+
+#: apps/installer/hostinstall.py
+#, python-format
+msgid "The database uses the character set “%(cs)s”. Create it again with the collation utf8mb4_unicode_ci (cPanel ▸ MySQL Databases)."
+msgstr "数据库使用字符集“%(cs)s”。请使用排序规则 utf8mb4_unicode_ci 重新创建（cPanel ▸ MySQL Databases）。"
+
+#: apps/installer/hostinstall.py
+msgid "The MySQL/MariaDB driver (PyMySQL) is not installed"
+msgstr "未安装 MySQL/MariaDB 驱动（PyMySQL）"
+
+#: apps/installer/hostinstall.py
+msgid "The media (uploads) folder is writable"
+msgstr "media（上传）文件夹可写"
+
+#: apps/installer/hostinstall.py
+#, python-format
+msgid "Package %(name)s cannot be loaded"
+msgstr "无法加载软件包 %(name)s"
+
+#: apps/installer/hostinstall.py
+#, python-format
+msgid "The folder for the SQLite file is not writable: %(path)s"
+msgstr "SQLite 文件所在文件夹不可写：%(path)s"
+
+#: apps/installer/hostinstall.py
+msgid "SQLite is fine for a small site; for larger sites, or many editors at once, a MySQL/MariaDB database from cPanel is better."
+msgstr "SQLite 适合小型网站；对于较大的网站或多位编辑同时工作，cPanel 提供的 MySQL/MariaDB 数据库更好。"
+
+#: apps/installer/hostinstall.py
+msgid "The database is not empty. Existing tables with the same names as Ravix's will be reused: use an empty database for a fresh site."
+msgstr "数据库不是空的。与 Ravix 同名的现有表将被复用：新站点请使用空数据库。"
+
+#: apps/installer/hostinstall.py
+msgid "unknown"
+msgstr "未知"
+
+#: apps/installer/hostinstall.py
+msgid "Ravix itself does not limit file uploads, but your host's web server might (often 8–64 MB). If large uploads fail, ask your host to raise it."
+msgstr "Ravix 本身不限制文件上传，但主机的网络服务器可能会限制（通常为 8–64 MB）。如果大文件上传失败，请联系主机商提高限制。"
+
+#: apps/installer/hostinstall.py
+msgid "The static files folder is not writable"
+msgstr "静态文件文件夹不可写"
+
+#: apps/installer/hostinstall.py
+msgid "The application can be restarted from the panel (tmp/restart.txt)"
+msgstr "可以从后台重启应用（tmp/restart.txt）"
+
+#: apps/installer/hostinstall.py
+msgid "Your hosting seems too old for this package (it needs a “manylinux2014” or newer wheel). Ask your hosting support to update the server's Python/OS, or to install it for you, or move to a newer plan."
+msgstr "您的主机对于此软件包似乎过旧（需要“manylinux2014”或更新的 wheel）。请联系主机支持更新服务器的 Python/系统，或为您安装，或升级到更新的套餐。"
+
+#: apps/installer/hostinstall.py
+msgid "The database character set was changed to utf8mb4."
+msgstr "数据库字符集已更改为 utf8mb4。"
+
+#: apps/installer/hostinstall.py
+#, python-format
+msgid "Python %(v)s"
+msgstr "Python %(v)s"
+
+#: apps/installer/hostinstall.py
+msgid "This page is served over HTTPS"
+msgstr "此页面通过 HTTPS 提供"
+
+#: apps/updater/backup.py
+msgid "The mysql client tool is not installed on the server; the restore was not possible."
+msgstr "服务器上未安装 mysql 客户端工具；无法恢复。"
+
+#: apps/updater/backup.py
+#, python-format
+msgid "Database restore failed: %(sanitize)s"
+msgstr "数据库恢复失败：%(sanitize)s"
+
+#: apps/updater/pipeline.py
+msgid "The upgrade succeeded and the application was restarted. If there is a problem: `python manage.py ravix_update rollback --run %d`."
+msgstr "升级成功，应用已重启。如有问题：`python manage.py ravix_update rollback --run %d`。"
+
+#: apps/updater/views.py
+msgid "Updating the core from an uploaded file failed"
+msgstr "通过上传文件更新核心失败"
+
+#: apps/updater/views.py
+msgid "The file is not a valid ZIP."
+msgstr "该文件不是有效的 ZIP。"
+
+#: apps/updater/views.py
+msgid "Choose the update ZIP file."
+msgstr "请选择更新 ZIP 文件。"
+
+#: apps/updater/views.py
+#, python-format
+msgid "Updated core to %(to_version)s from an uploaded file"
+msgstr "已通过上传文件将核心更新到 %(to_version)s"
+
+#: apps/updater/work.py
+msgid "This ZIP is not an update bundle (it must contain index.json and the package files)."
+msgstr "此 ZIP 不是更新包（必须包含 index.json 和包文件）。"
+
+#: templates/core/email_settings.html
+msgid "Send a test email"
+msgstr "发送测试邮件"
+
+#: templates/core/email_settings.html
+msgid "The password is encrypted with a key derived from the site’s secret key."
+msgstr "密码使用由网站密钥派生的密钥加密。"
+
+#: templates/core/email_settings.html
+#, python-format
+msgid "Messages waiting to be retried: %(n)s."
+msgstr "等待重试的邮件：%(n)s。"
+
+#: templates/core/email_settings.html
+msgid "How the site sends email (password resets, notifications). Use your hosting’s mailbox or an outside service."
+msgstr "网站如何发送邮件（重置密码、通知）。可使用主机的邮箱或外部服务。"
+
+#: templates/core/email_settings.html
+msgid "A password is saved (stored encrypted)."
+msgstr "已保存密码（加密存储）。"
+
+#: templates/core/email_settings.html
+msgid "Your account has no email address; add one in your profile to send a test."
+msgstr "您的账户没有电子邮件地址；请在个人资料中添加后再发送测试。"
+
+#: templates/core/email_settings.html
+#, python-format
+msgid "Save first, then send a test message to %(to)s. Errors are shown here, not hidden."
+msgstr "请先保存，然后向 %(to)s 发送测试邮件。错误会显示在这里，不会被隐藏。"
+
+#: templates/core/speed_settings.html
+msgid "The page cache is working now."
+msgstr "页面缓存当前正常工作。"
+
+#: templates/core/speed_settings.html
+msgid "Scheduled job"
+msgstr "计划任务"
+
+#: templates/core/speed_settings.html
+msgid "The page cache is off now."
+msgstr "页面缓存当前已关闭。"
+
+#: templates/core/speed_settings.html
+msgid "Settings that make the site answer faster on modest hosting."
+msgstr "让网站在普通主机上响应更快的设置。"
+
+#: templates/installer/hosting.html
+msgid "Sign in to the panel"
+msgstr "登录后台"
+
+#: templates/installer/hosting.html
+msgid "Ravix is installed."
+msgstr "Ravix 已安装。"
+
+#: templates/installer/hosting.html
+msgid "Checking that your hosting can run Ravix."
+msgstr "正在检查您的主机能否运行 Ravix。"
+
+#: templates/installer/hosting.html
+msgid "In cPanel open “Cron Jobs”, choose “Once Per Five Minutes”, and paste this command. It publishes scheduled posts, sends queued email, makes the daily backup and keeps the site fast."
+msgstr "在 cPanel 中打开“Cron Jobs”，选择“Once Per Five Minutes”，然后粘贴此命令。它会发布定时文章、发送队列邮件、进行每日备份并保持网站快速。"
+
+#: templates/installer/hosting.html
+msgid "The installer is now locked for good."
+msgstr "安装程序现已永久锁定。"
+
+#: templates/installer/hosting.html
+msgid "Installing. This takes a minute or two; this page refreshes by itself. Do not close it."
+msgstr "正在安装。需要一两分钟；此页面会自动刷新。请勿关闭。"
+
+#: templates/installer/hosting.html
+msgid "Test the connection and continue"
+msgstr "测试连接并继续"
+
+#: templates/installer/hosting.html
+msgid "Too many wrong attempts. Try again in 15 minutes."
+msgstr "错误尝试次数过多。请 15 分钟后重试。"
+
+#: templates/installer/hosting.html
+msgid "One last step: the scheduled task"
+msgstr "最后一步：计划任务"
+
+#: templates/installer/hosting.html
+msgid "Try again"
+msgstr "重试"
+
+#: templates/installer/hosting.html
+msgid "The installation stopped with an error:"
+msgstr "安装因错误而停止："
+
+#: templates/installer/hosting.html
+msgid "To protect your new site, nobody can start the installation without the install code that was created for it."
+msgstr "为保护您的新网站，没有为其生成的安装码，任何人都无法开始安装。"
+
+#: templates/installer/hosting.html
+msgid "The database works. Now the site name and the administrator account."
+msgstr "数据库可用。现在填写网站名称和管理员账户。"
+
+#: templates/installer/hosting.html
+msgid "Working…"
+msgstr "处理中…"
+
+#: templates/installer/hosting.html
+msgid "Fix the items marked ✖ and reload this page."
+msgstr "请修复标有 ✖ 的项目，然后重新加载此页面。"
+
+#: templates/installer/hosting.html
+msgid "In cPanel ▸ MySQL Databases create a database, a user, and give the user all privileges. Then enter them here."
+msgstr "在 cPanel ▸ MySQL Databases 中创建数据库和用户，并授予该用户全部权限，然后在此处填写。"
+
+#: templates/installer/hosting.html
+msgid "The background process seems to have stopped (some hosts do that). Open cPanel ▸ Terminal and run this command, then reload this page:"
+msgstr "后台进程似乎已停止（有些主机会这样做）。请打开 cPanel ▸ Terminal，运行此命令，然后重新加载页面："
+
+#: templates/updater/home.html
+msgid "Update from a file"
+msgstr "从文件更新"
+
+#: templates/updater/home.html
+msgid "Upload the update ZIP you downloaded (it contains index.json and the ravix-core package). It is checked (SHA-256 and signature), the site is backed up first, then upgraded, and restarted automatically on shared hosting."
+msgstr "上传您下载的更新 ZIP（包含 index.json 和 ravix-core 包）。系统会先校验（SHA-256 与签名），先备份网站，再升级，并在共享主机上自动重启。"
+
+#: templates/updater/home.html
+msgid "Upload and upgrade"
+msgstr "上传并升级"

@@ -1,12 +1,14 @@
 from apps.core.clilang import cli_gettext
 from django.utils.translation import gettext
 import logging
+from datetime import timedelta
 
 from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
+from django.utils import timezone
 from django.views import View
 from django.views.generic import TemplateView
 
@@ -124,6 +126,39 @@ class ApplyView(ManageMixin, View):
             last = UpdateRun.objects.first()
             return redirect("updater:run", pk=last.pk) if last and last.status != "running" else redirect("updater:home")
         _audit(request, (gettext("Updated %(component)s %(slug)s to %(to_version)s") % {"component": component, "slug": slug, "to_version": run.to_version}))
+        messages.success(request, (gettext("Update completed.%(value)s") % {"value": (gettext(" Restart the service.") if run.restart_required else "")}))
+        return redirect("updater:run", pk=run.pk)
+
+
+class UploadView(ManageMixin, View):
+    """Shared hosting: upload the update bundle (index.json [+ index.json.sig] + the ravix-core-*.zip it lists) instead of fetching it from a server.
+    It goes through exactly the same checks as an online update (SHA-256 and signature per the trusted keys), the same automatic backup, the
+    same migrate step and the same automatic rollback."""
+
+    def post(self, request):
+        import shutil
+        import zipfile
+
+        from . import work
+
+        upload = request.FILES.get("bundle")
+        if upload is None:
+            messages.error(request, gettext("Choose the update ZIP file."))
+            return redirect("updater:home")
+        folder = None
+        try:
+            folder = work.new_folder("upload")
+            work.extract_bundle(upload, folder, max_total=settings.RAVIX_UPDATE_MAX_PACKAGE_BYTES * 2)
+            run = pipeline.apply_core(None, request.user, source=sources.DirSource(folder))
+        except (UpdateError, zipfile.BadZipFile) as exc:
+            messages.error(request, sanitize(exc) if isinstance(exc, UpdateError) else gettext("The file is not a valid ZIP."))
+            _audit(request, gettext("Updating the core from an uploaded file failed"))
+            last = UpdateRun.objects.first()
+            return redirect("updater:run", pk=last.pk) if last and last.status != "running" and last.started_at > timezone.now() - timedelta(minutes=5) else redirect("updater:home")
+        finally:
+            if folder is not None:
+                shutil.rmtree(folder, ignore_errors=True)
+        _audit(request, (gettext("Updated core to %(to_version)s from an uploaded file") % {"to_version": run.to_version}))
         messages.success(request, (gettext("Update completed.%(value)s") % {"value": (gettext(" Restart the service.") if run.restart_required else "")}))
         return redirect("updater:run", pk=run.pk)
 

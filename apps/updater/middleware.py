@@ -33,7 +33,7 @@ class MaintenanceMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        if not request.path.startswith(EXEMPT) and maintenance_active():
+        if not request.path_info.startswith(EXEMPT) and maintenance_active():
             message = gettext("The site is being updated; please try again in a few moments.")
             if "text/html" in request.headers.get("Accept", "text/html") or "*/*" in request.headers.get("Accept", ""):
                 from apps.core.errorpages import standalone_response

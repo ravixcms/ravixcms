@@ -3,6 +3,7 @@ from apps.core.clilang import cli_gettext
 from django.utils.translation import gettext
 import logging
 
+from django.conf import settings
 from django.core.management import call_command
 from django.db import DatabaseError, connection, transaction
 from django.db.migrations.executor import MigrationExecutor
@@ -40,6 +41,11 @@ def is_installed() -> bool:
     global _installed
     if _installed:
         return True
+    if getattr(settings, "RAVIX_HOSTING", False):
+        from apps.core import hosting
+
+        if hosting.installed_lock_exists():  # the lock file is the final word on shared hosting, even if the database is unreachable
+            return True
     try:
         row = SiteSettings.objects.filter(pk=1).values_list("installed_at", flat=True).first()
         if row is not None:

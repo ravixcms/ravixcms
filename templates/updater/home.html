@@ -28,6 +28,14 @@
   {% elif plan %}<p class="badge badge-published">{% trans "The core is up to date" %}</p>{% endif %}
 </div></div>
 
+{% if can_manage and web_apply %}
+<div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>{% trans "Update from a file" %}</h2></div><div class="card-body">
+  <p class="help">{% trans "Upload the update ZIP you downloaded (it contains index.json and the ravix-core package). It is checked (SHA-256 and signature), the site is backed up first, then upgraded, and restarted automatically on shared hosting." %}</p>
+  <form method="post" action="{% url 'updater:upload' %}" enctype="multipart/form-data" data-confirm="{% trans "Files and the database are backed up before the upgrade and the site is in maintenance mode for a few moments. Continue?" %}">{% csrf_token %}
+    <input type="file" name="bundle" accept=".zip" required> <button class="btn" type="submit">{% trans "Upload and upgrade" %}</button></form>
+</div></div>
+{% endif %}
+
 <div class="card" style="margin-bottom:1.25rem"><div class="card-header"><h2>{% trans "Themes and plugins" %}</h2></div>
   <div class="table-wrap"><table class="table"><thead><tr><th>{% trans "Type" %}</th><th>{% trans "Name" %}</th><th>{% trans "Version" %}</th><th>{% trans "New version" %}</th><th></th></tr></thead><tbody>
   {% for t in v.themes %}<tr><td>{% trans "Theme" %}</td><td class="ltr">{{ t.slug }}</td><td class="ltr">{{ t.version }}</td><td class="ltr">{{ t.new|default:"—" }}</td>

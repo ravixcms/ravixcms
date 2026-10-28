@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.utils.translation import gettext
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -15,8 +16,8 @@ from django.views.generic import TemplateView, UpdateView
 from apps.accounts.mixins import CapabilityRequiredMixin
 from apps.audit.services import log_event
 
-from .forms import SiteSettingsForm
-from .models import SiteSettings
+from .forms import EmailSettingsForm, SiteSettingsForm, SpeedSettingsForm
+from .models import MailSettings, SiteSettings
 
 
 class SiteSettingsView(CapabilityRequiredMixin, UpdateView):
@@ -38,6 +39,71 @@ class SiteSettingsView(CapabilityRequiredMixin, UpdateView):
     def form_invalid(self, form):
         messages.error(self.request, gettext("The settings were not saved. Please check the form errors."))
         return super().form_invalid(form)
+
+
+class SpeedSettingsView(CapabilityRequiredMixin, UpdateView):
+    """Page cache for visitors and the keep-alive request of the scheduled job."""
+
+    required_capability = "settings.manage"
+    template_name = "core/speed_settings.html"
+    form_class = SpeedSettingsForm
+    success_url = reverse_lazy("core:speed_settings")
+
+    def get_object(self, queryset=None):
+        return SiteSettings.load()
+
+    def get_context_data(self, **kwargs):
+        from . import pagecache
+
+        ctx = super().get_context_data(**kwargs)
+        ctx["cache_active"] = pagecache.enabled()
+        ctx["hosting"] = bool(getattr(settings, "RAVIX_HOSTING", False))
+        return ctx
+
+    def form_valid(self, form):
+        from . import pagecache
+
+        response = super().form_valid(form)
+        pagecache.clear()
+        log_event(self.request, "update", self.object, gettext("Speed settings were edited."), object_type=gettext("Site settings"))
+        messages.success(self.request, gettext("Speed settings were saved."))
+        return response
+
+
+class EmailSettingsView(CapabilityRequiredMixin, UpdateView):
+    required_capability = "settings.manage"
+    template_name = "core/email_settings.html"
+    form_class = EmailSettingsForm
+    success_url = reverse_lazy("core:email_settings")
+
+    def dispatch(self, request, *args, **kwargs):
+        from .mailbackend import uses_panel_mail
+
+        if not uses_panel_mail():
+            from django.http import Http404
+
+            raise Http404
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_object(self, queryset=None):
+        return MailSettings.load()
+
+    def get_context_data(self, **kwargs):
+        from . import secretbox
+        from .models import QueuedEmail
+
+        ctx = super().get_context_data(**kwargs)
+        ctx["has_password"] = bool(self.object.password_encrypted)
+        ctx["queued"] = QueuedEmail.objects.count()
+        ctx["test_email_to"] = self.request.user.email
+        ctx["dedicated_key"] = secretbox.has_dedicated_key()
+        return ctx
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        log_event(self.request, "update", self.object, gettext("Email settings were edited."), object_type=gettext("Email settings"))
+        messages.success(self.request, gettext("Email settings were saved. Use “Send a test email” to check them."))
+        return response
 
 
 class SiteHealthView(CapabilityRequiredMixin, TemplateView):
@@ -65,30 +131,24 @@ class SiteHealthTestEmailView(CapabilityRequiredMixin, View):
     http_method_names = ["post"]
 
     def post(self, request):
+        back = "core:email_settings" if request.POST.get("back") == "email" else "core:site_health"
         to = request.user.email
         if not to:
             messages.error(request, gettext("Your account has no email; add an email in your profile first."))
-            return redirect("core:site_health")
+            return redirect(back)
         key = f"health-test-email:{request.user.pk}"
         if not cache.add(key, 1, 30):
             messages.warning(request, gettext("Wait a few seconds and try again."))
-            return redirect("core:site_health")
+            return redirect(back)
         try:
-            from .mailhtml import build_message
-            from .recipient import current_language, language_for_email, use_language
+            from .mailbackend import send_test
 
-            with use_language(language_for_email(to, fallback=current_language())):  # in the language of the person who will read it
-                subject, text = gettext("Ravix test email"), gettext("This is a test message and shows that sending email from your site works.")
-                message = build_message(subject, text, [to])
-            sent = message.send(fail_silently=False)
+            send_test(to)
         except Exception as exc:  # noqa: BLE001
             messages.error(request, (gettext("Sending failed (%(name)s). Check the SMTP settings.") % {"name": type(exc).__name__}))
         else:
-            if sent:
-                messages.success(request, (gettext("The test email was handed to the mail server at %(to)s; check yourself that it reaches the inbox.") % {"to": to}))
-            else:
-                messages.error(request, gettext("Sending failed (the mail service did not accept the message)."))
-        return redirect("core:site_health")
+            messages.success(request, (gettext("The test email was handed to the mail server at %(to)s; check yourself that it reaches the inbox.") % {"to": to}))
+        return redirect(back)
 
 
 # ---------------------------------------------------------------- صفحه‌های خطا

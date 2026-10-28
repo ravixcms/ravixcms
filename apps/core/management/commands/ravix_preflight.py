@@ -51,10 +51,15 @@ class Command(BaseCommand):
         need(not settings.DEBUG, cli_gettext("DEBUG is off"), cli_gettext("DEBUG is on"))
         need(len(settings.SECRET_KEY) >= 32 and "insecure" not in settings.SECRET_KEY.lower(), cli_gettext("SECRET_KEY is strong"), cli_gettext("SECRET_KEY is weak or the default"))
         need("*" not in settings.ALLOWED_HOSTS and settings.ALLOWED_HOSTS, cli_gettext("ALLOWED_HOSTS is set"), cli_gettext("ALLOWED_HOSTS is empty or *"))
-        need(connection.vendor == "postgresql", cli_gettext("The database is PostgreSQL"), cli_gettext("The database is %(a1)s (PostgreSQL is required for production)") % {"a1": connection.vendor})
-        need(getattr(settings, "SECURE_SSL_REDIRECT", False), cli_gettext("HTTPS redirect is enabled"), cli_gettext("SECURE_SSL_REDIRECT is off"))
-        need(settings.SESSION_COOKIE_SECURE and settings.CSRF_COOKIE_SECURE, cli_gettext("Cookies are Secure"), cli_gettext("Cookies are not Secure"))
-        need(getattr(settings, "SECURE_HSTS_SECONDS", 0) > 0, cli_gettext("HSTS is enabled"), cli_gettext("HSTS is off"))
+        hosting_mode = bool(getattr(settings, "RAVIX_HOSTING", False))  # shared hosting (cPanel): MySQL/MariaDB or SQLite are fine; HTTPS depends on the host's certificate
+        if hosting_mode:
+            advise(connection.vendor == "mysql", cli_gettext("The database is MySQL/MariaDB"), cli_gettext("The database is %(a1)s (MySQL/MariaDB is recommended on shared hosting)") % {"a1": connection.vendor})
+        else:
+            need(connection.vendor == "postgresql", cli_gettext("The database is PostgreSQL"), cli_gettext("The database is %(a1)s (PostgreSQL is required for production)") % {"a1": connection.vendor})
+        https_check = advise if (hosting_mode and not str(settings.SITE_URL).startswith("https://")) else need
+        https_check(getattr(settings, "SECURE_SSL_REDIRECT", False), cli_gettext("HTTPS redirect is enabled"), cli_gettext("SECURE_SSL_REDIRECT is off"))
+        https_check(settings.SESSION_COOKIE_SECURE and settings.CSRF_COOKIE_SECURE, cli_gettext("Cookies are Secure"), cli_gettext("Cookies are not Secure"))
+        https_check(getattr(settings, "SECURE_HSTS_SECONDS", 0) > 0, cli_gettext("HSTS is enabled"), cli_gettext("HSTS is off"))
         advise(bool(settings.CSRF_TRUSTED_ORIGINS), cli_gettext("CSRF_TRUSTED_ORIGINS is set"), cli_gettext("CSRF_TRUSTED_ORIGINS is empty (usually required behind HTTPS with a domain)"))
         advise(bool(settings.SITE_URL), cli_gettext("SITE_URL is set (absolute sitemap/canonical URLs)"), cli_gettext("SITE_URL is empty; absolute URLs are built from the request Host"))
         advise("console" not in settings.EMAIL_BACKEND, cli_gettext("Real email is configured"), cli_gettext("EMAIL_BACKEND is the console one; no email is sent"))
@@ -128,6 +133,15 @@ class Command(BaseCommand):
         if shop_live:
             timers.append(("ravix-expire-orders.timer", cli_gettext("Cancelling unpaid orders")))
         unavailable = False
+        if hosting_mode:
+            timers = []  # no systemd on shared hosting: the cPanel cron job runs manage.py ravix_cron instead
+            from apps.core.models import CronRun
+
+            try:
+                last = CronRun.objects.order_by("-started_at").first()
+            except Exception:  # noqa: BLE001 - before migrate
+                last = None
+            advise(last is not None, cli_gettext("The scheduled job (ravix_cron) has run"), cli_gettext("ravix_cron has never run; add the cron line shown by the installer in cPanel ▸ Cron Jobs"))
         for unit, label in timers:
             state = systemd_unit_state(unit)
             if state is not None and state[0] not in _ENABLED_OK:
@@ -178,7 +192,7 @@ class Command(BaseCommand):
             need(settings.RAVIX_UPDATE_URL.startswith("https://"), cli_gettext("The update source is HTTPS"), cli_gettext("RAVIX_UPDATE_URL must be https"))
         if settings.RAVIX_UPDATE_URL or settings.RAVIX_UPDATE_DIR:
             advise(bool(signing.trusted_keys()), cli_gettext("A trusted public key for package signatures is configured"), cli_gettext("There is no trusted key (RAVIX_TRUSTED_PUBLIC_KEYS): the official update source stays disabled and no update package is accepted"))
-        advise(not settings.RAVIX_UPDATE_WEB_APPLY, cli_gettext("Applying upgrades from the web is off (recommended)"), cli_gettext("RAVIX_UPDATE_WEB_APPLY is on; the web service must have write access to the code and the database"))
+        advise(not settings.RAVIX_UPDATE_WEB_APPLY or hosting_mode, cli_gettext("Applying upgrades from the web is off (recommended)"), cli_gettext("RAVIX_UPDATE_WEB_APPLY is on; the web service must have write access to the code and the database"))
         try:
             plan = MigrationExecutor(connection).migration_plan(MigrationExecutor(connection).loader.graph.leaf_nodes())
             need(not plan, cli_gettext("All migrations have been applied"), cli_gettext("%(a1)s migrations have not been applied; run migrate") % {"a1": len(plan)})

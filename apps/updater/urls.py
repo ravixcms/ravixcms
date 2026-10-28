@@ -9,5 +9,6 @@ urlpatterns = [
     path("updates/check/", views.CheckView.as_view(), name="check"),
     path("updates/run/<int:pk>/", views.RunDetailView.as_view(), name="run"),
     path("updates/run/<int:pk>/rollback/", views.RollbackView.as_view(), name="rollback"),
+    path("updates/upload/", views.UploadView.as_view(), name="upload"),
     path("updates/apply/<slug:component>/", views.ApplyView.as_view(), name="apply"),
 ]

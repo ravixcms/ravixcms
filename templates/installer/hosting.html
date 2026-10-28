@@ -1,0 +1,89 @@
+{% extends "layouts/auth.html" %}
+{% load i18n %}
+{% load ravix_ui %}
+{% block title %}{% trans "Install" %}{% endblock %}
+{% block head %}{% if step == "run" and not stale %}<meta http-equiv="refresh" content="3">{% endif %}<meta name="robots" content="noindex,nofollow">{% endblock %}
+{% block auth_content %}
+<h2 style="margin-bottom:.5rem">{% trans "Install Ravix" %}</h2>
+
+{% if step != "unlock" and step != "done" and step != "error" %}
+<ol class="help" style="display:flex;gap:.5rem;flex-wrap:wrap;list-style:none;padding:0;margin:0 0 1rem" aria-label="{% trans 'Steps' %}">
+  {% for key, label in steps %}<li{% if key == step %} aria-current="step" style="font-weight:700"{% endif %}>{{ forloop.counter }}. {{ label }}</li>{% endfor %}
+</ol>
+{% endif %}
+
+{% if step == "unlock" %}
+  <p class="help" style="margin-bottom:1rem">{% trans "To protect your new site, nobody can start the installation without the install code that was created for it." %}</p>
+  {% if locked_out %}
+    <div class="form-errors" role="alert"><p>{% trans "Too many wrong attempts. Try again in 15 minutes." %}</p></div>
+  {% endif %}
+  <form method="post" novalidate data-once>
+    {% csrf_token %}
+    {% include "partials/_form_errors.html" %}
+    {% for field in form %}{% include "partials/_field.html" %}{% endfor %}
+    <button type="submit" class="btn btn-block"{% if locked_out %} disabled{% endif %}>{% icon "check" 18 %} {% trans "Continue" %}</button>
+  </form>
+
+{% elif step == "checks" %}
+  <p class="help" style="margin-bottom:1rem">{% trans "Checking that your hosting can run Ravix." %}</p>
+  <ul class="host-checks" style="list-style:none;padding:0;margin:0 0 1rem">
+    {% for row in rows %}
+    <li style="margin-bottom:.6rem" data-status="{{ row.status }}">
+      <strong>{% if row.status == "ok" %}✔{% elif row.status == "warn" %}⚠{% elif row.status == "error" %}✖{% else %}ℹ{% endif %}</strong>
+      {{ row.title }}
+      {% if row.detail %}<br><span class="help">{{ row.detail }}</span>{% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% if blocked %}<div class="form-errors" role="alert"><p>{% trans "Fix the items marked ✖ and reload this page." %}</p></div>{% endif %}
+  <form method="post" data-once>
+    {% csrf_token %}
+    <input type="hidden" name="action" value="continue">
+    <button type="submit" class="btn btn-block"{% if blocked %} disabled{% endif %}>{% trans "Continue" %}</button>
+  </form>
+
+{% elif step == "db" %}
+  <p class="help" style="margin-bottom:1rem">{% trans "In cPanel ▸ MySQL Databases create a database, a user, and give the user all privileges. Then enter them here." %}</p>
+  <form method="post" novalidate data-once>
+    {% csrf_token %}
+    <input type="hidden" name="action" value="db">
+    {% include "partials/_form_errors.html" %}
+    {% for field in form %}{% include "partials/_field.html" %}{% endfor %}
+    <button type="submit" class="btn btn-block">{% trans "Test the connection and continue" %}</button>
+  </form>
+  <form method="post" style="margin-top:.5rem">{% csrf_token %}<input type="hidden" name="action" value="back"><button type="submit" class="btn btn-light btn-block">{% trans "Back" %}</button></form>
+
+{% elif step == "site" %}
+  <p class="help" style="margin-bottom:1rem">{% trans "The database works. Now the site name and the administrator account." %}</p>
+  {% for note in notes %}<p class="help">{{ note }}</p>{% endfor %}
+  <form method="post" novalidate data-once>
+    {% csrf_token %}
+    <input type="hidden" name="action" value="site">
+    {% include "partials/_form_errors.html" %}
+    {% for field in form %}{% include "partials/_field.html" %}{% endfor %}
+    <button type="submit" class="btn btn-block">{% icon "check" 18 %} {% trans "Install" %}</button>
+  </form>
+  <form method="post" style="margin-top:.5rem">{% csrf_token %}<input type="hidden" name="action" value="back"><button type="submit" class="btn btn-light btn-block">{% trans "Back" %}</button></form>
+
+{% elif step == "run" %}
+  <p class="help" style="margin-bottom:1rem">{% trans "Installing. This takes a minute or two; this page refreshes by itself. Do not close it." %}</p>
+  <p><strong>{% trans "Working…" %}</strong> <span class="help">{{ status.step }}</span></p>
+  {% if stale %}
+    <div class="form-errors" role="alert">
+      <p>{% trans "The background process seems to have stopped (some hosts do that). Open cPanel ▸ Terminal and run this command, then reload this page:" %}</p>
+      <p><code class="ltr">{{ manual }}</code></p>
+    </div>
+  {% endif %}
+
+{% elif step == "error" %}
+  <div class="form-errors" role="alert"><p>{% trans "The installation stopped with an error:" %}</p><p><code class="ltr">{{ error }}</code></p></div>
+  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="retry"><button type="submit" class="btn btn-block">{% trans "Try again" %}</button></form>
+
+{% elif step == "done" %}
+  <div class="alert alert-success" role="status"><p><strong>{% trans "Ravix is installed." %}</strong> {% trans "The installer is now locked for good." %}</p></div>
+  <h3>{% trans "One last step: the scheduled task" %}</h3>
+  <p class="help">{% trans "In cPanel open “Cron Jobs”, choose “Once Per Five Minutes”, and paste this command. It publishes scheduled posts, sends queued email, makes the daily backup and keeps the site fast." %}</p>
+  <pre class="ltr" style="white-space:pre-wrap;word-break:break-all;user-select:all"><code>{{ cron }}</code></pre>
+  <p style="margin-top:1rem"><a class="btn btn-block" href="{{ login_url }}">{% trans "Sign in to the panel" %}</a></p>
+{% endif %}
+{% endblock %}

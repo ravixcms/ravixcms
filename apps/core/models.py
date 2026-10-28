@@ -58,6 +58,12 @@ class SiteSettings(models.Model):
         help_text=gettext_lazy("On: /en/ lists only English posts, a post opened under another language prefix is redirected to its own language, and each language has its own feed and sitemap. "
                                "Off: every post is shown under every language prefix (the behaviour before this option existed)."))
     translations = models.JSONField(default=dict, blank=True, editable=False)  # {language: {site_name, tagline, description, footer_text}}
+    PAGE_CACHE_CHOICES = (("auto", gettext_lazy("Automatic (on for shared hosting, off for a VPS)")), ("on", gettext_lazy("On")), ("off", gettext_lazy("Off")))
+    page_cache = models.CharField(gettext_lazy("Page cache for visitors"), max_length=4, choices=PAGE_CACHE_CHOICES, default="auto",
+                                  help_text=gettext_lazy("Visitors who are not logged in get ready-made pages without database queries. It is cleared automatically whenever content changes. "
+                                                         "Logged-in users, carts, forms and pages with a security token are never served from it."))
+    keep_alive = models.BooleanField(gettext_lazy("Keep the application awake from the scheduled job"), default=True,
+                                     help_text=gettext_lazy("The scheduled job opens the home page each time it runs so the first visitor does not wait for the application to start (shared hosting)."))
     updated_at = models.DateTimeField(gettext_lazy("Last edit"), auto_now=True)
 
     #: Texts a site owner can set per language. The plain fields above are the text in the site's default language and the
@@ -139,3 +145,63 @@ class ModuleState(models.Model):
 
     def __str__(self):
         return f"{self.key}={'on' if self.enabled else 'off'}"
+
+
+class MailSettings(models.Model):
+    """SMTP settings edited in the panel (a singleton). When ``enabled`` is off, the server's own EMAIL_* settings are used.
+    The password is stored encrypted (``apps.core.secretbox``)."""
+
+    SECURITY_CHOICES = (("starttls", gettext_lazy("STARTTLS (usually port 587)")), ("ssl", gettext_lazy("SSL/TLS (usually port 465)")), ("none", gettext_lazy("No encryption (not recommended)")))
+
+    enabled = models.BooleanField(gettext_lazy("Use these SMTP settings"), default=False)
+    host = models.CharField(gettext_lazy("SMTP server"), max_length=255, blank=True)
+    port = models.PositiveIntegerField(gettext_lazy("Port"), default=587)
+    security = models.CharField(gettext_lazy("Encryption"), max_length=8, choices=SECURITY_CHOICES, default="starttls")
+    username = models.CharField(gettext_lazy("Username"), max_length=255, blank=True)
+    password_encrypted = models.TextField(blank=True, editable=False)
+    from_email = models.CharField(gettext_lazy("Sender address"), max_length=255, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = gettext_lazy("Email settings")
+        verbose_name_plural = gettext_lazy("Email settings")
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        kwargs.pop("force_insert", None)
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def load(cls) -> "MailSettings":
+        obj, _ = cls.objects.get_or_create(pk=1)
+        return obj
+
+
+class QueuedEmail(models.Model):
+    """A message that could not be sent right away (the mail server was busy or down); ``ravix_cron`` retries it."""
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    raw = models.BinaryField()  # the finished MIME message
+    from_email = models.CharField(max_length=255)
+    recipients = models.JSONField(default=list)
+    attempts = models.PositiveSmallIntegerField(default=1)
+    next_attempt = models.DateTimeField(db_index=True)
+    last_error = models.CharField(max_length=200, blank=True)
+
+    class Meta:
+        verbose_name = gettext_lazy("Queued email")
+        verbose_name_plural = gettext_lazy("Queued emails")
+
+
+class CronRun(models.Model):
+    """One run of ``manage.py ravix_cron``: when it ran and what each job did (shown in the site-health page)."""
+
+    started_at = models.DateTimeField(db_index=True)
+    finished_at = models.DateTimeField(null=True, blank=True)
+    ok = models.BooleanField(default=True)
+    summary = models.JSONField(default=dict, blank=True)  # {job: "ok" | "skipped: …" | "failed: …"}
+
+    class Meta:
+        ordering = ["-started_at"]
+        verbose_name = gettext_lazy("Scheduled-job run")
+        verbose_name_plural = gettext_lazy("Scheduled-job runs")

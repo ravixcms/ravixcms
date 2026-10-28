@@ -26,8 +26,8 @@ MAX_RATIO = 200
 RELEASE_FILE = "release.json"
 
 # فقط این مسیرها را بستهٔ هسته می‌تواند جایگزین کند. هرگز: .env، .venv، media، دیتابیس، plugins/، plugins_installed، قالب‌های سفارشی، پشتیبان‌ها.
-CORE_ENTRIES = ("apps", "config", "static", "templates", "themes/default", "deploy", "docs", "scripts", "manage.py", "requirements.txt",
-                "requirements-optional.txt", "README.md", ".env.example")
+CORE_ENTRIES = ("apps", "config", "static", "templates", "locale", "themes/default", "deploy", "docs", "scripts", "manage.py", "requirements.txt",
+                "requirements-optional.txt", "requirements-cpanel.txt", "passenger_wsgi.py", "README.md", ".env.example")
 REQUIRED_CORE = ("manage.py", "apps/core/version.py", "config", "requirements.txt")
 THEME_EXTENSIONS = {"html", "css", "js", "json", "png", "jpg", "jpeg", "gif", "webp", "svg", "woff", "woff2", "ttf", "ico", "txt", "md", "map"}
 FORBIDDEN_NAME = re.compile(r"(^|/)(\.env(\..+)?|.*\.sqlite3?|.*\.pem|.*\.key|id_rsa.*|\.git|\.venv|__pycache__|.*\.pyc|.*\.pyo)$")

@@ -10,7 +10,7 @@ JavaScript and icons bundled for Ravix Studio:
 
 Python dependencies are installed from PyPI and keep their own licenses
 (Django – BSD-3, Django REST framework – BSD-3, Pillow – HPND, psycopg – LGPL-3.0,
-gunicorn – MIT, WhiteNoise – MIT, cryptography – Apache-2.0/BSD, nh3 – MIT, Markdown – BSD-3,
+gunicorn – MIT, PyMySQL – MIT, WhiteNoise – MIT, cryptography – Apache-2.0/BSD, nh3 – MIT, Markdown – BSD-3,
 jdatetime – Python-2.0/MIT-style). See `requirements.lock` for exact versions;
 check each package's metadata (`pip show -v <name>`) for the authoritative license.
 

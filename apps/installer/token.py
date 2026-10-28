@@ -25,6 +25,10 @@ def _file() -> Path:
 
 
 def expected_token() -> str:
+    if getattr(settings, "RAVIX_HOSTING", False):  # shared hosting: the install code of the web installer; it is never written to a log
+        from . import hostinstall
+
+        return hostinstall.ensure_key()
     env_value = (getattr(settings, "RAVIX_INSTALL_TOKEN", "") or "").strip()
     if env_value:
         return env_value

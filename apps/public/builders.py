@@ -359,12 +359,12 @@ def language_links(request) -> tuple:
     from .seo import hreflang
 
     current = (translation.get_language() or "").lower()
-    path = request.path
+    path = request.path  # full path (script prefix included): swap_language_prefix and the fallback link need it
     route = getattr(getattr(request, "resolver_match", None), "view_name", "") or ""
     separated = False
     if route == "public:page_detail":
         separated = bool(separated_language())
-    prefixed = split_language_prefix(path)[0] != ""
+    prefixed = split_language_prefix(request.path_info)[0] != ""
     links = []
     for code, name in settings.LANGUAGES:
         if route in _BLOG_HOME_ROUTES:

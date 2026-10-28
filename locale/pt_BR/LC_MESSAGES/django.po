@@ -13065,3 +13065,619 @@ msgstr "Buscar por título ou slug"
 #: templates/studio/editor.html
 msgid "Redo (Ctrl+Shift+Z)"
 msgstr "Refazer (Ctrl+Shift+Z)"
+
+#: apps/core/apps.py
+msgid "Speed"
+msgstr "Velocidade"
+
+#: apps/core/forms.py
+msgid "Enter the SMTP server name."
+msgstr "Informe o nome do servidor SMTP."
+
+#: apps/core/forms.py
+msgid "Remove the saved password"
+msgstr "Remover a senha salva"
+
+#: apps/core/forms.py
+msgid "Leave empty to keep the saved password."
+msgstr "Deixe em branco para manter a senha salva."
+
+#: apps/core/mailbackend.py
+msgid "the mail service did not accept the message"
+msgstr "o serviço de e-mail não aceitou a mensagem"
+
+#: apps/core/models.py
+msgid "Keep the application awake from the scheduled job"
+msgstr "Manter o aplicativo ativo pela tarefa agendada"
+
+#: apps/core/models.py
+msgid "SSL/TLS (usually port 465)"
+msgstr "SSL/TLS (geralmente porta 465)"
+
+#: apps/core/models.py
+msgid "SMTP server"
+msgstr "Servidor SMTP"
+
+#: apps/core/models.py
+msgid "Scheduled-job run"
+msgstr "Execução da tarefa agendada"
+
+#: apps/core/models.py
+msgid "Off"
+msgstr "Desligado"
+
+#: apps/core/models.py
+msgid "Queued emails"
+msgstr "E-mails na fila"
+
+#: apps/core/models.py
+msgid "Page cache for visitors"
+msgstr "Cache de páginas para visitantes"
+
+#: apps/core/models.py
+msgid "Queued email"
+msgstr "E-mail na fila"
+
+#: apps/core/models.py
+msgid "STARTTLS (usually port 587)"
+msgstr "STARTTLS (geralmente porta 587)"
+
+#: apps/core/models.py
+msgid "No encryption (not recommended)"
+msgstr "Sem criptografia (não recomendado)"
+
+#: apps/core/models.py
+msgid "Visitors who are not logged in get ready-made pages without database queries. It is cleared automatically whenever content changes. Logged-in users, carts, forms and pages with a security token are never served from it."
+msgstr "Visitantes sem login recebem páginas prontas, sem consultas ao banco de dados. O cache é limpo automaticamente quando o conteúdo muda. Usuários logados, carrinhos, formulários e páginas com token de segurança nunca são servidos por ele."
+
+#: apps/core/models.py
+msgid "Encryption"
+msgstr "Criptografia"
+
+#: apps/core/models.py
+msgid "Automatic (on for shared hosting, off for a VPS)"
+msgstr "Automático (ligado em hospedagem compartilhada, desligado em um VPS)"
+
+#: apps/core/models.py
+msgid "On"
+msgstr "Ligado"
+
+#: apps/core/models.py
+msgid "Scheduled-job runs"
+msgstr "Execuções da tarefa agendada"
+
+#: apps/core/models.py
+msgid "Port"
+msgstr "Porta"
+
+#: apps/core/models.py
+msgid "The scheduled job opens the home page each time it runs so the first visitor does not wait for the application to start (shared hosting)."
+msgstr "A tarefa agendada abre a página inicial a cada execução para que o primeiro visitante não espere o aplicativo iniciar (hospedagem compartilhada)."
+
+#: apps/core/models.py
+msgid "Email settings"
+msgstr "Configurações de e-mail"
+
+#: apps/core/models.py
+msgid "Use these SMTP settings"
+msgstr "Usar estas configurações SMTP"
+
+#: apps/core/sitehealth.py
+msgid "This Python version is not supported."
+msgstr "Esta versão do Python não é suportada."
+
+#: apps/core/sitehealth.py
+#, python-format
+msgid "The last run (%(when)s) reported a problem: %(summary)s"
+msgstr "A última execução (%(when)s) relatou um problema: %(summary)s"
+
+#: apps/core/sitehealth.py
+msgid "Turn it on in Speed settings."
+msgstr "Ative nas configurações de velocidade."
+
+#: apps/core/sitehealth.py
+msgid "The page cache is on but its storage does not answer."
+msgstr "O cache de páginas está ligado, mas o armazenamento não responde."
+
+#: apps/core/sitehealth.py
+#, python-format
+msgid "Last run: %(when)s."
+msgstr "Última execução: %(when)s."
+
+#: apps/core/sitehealth.py
+msgid "Page cache"
+msgstr "Cache de páginas"
+
+#: apps/core/sitehealth.py
+msgid "Create a MySQL database in cPanel and ask for help moving to it in the documentation."
+msgstr "Crie um banco de dados MySQL no cPanel e veja na documentação como migrar para ele."
+
+#: apps/core/sitehealth.py
+msgid "The scheduled job has never run. Scheduled posts, queued email and backups wait for it."
+msgstr "A tarefa agendada nunca foi executada. Publicações agendadas, e-mails na fila e backups dependem dela."
+
+#: apps/core/sitehealth.py
+msgid "The page cache is off, so every visit runs the application."
+msgstr "O cache de páginas está desligado, então cada visita executa o aplicativo."
+
+#: apps/core/sitehealth.py
+msgid "No backup has been made yet. The scheduled job makes one every day."
+msgstr "Nenhum backup foi feito ainda. A tarefa agendada faz um por dia."
+
+#: apps/core/sitehealth.py
+#, python-format
+msgid "The scheduled job last ran %(hours)s hours ago (%(when)s)."
+msgstr "A tarefa agendada foi executada pela última vez há %(hours)s horas (%(when)s)."
+
+#: apps/core/sitehealth.py
+msgid "Check the SMTP settings (Email page) and press “Send a test email”."
+msgstr "Verifique as configurações SMTP (página de e-mail) e clique em “Enviar e-mail de teste”."
+
+#: apps/core/sitehealth.py
+#, python-format
+msgid "In cPanel ▸ Cron Jobs add this line (every 5 minutes): %(cmd)s"
+msgstr "No cPanel ▸ Cron Jobs adicione esta linha (a cada 5 minutos): %(cmd)s"
+
+#: apps/core/sitehealth.py
+msgid "Choose Python 3.11 or newer in Setup Python App."
+msgstr "Escolha o Python 3.11 ou superior em Setup Python App."
+
+#: apps/core/sitehealth.py
+#, python-format
+msgid "%(n)s messages are waiting to be retried."
+msgstr "%(n)s mensagens aguardam nova tentativa."
+
+#: apps/core/sitehealth.py
+#, python-format
+msgid "Last backup: %(when_txt)s. Download a copy now and then (File Manager ▸ the ravix-data/backups folder)."
+msgstr "Último backup: %(when_txt)s. Baixe uma cópia de vez em quando (File Manager ▸ pasta ravix-data/backups)."
+
+#: apps/core/sitehealth.py
+#, python-format
+msgid "Python %(v)s."
+msgstr "Python %(v)s."
+
+#: apps/core/sitehealth.py
+msgid "The site uses SQLite. That is fine for a small site, but several editors at once or a busy site run better on MySQL/MariaDB."
+msgstr "O site usa SQLite. Serve para um site pequeno, mas vários editores ao mesmo tempo ou um site movimentado funcionam melhor com MySQL/MariaDB."
+
+#: apps/core/sitehealth.py
+#, python-format
+msgid "The scheduled job last ran %(minutes)s minutes ago (%(when)s); it should run every 5 minutes."
+msgstr "A tarefa agendada foi executada pela última vez há %(minutes)s minutos (%(when)s); deveria rodar a cada 5 minutos."
+
+#: apps/core/sitehealth.py
+msgid "The page cache is on and its storage works."
+msgstr "O cache de páginas está ligado e o armazenamento funciona."
+
+#: apps/core/sitehealth.py
+msgid "Check the cron job."
+msgstr "Verifique a tarefa cron."
+
+#: apps/core/sitehealth.py
+msgid "Email queue"
+msgstr "Fila de e-mails"
+
+#: apps/core/sitehealth.py
+msgid "Shared hosting"
+msgstr "Hospedagem compartilhada"
+
+#: apps/core/sitehealth.py
+msgid "Scheduled job (cron)"
+msgstr "Tarefa agendada (cron)"
+
+#: apps/core/sitehealth.py
+msgid "Python version"
+msgstr "Versão do Python"
+
+#: apps/core/sitehealth.py
+msgid "Make sure the cache folder in the private data folder is writable."
+msgstr "Verifique se a pasta cache na pasta de dados privada tem permissão de escrita."
+
+#: apps/core/sitehealth.py
+msgid "No messages are waiting."
+msgstr "Nenhuma mensagem aguardando."
+
+#: apps/core/sitehealth.py
+msgid "Check that the cron job in cPanel is set up."
+msgstr "Verifique se a tarefa cron do cPanel está configurada."
+
+#: apps/core/views.py
+msgid "Email settings were edited."
+msgstr "As configurações de e-mail foram editadas."
+
+#: apps/core/views.py
+msgid "Speed settings were edited."
+msgstr "As configurações de velocidade foram editadas."
+
+#: apps/core/views.py
+msgid "Email settings were saved. Use “Send a test email” to check them."
+msgstr "As configurações de e-mail foram salvas. Use “Enviar e-mail de teste” para conferir."
+
+#: apps/core/views.py
+msgid "Speed settings were saved."
+msgstr "As configurações de velocidade foram salvas."
+
+#: apps/installer/forms.py
+msgid "Database name"
+msgstr "Nome do banco de dados"
+
+#: apps/installer/forms.py
+msgid "The code is in the file install-key.txt in your private data folder (next to the application folder, outside public_html). Open it with cPanel ▸ File Manager."
+msgstr "O código está no arquivo install-key.txt na sua pasta de dados privada (ao lado da pasta do aplicativo, fora de public_html). Abra-o com cPanel ▸ File Manager."
+
+#: apps/installer/forms.py
+msgid "Database type"
+msgstr "Tipo de banco de dados"
+
+#: apps/installer/forms.py
+msgid "Database password"
+msgstr "Senha do banco de dados"
+
+#: apps/installer/forms.py
+msgid "Enter a host name such as localhost."
+msgstr "Informe um nome de host como localhost."
+
+#: apps/installer/forms.py
+msgid "Database host"
+msgstr "Host do banco de dados"
+
+#: apps/installer/forms.py
+msgid "This field is required."
+msgstr "Este campo é obrigatório."
+
+#: apps/installer/forms.py
+msgid "MySQL / MariaDB (recommended)"
+msgstr "MySQL / MariaDB (recomendado)"
+
+#: apps/installer/forms.py
+msgid "Database user"
+msgstr "Usuário do banco de dados"
+
+#: apps/installer/forms.py
+msgid "SQLite (small sites)"
+msgstr "SQLite (sites pequenos)"
+
+#: apps/installer/forms.py
+msgid "In cPanel the name starts with your account name, for example myaccount_ravix."
+msgstr "No cPanel o nome começa com o nome da sua conta, por exemplo myaccount_ravix."
+
+#: apps/installer/forms.py
+msgid "Install code"
+msgstr "Código de instalação"
+
+#: apps/installer/hosting_views.py
+msgid "The install code is not correct."
+msgstr "O código de instalação não está correto."
+
+#: apps/installer/hosting_views.py
+msgid "Site and administrator"
+msgstr "Site e administrador"
+
+#: apps/installer/hosting_views.py
+msgid "Installing"
+msgstr "Instalando"
+
+#: apps/installer/hosting_views.py
+msgid "Host check"
+msgstr "Verificação da hospedagem"
+
+#: apps/installer/hostinstall.py
+#, python-format
+msgid "This database server (%(v)s) is too old. Ravix needs MariaDB 10.5+ or MySQL 8.0+."
+msgstr "Este servidor de banco de dados (%(v)s) é antigo demais. O Ravix precisa de MariaDB 10.5+ ou MySQL 8.0+."
+
+#: apps/installer/hostinstall.py
+#, python-format
+msgid "Python %(v)s is too old"
+msgstr "O Python %(v)s é antigo demais"
+
+#: apps/installer/hostinstall.py
+#, python-format
+msgid "Application server: %(name)s"
+msgstr "Servidor de aplicativos: %(name)s"
+
+#: apps/installer/hostinstall.py
+msgid "Upload limit"
+msgstr "Limite de upload"
+
+#: apps/installer/hostinstall.py
+msgid "Private data folder is writable"
+msgstr "A pasta de dados privada tem permissão de escrita"
+
+#: apps/installer/hostinstall.py
+#, python-format
+msgid "Only %(mb)s MB of memory is available to your account"
+msgstr "Apenas %(mb)s MB de memória estão disponíveis para sua conta"
+
+#: apps/installer/hostinstall.py
+msgid "Install the requirements again (pip install -r requirements-cpanel.txt) or choose SQLite."
+msgstr "Instale os requisitos novamente (pip install -r requirements-cpanel.txt) ou escolha SQLite."
+
+#: apps/installer/hostinstall.py
+#, python-format
+msgid "Make this folder writable by your account, or create it in File Manager: %(path)s"
+msgstr "Torne esta pasta gravável pela sua conta ou crie-a no File Manager: %(path)s"
+
+#: apps/installer/hostinstall.py
+msgid "MySQL/MariaDB driver (PyMySQL) is installed"
+msgstr "O driver MySQL/MariaDB (PyMySQL) está instalado"
+
+#: apps/installer/hostinstall.py
+msgid "The database driver for this choice is not installed on the host."
+msgstr "O driver de banco de dados para esta escolha não está instalado na hospedagem."
+
+#: apps/installer/hostinstall.py
+msgid "This page is served over plain HTTP"
+msgstr "Esta página é servida por HTTP simples"
+
+#: apps/installer/hostinstall.py
+msgid "The private data folder is not writable"
+msgstr "A pasta de dados privada não tem permissão de escrita"
+
+#: apps/installer/hostinstall.py
+msgid "Memory limit could not be detected"
+msgstr "Não foi possível detectar o limite de memória"
+
+#: apps/installer/hostinstall.py
+msgid "The media folder is not writable; uploading files will not work"
+msgstr "A pasta media não tem permissão de escrita; o envio de arquivos não funcionará"
+
+#: apps/installer/hostinstall.py
+msgid "The static files folder is writable"
+msgstr "A pasta de arquivos estáticos tem permissão de escrita"
+
+#: apps/installer/hostinstall.py
+#, python-format
+msgid "Package %(name)s is installed"
+msgstr "O pacote %(name)s está instalado"
+
+#: apps/installer/hostinstall.py
+#, python-format
+msgid "Memory available: %(mb)s MB"
+msgstr "Memória disponível: %(mb)s MB"
+
+#: apps/installer/hostinstall.py
+#, python-format
+msgid "Could not connect to the database: %(err)s"
+msgstr "Não foi possível conectar ao banco de dados: %(err)s"
+
+#: apps/installer/hostinstall.py
+msgid "Turn on AutoSSL / Let’s Encrypt in cPanel (SSL/TLS Status) so logins are encrypted. Ravix switches to HTTPS automatically once the certificate works."
+msgstr "Ative o AutoSSL / Let’s Encrypt no cPanel (SSL/TLS Status) para criptografar os logins. O Ravix passa para HTTPS automaticamente quando o certificado funcionar."
+
+#: apps/installer/hostinstall.py
+msgid "Ravix runs best with at least 512 MB. Installation may fail on such a small limit."
+msgstr "O Ravix funciona melhor com pelo menos 512 MB. A instalação pode falhar com um limite tão pequeno."
+
+#: apps/installer/hostinstall.py
+msgid "Ravix needs Python 3.11 or newer (Python 3.10 reached end of life and is not supported). In cPanel open “Setup Python App”, edit the application and choose a newer Python version."
+msgstr "O Ravix precisa do Python 3.11 ou superior (o Python 3.10 chegou ao fim da vida e não é suportado). No cPanel abra “Setup Python App”, edite o aplicativo e escolha uma versão mais recente do Python."
+
+#: apps/installer/hostinstall.py
+msgid "The tmp folder is not writable, so the application cannot restart itself after an update"
+msgstr "A pasta tmp não tem permissão de escrita, então o aplicativo não consegue se reiniciar após uma atualização"
+
+#: apps/installer/hostinstall.py
+#, python-format
+msgid "The database uses the character set “%(cs)s”. Create it again with the collation utf8mb4_unicode_ci (cPanel ▸ MySQL Databases)."
+msgstr "O banco de dados usa o conjunto de caracteres “%(cs)s”. Crie-o novamente com a collation utf8mb4_unicode_ci (cPanel ▸ MySQL Databases)."
+
+#: apps/installer/hostinstall.py
+msgid "The MySQL/MariaDB driver (PyMySQL) is not installed"
+msgstr "O driver MySQL/MariaDB (PyMySQL) não está instalado"
+
+#: apps/installer/hostinstall.py
+msgid "The media (uploads) folder is writable"
+msgstr "A pasta media (uploads) tem permissão de escrita"
+
+#: apps/installer/hostinstall.py
+#, python-format
+msgid "Package %(name)s cannot be loaded"
+msgstr "Não foi possível carregar o pacote %(name)s"
+
+#: apps/installer/hostinstall.py
+#, python-format
+msgid "The folder for the SQLite file is not writable: %(path)s"
+msgstr "A pasta do arquivo SQLite não tem permissão de escrita: %(path)s"
+
+#: apps/installer/hostinstall.py
+msgid "SQLite is fine for a small site; for larger sites, or many editors at once, a MySQL/MariaDB database from cPanel is better."
+msgstr "SQLite serve para um site pequeno; para sites maiores ou vários editores ao mesmo tempo, um banco MySQL/MariaDB do cPanel é melhor."
+
+#: apps/installer/hostinstall.py
+msgid "The database is not empty. Existing tables with the same names as Ravix's will be reused: use an empty database for a fresh site."
+msgstr "O banco de dados não está vazio. Tabelas existentes com os mesmos nomes das do Ravix serão reutilizadas: use um banco vazio para um site novo."
+
+#: apps/installer/hostinstall.py
+msgid "unknown"
+msgstr "desconhecido"
+
+#: apps/installer/hostinstall.py
+msgid "Ravix itself does not limit file uploads, but your host's web server might (often 8–64 MB). If large uploads fail, ask your host to raise it."
+msgstr "O próprio Ravix não limita uploads de arquivos, mas o servidor web da hospedagem pode limitar (muitas vezes 8–64 MB). Se uploads grandes falharem, peça à hospedagem para aumentar o limite."
+
+#: apps/installer/hostinstall.py
+msgid "The static files folder is not writable"
+msgstr "A pasta de arquivos estáticos não tem permissão de escrita"
+
+#: apps/installer/hostinstall.py
+msgid "The application can be restarted from the panel (tmp/restart.txt)"
+msgstr "O aplicativo pode ser reiniciado pelo painel (tmp/restart.txt)"
+
+#: apps/installer/hostinstall.py
+msgid "Your hosting seems too old for this package (it needs a “manylinux2014” or newer wheel). Ask your hosting support to update the server's Python/OS, or to install it for you, or move to a newer plan."
+msgstr "Sua hospedagem parece antiga demais para este pacote (precisa de um wheel “manylinux2014” ou mais novo). Peça ao suporte da hospedagem para atualizar o Python/sistema do servidor ou instalar o pacote para você, ou mude para um plano mais novo."
+
+#: apps/installer/hostinstall.py
+msgid "The database character set was changed to utf8mb4."
+msgstr "O conjunto de caracteres do banco de dados foi alterado para utf8mb4."
+
+#: apps/installer/hostinstall.py
+#, python-format
+msgid "Python %(v)s"
+msgstr "Python %(v)s"
+
+#: apps/installer/hostinstall.py
+msgid "This page is served over HTTPS"
+msgstr "Esta página é servida por HTTPS"
+
+#: apps/updater/backup.py
+msgid "The mysql client tool is not installed on the server; the restore was not possible."
+msgstr "A ferramenta cliente mysql não está instalada no servidor; a restauração não foi possível."
+
+#: apps/updater/backup.py
+#, python-format
+msgid "Database restore failed: %(sanitize)s"
+msgstr "A restauração do banco de dados falhou: %(sanitize)s"
+
+#: apps/updater/pipeline.py
+msgid "The upgrade succeeded and the application was restarted. If there is a problem: `python manage.py ravix_update rollback --run %d`."
+msgstr "A atualização foi bem-sucedida e o aplicativo foi reiniciado. Se houver algum problema: `python manage.py ravix_update rollback --run %d`."
+
+#: apps/updater/views.py
+msgid "Updating the core from an uploaded file failed"
+msgstr "A atualização do núcleo a partir de um arquivo enviado falhou"
+
+#: apps/updater/views.py
+msgid "The file is not a valid ZIP."
+msgstr "O arquivo não é um ZIP válido."
+
+#: apps/updater/views.py
+msgid "Choose the update ZIP file."
+msgstr "Escolha o arquivo ZIP de atualização."
+
+#: apps/updater/views.py
+#, python-format
+msgid "Updated core to %(to_version)s from an uploaded file"
+msgstr "Núcleo atualizado para %(to_version)s a partir de um arquivo enviado"
+
+#: apps/updater/work.py
+msgid "This ZIP is not an update bundle (it must contain index.json and the package files)."
+msgstr "Este ZIP não é um pacote de atualização (deve conter index.json e os arquivos do pacote)."
+
+#: templates/core/email_settings.html
+msgid "Send a test email"
+msgstr "Enviar e-mail de teste"
+
+#: templates/core/email_settings.html
+msgid "The password is encrypted with a key derived from the site’s secret key."
+msgstr "A senha é criptografada com uma chave derivada da chave secreta do site."
+
+#: templates/core/email_settings.html
+#, python-format
+msgid "Messages waiting to be retried: %(n)s."
+msgstr "Mensagens aguardando nova tentativa: %(n)s."
+
+#: templates/core/email_settings.html
+msgid "How the site sends email (password resets, notifications). Use your hosting’s mailbox or an outside service."
+msgstr "Como o site envia e-mails (redefinição de senha, avisos). Use a caixa de e-mail da hospedagem ou um serviço externo."
+
+#: templates/core/email_settings.html
+msgid "A password is saved (stored encrypted)."
+msgstr "Há uma senha salva (criptografada)."
+
+#: templates/core/email_settings.html
+msgid "Your account has no email address; add one in your profile to send a test."
+msgstr "Sua conta não tem endereço de e-mail; adicione um no perfil para enviar um teste."
+
+#: templates/core/email_settings.html
+#, python-format
+msgid "Save first, then send a test message to %(to)s. Errors are shown here, not hidden."
+msgstr "Salve primeiro e depois envie uma mensagem de teste para %(to)s. Os erros aparecem aqui, não ficam ocultos."
+
+#: templates/core/speed_settings.html
+msgid "The page cache is working now."
+msgstr "O cache de páginas está funcionando agora."
+
+#: templates/core/speed_settings.html
+msgid "Scheduled job"
+msgstr "Tarefa agendada"
+
+#: templates/core/speed_settings.html
+msgid "The page cache is off now."
+msgstr "O cache de páginas está desligado agora."
+
+#: templates/core/speed_settings.html
+msgid "Settings that make the site answer faster on modest hosting."
+msgstr "Configurações que deixam o site mais rápido em hospedagens modestas."
+
+#: templates/installer/hosting.html
+msgid "Sign in to the panel"
+msgstr "Entrar no painel"
+
+#: templates/installer/hosting.html
+msgid "Ravix is installed."
+msgstr "O Ravix está instalado."
+
+#: templates/installer/hosting.html
+msgid "Checking that your hosting can run Ravix."
+msgstr "Verificando se sua hospedagem pode executar o Ravix."
+
+#: templates/installer/hosting.html
+msgid "In cPanel open “Cron Jobs”, choose “Once Per Five Minutes”, and paste this command. It publishes scheduled posts, sends queued email, makes the daily backup and keeps the site fast."
+msgstr "No cPanel abra “Cron Jobs”, escolha “Once Per Five Minutes” e cole este comando. Ele publica posts agendados, envia e-mails da fila, faz o backup diário e mantém o site rápido."
+
+#: templates/installer/hosting.html
+msgid "The installer is now locked for good."
+msgstr "O instalador agora está bloqueado para sempre."
+
+#: templates/installer/hosting.html
+msgid "Installing. This takes a minute or two; this page refreshes by itself. Do not close it."
+msgstr "Instalando. Leva um ou dois minutos; esta página se atualiza sozinha. Não a feche."
+
+#: templates/installer/hosting.html
+msgid "Test the connection and continue"
+msgstr "Testar a conexão e continuar"
+
+#: templates/installer/hosting.html
+msgid "Too many wrong attempts. Try again in 15 minutes."
+msgstr "Muitas tentativas incorretas. Tente novamente em 15 minutos."
+
+#: templates/installer/hosting.html
+msgid "One last step: the scheduled task"
+msgstr "Um último passo: a tarefa agendada"
+
+#: templates/installer/hosting.html
+msgid "Try again"
+msgstr "Tentar novamente"
+
+#: templates/installer/hosting.html
+msgid "The installation stopped with an error:"
+msgstr "A instalação parou com um erro:"
+
+#: templates/installer/hosting.html
+msgid "To protect your new site, nobody can start the installation without the install code that was created for it."
+msgstr "Para proteger seu novo site, ninguém pode iniciar a instalação sem o código de instalação criado para ele."
+
+#: templates/installer/hosting.html
+msgid "The database works. Now the site name and the administrator account."
+msgstr "O banco de dados funciona. Agora o nome do site e a conta de administrador."
+
+#: templates/installer/hosting.html
+msgid "Working…"
+msgstr "Trabalhando…"
+
+#: templates/installer/hosting.html
+msgid "Fix the items marked ✖ and reload this page."
+msgstr "Corrija os itens marcados com ✖ e recarregue esta página."
+
+#: templates/installer/hosting.html
+msgid "In cPanel ▸ MySQL Databases create a database, a user, and give the user all privileges. Then enter them here."
+msgstr "No cPanel ▸ MySQL Databases crie um banco de dados e um usuário e dê ao usuário todos os privilégios. Depois informe-os aqui."
+
+#: templates/installer/hosting.html
+msgid "The background process seems to have stopped (some hosts do that). Open cPanel ▸ Terminal and run this command, then reload this page:"
+msgstr "O processo em segundo plano parece ter parado (algumas hospedagens fazem isso). Abra cPanel ▸ Terminal, execute este comando e recarregue a página:"
+
+#: templates/updater/home.html
+msgid "Update from a file"
+msgstr "Atualizar a partir de um arquivo"
+
+#: templates/updater/home.html
+msgid "Upload the update ZIP you downloaded (it contains index.json and the ravix-core package). It is checked (SHA-256 and signature), the site is backed up first, then upgraded, and restarted automatically on shared hosting."
+msgstr "Envie o ZIP de atualização que você baixou (contém index.json e o pacote ravix-core). Ele é verificado (SHA-256 e assinatura), o site recebe um backup antes, depois é atualizado e, em hospedagem compartilhada, reiniciado automaticamente."
+
+#: templates/updater/home.html
+msgid "Upload and upgrade"
+msgstr "Enviar e atualizar"

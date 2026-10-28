@@ -1,0 +1,14 @@
+# Ravix on cPanel shared hosting ("Setup Python App"): install with
+#   pip install --only-binary=:all: -r requirements-cpanel.txt
+# Only pure-Python packages and packages that publish ready-made wheels (manylinux2014 or newer) are listed, so nothing has to be compiled on the host
+# (shared hosting has no compiler). No gunicorn (Passenger/LiteSpeed run the app) and no psycopg (MySQL/MariaDB or SQLite are used).
+Django>=5.2,<6.0
+djangorestframework>=3.16
+python-dotenv>=1.0
+Pillow>=11.0          # native: needs a manylinux2014 (or newer) wheel
+cryptography>=43.0    # native: needs a manylinux2014 (or newer) wheel
+nh3>=0.2              # native: needs a manylinux2014 (or newer) wheel
+whitenoise>=6.8
+jdatetime>=5.0
+markdown>=3.7
+PyMySQL>=1.1

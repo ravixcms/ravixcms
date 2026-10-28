@@ -977,3 +977,62 @@ msgstr "همهٔ صفحه‌های منتشرشده را بازسازی کن، �
 #, python-format
 msgid "Renderer version %(v)s: %(done)s of %(total)s published page(s) rebuilt (%(stale)s were stale)."
 msgstr "نسخهٔ رندرکننده %(v)s: %(done)s از %(total)s صفحهٔ منتشرشده بازسازی شد (%(stale)s مورد کهنه بود)."
+
+#, python-format
+msgid "An email could not be sent now (%(error)s); it was queued for a retry."
+msgstr "ارسال یک ایمیل اکنون ممکن نشد (%(error)s)؛ برای تلاش دوباره در صف گذاشته شد."
+
+msgid "An email could not be sent and could not be queued either."
+msgstr "ارسال یک ایمیل ممکن نشد و در صف هم قرار نگرفت."
+
+#, python-format
+msgid "A queued email was dropped after %(n)s attempts (%(error)s)."
+msgstr "یک ایمیل صف‌شده پس از %(n)s تلاش کنار گذاشته شد (%(error)s)."
+
+msgid "Runs all scheduled jobs once (publishing, orders, queued email, cleanup, daily backup, keep-alive). Put it in cPanel Cron Jobs, every 5 minutes."
+msgstr "همهٔ کارهای زمان‌بندی‌شده را یک‌بار اجرا می‌کند (انتشار، سفارش‌ها، ایمیل صف، پاک‌سازی، پشتیبان روزانه، بیدار نگه‌داشتن). آن را در Cron Jobs سی‌پنل هر ۵ دقیقه بگذارید."
+
+msgid "Skip the daily backup in this run."
+msgstr "در این اجرا پشتیبان روزانه را رد کن."
+
+msgid "Do not open the home page."
+msgstr "صفحهٔ اصلی را باز نکن."
+
+#, python-format
+msgid "Scheduled jobs finished: %(summary)s"
+msgstr "کارهای زمان‌بندی‌شده تمام شد: %(summary)s"
+
+msgid "Another run is still active; this one did nothing."
+msgstr "اجرای دیگری هنوز فعال است؛ این اجرا کاری نکرد."
+
+msgid "The database is MySQL/MariaDB"
+msgstr "پایگاه‌داده MySQL/MariaDB است"
+
+msgid "The scheduled job (ravix_cron) has run"
+msgstr "کار زمان‌بندی‌شده (ravix_cron) اجرا شده است"
+
+msgid "ravix_cron has never run; add the cron line shown by the installer in cPanel ▸ Cron Jobs"
+msgstr "ravix_cron هرگز اجرا نشده؛ خط cron که نصب‌کننده نشان داد را در cPanel ▸ Cron Jobs اضافه کنید"
+
+#, python-format
+msgid "The database is %(a1)s (MySQL/MariaDB is recommended on shared hosting)"
+msgstr "پایگاه‌داده %(a1)s است (روی هاست اشتراکی MySQL/MariaDB پیشنهاد می‌شود)"
+
+msgid "Runs the installation prepared by the web installer on shared hosting (migrate, static files, administrator, settings file, lock)."
+msgstr "نصبی را که نصب‌کنندهٔ وب روی هاست اشتراکی آماده کرده اجرا می‌کند (مهاجرت، فایل‌های استاتیک، مدیر، فایل تنظیمات، قفل)."
+
+msgid "Path of the job file written by the web installer"
+msgstr "مسیر فایل کاری که نصب‌کنندهٔ وب نوشته است"
+
+msgid "Run the pending job again (use this if the background process was stopped by the host)"
+msgstr "کار در انتظار را دوباره اجرا کن (اگر میزبان پردازش پس‌زمینه را متوقف کرد)"
+
+msgid "There is no pending installation job. Start again from the /install/ page."
+msgstr "کار نصب در انتظاری وجود ندارد. از صفحهٔ /install/ دوباره شروع کنید."
+
+msgid "The job file could not be read."
+msgstr "فایل کار خوانده نشد."
+
+#, python-format
+msgid "Ravix is installed but its settings file is missing (%(path)s). Restore it from your backup; the installer stays locked."
+msgstr "Ravix نصب شده اما فایل تنظیمات آن گم شده است (%(path)s). آن را از پشتیبان خود برگردانید؛ نصب‌کننده قفل می‌ماند."

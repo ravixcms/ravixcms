@@ -1,3 +1,4 @@
+import re
 from django.utils.translation import gettext, gettext_lazy
 from django import forms
 from django.contrib.auth.password_validation import validate_password
@@ -75,3 +76,42 @@ class InstallForm(StyledFormMixin, forms.Form):
             except ValidationError as exc:
                 self.add_error("password1", exc)
         return data
+
+
+class HostUnlockForm(StyledFormMixin, forms.Form):
+    code = forms.CharField(label=gettext_lazy("Install code"), max_length=64, strip=True,
+                           widget=forms.TextInput(attrs={"dir": "ltr", "autocomplete": "off", "autofocus": True, "placeholder": "XXXX-XXXX-XXXX-XXXX", "spellcheck": "false"}),
+                           help_text=gettext_lazy("The code is in the file install-key.txt in your private data folder (next to the application folder, outside public_html). Open it with cPanel ▸ File Manager."))
+
+
+class HostDatabaseForm(StyledFormMixin, forms.Form):
+    ENGINES = [("mysql", gettext_lazy("MySQL / MariaDB (recommended)")), ("sqlite", gettext_lazy("SQLite (small sites)")), ("postgres", "PostgreSQL")]
+    engine = forms.ChoiceField(label=gettext_lazy("Database type"), choices=ENGINES, initial="mysql")
+    host = forms.CharField(label=gettext_lazy("Database host"), initial="localhost", required=False, max_length=200, widget=forms.TextInput(attrs={"dir": "ltr"}))
+    port = forms.IntegerField(label=gettext_lazy("Port"), initial=3306, required=False, min_value=1, max_value=65535, widget=forms.NumberInput(attrs={"dir": "ltr"}))
+    name = forms.CharField(label=gettext_lazy("Database name"), required=False, max_length=128, widget=forms.TextInput(attrs={"dir": "ltr", "autocomplete": "off"}),
+                           help_text=gettext_lazy("In cPanel the name starts with your account name, for example myaccount_ravix."))
+    user = forms.CharField(label=gettext_lazy("Database user"), required=False, max_length=128, widget=forms.TextInput(attrs={"dir": "ltr", "autocomplete": "off"}))
+    password = forms.CharField(label=gettext_lazy("Database password"), required=False, strip=False, widget=forms.PasswordInput(attrs={"dir": "ltr", "autocomplete": "off"}, render_value=False))
+
+    def clean(self):
+        data = super().clean()
+        engine = data.get("engine")
+        if engine and engine != "sqlite":
+            for field in ("name", "user"):
+                if not data.get(field):
+                    self.add_error(field, gettext("This field is required."))
+            data["host"] = (data.get("host") or "localhost").strip()
+            data["port"] = data.get("port") or (3306 if engine == "mysql" else 5432)
+            if not re.fullmatch(r"[A-Za-z0-9._-]+", data["host"]):
+                self.add_error("host", gettext("Enter a host name such as localhost."))
+        return data
+
+
+class HostSiteForm(InstallForm):
+    """The same questions as the VPS installer (site name, language, time zone, administrator); no install-token field and no database lookups."""
+
+    def __init__(self, *args, **kwargs):
+        kwargs["db_ready"] = False
+        super().__init__(*args, **kwargs)
+        self.fields.pop("install_token", None)

@@ -1,3 +1,4 @@
+import re
 import os
 import stat
 import tempfile
@@ -208,7 +209,7 @@ class RegionalTests(TestCase):
         self.client.force_login(self.admin)
         with CaptureQueriesContext(connection) as ctx:
             self.client.get("/panel/")  # صفحهٔ HTML بدون ویوی SiteSettings: middleware + context processor باید یک خواندن مشترک داشته باشند
-        loads = [q for q in ctx.captured_queries if 'FROM "core_sitesettings"' in q["sql"] and "SELECT" in q["sql"]]
+        loads = [q for q in ctx.captured_queries if re.search(r'FROM [`"]core_sitesettings[`"]', q["sql"]) and "SELECT" in q["sql"]]
         self.assertEqual(len(loads), 1, [q["sql"][:90] for q in loads])
 
     def test_settings_form_saves_timezone_rejects_invalid_and_keeps_when_omitted(self):

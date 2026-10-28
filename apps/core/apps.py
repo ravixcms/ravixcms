@@ -10,6 +10,7 @@ class CoreConfig(AppConfig):
     def ready(self):
         self._activate_cli_language()
         from . import builtin_modules  # noqa: F401 - registers the built-in modules
+        from . import pagecache  # noqa: F401 - connects the signals that clear the page cache (also needed in cron and shell processes, not only web workers)
         from .navigation import NavItem, register_nav_item
 
         register_nav_item(
@@ -24,6 +25,17 @@ class CoreConfig(AppConfig):
                 active_urls=("core:site_settings",),
             )
         )
+        register_nav_item(
+            NavItem(key="core.speed", label=gettext_lazy("Speed"), url_name="core:speed_settings", icon="settings", section="system", order=92,
+                    capability="settings.manage", active_urls=("core:speed_settings",))
+        )
+        from django.conf import settings as dj_settings
+
+        if str(getattr(dj_settings, "EMAIL_BACKEND", "")).startswith("apps.core.mailbackend."):  # the panel's SMTP page only matters with Ravix's own mail backend
+            register_nav_item(
+                NavItem(key="core.email", label=gettext_lazy("Email"), url_name="core:email_settings", icon="settings", section="system", order=93,
+                        capability="settings.manage", active_urls=("core:email_settings",))
+            )
         register_nav_item(
             NavItem(
                 key="core.health",
