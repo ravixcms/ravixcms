@@ -10,3 +10,4 @@ paths = [
   '''(^|/)tests/.*\.py$''',
   '''__pycache__/''',
 ]
+regexes = ['''ABCDEFGHJKMNPQRSTUVWXYZ23456789''']  # the character set of the one-time install code (an alphabet, not a key)
