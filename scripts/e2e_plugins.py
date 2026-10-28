@@ -21,7 +21,7 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parent.parent
-PY = os.environ.get("RAVIX_PYTHON") or str(ROOT / ".venv" / "bin" / "python")
+PY = os.environ.get("RAVIX_PYTHON") or sys.executable
 PASSWORD = "Pass12345!xyz"
 results = []
 

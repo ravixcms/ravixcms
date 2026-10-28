@@ -122,29 +122,41 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.11" }
-      # What a cPanel "Setup Python App" gives: only the packages of requirements-cpanel.txt, wheels only (no compiler on a shared host).
-      - name: Install like a shared host (wheels only, no gunicorn, no psycopg)
+      # The package is built by the runner user (it needs the requirements to collect static files) ...
+      - name: Build the cPanel package (wheels only, no gunicorn, no psycopg)
         run: |
-          python -m venv "$RUNNER_TEMP/host-venv"
-          "$RUNNER_TEMP/host-venv/bin/pip" install --only-binary=:all: -r requirements-cpanel.txt
-          if "$RUNNER_TEMP/host-venv/bin/pip" list | grep -i -E '^(gunicorn|psycopg)'; then echo "VPS-only packages leaked into the cPanel requirements"; exit 1; fi
+          python -m venv "$RUNNER_TEMP/build-venv"
+          "$RUNNER_TEMP/build-venv/bin/pip" install --only-binary=:all: -r requirements-cpanel.txt
+          if "$RUNNER_TEMP/build-venv/bin/pip" list | grep -i -E '^(gunicorn|psycopg)'; then echo "VPS-only packages leaked into the cPanel requirements"; exit 1; fi
+          "$RUNNER_TEMP/build-venv/bin/python" scripts/build_cpanel_zip.py --out "$RUNNER_TEMP/dist"
+          ls -l "$RUNNER_TEMP/dist"
+      # ... and installed by another user, as on a real host: its own virtualenv in its own home folder (what cPanel's "Setup Python App" creates).
+      # /home/runner is not readable by other users on GitHub's runners, so everything the host user needs is copied into its home.
+      - name: Host user with its own virtualenv
+        run: |
+          sudo useradd -m hostuser
+          sudo install -d -o hostuser -g hostuser -m 755 /home/hostuser/work
+          sudo cp -r scripts requirements-cpanel.txt /home/hostuser/work/
+          sudo cp "$RUNNER_TEMP"/dist/ravix-*-cpanel.zip /home/hostuser/work/ravix-cpanel.zip
+          sudo chown -R hostuser:hostuser /home/hostuser/work
+          PYBIN="$(command -v python)"
+          cd /tmp   # the runner's workspace is not enterable by another user (sudo keeps the current folder)
+          sudo -H -u hostuser "$PYBIN" -m venv /home/hostuser/virtualenv/ravix
+          sudo -H -u hostuser /home/hostuser/virtualenv/ravix/bin/pip install --only-binary=:all: -r /home/hostuser/work/requirements-cpanel.txt
+          sudo -H -u hostuser /home/hostuser/virtualenv/ravix/bin/python --version
       - name: Database and user (like cPanel MySQL Databases)
         run: |
           mysql -h127.0.0.1 -uroot -pci-only-password -e "CREATE DATABASE ravix_e2e CHARACTER SET utf8mb4; CREATE USER 'ravix'@'%' IDENTIFIED BY 'ci-only-password'; GRANT ALL ON ravix_e2e.* TO 'ravix'@'%'; FLUSH PRIVILEGES;"
-      - name: Build the cPanel package
-        run: |
-          "$RUNNER_TEMP/host-venv/bin/python" scripts/build_cpanel_zip.py --out "$RUNNER_TEMP/dist"
-          ls -l "$RUNNER_TEMP/dist"
       # Runs as an ordinary user, through passenger_wsgi.py (a Passenger-like supervisor), web installer end to end, ravix_cron, the page cache.
       - name: End-to-end (web installer, ravix_cron, cache, privacy)
         run: |
-          sudo useradd -m hostuser
-          sudo chmod -R a+rX "$GITHUB_WORKSPACE" "$RUNNER_TEMP"
-          sudo -u hostuser "$RUNNER_TEMP/host-venv/bin/python" scripts/e2e_shared_hosting.py --zip "$RUNNER_TEMP"/dist/ravix-*-cpanel.zip --db "mysql://ravix:ci-only-password@127.0.0.1:3306/ravix_e2e"
+          cd /tmp
+          sudo -H -u hostuser /home/hostuser/virtualenv/ravix/bin/python /home/hostuser/work/scripts/e2e_shared_hosting.py --zip /home/hostuser/work/ravix-cpanel.zip --db "mysql://ravix:ci-only-password@127.0.0.1:3306/ravix_e2e"
       - name: End-to-end in a sub-folder (example.com/site/)
         run: |
           mysql -h127.0.0.1 -uroot -pci-only-password -e "DROP DATABASE ravix_e2e; CREATE DATABASE ravix_e2e CHARACTER SET utf8mb4;"
-          sudo -u hostuser "$RUNNER_TEMP/host-venv/bin/python" scripts/e2e_shared_hosting.py --zip "$RUNNER_TEMP"/dist/ravix-*-cpanel.zip --mount /site --db "mysql://ravix:ci-only-password@127.0.0.1:3306/ravix_e2e"
+          cd /tmp
+          sudo -H -u hostuser /home/hostuser/virtualenv/ravix/bin/python /home/hostuser/work/scripts/e2e_shared_hosting.py --zip /home/hostuser/work/ravix-cpanel.zip --mount /site --db "mysql://ravix:ci-only-password@127.0.0.1:3306/ravix_e2e"
 
   e2e-postgres:
     name: "E2E (PostgreSQL 16؛ پشتیبان/بازیابی و به‌روزرسانی)"

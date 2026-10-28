@@ -17,7 +17,7 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-PY = os.environ.get("RAVIX_PYTHON") or str(ROOT / ".venv" / "bin" / "python")
+PY = os.environ.get("RAVIX_PYTHON") or sys.executable
 MIN_SCORE = int(os.environ.get("MIN_SCORE", "90"))
 
 SEED = r'''
