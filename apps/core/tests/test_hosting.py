@@ -175,7 +175,7 @@ class CronTests(TmpMixin, TestCase):
         patcher.start()
         self.addCleanup(patcher.stop)
         self.root = self.tmp()
-        for ctx in (override_settings(RAVIX_DATA_DIR=self.root, RAVIX_BACKUP_DIR=self.root / "backups"),):
+        for ctx in (override_settings(RAVIX_DATA_DIR=self.root, RAVIX_BACKUP_DIR=self.root / "backups", RAVIX_CLI_LANG="en"),):  # the asserts read the English text
             ctx.enable()
             self.addCleanup(ctx.disable)
 

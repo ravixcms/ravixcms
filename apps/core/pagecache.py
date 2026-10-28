@@ -39,7 +39,10 @@ IGNORED_APPS = {"audit", "updater"}
 
 
 def _bump(**_kwargs):
-    cache.set(GEN_KEY, secrets.token_hex(6), None)
+    try:
+        cache.set(GEN_KEY, secrets.token_hex(6), None)
+    except Exception:  # noqa: BLE001 - a broken cache must never stop a save (the throttle has its own database fallback)
+        pass
 
 
 def clear() -> None:
@@ -56,7 +59,10 @@ def _relevant(sender, instance=None, created=False, update_fields=None, **kwargs
     if label == "comments.comment" and created and getattr(instance, "status", "approved") != "approved":
         return
     if label == "core.sitesettings":
-        cache.delete(CFG_KEY)
+        try:
+            cache.delete(CFG_KEY)
+        except Exception:  # noqa: BLE001
+            pass
     _bump()
 
 
@@ -72,7 +78,10 @@ m2m_changed.connect(_relevant_m2m, dispatch_uid="ravix-pagecache-m2m")
 
 def enabled(request=None) -> bool:
     """The effective switch: the panel choice, else the server default. Cached so a hit needs no database query."""
-    value = cache.get(CFG_KEY)
+    try:
+        value = cache.get(CFG_KEY)
+    except Exception:  # noqa: BLE001 - storage down: behave as if the cache were off
+        return False
     if value is None:
         server = str(getattr(settings, "RAVIX_PAGE_CACHE", "off")).lower() == "on"
         value = server
@@ -92,7 +101,10 @@ def enabled(request=None) -> bool:
                 value = False
         except Exception:  # noqa: BLE001 - before the first migration: off, and not remembered (the cache is shared with the installed site)
             return False
-        cache.set(CFG_KEY, value, 600)
+        try:
+            cache.set(CFG_KEY, value, 600)
+        except Exception:  # noqa: BLE001
+            pass
     return bool(value)
 
 
