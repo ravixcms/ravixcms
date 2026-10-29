@@ -88,6 +88,43 @@ def sanitize_sitemap(original: list, result, language: str = "") -> list:
     return out
 
 
+MAX_FLOATING_ACTIONS_PER_PLUGIN = 3
+MAX_FLOATING_ACTIONS = 6
+_ICON_NAME = __import__("re").compile(r"^[a-z][a-z0-9_-]{0,30}$")
+
+
+def sanitize_floating_actions(original: list, result, user=None) -> list:
+    """Floating panel buttons from one plugin, cleaned: a short plain label, an icon *name* (never markup), a local address under the panel
+    (``/panel/…``, with the script prefix when the site lives in a sub-folder), an optional capability the user must hold. At most
+    MAX_FLOATING_ACTIONS_PER_PLUGIN buttons per plugin and MAX_FLOATING_ACTIONS in total are taken; anything else is dropped."""
+    from django.urls import get_script_prefix
+
+    from apps.core.safeurl import is_safe_url
+
+    if not isinstance(result, (list, tuple)):
+        return original
+    out = list(original)
+    panel = get_script_prefix().rstrip("/") + "/panel/"
+    taken = 0
+    for item in result:
+        if taken >= MAX_FLOATING_ACTIONS_PER_PLUGIN or len(out) >= MAX_FLOATING_ACTIONS:
+            break
+        if not isinstance(item, dict):
+            continue
+        label, icon, url, cap = item.get("label"), item.get("icon", "circle"), item.get("url"), item.get("capability", "")
+        if not isinstance(label, str) or not isinstance(url, str) or not isinstance(icon, str) or not isinstance(cap, str):
+            continue
+        label = " ".join(label.split())[:40]
+        if (not label or not _ICON_NAME.match(icon) or len(url) > 300 or not url.startswith(panel) or url.startswith("//") or "\\" in url
+                or any(c.isspace() or ord(c) < 32 for c in url) or not is_safe_url(url)):
+            continue
+        if cap and (user is None or not getattr(user, "has_cap", lambda c: False)(cap)):
+            continue
+        out.append({"label": label, "icon": icon, "url": url})
+        taken += 1
+    return out
+
+
 COMMENT_STATUSES = {"pending", "spam"}  # افزونه فقط می‌تواند سخت‌گیرتر کند؛ تأیید خودکار ممنوع است
 
 
@@ -118,6 +155,8 @@ def apply_filter(name, value, **ctx):
             continue
         if name == "public.sitemap":
             value = sanitize_sitemap(value, new, ctx.get("language", ""))
+        elif name == "panel.floating_actions":
+            value = sanitize_floating_actions(value, new, getattr(ctx.get("request"), "user", None))
         else:
             value = _SANITIZERS[name](value, new) if name in _SANITIZERS else new
     return value

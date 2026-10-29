@@ -1,0 +1,17 @@
+{% load i18n ravix_ui %}{% if floating_actions %}
+<div class="fab-dock" data-fab-dock>
+  {% for action in floating_actions %}
+  <button type="button" class="fab" data-fab-open="{{ action.url }}" data-fab-title="{{ action.label }}" aria-haspopup="dialog" aria-controls="fab-drawer" title="{{ action.label }}">{% icon action.icon 22 %}<span class="sr-only">{{ action.label }}</span></button>
+  {% endfor %}
+</div>
+<aside class="fab-drawer" id="fab-drawer" data-fab-drawer role="dialog" aria-modal="false" aria-label="{% trans "Side window" %}" hidden>
+  <header class="fab-drawer-head">
+    <strong data-fab-title-target></strong>
+    <span class="fab-drawer-tools">
+      <a href="#" target="_blank" rel="noopener" data-fab-full class="fab-link">{% trans "Open in a full page" %}</a>
+      <button type="button" class="fab-close" data-fab-close aria-label="{% trans "Close" %}">{% icon "close" 18 %}</button>
+    </span>
+  </header>
+  <iframe class="fab-frame" data-fab-frame title="{% trans "Side window" %}" referrerpolicy="same-origin" loading="lazy"></iframe>
+</aside>
+{% endif %}

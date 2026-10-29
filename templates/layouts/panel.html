@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load ravix_ui %}
 {% block body %}
-<div class="panel">
+<div class="panel{% if request.GET.embed == "1" %} is-embedded{% endif %}">
   <aside class="sidebar" id="sidebar" aria-label="{% trans "Main menu" %}">
     <div class="sidebar-brand">
       <a href="{% url 'public:home' %}" class="sidebar-brand-link" data-view-site title="{% trans "View site" %}">
@@ -54,4 +54,5 @@
       {% if ravix_links.docs %} · <a href="{{ ravix_links.docs }}" rel="noopener" target="_blank">{% trans "Documentation" %}</a>{% endif %}</footer>
   </div>
 </div>
+{% include "partials/_floating_actions.html" %}
 {% endblock %}

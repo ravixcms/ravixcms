@@ -12990,3 +12990,11 @@ msgstr "上传您下载的更新 ZIP（包含 index.json 和 ravix-core 包）�
 #: templates/updater/home.html
 msgid "Upload and upgrade"
 msgstr "上传并升级"
+
+#: templates/partials/_floating_actions.html
+msgid "Side window"
+msgstr "侧边窗口"
+
+#: templates/partials/_floating_actions.html
+msgid "Open in a full page"
+msgstr "在整页中打开"

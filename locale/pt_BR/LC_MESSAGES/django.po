@@ -13681,3 +13681,11 @@ msgstr "Envie o ZIP de atualização que você baixou (contém index.json e o pa
 #: templates/updater/home.html
 msgid "Upload and upgrade"
 msgstr "Enviar e atualizar"
+
+#: templates/partials/_floating_actions.html
+msgid "Side window"
+msgstr "Janela lateral"
+
+#: templates/partials/_floating_actions.html
+msgid "Open in a full page"
+msgstr "Abrir em página inteira"

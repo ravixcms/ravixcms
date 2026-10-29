@@ -13566,3 +13566,11 @@ msgstr "İndirdiğiniz güncelleme ZIP'ini yükleyin (index.json ve ravix-core p
 #: templates/updater/home.html
 msgid "Upload and upgrade"
 msgstr "Yükle ve yükselt"
+
+#: templates/partials/_floating_actions.html
+msgid "Side window"
+msgstr "Yan pencere"
+
+#: templates/partials/_floating_actions.html
+msgid "Open in a full page"
+msgstr "Tam sayfada aç"

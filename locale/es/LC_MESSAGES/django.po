@@ -13753,3 +13753,11 @@ msgstr "Suba el ZIP de actualización que descargó (contiene index.json y el pa
 #: templates/updater/home.html
 msgid "Upload and upgrade"
 msgstr "Subir y actualizar"
+
+#: templates/partials/_floating_actions.html
+msgid "Side window"
+msgstr "Ventana lateral"
+
+#: templates/partials/_floating_actions.html
+msgid "Open in a full page"
+msgstr "Abrir en página completa"

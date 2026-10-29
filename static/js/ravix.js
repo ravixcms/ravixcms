@@ -280,3 +280,35 @@ document.addEventListener("change", function (e) {
   var form = el.closest("form");
   if (form) form.querySelectorAll('input[type="checkbox"][name="ids"]').forEach(function (c) { c.checked = el.checked; });
 });
+
+/* ---- Floating panel buttons (hook panel.floating_actions): a side drawer that loads the plugin page in a same-origin frame */
+(function () {
+  "use strict";
+  var drawer = document.querySelector("[data-fab-drawer]");
+  if (!drawer) return;
+  var frame = drawer.querySelector("[data-fab-frame]");
+  var titleEl = drawer.querySelector("[data-fab-title-target]");
+  var full = drawer.querySelector("[data-fab-full]");
+  var lastOpener = null, loaded = "";
+  function embedUrl(url) { return url + (url.indexOf("?") === -1 ? "?" : "&") + "embed=1"; }
+  function open(btn) {
+    var url = btn.getAttribute("data-fab-open");
+    lastOpener = btn;
+    titleEl.textContent = btn.getAttribute("data-fab-title") || "";
+    full.setAttribute("href", url);
+    if (loaded !== url) { frame.setAttribute("src", embedUrl(url)); loaded = url; }
+    drawer.hidden = false;
+    btn.setAttribute("aria-expanded", "true");
+    drawer.querySelector("[data-fab-close]").focus();
+  }
+  function close() {
+    drawer.hidden = true;
+    if (lastOpener) { lastOpener.setAttribute("aria-expanded", "false"); lastOpener.focus(); }
+  }
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest("[data-fab-open]");
+    if (btn) { drawer.hidden ? open(btn) : (loaded === btn.getAttribute("data-fab-open") ? close() : open(btn)); return; }
+    if (e.target.closest("[data-fab-close]")) close();
+  });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !drawer.hidden) close(); });
+})();

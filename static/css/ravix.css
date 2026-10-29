@@ -449,3 +449,22 @@ input[type=color].input{height:2.6rem;padding:.2rem;cursor:pointer}
 .filedrop.has-file .filedrop-text { color: var(--c-text); }
 .filedrop input.filedrop-input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; font-size: 0; padding: 0; margin: 0; border: 0; }
 .prose code { unicode-bidi: isolate; }
+
+/* ---- Floating panel buttons added by plugins (hook panel.floating_actions) and their side drawer */
+.fab-dock { position: fixed; inset-block-end: 1.25rem; inset-inline-end: 1.25rem; display: flex; flex-direction: column; gap: .6rem; z-index: 40; }
+.fab { width: 3.1rem; height: 3.1rem; border-radius: 50%; border: 0; cursor: pointer; background: var(--c-primary); color: #fff; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 6px 18px rgba(15, 23, 42, .28); }
+.fab:hover { background: var(--c-primary-600); }
+.fab:focus-visible { outline: 3px solid var(--brand-amber); outline-offset: 2px; }
+.fab-drawer { position: fixed; inset-block: 0; inset-inline-end: 0; width: min(440px, 100vw); background: var(--c-surface); border-inline-start: 1px solid var(--c-border); box-shadow: -8px 0 28px rgba(15, 23, 42, .18); z-index: 60; display: flex; flex-direction: column; }
+.fab-drawer[hidden] { display: none; }
+.fab-drawer-head { display: flex; align-items: center; justify-content: space-between; gap: .6rem; padding: .6rem .9rem; border-block-end: 1px solid var(--c-border); }
+.fab-drawer-tools { display: inline-flex; align-items: center; gap: .8rem; }
+.fab-link { font-size: .85rem; }
+.fab-close { background: none; border: 0; padding: .25rem; display: inline-flex; cursor: pointer; color: var(--c-muted); }
+.fab-frame { flex: 1; width: 100%; border: 0; background: var(--c-surface); }
+@media print { .fab-dock, .fab-drawer { display: none; } }
+
+/* A panel page opened inside the side drawer (?embed=1): only the content, no menu, top bar or footer */
+.panel.is-embedded .sidebar, .panel.is-embedded .backdrop, .panel.is-embedded .topbar, .panel.is-embedded .site-footer { display: none; }
+.panel.is-embedded .main { margin-inline-start: 0; min-height: 0; }
+.panel.is-embedded .content { padding: .75rem; }

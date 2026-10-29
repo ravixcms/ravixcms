@@ -13402,3 +13402,11 @@ msgstr "ZIP به‌روزرسانی که دانلود کرده‌اید را ب�
 #: templates/updater/home.html
 msgid "Upload and upgrade"
 msgstr "بارگذاری و ارتقا"
+
+#: templates/partials/_floating_actions.html
+msgid "Side window"
+msgstr "پنجرهٔ کناری"
+
+#: templates/partials/_floating_actions.html
+msgid "Open in a full page"
+msgstr "باز کردن در صفحهٔ کامل"

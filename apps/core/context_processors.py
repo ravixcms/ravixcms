@@ -62,5 +62,13 @@ def site_settings(request):
                 active_site = panel_site(request)
         except Exception:  # noqa: BLE001
             pass
-    return {"site": site, "sidebar": sidebar, "panel_sites": panel_sites if len(panel_sites) > 1 else [], "active_site": active_site,
+    floating_actions = []
+    if user is not None and user.is_authenticated and request.path_info.startswith("/panel/") and request.GET.get("embed") != "1":
+        try:  # buttons that active plugins add to every panel page; a plugin error must never break the panel
+            from apps.plugins.hooks import apply_filter
+
+            floating_actions = apply_filter("panel.floating_actions", [], request=request)
+        except Exception:  # noqa: BLE001
+            floating_actions = []
+    return {"site": site, "floating_actions": floating_actions, "sidebar": sidebar, "panel_sites": panel_sites if len(panel_sites) > 1 else [], "active_site": active_site,
             "ravix_version": RAVIX_VERSION, "ravix_links": official_links()}

@@ -13863,3 +13863,11 @@ msgstr "Laden Sie das heruntergeladene Update-ZIP hoch (es enthält index.json u
 #: templates/updater/home.html
 msgid "Upload and upgrade"
 msgstr "Hochladen und aktualisieren"
+
+#: templates/partials/_floating_actions.html
+msgid "Side window"
+msgstr "Seitenfenster"
+
+#: templates/partials/_floating_actions.html
+msgid "Open in a full page"
+msgstr "Als ganze Seite öffnen"

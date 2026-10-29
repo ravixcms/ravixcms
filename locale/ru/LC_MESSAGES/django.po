@@ -13586,3 +13586,11 @@ msgstr "Загрузите скачанный ZIP обновления (в нё�
 #: templates/updater/home.html
 msgid "Upload and upgrade"
 msgstr "Загрузить и обновить"
+
+#: templates/partials/_floating_actions.html
+msgid "Side window"
+msgstr "Боковое окно"
+
+#: templates/partials/_floating_actions.html
+msgid "Open in a full page"
+msgstr "Открыть на всю страницу"

@@ -13873,3 +13873,11 @@ msgstr "Téléversez le ZIP de mise à jour que vous avez téléchargé (il cont
 #: templates/updater/home.html
 msgid "Upload and upgrade"
 msgstr "Téléverser et mettre à niveau"
+
+#: templates/partials/_floating_actions.html
+msgid "Side window"
+msgstr "Fenêtre latérale"
+
+#: templates/partials/_floating_actions.html
+msgid "Open in a full page"
+msgstr "Ouvrir en pleine page"

@@ -13351,3 +13351,11 @@ msgstr "ارفع ملف ZIP للتحديث الذي نزّلته (يحتوي ع�
 #: templates/updater/home.html
 msgid "Upload and upgrade"
 msgstr "ارفع وقم بالترقية"
+
+#: templates/partials/_floating_actions.html
+msgid "Side window"
+msgstr "نافذة جانبية"
+
+#: templates/partials/_floating_actions.html
+msgid "Open in a full page"
+msgstr "فتح في صفحة كاملة"
