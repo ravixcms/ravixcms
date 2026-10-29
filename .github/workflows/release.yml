@@ -11,7 +11,7 @@ concurrency:
 jobs:
   preflight:
     name: تگ، نسخه و CHANGELOG
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       version: ${{ steps.v.outputs.version }}
       prerelease: ${{ steps.v.outputs.prerelease }}
@@ -38,7 +38,7 @@ jobs:
   package:
     name: بستهٔ zip و checksum
     needs: [preflight, ci]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -59,7 +59,7 @@ jobs:
   docker:
     name: image داکر (GHCR)
     needs: [preflight, ci]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions: { contents: read, packages: write }
     outputs:
       digest: ${{ steps.push.outputs.digest }}
@@ -96,7 +96,7 @@ jobs:
   release:
     name: GitHub Release
     needs: [preflight, package, docker]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions: { contents: write }
     steps:
       - uses: actions/download-artifact@v4

@@ -17,7 +17,7 @@ env:
 jobs:
   migrations:
     name: Migrations (جاافتاده؟)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -32,7 +32,7 @@ jobs:
 
   test:
     name: Test (py${{ matrix.python }}, ${{ matrix.db }}${{ matrix.shop == 'false' && ', بدون فروشگاه' || '' }}${{ matrix.studio == 'false' && ', بدون Studio' || '' }})
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     strategy:
       fail-fast: false
@@ -83,9 +83,38 @@ jobs:
           python manage.py migrate --noinput -v 0
           python manage.py ravix_preflight --ci
 
+  # Ubuntu 24.04 is pinned above so a runner-image upgrade cannot turn the whole CI red. This job checks the NEXT image on purpose:
+  # if Ubuntu 26.04 breaks something, only this job goes red and tells us before the servers move.
+  ubuntu-2604:
+    name: "سازگاری با Ubuntu 26.04 (Test SQLite + preflight)"
+    if: github.event_name != 'workflow_call'   # a compatibility probe must not block a release
+    runs-on: ubuntu-26.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.13", cache: pip, cache-dependency-path: requirements.lock }
+      - run: pip install -r requirements.lock
+      - run: mkdir -p plugins_installed plugin_backups media staticfiles
+      - run: lsb_release -ds; python --version; systemctl --version | head -1
+      - name: makemigrations --check
+        run: python manage.py makemigrations --check --dry-run
+      - name: Tests (SQLite)
+        run: python manage.py test --verbosity 1
+      - name: preflight (حالت CI، SQLite)
+        env:
+          DJANGO_SETTINGS_MODULE: config.settings.production
+          DJANGO_ALLOWED_HOSTS: example.com
+          RAVIX_CI: "1"
+          RAVIX_ALLOW_SQLITE_IN_PRODUCTION: "true"
+        run: |
+          export RAVIX_CACHE_DIR="$RUNNER_TEMP/ravix-cache"; mkdir -p "$RAVIX_CACHE_DIR"
+          python manage.py migrate --noinput -v 0
+          python manage.py ravix_preflight --ci
+
   test-mariadb:
     name: Test (py3.13, MariaDB 10.11)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 40
     services:
       mariadb:
@@ -109,7 +138,7 @@ jobs:
 
   shared-hosting:
     name: "Shared hosting (py3.11, MariaDB, no root, no Redis, no systemd)"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     services:
       mariadb:
@@ -160,7 +189,7 @@ jobs:
 
   e2e-postgres:
     name: "E2E (PostgreSQL 16؛ پشتیبان/بازیابی و به‌روزرسانی)"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     services:
       postgres:
@@ -176,16 +205,14 @@ jobs:
       - uses: actions/setup-python@v5
         with: { python-version: "3.13", cache: pip, cache-dependency-path: requirements.lock }
       - name: ابزار کلاینت PostgreSQL (pg_dump/pg_restore باید هم‌نسخهٔ سرور ۱۶ باشند)
-        run: |
-          pg_dump --version | grep -q ' 16\.' || { sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client-16; }
-          pg_dump --version
+        run: scripts/ci_pg_client.sh   # PGDG یا ابزارهای ایمیج postgres:16؛ بستهٔ پیش‌فرض اوبونتوی تازه ممکن است postgresql-client-16 نداشته باشد
       - run: pip install -r requirements.lock
       - run: python scripts/e2e_backup_restore.py
       - run: python scripts/e2e_updater.py
 
   e2e-studio:
     name: "E2E مرورگر (Ravix Studio، Chromium)"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
@@ -199,7 +226,7 @@ jobs:
 
   security:
     name: امنیت (pip-audit، bandit، check --deploy)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
@@ -224,7 +251,7 @@ jobs:
 
   secrets:
     name: راز جاافتاده (gitleaks، کل تاریخچه)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -241,7 +268,7 @@ jobs:
 
   docker-build:
     name: Docker image (ساخت و بررسی)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4

@@ -19,7 +19,8 @@ Checking prerequisites	بررسی پیش‌نیازها
 Run as root: sudo ./install.sh	با دسترسی root اجرا کنید: sudo ./install.sh
 unknown	نامعلوم
 The system %s is not supported; continuing because of RAVIX_SKIP_OS_CHECK=1	سیستم %s پشتیبانی‌نشده است؛ به‌دلیل RAVIX_SKIP_OS_CHECK=1 ادامه می‌دهیم
-Only Ubuntu 22.04 and 24.04 are supported (this system: %s).	فقط Ubuntu 22.04 و 24.04 پشتیبانی می‌شود (این سیستم: %s).
+Only Ubuntu 22.04, 24.04 and 26.04 are supported (this system: %s).	فقط Ubuntu 22.04، 24.04 و 26.04 پشتیبانی می‌شود (این سیستم: %s).
+Ubuntu 26.04 is new: it brings PostgreSQL 18, Python 3.13 and systemd 259. The code is tested on it in CI, but this installer has not yet been run on a real 26.04 server; read the output of every step.	Ubuntu 26.04 تازه است: PostgreSQL 18، پایتون 3.13 و systemd 259 دارد. کد در CI روی آن آزموده می‌شود، اما این نصب‌کننده هنوز روی سرور واقعی 26.04 اجرا نشده؛ خروجی هر مرحله را بخوانید.
 Operating system: %s	سیستم‌عامل: %s
 The Ravix code was not found in %s (manage.py / requirements.lock). Pass --source.	کد Ravix در %s پیدا نشد (manage.py / requirements.lock). --source را بدهید.
 Code: %s	کد: %s

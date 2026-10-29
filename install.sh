@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Installs Ravix on Ubuntu 22.04 / 24.04: Python, PostgreSQL, a system user, Gunicorn + systemd, Nginx and Let's Encrypt (certbot).
+# Installs Ravix on Ubuntu 22.04 / 24.04 / 26.04: Python, PostgreSQL, a system user, Gunicorn + systemd, Nginx and Let's Encrypt (certbot).
 #
 #   sudo ./install.sh                                   # interactive; asks before every change
 #   sudo ./install.sh --domain example.com --email me@example.com --yes   # non-interactive
@@ -174,10 +174,11 @@ step "Checking prerequisites"
 if [ "$DRY_RUN" = 0 ]; then mkdir -p "$(dirname "$LOG_FILE")"; exec > >(tee -a "$LOG_FILE") 2>&1; fi
 . /etc/os-release 2>/dev/null || true
 UNKNOWN_OS="$(t "unknown")"
-if [ "${ID:-}" != "ubuntu" ] || { [ "${VERSION_ID:-}" != "22.04" ] && [ "${VERSION_ID:-}" != "24.04" ]; }; then
+if [ "${ID:-}" != "ubuntu" ] || { [ "${VERSION_ID:-}" != "22.04" ] && [ "${VERSION_ID:-}" != "24.04" ] && [ "${VERSION_ID:-}" != "26.04" ]; }; then
   if [ "${RAVIX_SKIP_OS_CHECK:-0}" = 1 ]; then warn "The system %s is not supported; continuing because of RAVIX_SKIP_OS_CHECK=1" "${PRETTY_NAME:-$UNKNOWN_OS}"
-  else die "Only Ubuntu 22.04 and 24.04 are supported (this system: %s)." "${PRETTY_NAME:-$UNKNOWN_OS}"; fi
+  else die "Only Ubuntu 22.04, 24.04 and 26.04 are supported (this system: %s)." "${PRETTY_NAME:-$UNKNOWN_OS}"; fi
 fi
+[ "${VERSION_ID:-}" = "26.04" ] && warn "Ubuntu 26.04 is new: it brings PostgreSQL 18, Python 3.13 and systemd 259. The code is tested on it in CI, but this installer has not yet been run on a real 26.04 server; read the output of every step."
 ok "Operating system: %s" "${PRETTY_NAME:-?}"
 [ -f "$SRC/manage.py" ] && [ -f "$SRC/requirements.lock" ] || die "The Ravix code was not found in %s (manage.py / requirements.lock). Pass --source." "$SRC"
 ok "Code: %s" "$SRC"

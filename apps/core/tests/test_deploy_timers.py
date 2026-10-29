@@ -67,14 +67,29 @@ class UnitFilesTests(SimpleTestCase):
         if not exe:
             self.skipTest("systemd-analyze نصب نیست")
         with tempfile.TemporaryDirectory() as d:
-            for f in DEPLOY.glob("ravix-*.service"):
+            ravix_units = []
+            for f in list(DEPLOY.glob("ravix-*.service")) + list(DEPLOY.glob("ravix-*.timer")):
                 shutil.copy(f, d)
-            for f in DEPLOY.glob("ravix-*.timer"):
-                shutil.copy(f, d)
+                ravix_units.append(f.name)
             r = subprocess.run([exe, "verify", "--man=no", *sorted(str(p) for p in Path(d).iterdir())], capture_output=True, text=True)
-        # نبودن /srv/ravix روی این ماشین خطا نیست؛ هر پیام دیگری (نحو/کلید ناشناخته) خطاست
-        bad = [l for l in (r.stdout + r.stderr).splitlines() if l.strip() and "is not executable" not in l]
+        # نبودن /srv/ravix روی این ماشین خطا نیست؛ هر پیام دیگری (نحو/کلید ناشناخته/گزینهٔ حذف‌شده) دربارهٔ فایل‌های خود Ravix خطاست.
+        # هشدارهای فایل‌های خود سیستم‌عامل (مثل xfs_scrub_all.service روی Ubuntu 26.04) به ما ربطی ندارند.
+        mine = {f"{d}/{name}" for name in ravix_units}
+        bad = []
+        for line in (r.stdout + r.stderr).splitlines():
+            if not line.strip() or "is not executable" in line:
+                continue
+            if any(line.startswith(path) or f" {path}" in line for path in mine):
+                bad.append(line)
         self.assertEqual(bad, [])
+
+    def test_unit_files_use_no_removed_options(self):
+        removed = ("CPUAccounting=", "BlockIOAccounting=", "BlockIOWeight=", "MemoryLimit=", "CPUShares=")
+        for f in sorted(DEPLOY.glob("ravix*.service")) + sorted(DEPLOY.glob("ravix*.timer")):
+            for n, line in enumerate(f.read_text(encoding="utf-8").splitlines(), 1):
+                for opt in removed:
+                    if line.strip().startswith(opt):
+                        self.fail(f"{f.name}:{n} uses the removed option {opt}")
 
 
 class PreflightTimerTests(TestCase):
