@@ -193,3 +193,19 @@ class PruningTests(StudioBase):
         from django.conf import settings
 
         self.assertEqual(settings.STUDIO_MAX_VERSIONS, 50)
+
+
+class DeleteTargetTests(StudioBase):
+    def test_deleting_a_page_or_post_removes_its_layout(self):
+        """Regression: on MySQL/MariaDB Django nulls the layout's page/post first, which broke the one-target CHECK constraint."""
+        from apps.content.models import Page, Post
+        from apps.studio.models import StudioDocument
+
+        page = Page.objects.create(title="Gone", body="", author=self.admin)
+        post = Post.objects.create(title="Gone too", body="", author=self.admin)
+        services.get_document(page)
+        services.get_document(post)
+        self.assertEqual(StudioDocument.objects.count(), 2)
+        page.delete()
+        post.delete()
+        self.assertEqual(StudioDocument.objects.count(), 0)
