@@ -13608,3 +13608,27 @@ msgstr "Bu kullanıcıları göster"
 
 msgid "Got it"
 msgstr "Anladım"
+
+msgid "The automatic human check did not finish. Wait a moment for it to complete (JavaScript is required) and try again."
+msgstr "Otomatik insan doğrulaması tamamlanmadı. Bitmesini bekleyin (JavaScript gerekir) ve tekrar deneyin."
+
+msgid "The human check expired. Please try again."
+msgstr "Doğrulamanın süresi doldu. Lütfen tekrar deneyin."
+
+msgid "The human check was not accepted. Please try again."
+msgstr "Doğrulama kabul edilmedi. Lütfen tekrar deneyin."
+
+msgid "Too many sign-up attempts from your network. Please try again later."
+msgstr "Ağınızdan çok fazla kayıt denemesi yapıldı. Lütfen daha sonra tekrar deneyin."
+
+msgid "JavaScript is required for the automatic human check on this page."
+msgstr "Bu sayfadaki otomatik insan doğrulaması için JavaScript gerekir."
+
+msgid "The human check could not finish. Reload the page and try again."
+msgstr "Doğrulama tamamlanamadı. Sayfayı yeniden yükleyip tekrar deneyin."
+
+msgid "Human check passed."
+msgstr "Doğrulama geçildi."
+
+msgid "Checking that you are human…"
+msgstr "İnsan olduğunuz doğrulanıyor…"

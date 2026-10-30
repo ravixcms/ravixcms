@@ -9,6 +9,7 @@
   {% include "partials/_form_errors.html" %}
   {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
   {% for field in form %}{% include "partials/_field.html" %}{% endfor %}
+  {% include "accounts/_captcha.html" %}
   <button type="submit" class="btn btn-block">{% icon "login" 18 %} {% trans "Sign in" %}</button>
 </form>
 <p class="auth-switch" style="margin-top:.75rem"><a href="{% url 'accounts:password_reset' %}">{% trans "Forgot your password?" %}</a></p>

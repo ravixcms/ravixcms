@@ -23,7 +23,7 @@ from django.views.generic import FormView, ListView, TemplateView, UpdateView
 from apps.audit.services import log_event
 from apps.core.models import SiteSettings
 
-from . import emailing
+from . import emailing, throttle
 from .forms import (
     LoginForm,
     PasswordResetRequestForm,
@@ -82,6 +82,15 @@ class RegisterView(RedirectAuthenticatedMixin, FormView):
         if not request.user.is_authenticated and not SiteSettings.load().registration_open:
             return self.registration_closed(request)
         return super().dispatch(request, *args, **kwargs)
+
+    def get_form_kwargs(self):
+        return {**super().get_form_kwargs(), "request": self.request}
+
+    def post(self, request, *args, **kwargs):
+        if not throttle.allow_action(request, "register", settings.RAVIX_REGISTER_LIMIT_PER_IP):
+            messages.error(request, gettext("Too many sign-up attempts from your network. Please try again later."))
+            return self.get(request, *args, **kwargs)
+        return super().post(request, *args, **kwargs)
 
     def registration_closed(self, request):
         messages.warning(request, gettext("Public registration is currently disabled."))
@@ -156,6 +165,9 @@ class PasswordResetView(RedirectAuthenticatedMixin, DjangoPasswordResetView):
     subject_template_name = "accounts/email/password_reset_subject.txt"
     success_url = reverse_lazy("accounts:password_reset_done")
 
+    def get_form_kwargs(self):
+        return {**super().get_form_kwargs(), "request": self.request}
+
 
 class PasswordResetDoneView(DjangoPasswordResetDoneView):
     template_name = "accounts/password_reset_done.html"
@@ -210,6 +222,9 @@ class ResendVerificationView(FormView):
     def get_initial(self):
         user = self.request.user
         return {"email": user.email} if user.is_authenticated else {}
+
+    def get_form_kwargs(self):
+        return {**super().get_form_kwargs(), "request": self.request}
 
     def form_valid(self, form):
         email = form.cleaned_data["email"].strip().lower()

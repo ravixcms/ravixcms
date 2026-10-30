@@ -13905,3 +13905,27 @@ msgstr "Diese Benutzer anzeigen"
 
 msgid "Got it"
 msgstr "Verstanden"
+
+msgid "The automatic human check did not finish. Wait a moment for it to complete (JavaScript is required) and try again."
+msgstr "Die automatische Prüfung ist nicht abgeschlossen. Warten Sie einen Moment, bis sie fertig ist (JavaScript ist erforderlich), und versuchen Sie es erneut."
+
+msgid "The human check expired. Please try again."
+msgstr "Die Prüfung ist abgelaufen. Bitte versuchen Sie es erneut."
+
+msgid "The human check was not accepted. Please try again."
+msgstr "Die Prüfung wurde nicht akzeptiert. Bitte versuchen Sie es erneut."
+
+msgid "Too many sign-up attempts from your network. Please try again later."
+msgstr "Zu viele Registrierungsversuche aus Ihrem Netzwerk. Bitte versuchen Sie es später erneut."
+
+msgid "JavaScript is required for the automatic human check on this page."
+msgstr "Für die automatische Prüfung auf dieser Seite ist JavaScript erforderlich."
+
+msgid "The human check could not finish. Reload the page and try again."
+msgstr "Die Prüfung konnte nicht abgeschlossen werden. Laden Sie die Seite neu und versuchen Sie es erneut."
+
+msgid "Human check passed."
+msgstr "Prüfung bestanden."
+
+msgid "Checking that you are human…"
+msgstr "Es wird geprüft, ob Sie ein Mensch sind…"

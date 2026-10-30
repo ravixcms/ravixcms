@@ -8,13 +8,50 @@ from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm, Pa
 
 from apps.core.forms import StyledFormMixin
 
-from . import emailing, throttle
+from . import captcha, emailing, throttle
 from .permissions import Role
 
 User = get_user_model()
 
 
-class LoginForm(StyledFormMixin, AuthenticationForm):
+class CaptchaMixin:
+    """Asks for the proof-of-work (see ``captcha.py``) when ``captcha_needed()`` says so. The two hidden inputs are read from the submitted
+    data (they are not form fields); the page shows a new challenge every time it is drawn. Needs ``self.request``."""
+
+    captcha_purpose = "form"
+    captcha_always = False
+    captcha_messages = {
+        "missing": gettext_lazy("The automatic human check did not finish. Wait a moment for it to complete (JavaScript is required) and try again."),
+        "expired": gettext_lazy("The human check expired. Please try again."),
+        "invalid": gettext_lazy("The human check was not accepted. Please try again."),
+        "weak": gettext_lazy("The human check was not accepted. Please try again."),
+        "replay": gettext_lazy("The human check was not accepted. Please try again."),
+    }
+
+    def captcha_needed(self) -> bool:
+        return captcha.enabled() and self.captcha_always
+
+    def captcha_bits(self) -> int:
+        return settings.RAVIX_CAPTCHA_BITS
+
+    @property
+    def captcha_widget(self):
+        """The challenge to draw on the page, or ``None`` when no check is asked for. One per form instance."""
+        if not hasattr(self, "_captcha_widget"):
+            self._captcha_widget = captcha.new_challenge(self.captcha_purpose, self.captcha_bits()) if self.captcha_needed() else None
+        return self._captcha_widget
+
+    def check_captcha(self) -> None:
+        """Raises ValidationError (code ``captcha``) unless no check is needed or a fresh correct answer came with the form."""
+        if not self.captcha_needed():
+            return
+        result = captcha.verify(self.captcha_purpose, self.data.get("captcha_challenge", ""), self.data.get("captcha_solution", ""), min_bits=self.captcha_bits())
+        if result != "ok":
+            raise forms.ValidationError(self.captcha_messages[result], code="captcha")
+
+
+class LoginForm(CaptchaMixin, StyledFormMixin, AuthenticationForm):
+    captcha_purpose = "login"
     username = forms.CharField(
         label=gettext_lazy("Username or email"),
         widget=forms.TextInput(attrs={"autofocus": True, "autocomplete": "username", "dir": "ltr"}),
@@ -38,10 +75,27 @@ class LoginForm(StyledFormMixin, AuthenticationForm):
         if settings.RAVIX_REQUIRE_EMAIL_VERIFICATION and not user.email_verified_at:
             raise forms.ValidationError(self.error_messages["unverified"], code="unverified")
 
+    def _identifier(self) -> str:
+        return (self.data.get("username") or "").strip()
+
+    def captcha_needed(self) -> bool:
+        """Only after a few failures: for this IP + account, for this IP, or against this account from anywhere."""
+        if not captcha.enabled():
+            return False
+        pair, ip, account = throttle.failure_counts(self.request, self._identifier())
+        return pair >= settings.RAVIX_CAPTCHA_LOGIN_AFTER or ip >= throttle.IP_CAPTCHA_AFTER or account >= throttle.ACCOUNT_CAPTCHA_AFTER
+
+    def captcha_bits(self) -> int:
+        """More failures, harder puzzle (one bit more per five failures, up to four)."""
+        pair, ip, account = throttle.failure_counts(self.request, self._identifier())
+        return settings.RAVIX_CAPTCHA_BITS + min(4, max(pair, account // 2, ip // 2) // 5)
+
     def clean(self):
         identifier = self.cleaned_data.get("username")
         if identifier and throttle.is_locked(self.request, identifier):
             raise forms.ValidationError(self.error_messages["locked"], code="locked")
+        if self.is_bound and self.captcha_needed():
+            self.check_captcha()  # a visitor who skipped the check never gets a password tried (so cannot guess)
         try:
             result = super().clean()
         except forms.ValidationError:
@@ -53,7 +107,7 @@ class LoginForm(StyledFormMixin, AuthenticationForm):
         return result
 
 
-class RegisterForm(StyledFormMixin, UserCreationForm):
+class RegisterForm(CaptchaMixin, StyledFormMixin, UserCreationForm):
     """Public sign-up. It never tells whether an email address is already registered: uniqueness is NOT validated here
     (the view handles an existing address silently), and there is no username field (a free one is generated), so no error can reveal an account."""
 
@@ -64,8 +118,12 @@ class RegisterForm(StyledFormMixin, UserCreationForm):
             "email": forms.EmailInput(attrs={"dir": "ltr", "autocomplete": "email"}),
         }
 
-    def __init__(self, *args, **kwargs):
+    captcha_purpose = "register"
+    captcha_always = True
+
+    def __init__(self, *args, request=None, **kwargs):
         super().__init__(*args, **kwargs)
+        self.request = request
         self.fields["email"].required = True
         self.fields["first_name"].required = True
         self.fields["password1"].widget.attrs.update({"dir": "ltr", "autocomplete": "new-password"})
@@ -73,6 +131,11 @@ class RegisterForm(StyledFormMixin, UserCreationForm):
 
     def clean_email(self):
         return self.cleaned_data["email"].strip().lower()
+
+    def clean(self):
+        cleaned = super().clean()
+        self.check_captcha()
+        return cleaned
 
     def validate_unique(self):
         """The model's unique-email check would answer "already registered"; the view decides what to do with a known address instead."""
@@ -171,11 +234,22 @@ class UserManageForm(StyledFormMixin, forms.ModelForm):
         return cleaned
 
 
-class PasswordResetRequestForm(StyledFormMixin, PasswordResetForm):
+class PasswordResetRequestForm(CaptchaMixin, StyledFormMixin, PasswordResetForm):
     """درخواست بازیابی رمز. پاسخ برای ایمیل موجود و ناموجود دقیقاً یکی است (کاربران قابل‌شناسایی نیستند)؛
     خطای ارسال و محدودیت نرخ هم فقط لاگ می‌شوند، نه نمایش."""
 
+    captcha_purpose = "reset"
+    captcha_always = True
     email = forms.EmailField(label=gettext_lazy("Email"), max_length=254, widget=forms.EmailInput(attrs={"autocomplete": "email", "dir": "ltr", "autofocus": True}))
+
+    def __init__(self, *args, request=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.request = request
+
+    def clean(self):
+        cleaned = super().clean()
+        self.check_captcha()
+        return cleaned
 
     def send_mail(self, subject_template_name, email_template_name, context, from_email, to_email, html_email_template_name=None):
         """The message is written in the recipient's language (profile, else the language the visitor is using now)."""
@@ -218,5 +292,17 @@ class StyledSetPasswordForm(StyledFormMixin, SetPasswordForm):
             self.fields[name].widget.attrs.update({"dir": "ltr", "autocomplete": "new-password"})
 
 
-class ResendVerificationForm(StyledFormMixin, forms.Form):
+class ResendVerificationForm(CaptchaMixin, StyledFormMixin, forms.Form):
+    captcha_purpose = "resend"
+    captcha_always = True
+
+    def __init__(self, *args, request=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.request = request
+
+    def clean(self):
+        cleaned = super().clean()
+        self.check_captcha()
+        return cleaned
+
     email = forms.EmailField(label=gettext_lazy("Account email"), max_length=254, widget=forms.EmailInput(attrs={"autocomplete": "email", "dir": "ltr", "autofocus": True}))

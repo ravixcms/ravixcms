@@ -13032,3 +13032,27 @@ msgstr "显示这些用户"
 
 msgid "Got it"
 msgstr "知道了"
+
+msgid "The automatic human check did not finish. Wait a moment for it to complete (JavaScript is required) and try again."
+msgstr "自动真人验证未完成。请稍候直至完成（需要 JavaScript），然后重试。"
+
+msgid "The human check expired. Please try again."
+msgstr "验证已过期，请重试。"
+
+msgid "The human check was not accepted. Please try again."
+msgstr "验证未被接受，请重试。"
+
+msgid "Too many sign-up attempts from your network. Please try again later."
+msgstr "您的网络注册尝试次数过多，请稍后再试。"
+
+msgid "JavaScript is required for the automatic human check on this page."
+msgstr "此页面的自动真人验证需要 JavaScript。"
+
+msgid "The human check could not finish. Reload the page and try again."
+msgstr "验证未能完成。请刷新页面后重试。"
+
+msgid "Human check passed."
+msgstr "验证通过。"
+
+msgid "Checking that you are human…"
+msgstr "正在验证您是真人…"

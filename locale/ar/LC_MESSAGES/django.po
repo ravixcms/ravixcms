@@ -13393,3 +13393,27 @@ msgstr "عرض هؤلاء المستخدمين"
 
 msgid "Got it"
 msgstr "فهمت"
+
+msgid "The automatic human check did not finish. Wait a moment for it to complete (JavaScript is required) and try again."
+msgstr "لم يكتمل التحقق التلقائي من أنك إنسان. انتظر قليلًا حتى ينتهي (يتطلب JavaScript) ثم حاول مرة أخرى."
+
+msgid "The human check expired. Please try again."
+msgstr "انتهت صلاحية التحقق من أنك إنسان. حاول مرة أخرى."
+
+msgid "The human check was not accepted. Please try again."
+msgstr "لم يتم قبول التحقق من أنك إنسان. حاول مرة أخرى."
+
+msgid "Too many sign-up attempts from your network. Please try again later."
+msgstr "عدد كبير من محاولات التسجيل من شبكتك. يرجى المحاولة لاحقًا."
+
+msgid "JavaScript is required for the automatic human check on this page."
+msgstr "يلزم JavaScript للتحقق التلقائي من أنك إنسان في هذه الصفحة."
+
+msgid "The human check could not finish. Reload the page and try again."
+msgstr "تعذّر إكمال التحقق. أعد تحميل الصفحة وحاول مرة أخرى."
+
+msgid "Human check passed."
+msgstr "تم التحقق بنجاح."
+
+msgid "Checking that you are human…"
+msgstr "جارٍ التحقق من أنك إنسان…"

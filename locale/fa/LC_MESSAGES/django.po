@@ -13444,3 +13444,27 @@ msgstr "نمایش این کاربران"
 
 msgid "Got it"
 msgstr "متوجه شدم"
+
+msgid "The automatic human check did not finish. Wait a moment for it to complete (JavaScript is required) and try again."
+msgstr "بررسی خودکار انسان‌بودن کامل نشد. کمی صبر کنید تا تمام شود (به جاوااسکریپت نیاز دارد) و دوباره تلاش کنید."
+
+msgid "The human check expired. Please try again."
+msgstr "بررسی انسان‌بودن منقضی شد. دوباره تلاش کنید."
+
+msgid "The human check was not accepted. Please try again."
+msgstr "بررسی انسان‌بودن پذیرفته نشد. دوباره تلاش کنید."
+
+msgid "Too many sign-up attempts from your network. Please try again later."
+msgstr "تعداد تلاش‌های ثبت‌نام از شبکهٔ شما زیاد بود. لطفاً بعداً دوباره تلاش کنید."
+
+msgid "JavaScript is required for the automatic human check on this page."
+msgstr "برای بررسی خودکار انسان‌بودن در این صفحه، جاوااسکریپت لازم است."
+
+msgid "The human check could not finish. Reload the page and try again."
+msgstr "بررسی انسان‌بودن کامل نشد. صفحه را دوباره بارگذاری کنید و دوباره تلاش کنید."
+
+msgid "Human check passed."
+msgstr "بررسی انسان‌بودن انجام شد."
+
+msgid "Checking that you are human…"
+msgstr "در حال بررسی انسان‌بودن شما…"

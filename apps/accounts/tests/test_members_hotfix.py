@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.core.cache import cache
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from apps.accounts.permissions import CAPABILITIES, Role
@@ -135,6 +135,7 @@ class SignUpDoesNotRevealAccountsTests(TestCase):
         self.assertNotIn("قبلاً", text.split("<form")[0] if "<form" in text else text)
         self.assertNotIn("already", text.lower())
 
+    @override_settings(RAVIX_REGISTER_LIMIT_PER_IP=100)
     def test_the_known_address_path_is_rate_limited_silently(self):
         for _ in range(12):
             r = self.client.post(self.url, self.data("taken@example.com"))

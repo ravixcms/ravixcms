@@ -12,6 +12,7 @@
       <div class="{% if field.name == 'username' or field.name == 'email' or field.name == 'password1' or field.name == 'password2' %}span-2{% endif %}">{% include "partials/_field.html" %}</div>
     {% endfor %}
   </div>
+  {% include "accounts/_captcha.html" %}
   <button type="submit" class="btn btn-block">{% icon "plus" 18 %} {% trans "Sign up" %}</button>
 </form>
 <p class="auth-switch">{% trans "Already registered?" %} <a href="{% url 'accounts:login' %}">{% trans "Sign in now" %}</a></p>

@@ -5,6 +5,7 @@
 """
 from apps.core.clilang import cli_gettext
 import os
+import sys
 import re
 from pathlib import Path
 from urllib.parse import unquote, urlparse
@@ -232,6 +233,14 @@ RAVIX_REQUIRE_EMAIL_VERIFICATION = env_bool("RAVIX_REQUIRE_EMAIL_VERIFICATION", 
 RAVIX_MAIL_WINDOW_SECONDS = int(env("RAVIX_MAIL_WINDOW_SECONDS", str(60 * 60)))
 RAVIX_MAIL_LIMIT_PER_EMAIL = int(env("RAVIX_MAIL_LIMIT_PER_EMAIL", "3"))  # ارسال در هر بازه به‌ازای هر ایمیل
 RAVIX_MAIL_LIMIT_PER_IP = int(env("RAVIX_MAIL_LIMIT_PER_IP", "10"))  # ارسال در هر بازه به‌ازای هر IP
+
+# Self-hosted proof-of-work check (no third party, no tracking). Sign-up, password recovery and "resend verification" always ask for it;
+# sign-in asks for it only after a few failed attempts. Each extra bit doubles the work the visitor's browser does.
+RAVIX_CAPTCHA_ENABLED = env_bool("RAVIX_CAPTCHA_ENABLED", True) and "test" not in sys.argv  # off while running the test suite; the captcha tests switch it on
+RAVIX_CAPTCHA_BITS = int(env("RAVIX_CAPTCHA_BITS", "18"))  # about a quarter of a million hashes (well under a second in a browser)
+RAVIX_CAPTCHA_MAX_AGE = int(env("RAVIX_CAPTCHA_MAX_AGE", "900"))  # seconds a challenge stays valid (and each one works once)
+RAVIX_CAPTCHA_LOGIN_AFTER = int(env("RAVIX_CAPTCHA_LOGIN_AFTER", "3"))  # failed sign-ins (same IP + account) before the check appears
+RAVIX_REGISTER_LIMIT_PER_IP = int(env("RAVIX_REGISTER_LIMIT_PER_IP", "10"))  # sign-up submissions per IP per hour
 RAVIX_COMMENT_LIMIT_PER_IP = int(env("RAVIX_COMMENT_LIMIT_PER_IP", "5"))  # دیدگاه در هر بازه به‌ازای هر IP (همهٔ تلاش‌ها شمرده می‌شود)
 RAVIX_COMMENT_WINDOW_SECONDS = int(env("RAVIX_COMMENT_WINDOW_SECONDS", "600"))
 RAVIX_COMMENT_MAX_DEPTH = int(env("RAVIX_COMMENT_MAX_DEPTH", "2"))  # عمق پاسخ: دیدگاه اصلی ۰، پاسخ ۱، پاسخ به پاسخ ۲

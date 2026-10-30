@@ -13628,3 +13628,27 @@ msgstr "Показать этих пользователей"
 
 msgid "Got it"
 msgstr "Понятно"
+
+msgid "The automatic human check did not finish. Wait a moment for it to complete (JavaScript is required) and try again."
+msgstr "Автоматическая проверка не завершилась. Подождите её окончания (нужен JavaScript) и повторите попытку."
+
+msgid "The human check expired. Please try again."
+msgstr "Срок проверки истёк. Повторите попытку."
+
+msgid "The human check was not accepted. Please try again."
+msgstr "Проверка не принята. Повторите попытку."
+
+msgid "Too many sign-up attempts from your network. Please try again later."
+msgstr "Слишком много попыток регистрации из вашей сети. Повторите позже."
+
+msgid "JavaScript is required for the automatic human check on this page."
+msgstr "Для автоматической проверки на этой странице нужен JavaScript."
+
+msgid "The human check could not finish. Reload the page and try again."
+msgstr "Не удалось завершить проверку. Перезагрузите страницу и повторите попытку."
+
+msgid "Human check passed."
+msgstr "Проверка пройдена."
+
+msgid "Checking that you are human…"
+msgstr "Проверяем, что вы человек…"

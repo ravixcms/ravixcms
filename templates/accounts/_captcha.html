@@ -1,0 +1,11 @@
+{% load i18n static %}{% with challenge=form.captcha_widget %}{% if challenge %}
+<div class="pow" data-pow data-bits="{{ challenge.bits }}" role="status" aria-live="polite" style="margin:.75rem 0">
+  <input type="hidden" name="captcha_challenge" value="{{ challenge.token }}">
+  <input type="hidden" name="captcha_solution" value="">
+  <span class="muted pow-status" data-pow-status>{% trans "Checking that you are human…" %}</span>
+  <span hidden data-pow-done>{% trans "Human check passed." %}</span>
+  <span hidden data-pow-failed>{% trans "The human check could not finish. Reload the page and try again." %}</span>
+  <noscript><span class="muted">{% trans "JavaScript is required for the automatic human check on this page." %}</span></noscript>
+</div>
+<script src="{% static 'js/pow.js' %}" defer></script>
+{% endif %}{% endwith %}

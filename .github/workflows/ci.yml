@@ -221,6 +221,8 @@ jobs:
       - run: pip install -r requirements.lock playwright
       - run: playwright install --with-deps chromium
       - run: python scripts/e2e_studio.py
+      - name: E2E صفحه‌های حساب (ثبت‌نام با CAPTCHA، تأیید ایمیل، ورود)
+        run: python scripts/e2e_accounts.py
       - name: Lighthouse موبایل (صفحهٔ نمونهٔ Studio، حداقل ۹۰)
         run: python scripts/lighthouse_studio.py
 
