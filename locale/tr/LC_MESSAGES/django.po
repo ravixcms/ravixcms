@@ -13574,3 +13574,37 @@ msgstr "Yan pencere"
 #: templates/partials/_floating_actions.html
 msgid "Open in a full page"
 msgstr "Tam sayfada aç"
+
+msgid "Someone tried to create an account with this email address, but you already have one."
+msgstr "Birisi bu e-posta adresiyle hesap oluşturmaya çalıştı, ancak zaten bir hesabınız var."
+
+msgid "If it was you, sign in here:"
+msgstr "Siz yaptıysanız buradan giriş yapın:"
+
+msgid "If you forgot your password, you can reset it here:"
+msgstr "Parolanızı unuttuysanız buradan sıfırlayabilirsiniz:"
+
+msgid "If it was not you, ignore this email; nothing was changed."
+msgstr "Siz yapmadıysanız bu e-postayı yok sayın; hiçbir şey değişmedi."
+
+msgid "Someone tried to sign up with your email address"
+msgstr "Birisi e-posta adresinizle kaydolmaya çalıştı"
+
+msgid "Check your email"
+msgstr "E-postanızı kontrol edin"
+
+msgid "If the information is valid, we have sent an email to verify your account. After verifying, you can sign in."
+msgstr "Bilgiler geçerliyse hesabınızı doğrulamanız için bir e-posta gönderdik. Doğruladıktan sonra giriş yapabilirsiniz."
+
+msgid "Members no longer enter the panel"
+msgstr "Üyeler artık panele girmiyor"
+
+#, python-format
+msgid "%(n)s user(s) with the role “Regular user” could open the panel before. That role is now a member: it only has its own account page. Give a higher role to anyone who needs the panel."
+msgstr "“Normal kullanıcı” rolündeki %(n)s kullanıcı daha önce paneli açabiliyordu. Bu rol artık bir üyedir: yalnızca kendi hesap sayfası vardır. Panele ihtiyacı olan herkese daha yüksek bir rol verin."
+
+msgid "Show these users"
+msgstr "Bu kullanıcıları göster"
+
+msgid "Got it"
+msgstr "Anladım"

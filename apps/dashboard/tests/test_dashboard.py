@@ -25,6 +25,8 @@ class DashboardTests(TestCase):
 
     def test_dashboard_renders_for_each_role(self):
         for role in Role:
+            if role == Role.USER:
+                continue  # a member has no panel (covered in test_members_without_panel)
             self.client.force_login(make_user(role.value, role))
             response = self.client.get(reverse("dashboard:home"))
             self.assertEqual(response.status_code, 200, role)

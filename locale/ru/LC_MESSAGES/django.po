@@ -13594,3 +13594,37 @@ msgstr "Боковое окно"
 #: templates/partials/_floating_actions.html
 msgid "Open in a full page"
 msgstr "Открыть на всю страницу"
+
+msgid "Someone tried to create an account with this email address, but you already have one."
+msgstr "Кто-то пытался создать учётную запись с этим адресом электронной почты, но у вас она уже есть."
+
+msgid "If it was you, sign in here:"
+msgstr "Если это были вы, войдите здесь:"
+
+msgid "If you forgot your password, you can reset it here:"
+msgstr "Если вы забыли пароль, вы можете сбросить его здесь:"
+
+msgid "If it was not you, ignore this email; nothing was changed."
+msgstr "Если это были не вы, проигнорируйте это письмо; ничего не изменилось."
+
+msgid "Someone tried to sign up with your email address"
+msgstr "Кто-то пытался зарегистрироваться с вашим адресом электронной почты"
+
+msgid "Check your email"
+msgstr "Проверьте почту"
+
+msgid "If the information is valid, we have sent an email to verify your account. After verifying, you can sign in."
+msgstr "Если данные верны, мы отправили письмо для подтверждения вашей учётной записи. После подтверждения вы сможете войти."
+
+msgid "Members no longer enter the panel"
+msgstr "Участники больше не заходят в панель"
+
+#, python-format
+msgid "%(n)s user(s) with the role “Regular user” could open the panel before. That role is now a member: it only has its own account page. Give a higher role to anyone who needs the panel."
+msgstr "Пользователи с ролью «Обычный пользователь» (%(n)s) раньше могли открывать панель. Теперь эта роль — участник: у неё есть только своя страница аккаунта. Назначьте более высокую роль тем, кому нужна панель."
+
+msgid "Show these users"
+msgstr "Показать этих пользователей"
+
+msgid "Got it"
+msgstr "Понятно"

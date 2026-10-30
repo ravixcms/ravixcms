@@ -45,6 +45,7 @@ class SiteSettings(models.Model):
         default=settings.REGISTRATION_DEFAULT_OPEN,
         help_text=gettext_lazy("If disabled, new users are created only by administrators."),
     )
+    members_notice_count = models.PositiveIntegerField(default=0, editable=False)  # users who had panel access as plain "user" before it was removed; shown to administrators until dismissed
     comments_require_approval = models.BooleanField(
         gettext_lazy("Comments require administrator approval before being shown"), default=True,
         help_text=gettext_lazy("If off, new (non-spam) comments are published immediately."))

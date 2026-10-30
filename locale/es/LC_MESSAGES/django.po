@@ -13761,3 +13761,37 @@ msgstr "Ventana lateral"
 #: templates/partials/_floating_actions.html
 msgid "Open in a full page"
 msgstr "Abrir en página completa"
+
+msgid "Someone tried to create an account with this email address, but you already have one."
+msgstr "Alguien intentó crear una cuenta con este correo electrónico, pero usted ya tiene una."
+
+msgid "If it was you, sign in here:"
+msgstr "Si fue usted, inicie sesión aquí:"
+
+msgid "If you forgot your password, you can reset it here:"
+msgstr "Si olvidó su contraseña, puede restablecerla aquí:"
+
+msgid "If it was not you, ignore this email; nothing was changed."
+msgstr "Si no fue usted, ignore este correo; no se ha cambiado nada."
+
+msgid "Someone tried to sign up with your email address"
+msgstr "Alguien intentó registrarse con su correo electrónico"
+
+msgid "Check your email"
+msgstr "Revise su correo electrónico"
+
+msgid "If the information is valid, we have sent an email to verify your account. After verifying, you can sign in."
+msgstr "Si los datos son válidos, hemos enviado un correo para verificar su cuenta. Tras verificarla, podrá iniciar sesión."
+
+msgid "Members no longer enter the panel"
+msgstr "Los miembros ya no entran al panel"
+
+#, python-format
+msgid "%(n)s user(s) with the role “Regular user” could open the panel before. That role is now a member: it only has its own account page. Give a higher role to anyone who needs the panel."
+msgstr "%(n)s usuario(s) con el rol «Usuario normal» podían abrir el panel antes. Ese rol ahora es un miembro: solo tiene su propia página de cuenta. Asigne un rol superior a quien necesite el panel."
+
+msgid "Show these users"
+msgstr "Mostrar estos usuarios"
+
+msgid "Got it"
+msgstr "Entendido"

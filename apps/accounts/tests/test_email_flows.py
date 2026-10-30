@@ -123,13 +123,16 @@ class PasswordResetTests(TestCase):
 class EmailVerificationTests(TestCase):
     def setUp(self):
         cache.clear()
+        from apps.core.models import SiteSettings
+
+        SiteSettings.objects.update_or_create(pk=1, defaults={"registration_open": True})
         self.user = make_user("sara")
 
     def verify_url(self, user=None):
         return reverse("accounts:verify_email", args=[emailing.make_verify_token(user or self.user)])
 
     def test_registration_sends_verification_email_and_user_is_unverified(self):
-        data = {"username": "newbie", "first_name": "نوید", "last_name": "رضایی", "email": "newbie@example.com",
+        data = {"first_name": "نوید", "last_name": "رضایی", "email": "newbie@example.com",
                 "password1": STRONG, "password2": STRONG}
         r = self.client.post(reverse("accounts:register"), data)
         self.assertEqual(r.status_code, 302)
@@ -138,7 +141,7 @@ class EmailVerificationTests(TestCase):
         self.assertIn("تأیید ایمیل", mail.outbox[0].subject)
         from django.contrib.auth import get_user_model
 
-        self.assertIsNone(get_user_model().objects.get(username="newbie").email_verified_at)
+        self.assertIsNone(get_user_model().objects.get(email="newbie@example.com").email_verified_at)
 
     def test_get_does_not_verify_post_does(self):
         url = self.verify_url()
@@ -234,9 +237,9 @@ class EmailVerificationTests(TestCase):
 
     @override_settings(RAVIX_REQUIRE_EMAIL_VERIFICATION=True)
     def test_registration_does_not_auto_login_when_required(self):
-        data = {"username": "newbie", "first_name": "ن", "last_name": "ر", "email": "newbie@example.com", "password1": STRONG, "password2": STRONG}
+        data = {"first_name": "ن", "last_name": "ر", "email": "newbie@example.com", "password1": STRONG, "password2": STRONG}
         r = self.client.post(reverse("accounts:register"), data)
-        self.assertRedirects(r, reverse("accounts:login"))
+        self.assertRedirects(r, reverse("accounts:register_done"))
         self.assertNotIn("_auth_user_id", self.client.session)
 
     def test_default_does_not_require_verification(self):
@@ -250,7 +253,7 @@ class EmailVerificationTests(TestCase):
         self.assertIsNotNone(admin.email_verified_at)
 
     def test_smtp_failure_on_registration_does_not_500(self):
-        data = {"username": "newbie", "first_name": "ن", "last_name": "ر", "email": "newbie@example.com", "password1": STRONG, "password2": STRONG}
+        data = {"first_name": "ن", "last_name": "ر", "email": "newbie@example.com", "password1": STRONG, "password2": STRONG}
         with mock.patch("django.core.mail.EmailMessage.send", side_effect=OSError("smtp down")):
             with self.assertLogs("apps.accounts.emailing", "ERROR"):
                 r = self.client.post(reverse("accounts:register"), data)

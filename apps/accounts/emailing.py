@@ -79,3 +79,20 @@ def send_verification_email(request, user) -> bool:
         logger.exception(cli_gettext("Sending the verification email to user %s failed."), user.pk)
         return False
     return True
+
+
+def send_registration_notice(request, user) -> bool:
+    """Someone tried to sign up with an address that already has an account: only its owner is told (the visitor sees the same page as always)."""
+    if not user.email or not throttle.allow_send(request, user.email, "register-exists"):
+        return False
+    ctx = {"user": user, "login_link": absolute_url(request, reverse("accounts:login")), "reset_link": absolute_url(request, reverse("accounts:password_reset"))}
+    with use_language(language_for_user(user, fallback=current_language())):
+        subject = " ".join(render_to_string("accounts/email/register_exists_subject.txt", ctx).split())
+        body = render_to_string("accounts/email/register_exists.txt", ctx)
+        message = build_message(subject, body, [user.email])
+    try:
+        message.send(fail_silently=False)
+    except Exception:  # noqa: BLE001 - never visible to the visitor
+        logger.exception(cli_gettext("Sending the verification email to user %s failed."), user.pk)
+        return False
+    return True

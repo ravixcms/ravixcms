@@ -17,9 +17,16 @@ from . import onboarding, services
 class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = "dashboard/home.html"
 
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated and not request.user.has_cap("dashboard.view"):
+            return redirect("accounts:profile")  # a member has no panel; their account page is theirs
+        return super().dispatch(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         user = self.request.user
+        if user.has_cap("users.manage"):
+            ctx["members_notice_count"] = (getattr(self.request, "site_settings", None) or SiteSettings.load()).members_notice_count  # the request already holds the one shared read
         ctx["profile_completeness"] = services.profile_completeness(user)
         if user.has_cap("content.write"):
             ctx["content_stats"] = services.content_stats(user)
@@ -41,6 +48,15 @@ class OnboardingDismissView(CapabilityRequiredMixin, View):
     def post(self, request):
         SiteSettings.objects.filter(pk=SiteSettings.load().pk).update(onboarding_dismissed=True)
         messages.success(request, gettext("The getting-started guide was closed."))
+        return redirect("dashboard:home")
+
+
+class MembersNoticeDismissView(CapabilityRequiredMixin, View):
+    required_capability = "users.manage"
+    http_method_names = ["post"]
+
+    def post(self, request):
+        SiteSettings.objects.filter(pk=SiteSettings.load().pk).update(members_notice_count=0)
         return redirect("dashboard:home")
 
 

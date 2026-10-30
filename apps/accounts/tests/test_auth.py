@@ -19,8 +19,8 @@ class RegistrationTests(TestCase):
     def setUp(self):
         cache.clear()
         self.url = reverse("accounts:register")
+        SiteSettings.objects.update_or_create(pk=1, defaults={"registration_open": True})  # a fresh install is closed; these tests open it
         self.data = {
-            "username": "newuser",
             "first_name": "نوید",
             "last_name": "رضایی",
             "email": "New@Example.com",
@@ -33,32 +33,25 @@ class RegistrationTests(TestCase):
         self.assertContains(response, "csrfmiddlewaretoken")
         self.assertContains(response, 'dir="rtl"')
 
-    def test_register_creates_regular_user_and_logs_in(self):
-        response = self.client.post(self.url, self.data, follow=True)
-        user = User.objects.get(username="newuser")
+    def test_register_creates_a_member_and_does_not_sign_in(self):
+        response = self.client.post(self.url, self.data)
+        self.assertRedirects(response, reverse("accounts:register_done"))
+        user = User.objects.get(email="new@example.com")  # ایمیل نرمال می‌شود
         self.assertEqual(user.role, Role.USER)
-        self.assertEqual(user.email, "new@example.com")  # ایمیل نرمال می‌شود
         self.assertFalse(user.is_staff)
-        self.assertRedirects(response, reverse("dashboard:home"))
-        self.assertEqual(int(self.client.session["_auth_user_id"]), user.pk)
+        self.assertEqual(user.username, "new")  # generated from the address, never asked
+        self.assertNotIn("_auth_user_id", self.client.session)  # nobody is signed in by registering (same answer for known and new addresses)
 
     def test_cannot_escalate_role_via_post(self):
         self.client.post(self.url, {**self.data, "role": "super_admin", "is_superuser": "on"})
-        self.assertEqual(User.objects.get(username="newuser").role, Role.USER)
-
-    def test_duplicate_email_rejected_case_insensitive(self):
-        make_user("other")
-        response = self.client.post(self.url, {**self.data, "email": "OTHER@example.com"})
-        self.assertEqual(response.status_code, 200)
-        self.assertFormError(response.context["form"], "email", "کاربری با این ایمیل قبلاً ثبت‌نام کرده است.")
-        self.assertFalse(User.objects.filter(username="newuser").exists())
+        self.assertEqual(User.objects.get(email="new@example.com").role, Role.USER)
 
     def test_password_mismatch_and_weak_password(self):
         response = self.client.post(self.url, {**self.data, "password2": "different"})
         self.assertTrue(response.context["form"].errors.get("password2"))
         response = self.client.post(self.url, {**self.data, "password1": "12345678", "password2": "12345678"})
         self.assertTrue(response.context["form"].errors.get("password2"))
-        self.assertFalse(User.objects.filter(username="newuser").exists())
+        self.assertFalse(User.objects.filter(email="new@example.com").exists())
 
     def test_registration_can_be_closed(self):
         settings_obj = SiteSettings.load()
@@ -66,7 +59,7 @@ class RegistrationTests(TestCase):
         settings_obj.save()
         response = self.client.post(self.url, self.data)
         self.assertRedirects(response, reverse("accounts:login"))
-        self.assertFalse(User.objects.filter(username="newuser").exists())
+        self.assertFalse(User.objects.filter(email="new@example.com").exists())
 
 
 class LoginLogoutTests(TestCase):
@@ -79,7 +72,7 @@ class LoginLogoutTests(TestCase):
         for ident in ("sara", "SARA", "sara@example.com"):
             self.client.logout()
             response = self.client.post(self.url, {"username": ident, "password": STRONG})
-            self.assertRedirects(response, reverse("dashboard:home"), msg_prefix=ident)
+            self.assertRedirects(response, reverse("dashboard:home"), msg_prefix=ident, fetch_redirect_response=False)
 
     def test_wrong_password_shows_persian_error(self):
         response = self.client.post(self.url, {"username": "sara", "password": "bad"})
@@ -103,7 +96,7 @@ class LoginLogoutTests(TestCase):
 
     def test_authenticated_user_redirected_from_login(self):
         self.client.force_login(self.user)
-        self.assertRedirects(self.client.get(self.url), reverse("dashboard:home"))
+        self.assertRedirects(self.client.get(self.url), reverse("dashboard:home"), fetch_redirect_response=False)
 
     def test_logout_requires_post(self):
         self.client.force_login(self.user)

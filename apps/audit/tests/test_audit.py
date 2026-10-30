@@ -32,8 +32,11 @@ class AuthEventsTests(TestCase):
         self.assertIsNone(event.actor)
 
     def test_registration_logged(self):
+        from apps.core.models import SiteSettings
+
+        SiteSettings.objects.update_or_create(pk=1, defaults={"registration_open": True})
         self.client.post(reverse("accounts:register"), {
-            "username": "newbie", "first_name": "ن", "last_name": "و", "email": "n@example.com",
+            "first_name": "ن", "last_name": "و", "email": "n@example.com",
             "password1": STRONG, "password2": STRONG})
         self.assertTrue(AuditLog.objects.filter(action="create", object_type="کاربر").exists())
 

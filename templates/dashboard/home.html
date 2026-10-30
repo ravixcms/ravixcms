@@ -17,6 +17,19 @@
   </div>
 </section>
 
+{% if members_notice_count %}
+<section class="card" role="status" style="border-inline-start:4px solid var(--warning, #d97706)">
+  <div class="card-body">
+    <div>
+      <h2 style="margin:0 0 .25rem">{% trans "Members no longer enter the panel" %}</h2>
+      <p style="margin:0">{% blocktrans trimmed with n=members_notice_count %}{{ n }} user(s) with the role “Regular user” could open the panel before. That role is now a member: it only has its own account page. Give a higher role to anyone who needs the panel.{% endblocktrans %}
+        <a href="{% url 'accounts:user_list' %}?role=user">{% trans "Show these users" %}</a></p>
+    </div>
+    <form method="post" action="{% url 'dashboard:members_notice_dismiss' %}">{% csrf_token %}<button class="btn btn-light btn-sm" type="submit">{% trans "Got it" %}</button></form>
+  </div>
+</section>
+{% endif %}
+
 {% if onboarding %}
 <section class="card onboarding" aria-labelledby="onb-title">
   <div class="card-header">

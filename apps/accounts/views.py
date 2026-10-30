@@ -12,6 +12,7 @@ from django.contrib.auth.views import PasswordResetDoneView as DjangoPasswordRes
 from django.contrib.auth.views import PasswordResetView as DjangoPasswordResetView
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
+from django.db import IntegrityError, transaction
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
@@ -87,19 +88,30 @@ class RegisterView(RedirectAuthenticatedMixin, FormView):
         return redirect("accounts:login")
 
     def form_valid(self, form):
-        user = form.save()
-        log_event(self.request, "create", user, (gettext("New user “%(username)s” registered.") % {"username": user.username}), actor=user)
-        emailing.send_verification_email(self.request, user)
-        if settings.RAVIX_REQUIRE_EMAIL_VERIFICATION:
-            messages.success(self.request, gettext("Your account was created. To sign in, open the verification link we sent to your email."))
-            return redirect("accounts:login")
-        login(self.request, user, backend="apps.accounts.backends.EmailOrUsernameBackend")
-        messages.success(self.request, gettext("Your account was created successfully. Welcome! To verify your email, open the link sent to your inbox."))
-        return super().form_valid(form)
+        """The answer is the same page whether the address was new or already registered; nobody is signed in by registering."""
+        email = form.cleaned_data["email"]
+        existing = User.objects.filter(email__iexact=email).first()
+        if existing is None:
+            try:
+                with transaction.atomic():
+                    user = form.save()
+            except IntegrityError:  # two sign-ups with the same address at once: the other one won
+                existing = User.objects.filter(email__iexact=email).first()
+            else:
+                log_event(self.request, "create", user, (gettext("New user “%(username)s” registered.") % {"username": user.username}), actor=user)
+                emailing.send_verification_email(self.request, user)
+        if existing is not None:
+            User().set_password(form.cleaned_data["password1"])  # the same hashing work as a real sign-up (no timing difference)
+            emailing.send_registration_notice(self.request, existing)
+        return redirect("accounts:register_done")
 
     def form_invalid(self, form):
         messages.error(self.request, gettext("Registration did not complete. Please check the form errors."))
         return super().form_invalid(form)
+
+
+class RegisterDoneView(TemplateView):
+    template_name = "accounts/register_done.html"
 
 
 class ProfileView(LoginRequiredMixin, UpdateView):

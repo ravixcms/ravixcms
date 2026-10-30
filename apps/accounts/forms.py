@@ -54,11 +54,13 @@ class LoginForm(StyledFormMixin, AuthenticationForm):
 
 
 class RegisterForm(StyledFormMixin, UserCreationForm):
+    """Public sign-up. It never tells whether an email address is already registered: uniqueness is NOT validated here
+    (the view handles an existing address silently), and there is no username field (a free one is generated), so no error can reveal an account."""
+
     class Meta:
         model = User
-        fields = ("username", "first_name", "last_name", "email")
+        fields = ("first_name", "last_name", "email")
         widgets = {
-            "username": forms.TextInput(attrs={"dir": "ltr", "autocomplete": "username"}),
             "email": forms.EmailInput(attrs={"dir": "ltr", "autocomplete": "email"}),
         }
 
@@ -68,26 +70,32 @@ class RegisterForm(StyledFormMixin, UserCreationForm):
         self.fields["first_name"].required = True
         self.fields["password1"].widget.attrs.update({"dir": "ltr", "autocomplete": "new-password"})
         self.fields["password2"].widget.attrs.update({"dir": "ltr", "autocomplete": "new-password"})
-        self.fields["username"].help_text = gettext("Letters, digits and the symbols @ . + - _ are allowed.")
 
     def clean_email(self):
-        email = self.cleaned_data["email"].strip().lower()
-        if User.objects.filter(email__iexact=email).exists():
-            raise forms.ValidationError(gettext("A user with this email has already registered."))
-        return email
+        return self.cleaned_data["email"].strip().lower()
 
-    def clean_username(self):
-        username = self.cleaned_data["username"]
-        if User.objects.filter(username__iexact=username).exists():
-            raise forms.ValidationError(gettext("This username is already taken."))
-        return username
+    def validate_unique(self):
+        """The model's unique-email check would answer "already registered"; the view decides what to do with a known address instead."""
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.role = Role.USER  # ثبت‌نام عمومی همیشه کاربر عادی می‌سازد
+        user.username = unique_username(self.cleaned_data["email"])
+        user.role = Role.USER  # ثبت‌نام عمومی همیشه عضو عادی می‌سازد
         if commit:
             user.save()
         return user
+
+
+def unique_username(email: str) -> str:
+    """A free username made from the part of the address before the @ (letters, digits and . _ - only), with a random suffix on a clash."""
+    import re
+    import secrets
+
+    base = re.sub(r"[^A-Za-z0-9._-]", "", (email or "").split("@")[0])[:30] or "member"
+    name = base
+    while User.objects.filter(username__iexact=name).exists():
+        name = f"{base}-{secrets.token_hex(3)}"
+    return name
 
 
 def profile_language_choices():

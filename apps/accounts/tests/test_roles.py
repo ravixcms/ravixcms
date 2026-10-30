@@ -75,13 +75,13 @@ class AccessControlTests(TestCase):
         self.assertContains(response, "دسترسی غیرمجاز", status_code=403)
 
     def test_sidebar_filtered_by_role(self):
-        user_html = self.get(Role.USER, "dashboard:home").content.decode()
+        user_html = self.get(Role.AUTHOR, "dashboard:home").content.decode()
         admin_html = self.get(Role.ADMIN, "dashboard:home").content.decode()
         self.assertNotIn(reverse("core:site_settings"), user_html)
         self.assertIn(reverse("core:site_settings"), admin_html)
 
     def test_dashboard_stats_only_for_admins(self):
-        self.assertNotIn("stats", self.get(Role.USER, "dashboard:home").context)
+        self.assertNotIn("stats", self.get(Role.AUTHOR, "dashboard:home").context)
         self.assertEqual(self.get(Role.ADMIN, "dashboard:home").context["stats"]["total_users"], 4)
 
 

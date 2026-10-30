@@ -13359,3 +13359,37 @@ msgstr "نافذة جانبية"
 #: templates/partials/_floating_actions.html
 msgid "Open in a full page"
 msgstr "فتح في صفحة كاملة"
+
+msgid "Someone tried to create an account with this email address, but you already have one."
+msgstr "حاول شخص ما إنشاء حساب بهذا البريد الإلكتروني، لكن لديك حساب بالفعل."
+
+msgid "If it was you, sign in here:"
+msgstr "إذا كنت أنت، فسجّل الدخول من هنا:"
+
+msgid "If you forgot your password, you can reset it here:"
+msgstr "إذا نسيت كلمة المرور، يمكنك إعادة تعيينها من هنا:"
+
+msgid "If it was not you, ignore this email; nothing was changed."
+msgstr "إذا لم تكن أنت، تجاهل هذه الرسالة؛ لم يتغير شيء."
+
+msgid "Someone tried to sign up with your email address"
+msgstr "حاول شخص ما التسجيل ببريدك الإلكتروني"
+
+msgid "Check your email"
+msgstr "تحقق من بريدك الإلكتروني"
+
+msgid "If the information is valid, we have sent an email to verify your account. After verifying, you can sign in."
+msgstr "إذا كانت المعلومات صحيحة، فقد أرسلنا رسالة إلى بريدك للتحقق من حسابك. بعد التحقق يمكنك تسجيل الدخول."
+
+msgid "Members no longer enter the panel"
+msgstr "لم يعد الأعضاء يدخلون لوحة التحكم"
+
+#, python-format
+msgid "%(n)s user(s) with the role “Regular user” could open the panel before. That role is now a member: it only has its own account page. Give a higher role to anyone who needs the panel."
+msgstr "كان %(n)s مستخدمًا بدور «مستخدم عادي» يستطيعون فتح اللوحة سابقًا. أصبح هذا الدور الآن «عضو» ولديه صفحة حسابه فقط. امنح دورًا أعلى لكل من يحتاج إلى اللوحة."
+
+msgid "Show these users"
+msgstr "عرض هؤلاء المستخدمين"
+
+msgid "Got it"
+msgstr "فهمت"

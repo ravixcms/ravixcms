@@ -1,0 +1,8 @@
+{% extends "layouts/auth.html" %}
+{% load i18n %}
+{% block title %}{% trans "Check your email" %}{% endblock %}
+{% block auth_content %}
+<h2 style="margin-bottom:1rem">{% trans "Check your email" %}</h2>
+<p>{% trans "If the information is valid, we have sent an email to verify your account. After verifying, you can sign in." %}</p>
+<p class="auth-switch"><a href="{% url 'accounts:login' %}">{% trans "Sign in now" %}</a></p>
+{% endblock %}

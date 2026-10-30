@@ -13410,3 +13410,37 @@ msgstr "پنجرهٔ کناری"
 #: templates/partials/_floating_actions.html
 msgid "Open in a full page"
 msgstr "باز کردن در صفحهٔ کامل"
+
+msgid "Someone tried to create an account with this email address, but you already have one."
+msgstr "شخصی تلاش کرد با این نشانی ایمیل حساب بسازد، اما شما از قبل حساب دارید."
+
+msgid "If it was you, sign in here:"
+msgstr "اگر خودتان بودید، از اینجا وارد شوید:"
+
+msgid "If you forgot your password, you can reset it here:"
+msgstr "اگر رمز عبور را فراموش کرده‌اید، از اینجا می‌توانید آن را بازنشانی کنید:"
+
+msgid "If it was not you, ignore this email; nothing was changed."
+msgstr "اگر خودتان نبودید، این ایمیل را نادیده بگیرید؛ هیچ چیز تغییر نکرده است."
+
+msgid "Someone tried to sign up with your email address"
+msgstr "شخصی تلاش کرد با نشانی ایمیل شما ثبت‌نام کند"
+
+msgid "Check your email"
+msgstr "ایمیل خود را بررسی کنید"
+
+msgid "If the information is valid, we have sent an email to verify your account. After verifying, you can sign in."
+msgstr "اگر اطلاعات معتبر باشد، ایمیلی برای تأیید حساب شما فرستاده‌ایم. پس از تأیید می‌توانید وارد شوید."
+
+msgid "Members no longer enter the panel"
+msgstr "اعضا دیگر وارد پنل نمی‌شوند"
+
+#, python-format
+msgid "%(n)s user(s) with the role “Regular user” could open the panel before. That role is now a member: it only has its own account page. Give a higher role to anyone who needs the panel."
+msgstr "%(n)s کاربر با نقش «کاربر عادی» پیش از این می‌توانستند پنل را باز کنند. این نقش اکنون «عضو» است و فقط صفحهٔ حساب خودش را دارد. به هر کسی که به پنل نیاز دارد نقش بالاتری بدهید."
+
+msgid "Show these users"
+msgstr "نمایش این کاربران"
+
+msgid "Got it"
+msgstr "متوجه شدم"

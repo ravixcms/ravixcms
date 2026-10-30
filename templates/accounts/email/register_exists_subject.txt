@@ -1,0 +1,1 @@
+{% load i18n %}{% trans "Someone tried to sign up with your email address" %}

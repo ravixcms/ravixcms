@@ -100,7 +100,7 @@ class OnboardingTests(TestCase):
         self.assertNotContains(self.c.get(self.url), "شروع سریع")
 
     def test_not_visible_to_plain_user_and_dismiss_forbidden(self):
-        user = make_user("plain", Role.USER)
+        user = make_user("plain", Role.AUTHOR)
         c = Client()
         c.force_login(user)
         self.assertNotContains(c.get(self.url), "شروع سریع")

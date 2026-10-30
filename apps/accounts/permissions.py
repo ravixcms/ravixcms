@@ -86,7 +86,7 @@ _ADMIN = _BASIC | {
 }
 
 ROLE_CAPABILITIES = {
-    Role.USER: frozenset(_BASIC),
+    Role.USER: frozenset({"profile.manage"}),  # a member: their own account page only, nothing of the panel (no dashboard.view)
     Role.AUTHOR: frozenset(_BASIC | {"content.write", "media.upload", "studio.edit"}),
     Role.ADMIN: frozenset(_ADMIN),
     Role.SUPER_ADMIN: frozenset(CAPABILITIES),

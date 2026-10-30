@@ -13689,3 +13689,37 @@ msgstr "Janela lateral"
 #: templates/partials/_floating_actions.html
 msgid "Open in a full page"
 msgstr "Abrir em página inteira"
+
+msgid "Someone tried to create an account with this email address, but you already have one."
+msgstr "Alguém tentou criar uma conta com este e-mail, mas você já tem uma."
+
+msgid "If it was you, sign in here:"
+msgstr "Se foi você, entre aqui:"
+
+msgid "If you forgot your password, you can reset it here:"
+msgstr "Se esqueceu a senha, você pode redefini-la aqui:"
+
+msgid "If it was not you, ignore this email; nothing was changed."
+msgstr "Se não foi você, ignore este e-mail; nada foi alterado."
+
+msgid "Someone tried to sign up with your email address"
+msgstr "Alguém tentou se cadastrar com o seu e-mail"
+
+msgid "Check your email"
+msgstr "Verifique seu e-mail"
+
+msgid "If the information is valid, we have sent an email to verify your account. After verifying, you can sign in."
+msgstr "Se as informações forem válidas, enviamos um e-mail para verificar sua conta. Depois de verificar, você poderá entrar."
+
+msgid "Members no longer enter the panel"
+msgstr "Membros não entram mais no painel"
+
+#, python-format
+msgid "%(n)s user(s) with the role “Regular user” could open the panel before. That role is now a member: it only has its own account page. Give a higher role to anyone who needs the panel."
+msgstr "%(n)s usuário(s) com a função “Usuário comum” podiam abrir o painel antes. Essa função agora é de membro: só tem a própria página de conta. Dê uma função superior a quem precisa do painel."
+
+msgid "Show these users"
+msgstr "Mostrar esses usuários"
+
+msgid "Got it"
+msgstr "Entendi"

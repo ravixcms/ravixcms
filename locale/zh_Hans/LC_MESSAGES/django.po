@@ -12998,3 +12998,37 @@ msgstr "侧边窗口"
 #: templates/partials/_floating_actions.html
 msgid "Open in a full page"
 msgstr "在整页中打开"
+
+msgid "Someone tried to create an account with this email address, but you already have one."
+msgstr "有人试图用此电子邮件地址创建账户，但您已经有账户了。"
+
+msgid "If it was you, sign in here:"
+msgstr "如果是您本人，请在此登录："
+
+msgid "If you forgot your password, you can reset it here:"
+msgstr "如果您忘记了密码，可以在此重置："
+
+msgid "If it was not you, ignore this email; nothing was changed."
+msgstr "如果不是您本人，请忽略此邮件；未做任何更改。"
+
+msgid "Someone tried to sign up with your email address"
+msgstr "有人试图使用您的电子邮件地址注册"
+
+msgid "Check your email"
+msgstr "请查收您的邮件"
+
+msgid "If the information is valid, we have sent an email to verify your account. After verifying, you can sign in."
+msgstr "如果信息有效，我们已发送一封邮件用于验证您的账户。验证后即可登录。"
+
+msgid "Members no longer enter the panel"
+msgstr "成员不再进入后台"
+
+#, python-format
+msgid "%(n)s user(s) with the role “Regular user” could open the panel before. That role is now a member: it only has its own account page. Give a higher role to anyone who needs the panel."
+msgstr "此前有 %(n)s 位“普通用户”角色的用户可以打开后台。该角色现在是成员：只有自己的账户页面。请为需要后台的人赋予更高的角色。"
+
+msgid "Show these users"
+msgstr "显示这些用户"
+
+msgid "Got it"
+msgstr "知道了"

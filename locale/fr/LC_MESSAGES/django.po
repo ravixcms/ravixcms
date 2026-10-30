@@ -13881,3 +13881,37 @@ msgstr "Fenêtre latérale"
 #: templates/partials/_floating_actions.html
 msgid "Open in a full page"
 msgstr "Ouvrir en pleine page"
+
+msgid "Someone tried to create an account with this email address, but you already have one."
+msgstr "Quelqu'un a essayé de créer un compte avec cette adresse e-mail, mais vous en avez déjà un."
+
+msgid "If it was you, sign in here:"
+msgstr "Si c'était vous, connectez-vous ici :"
+
+msgid "If you forgot your password, you can reset it here:"
+msgstr "Si vous avez oublié votre mot de passe, vous pouvez le réinitialiser ici :"
+
+msgid "If it was not you, ignore this email; nothing was changed."
+msgstr "Si ce n'était pas vous, ignorez cet e-mail ; rien n'a été modifié."
+
+msgid "Someone tried to sign up with your email address"
+msgstr "Quelqu'un a essayé de s'inscrire avec votre adresse e-mail"
+
+msgid "Check your email"
+msgstr "Vérifiez votre messagerie"
+
+msgid "If the information is valid, we have sent an email to verify your account. After verifying, you can sign in."
+msgstr "Si les informations sont valides, nous avons envoyé un e-mail pour vérifier votre compte. Après la vérification, vous pourrez vous connecter."
+
+msgid "Members no longer enter the panel"
+msgstr "Les membres n'accèdent plus au panneau"
+
+#, python-format
+msgid "%(n)s user(s) with the role “Regular user” could open the panel before. That role is now a member: it only has its own account page. Give a higher role to anyone who needs the panel."
+msgstr "%(n)s utilisateur(s) ayant le rôle « Utilisateur ordinaire » pouvaient ouvrir le panneau auparavant. Ce rôle est désormais un membre : il n'a que sa propre page de compte. Donnez un rôle supérieur à toute personne qui a besoin du panneau."
+
+msgid "Show these users"
+msgstr "Afficher ces utilisateurs"
+
+msgid "Got it"
+msgstr "Compris"

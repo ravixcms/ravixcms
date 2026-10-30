@@ -399,7 +399,7 @@ RAVIX_ADMIN_PATH = env("RAVIX_ADMIN_PATH", "django-admin").strip("/")  # مسی�
 # ثبت‌نام
 # ---------------------------------------------------------------------------
 # اگر False باشد ثبت‌نام عمومی غیرفعال می‌شود (قابل تغییر از تنظیمات سایت نیز هست).
-REGISTRATION_DEFAULT_OPEN = env_bool("RAVIX_REGISTRATION_OPEN", True)
+REGISTRATION_DEFAULT_OPEN = env_bool("RAVIX_REGISTRATION_OPEN", False)  # a fresh install starts with public sign-up CLOSED; an administrator opens it
 
 LOGGING = {
     "version": 1,
