@@ -14131,3 +14131,37 @@ msgstr "Ouvrir les réglages des comptes"
 
 msgid "Who can create an account, sign-in and sign-up rules, terms and invitations are in the account settings."
 msgstr "Qui peut créer un compte, les règles de connexion et d'inscription, les conditions et les invitations se trouvent dans les réglages des comptes."
+
+msgid "Trust scope"
+msgstr "Portée de confiance"
+
+msgid "The trusted key entry format is invalid."
+msgstr "Le format de l'entrée de clé de confiance n'est pas valide."
+
+msgid "The trust scope is empty (use plugin, core or plugin+core)."
+msgstr "La portée de confiance est vide (utilisez plugin, core ou plugin+core)."
+
+#, python-format
+msgid "Unknown trust scope: %(scope)s (use plugin or core)."
+msgstr "Portée de confiance inconnue : %(scope)s (utilisez plugin ou core)."
+
+msgid "This key is not trusted for this kind of package (plugin packages and core updates use separate trust scopes)."
+msgstr "Cette clé n'est pas de confiance pour ce type de paquet (les paquets de plugins et les mises à jour du noyau ont des portées de confiance séparées)."
+
+msgid "Choose at least one trust scope."
+msgstr "Choisissez au moins une portée de confiance."
+
+msgid "Some panel keys are trusted for both plugins and core updates. Narrow each key to the one purpose it is used for."
+msgstr "Certaines clés du panneau sont de confiance à la fois pour les plugins et pour les mises à jour du noyau. Limitez chaque clé à l'unique usage pour lequel elle sert."
+
+msgid "Plugin packages"
+msgstr "Paquets de plugins"
+
+msgid "Core and theme updates"
+msgstr "Mises à jour du noyau et des thèmes"
+
+msgid "Trusted for"
+msgstr "De confiance pour"
+
+msgid "Use separate keys: a key trusted for plugins cannot sign a core update, and the reverse. Tick both only for a key you fully control."
+msgstr "Utilisez des clés distinctes : une clé de confiance pour les plugins ne peut pas signer une mise à jour du noyau, et inversement. Ne cochez les deux que pour une clé que vous contrôlez entièrement."

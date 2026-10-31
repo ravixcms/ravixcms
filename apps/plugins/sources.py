@@ -131,7 +131,7 @@ def registry_state() -> str:
     if getattr(settings, "RAVIX_OFFICIAL_REGISTRY_URL", ""):
         from apps.plugins.signing import trusted_keys
 
-        return "ok" if trusted_keys() else "no_key"
+        return "ok" if trusted_keys("plugin") else "no_key"
     if getattr(settings, "RAVIX_REGISTRY_ENABLED", False) and django_apps.is_installed("apps.pluginhub"):
         return "local"
     return "none"

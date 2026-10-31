@@ -13660,3 +13660,37 @@ msgstr "باز کردن تنظیمات حساب‌ها"
 
 msgid "Who can create an account, sign-in and sign-up rules, terms and invitations are in the account settings."
 msgstr "اینکه چه کسی می‌تواند حساب بسازد، قوانین ورود و ثبت‌نام، شرایط و دعوت‌ها در تنظیمات حساب‌ها است."
+
+msgid "Trust scope"
+msgstr "دامنهٔ اعتماد"
+
+msgid "The trusted key entry format is invalid."
+msgstr "قالب ورودی کلید مورد اعتماد معتبر نیست."
+
+msgid "The trust scope is empty (use plugin, core or plugin+core)."
+msgstr "دامنهٔ اعتماد خالی است (plugin، core یا plugin+core را بنویسید)."
+
+#, python-format
+msgid "Unknown trust scope: %(scope)s (use plugin or core)."
+msgstr "دامنهٔ اعتماد ناشناخته: %(scope)s (plugin یا core را بنویسید)."
+
+msgid "This key is not trusted for this kind of package (plugin packages and core updates use separate trust scopes)."
+msgstr "این کلید برای این نوع بسته مورد اعتماد نیست (بستهٔ افزونه و به‌روزرسانی هسته دامنهٔ اعتماد جدا دارند)."
+
+msgid "Choose at least one trust scope."
+msgstr "دست‌کم یک دامنهٔ اعتماد را انتخاب کنید."
+
+msgid "Some panel keys are trusted for both plugins and core updates. Narrow each key to the one purpose it is used for."
+msgstr "برخی کلیدهای پنل هم برای افزونه‌ها و هم برای به‌روزرسانی هسته مورد اعتمادند. هر کلید را به همان یک کاربردی که دارد محدود کنید."
+
+msgid "Plugin packages"
+msgstr "بسته‌های افزونه"
+
+msgid "Core and theme updates"
+msgstr "به‌روزرسانی هسته و قالب"
+
+msgid "Trusted for"
+msgstr "مورد اعتماد برای"
+
+msgid "Use separate keys: a key trusted for plugins cannot sign a core update, and the reverse. Tick both only for a key you fully control."
+msgstr "کلیدها را جدا نگه دارید: کلیدی که برای افزونه‌ها مورد اعتماد است نمی‌تواند به‌روزرسانی هسته را امضا کند و برعکس. فقط برای کلیدی که کاملاً در اختیار خودتان است هر دو را علامت بزنید."

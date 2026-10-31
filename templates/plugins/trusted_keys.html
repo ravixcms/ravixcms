@@ -9,13 +9,21 @@
 <form method="post">{% csrf_token %}<input type="hidden" name="op" value="add"><div class="card" style="margin-bottom:1.25rem"><div class="card-body">
   <div class="field"><label for="label">{% trans "Tag" %}</label><input class="input" id="label" name="label" maxlength="80" required></div>
   <div class="field"><label for="public_key">{% trans "Public key (base64, 32 bytes)" %}</label><input class="input ltr" id="public_key" name="public_key" required autocomplete="off"></div>
+  <div class="field"><label>{% trans "Trusted for" %}</label>
+    <label><input type="checkbox" name="scopes" value="plugin" checked> {% trans "Plugin packages" %}</label>
+    <label style="margin-inline-start:1rem"><input type="checkbox" name="scopes" value="core"> {% trans "Core and theme updates" %}</label>
+    <p class="hint">{% trans "Use separate keys: a key trusted for plugins cannot sign a core update, and the reverse. Tick both only for a key you fully control." %}</p></div>
   <button class="btn">{% trans "Register key" %}</button></div></div></form>
-<div class="card"><div class="table-wrap"><table class="table"><thead><tr><th>{% trans "Tag" %}</th><th>{% trans "Identifier" %}</th><th>{% trans "Source" %}</th><th>{% trans "Status" %}</th><th></th></tr></thead><tbody>
-{% for k in env_keys %}<tr><td>{{ k.label }}</td><td class="ltr">{{ k.key_id }}</td><td>{% if k.source == "builtin" %}{% trans "Application code (official)" %}{% else %}{% trans "Server setting" %}{% endif %}</td><td><span class="badge badge-published">{% trans "Active" %}</span></td><td></td></tr>{% endfor %}
-{% for k in db_keys %}<tr><td>{{ k.label }}</td><td class="ltr">{{ k.key_id }}</td><td>{% trans "Registered in the panel" %}</td>
+{% if broad %}<div class="alert alert-warning" role="alert">{% trans "Some panel keys are trusted for both plugins and core updates. Narrow each key to the one purpose it is used for." %}</div>
+{% endif %}<div class="card"><div class="table-wrap"><table class="table"><thead><tr><th>{% trans "Tag" %}</th><th>{% trans "Identifier" %}</th><th>{% trans "Trusted for" %}</th><th>{% trans "Source" %}</th><th>{% trans "Status" %}</th><th></th></tr></thead><tbody>
+{% for k in env_keys %}<tr><td>{{ k.label }}</td><td class="ltr">{{ k.key_id }}</td><td class="ltr">{{ k.scopes_text }}</td><td>{% if k.source == "builtin" %}{% trans "Application code (official)" %}{% else %}{% trans "Server setting" %}{% endif %}</td><td><span class="badge badge-published">{% trans "Active" %}</span></td><td></td></tr>{% endfor %}
+{% for k in db_keys %}<tr><td>{{ k.label }}</td><td class="ltr">{{ k.key_id }}</td><td>
+<form method="post" style="display:flex;gap:.4rem;align-items:center;flex-wrap:wrap">{% csrf_token %}<input type="hidden" name="op" value="scopes"><input type="hidden" name="pk" value="{{ k.pk }}">
+<label><input type="checkbox" name="scopes" value="plugin"{% if "plugin" in k.scopes %} checked{% endif %}> plugin</label><label><input type="checkbox" name="scopes" value="core"{% if "core" in k.scopes %} checked{% endif %}> core</label>
+<button class="btn btn-light btn-sm">{% trans "Save" %}</button></form></td><td>{% trans "Registered in the panel" %}</td>
 <td>{% if k.key_id in revoked %}<span class="badge badge-inactive">{% trans "Revoked" %}</span>{% elif k.is_active %}<span class="badge badge-published">{% trans "Active" %}</span>{% else %}<span class="badge badge-inactive">{% trans "Inactive" %}</span>{% endif %}</td>
 <td style="display:flex;gap:.4rem"><form method="post">{% csrf_token %}<input type="hidden" name="op" value="toggle"><input type="hidden" name="pk" value="{{ k.pk }}"><button class="btn btn-light btn-sm">{% if k.is_active %}{% trans "Inactive" %}{% else %}{% trans "Active" %}{% endif %}</button></form>
 <form method="post">{% csrf_token %}<input type="hidden" name="op" value="delete"><input type="hidden" name="pk" value="{{ k.pk }}"><button class="btn btn-danger btn-sm">{% trans "Delete" %}</button></form></td></tr>{% endfor %}
-{% for kid in revoked %}<tr><td>—</td><td class="ltr">{{ kid }}</td><td>{% trans "Revocation list (code/server setting)" %}</td><td><span class="badge badge-inactive">{% trans "Revoked" %}</span></td><td></td></tr>{% endfor %}
-{% if not env_keys and not db_keys and not revoked %}<tr><td colspan="5"><div class="empty">{% trans "No key has been registered." %}</div></td></tr>{% endif %}
+{% for kid in revoked %}<tr><td>—</td><td class="ltr">{{ kid }}</td><td></td><td>{% trans "Revocation list (code/server setting)" %}</td><td><span class="badge badge-inactive">{% trans "Revoked" %}</span></td><td></td></tr>{% endfor %}
+{% if not env_keys and not db_keys and not revoked %}<tr><td colspan="6"><div class="empty">{% trans "No key has been registered." %}</div></td></tr>{% endif %}
 </tbody></table></div></div>{% endblock %}

@@ -13824,3 +13824,37 @@ msgstr "Hesap ayarlarını aç"
 
 msgid "Who can create an account, sign-in and sign-up rules, terms and invitations are in the account settings."
 msgstr "Kimin hesap oluşturabileceği, giriş ve kayıt kuralları, koşullar ve davetler hesap ayarlarındadır."
+
+msgid "Trust scope"
+msgstr "Güven kapsamı"
+
+msgid "The trusted key entry format is invalid."
+msgstr "Güvenilir anahtar girdisinin biçimi geçersiz."
+
+msgid "The trust scope is empty (use plugin, core or plugin+core)."
+msgstr "Güven kapsamı boş (plugin, core veya plugin+core kullanın)."
+
+#, python-format
+msgid "Unknown trust scope: %(scope)s (use plugin or core)."
+msgstr "Bilinmeyen güven kapsamı: %(scope)s (plugin veya core kullanın)."
+
+msgid "This key is not trusted for this kind of package (plugin packages and core updates use separate trust scopes)."
+msgstr "Bu anahtar bu tür paket için güvenilir değil (eklenti paketleri ve çekirdek güncellemeleri ayrı güven kapsamları kullanır)."
+
+msgid "Choose at least one trust scope."
+msgstr "En az bir güven kapsamı seçin."
+
+msgid "Some panel keys are trusted for both plugins and core updates. Narrow each key to the one purpose it is used for."
+msgstr "Bazı panel anahtarları hem eklentiler hem de çekirdek güncellemeleri için güvenilir. Her anahtarı kullanıldığı tek amaçla sınırlayın."
+
+msgid "Plugin packages"
+msgstr "Eklenti paketleri"
+
+msgid "Core and theme updates"
+msgstr "Çekirdek ve tema güncellemeleri"
+
+msgid "Trusted for"
+msgstr "Şunun için güvenilir"
+
+msgid "Use separate keys: a key trusted for plugins cannot sign a core update, and the reverse. Tick both only for a key you fully control."
+msgstr "Ayrı anahtarlar kullanın: eklentiler için güvenilir bir anahtar çekirdek güncellemesini imzalayamaz, tersi de geçerlidir. İkisini de yalnızca tamamen kontrol ettiğiniz bir anahtar için işaretleyin."

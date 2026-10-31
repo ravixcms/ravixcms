@@ -13248,3 +13248,37 @@ msgstr "打开账户设置"
 
 msgid "Who can create an account, sign-in and sign-up rules, terms and invitations are in the account settings."
 msgstr "谁可以创建账户、登录与注册规则、条款和邀请都在账户设置中。"
+
+msgid "Trust scope"
+msgstr "信任范围"
+
+msgid "The trusted key entry format is invalid."
+msgstr "受信任密钥条目的格式无效。"
+
+msgid "The trust scope is empty (use plugin, core or plugin+core)."
+msgstr "信任范围为空（请使用 plugin、core 或 plugin+core）。"
+
+#, python-format
+msgid "Unknown trust scope: %(scope)s (use plugin or core)."
+msgstr "未知的信任范围：%(scope)s（请使用 plugin 或 core）。"
+
+msgid "This key is not trusted for this kind of package (plugin packages and core updates use separate trust scopes)."
+msgstr "此密钥对此类包不受信任（插件包和核心更新使用各自独立的信任范围）。"
+
+msgid "Choose at least one trust scope."
+msgstr "请至少选择一个信任范围。"
+
+msgid "Some panel keys are trusted for both plugins and core updates. Narrow each key to the one purpose it is used for."
+msgstr "部分后台密钥同时被信任用于插件和核心更新。请将每个密钥限制在其实际用途上。"
+
+msgid "Plugin packages"
+msgstr "插件包"
+
+msgid "Core and theme updates"
+msgstr "核心与主题更新"
+
+msgid "Trusted for"
+msgstr "信任用于"
+
+msgid "Use separate keys: a key trusted for plugins cannot sign a core update, and the reverse. Tick both only for a key you fully control."
+msgstr "请使用不同的密钥：被信任用于插件的密钥不能签署核心更新，反之亦然。仅对您完全掌控的密钥才同时勾选两者。"

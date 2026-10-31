@@ -2,6 +2,9 @@
 قالب: [Keep a Changelog](https://keepachangelog.com/)، نسخه‌بندی [SemVer](https://semver.org/).
 
 ## [Unreleased]
+### Security (دامنهٔ اعتماد کلیدهای امضا)
+- کلیدهای مورد اعتماد حالا دامنه دارند: `plugin` (بستهٔ افزونه) و `core` (به‌روزرسانی هسته/قالب و فهرست آن). پیش‌تر یک فهرست مشترک بود و کلید ناشر افزونه‌ها می‌توانست هسته را امضا کند. env: `برچسب:دامنه:کلید` (شکل قدیمی هر دو دامنه را می‌دهد و `ravix_preflight` هشدار می‌دهد)؛ `TrustedKey.scopes` (migration `plugins.0004`؛ ردیف‌های موجود هر دو دامنه را نگه می‌دارند) و ویرایش آن در پنل.
+- دو کلید عمومی رسمی به‌روزرسانی هسته (اصلی + یدک، فقط دامنهٔ `core`) در `apps/core/official.py`؛ `verify_release.py` و `build_cpanel_zip.py` نبودشان را در بسته خطا می‌گیرند.
 ### Added (نصب روی هاست اشتراکی cPanel)
 - حالت هاستینگ (`config.settings.hosting`، فعال با `ravix-hosting.marker` یا `RAVIX_HOSTING=shared`)؛ مسیر VPS (`install.sh`) بدون تغییر. `passenger_wsgi.py` سازگار با Passenger و LiteSpeed، نصب در زیرپوشه (`RAVIX_SCRIPT_NAME`)، پایتون حداقل ۳٫۱۱ با پیام روشن.
 - پشتیبانی کامل MySQL/MariaDB با PyMySQL (utf8mb4؛ یکتایی‌های شرطی با ستون مجازی در `shop.0010` و `sites.0004`؛ پشتیبان/بازیابی MySQL) و جاب CI تازه.

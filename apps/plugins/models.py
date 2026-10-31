@@ -56,12 +56,23 @@ class TrustedKey(models.Model):
     key_id = models.CharField(max_length=16, unique=True)
     public_key = models.CharField(max_length=64)
     label = models.CharField(gettext_lazy("Tag"), max_length=80)
+    # دامنهٔ اعتماد: «plugin»، «core» یا هر دو (جداشده با ویرگول). ردیف‌های پیش از این نسخه هر دو را دارند تا رفتارشان عوض نشود؛ مدیرکل می‌تواند محدودشان کند.
+    scopes = models.CharField(gettext_lazy("Trust scope"), max_length=20, default="plugin,core")
     is_active = models.BooleanField(gettext_lazy("Active"), default=True)
     added_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ["label"]
+
+    @property
+    def scope_set(self) -> frozenset:
+        from .signing import SigningError, parse_scopes
+
+        try:
+            return parse_scopes(self.scopes, default=())
+        except SigningError:
+            return frozenset()  # مقدار خراب = هیچ دامنه‌ای (امن)
 
 
 class PluginPackage(models.Model):

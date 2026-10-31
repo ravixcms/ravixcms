@@ -104,7 +104,11 @@ class RejectedBeforeAnyChange(UpdaterCase):
 
     def test_no_trusted_keys_configured_rejects(self):
         self.publish("0.7.0")
-        with override_settings(RAVIX_TRUSTED_PUBLIC_KEYS=[]):
+        from unittest import mock
+
+        from apps.core import official
+
+        with override_settings(RAVIX_TRUSTED_PUBLIC_KEYS=[]), mock.patch.object(official, "OFFICIAL_PUBLIC_KEYS", ()):
             with self.assertRaisesRegex(UpdateBlocked, "کلید مورد اعتماد"):
                 self.apply()
         self.assertUntouched()

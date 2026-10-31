@@ -13609,3 +13609,37 @@ msgstr "فتح إعدادات الحسابات"
 
 msgid "Who can create an account, sign-in and sign-up rules, terms and invitations are in the account settings."
 msgstr "من يمكنه إنشاء حساب وقواعد الدخول والتسجيل والشروط والدعوات موجودة في إعدادات الحسابات."
+
+msgid "Trust scope"
+msgstr "نطاق الثقة"
+
+msgid "The trusted key entry format is invalid."
+msgstr "تنسيق إدخال المفتاح الموثوق غير صالح."
+
+msgid "The trust scope is empty (use plugin, core or plugin+core)."
+msgstr "نطاق الثقة فارغ (استخدم plugin أو core أو plugin+core)."
+
+#, python-format
+msgid "Unknown trust scope: %(scope)s (use plugin or core)."
+msgstr "نطاق ثقة غير معروف: %(scope)s (استخدم plugin أو core)."
+
+msgid "This key is not trusted for this kind of package (plugin packages and core updates use separate trust scopes)."
+msgstr "هذا المفتاح غير موثوق لهذا النوع من الحزم (حزم الإضافات وتحديثات النواة لها نطاقا ثقة منفصلان)."
+
+msgid "Choose at least one trust scope."
+msgstr "اختر نطاق ثقة واحدًا على الأقل."
+
+msgid "Some panel keys are trusted for both plugins and core updates. Narrow each key to the one purpose it is used for."
+msgstr "بعض مفاتيح اللوحة موثوقة للإضافات وتحديثات النواة معًا. قيّد كل مفتاح بالغرض الواحد الذي يُستخدم له."
+
+msgid "Plugin packages"
+msgstr "حزم الإضافات"
+
+msgid "Core and theme updates"
+msgstr "تحديثات النواة والقوالب"
+
+msgid "Trusted for"
+msgstr "موثوق لـ"
+
+msgid "Use separate keys: a key trusted for plugins cannot sign a core update, and the reverse. Tick both only for a key you fully control."
+msgstr "استخدم مفاتيح منفصلة: المفتاح الموثوق للإضافات لا يمكنه توقيع تحديث النواة، والعكس صحيح. حدّد الخيارين فقط لمفتاح تتحكم فيه بالكامل."

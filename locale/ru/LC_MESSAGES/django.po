@@ -13844,3 +13844,37 @@ msgstr "Открыть настройки аккаунтов"
 
 msgid "Who can create an account, sign-in and sign-up rules, terms and invitations are in the account settings."
 msgstr "Кто может создать аккаунт, правила входа и регистрации, условия и приглашения находятся в настройках аккаунтов."
+
+msgid "Trust scope"
+msgstr "Область доверия"
+
+msgid "The trusted key entry format is invalid."
+msgstr "Недопустимый формат записи доверенного ключа."
+
+msgid "The trust scope is empty (use plugin, core or plugin+core)."
+msgstr "Область доверия пуста (используйте plugin, core или plugin+core)."
+
+#, python-format
+msgid "Unknown trust scope: %(scope)s (use plugin or core)."
+msgstr "Неизвестная область доверия: %(scope)s (используйте plugin или core)."
+
+msgid "This key is not trusted for this kind of package (plugin packages and core updates use separate trust scopes)."
+msgstr "Этот ключ не является доверенным для данного типа пакетов (пакеты плагинов и обновления ядра имеют раздельные области доверия)."
+
+msgid "Choose at least one trust scope."
+msgstr "Выберите хотя бы одну область доверия."
+
+msgid "Some panel keys are trusted for both plugins and core updates. Narrow each key to the one purpose it is used for."
+msgstr "Некоторые ключи панели являются доверенными и для плагинов, и для обновлений ядра. Ограничьте каждый ключ единственной целью, для которой он используется."
+
+msgid "Plugin packages"
+msgstr "Пакеты плагинов"
+
+msgid "Core and theme updates"
+msgstr "Обновления ядра и тем"
+
+msgid "Trusted for"
+msgstr "Доверенный для"
+
+msgid "Use separate keys: a key trusted for plugins cannot sign a core update, and the reverse. Tick both only for a key you fully control."
+msgstr "Используйте раздельные ключи: ключ, доверенный для плагинов, не может подписать обновление ядра, и наоборот. Отмечайте оба пункта только для ключа, который вы полностью контролируете."

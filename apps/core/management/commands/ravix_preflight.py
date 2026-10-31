@@ -196,7 +196,7 @@ class Command(BaseCommand):
         if settings.RAVIX_UPDATE_URL:
             need(settings.RAVIX_UPDATE_URL.startswith("https://"), cli_gettext("The update source is HTTPS"), cli_gettext("RAVIX_UPDATE_URL must be https"))
         if settings.RAVIX_UPDATE_URL or settings.RAVIX_UPDATE_DIR:
-            advise(bool(signing.trusted_keys()), cli_gettext("A trusted public key for package signatures is configured"), cli_gettext("There is no trusted key (RAVIX_TRUSTED_PUBLIC_KEYS): the official update source stays disabled and no update package is accepted"))
+            advise(bool(signing.trusted_keys(signing.SCOPE_CORE)), cli_gettext("A trusted public key for core updates is configured"), cli_gettext("There is no key trusted for core updates (the official keys ship with Ravix, or add one as release:core:KEY in RAVIX_TRUSTED_PUBLIC_KEYS): the official update source stays disabled and no update package is accepted"))
         advise(not settings.RAVIX_UPDATE_WEB_APPLY or hosting_mode, cli_gettext("Applying upgrades from the web is off (recommended)"), cli_gettext("RAVIX_UPDATE_WEB_APPLY is on; the web service must have write access to the code and the database"))
         try:
             plan = MigrationExecutor(connection).migration_plan(MigrationExecutor(connection).loader.graph.leaf_nodes())
@@ -244,12 +244,16 @@ class Command(BaseCommand):
         media_root_p = Path(settings.MEDIA_ROOT).resolve()
         need(not (data_dir == media_root_p or media_root_p in data_dir.parents), cli_gettext("The plugin private-files folder is outside the public media"),
              cli_gettext("RAVIX_PLUGIN_DATA_DIR (%(path)s) is inside the public media; private plugin files would leak") % {"path": data_dir})
-        bad_keys = []
+        bad_keys, broad_keys = [], []
         for item in settings.RAVIX_TRUSTED_PUBLIC_KEYS:
             try:
-                signing.normalize_public_key(item.partition(":")[2] or item)
+                _l, _k, _s, explicit = signing.parse_key_entry(item, "env")
+                if not explicit:
+                    broad_keys.append(item[:20])
             except signing.SigningError:
                 bad_keys.append(item[:20])
+        if broad_keys:
+            warns.append((cli_gettext("RAVIX_TRUSTED_PUBLIC_KEYS has entries without a trust scope (%(keys)s); they are trusted for both plugins and core updates. Write them as label:plugin:KEY or label:core:KEY") % {"keys": ", ".join(broad_keys)}))
         need(not bad_keys, cli_gettext("Trusted keys (env) are valid"), cli_gettext("RAVIX_TRUSTED_PUBLIC_KEYS contains an invalid entry: %(bad_keys)s") % {"bad_keys": bad_keys})
         if settings.RAVIX_PLUGIN_WEB_INSTALL:
             warns.append(cli_gettext("Plugin installation from the web is on (RAVIX_PLUGIN_WEB_INSTALL); keep it on only if you need it, because a plugin is executable code"))
@@ -258,7 +262,7 @@ class Command(BaseCommand):
             backup_dir = Path(settings.RAVIX_PLUGIN_BACKUP_DIR)
             server(backup_dir.is_dir() and os.access(str(backup_dir), os.W_OK), cli_gettext("The plugin backup folder is writable"),
                  cli_gettext("The plugin backup folder (%(backup_dir)s) does not exist or is not writable") % {"backup_dir": backup_dir})
-            advise(bool(signing.trusted_keys()), cli_gettext("A trusted signing key is defined"), cli_gettext("No trusted key is defined; a signed package is not accepted"))
+            advise(bool(signing.trusted_keys(signing.SCOPE_PLUGIN)), cli_gettext("A trusted signing key is defined"), cli_gettext("No key is trusted for plugin packages (add one as publisher:plugin:KEY in RAVIX_TRUSTED_PUBLIC_KEYS); a signed package is not accepted"))
         advise(not settings.RAVIX_PLUGINS_ALLOW_UNSIGNED, cli_gettext("Unsigned packages are not accepted"), cli_gettext("RAVIX_PLUGINS_ALLOW_UNSIGNED is on; local upload without a signature is allowed"))
         if settings.RAVIX_REGISTRY_SIGNING_KEY_FILE:
             try:

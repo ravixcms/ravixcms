@@ -348,7 +348,7 @@ class InstallPackageView(PluginsAdminMixin, View):
     def _ctx(self, request, **extra):
         from django.conf import settings
 
-        return {"web_install": settings.RAVIX_PLUGIN_WEB_INSTALL, "has_registry": sources.has_source(), "trusted_count": len(signing.trusted_keys()),
+        return {"web_install": settings.RAVIX_PLUGIN_WEB_INSTALL, "has_registry": sources.has_source(), "trusted_count": len(signing.trusted_keys(signing.SCOPE_PLUGIN)),
                 "allow_unsigned": settings.RAVIX_PLUGINS_ALLOW_UNSIGNED, "prefill_slug": request.GET.get("slug", "")[:40],
                 "prefill_version": request.GET.get("version", "")[:20], **extra}
 
@@ -418,7 +418,8 @@ class TrustedKeysView(CapabilityRequiredMixin, View):
 
     def _render(self, request, status=200):
         return render(request, "plugins/trusted_keys.html", {"env_keys": [k for k in signing.trusted_keys().values() if k.source in ("builtin", "env")],
-                                                            "db_keys": TrustedKey.objects.all(), "revoked": sorted(signing.revoked_key_ids())}, status=status)
+                                                            "db_keys": TrustedKey.objects.all(), "revoked": sorted(signing.revoked_key_ids()),
+                                                            "scope_choices": signing.SCOPES, "broad": [k for k in TrustedKey.objects.filter(is_active=True) if k.scope_set == signing.ALL_SCOPES]}, status=status)
 
     def get(self, request):
         return self._render(request)
@@ -435,15 +436,31 @@ class TrustedKeysView(CapabilityRequiredMixin, View):
             if not label:
                 messages.error(request, gettext("A label is required."))
                 return self._render(request, 400)
+            try:
+                scopes = signing.parse_scopes(request.POST.getlist("scopes"), default=(signing.SCOPE_PLUGIN,))
+            except signing.SigningError as exc:
+                messages.error(request, str(exc))
+                return self._render(request, 400)
             kid = signing.key_id(pub)
-            _, created = TrustedKey.objects.get_or_create(key_id=kid, defaults={"public_key": pub, "label": label, "added_by": request.user})
+            _, created = TrustedKey.objects.get_or_create(key_id=kid, defaults={"public_key": pub, "label": label, "scopes": ",".join(s for s in signing.SCOPES if s in scopes), "added_by": request.user})
             events.log_event("_keys", "key_added" if created else "key_exists", (gettext("Key %(kid)s (%(label)s) %(value)s.") % {"kid": kid, "label": label, "value": (gettext("was added") if created else gettext("already existed"))}), actor=request.user)
             messages.success(request, (gettext("Key %(kid)s was registered.") % {"kid": kid}) if created else gettext("This key was already registered."))
-        elif op in ("toggle", "delete"):
+        elif op in ("toggle", "delete", "scopes"):
             k = TrustedKey.objects.filter(pk=request.POST.get("pk")).first()
             if k is None:
                 raise Http404
-            if op == "delete":
+            if op == "scopes":
+                try:
+                    scopes = signing.parse_scopes(request.POST.getlist("scopes"), default=())
+                except signing.SigningError as exc:
+                    messages.error(request, str(exc))
+                    return self._render(request, 400)
+                if not scopes:
+                    messages.error(request, gettext("Choose at least one trust scope."))
+                    return self._render(request, 400)
+                k.scopes = ",".join(s for s in signing.SCOPES if s in scopes)
+                k.save(update_fields=["scopes"])
+            elif op == "delete":
                 k.delete()
             else:
                 k.is_active = not k.is_active

@@ -309,7 +309,7 @@ RAVIX_PLUGIN_BACKUPS_KEEP = int(env("RAVIX_PLUGIN_BACKUPS_KEEP", "5"))
 # نصب از طریق وب (آپلود/مخزن) صراحتاً باید روشن شود؛ بدون آن فقط نصب دستی پوشه‌ای + تأیید در پنل ممکن است.
 RAVIX_PLUGIN_WEB_INSTALL = env_bool("RAVIX_PLUGIN_WEB_INSTALL", False)
 RAVIX_PLUGINS_ALLOW_UNSIGNED = env_bool("RAVIX_PLUGINS_ALLOW_UNSIGNED", False)  # بستهٔ بدون امضای معتبر (فقط آپلود محلی؛ مخزن همیشه امضا می‌خواهد)
-RAVIX_TRUSTED_PUBLIC_KEYS = env_list("RAVIX_TRUSTED_PUBLIC_KEYS")  # «برچسب:کلید_عمومی_base64» ؛ کلیدهای بیشتر در پنل (مدیرکل)
+RAVIX_TRUSTED_PUBLIC_KEYS = env_list("RAVIX_TRUSTED_PUBLIC_KEYS")  # «برچسب:دامنه:کلید_عمومی_base64» (دامنه: plugin، core یا plugin+core)؛ بدون دامنه = هر دو (قدیمی، با هشدار preflight). کلیدهای بیشتر در پنل (مدیرکل)
 # پیش‌فرض‌ها از apps/core/official.py می‌آیند و با متغیر محیطی عوض می‌شوند؛ مقدار خالیِ صریح (RAVIX_OFFICIAL_REGISTRY_URL=) آن را خاموش می‌کند.
 RAVIX_OFFICIAL_REGISTRY_URL = env("RAVIX_OFFICIAL_REGISTRY_URL", official.OFFICIAL_REGISTRY_URL).strip().rstrip("/")  # خالی: مخزن همین نمونه (اگر روشن باشد)
 RAVIX_REVOKED_KEY_IDS = [k.lower() for k in env_list("RAVIX_REVOKED_KEY_IDS")]  # شناسهٔ کلیدهای ابطال‌شده (افزون بر official.REVOKED_KEY_IDS)

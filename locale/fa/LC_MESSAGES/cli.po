@@ -119,9 +119,6 @@ msgstr "قالب جدید بر پایهٔ قالب «%s»؛ این توضیح ر
 msgid "A theme with the slug “%(slug)s” already exists."
 msgstr "قالبی با نامک «%(slug)s» از قبل وجود دارد."
 
-msgid "A trusted public key for package signatures is configured"
-msgstr "کلید عمومی مورد اعتماد برای امضای بسته‌ها تنظیم شده"
-
 msgid "A trusted signing key is defined"
 msgstr "کلید مورد اعتماد برای امضا تعریف شده"
 
@@ -358,9 +355,6 @@ msgstr "کلید امضا داده نشد: --key-file یا RAVIX_RELEASE_SIGNING
 
 msgid "No theme was found in the RAVIX_THEME_DIRS paths."
 msgstr "هیچ قالبی در مسیرهای RAVIX_THEME_DIRS پیدا نشد."
-
-msgid "No trusted key is defined; a signed package is not accepted"
-msgstr "هیچ کلید مورد اعتمادی تعریف نشده؛ بستهٔ امضاشده پذیرفته نمی‌شود"
 
 msgid "No update source (RAVIX_UPDATE_URL) is configured; checking for new versions is disabled"
 msgstr "منبع به‌روزرسانی (RAVIX_UPDATE_URL) تنظیم نشده؛ بررسی نسخهٔ جدید غیرفعال است"
@@ -813,9 +807,6 @@ msgstr "مقدار نوشته‌شده خوانده نشد"
 msgid "Theme slug: lowercase English letters, digits, “-” and “_”"
 msgstr "نامک قالب: حروف کوچک انگلیسی، عدد، «-» و «_»"
 
-msgid "There is no trusted key (RAVIX_TRUSTED_PUBLIC_KEYS): the official update source stays disabled and no update package is accepted"
-msgstr "هیچ کلید مورد اعتمادی (RAVIX_TRUSTED_PUBLIC_KEYS) نیست: منبع رسمی به‌روزرسانی غیرفعال می‌ماند و هیچ بستهٔ به‌روزرسانی پذیرفته نمی‌شود"
-
 msgid "Trusted keys (env) are valid"
 msgstr "کلیدهای مورد اعتماد (env) معتبرند"
 
@@ -1040,3 +1031,16 @@ msgstr "Ravix نصب شده اما فایل تنظیمات آن گم شده اس
 #, python-format
 msgid "Sending the invitation to %s failed."
 msgstr "ارسال دعوت‌نامه %s ناموفق بود."
+
+msgid "A trusted public key for core updates is configured"
+msgstr "کلید عمومی مورد اعتماد برای به‌روزرسانی هسته تنظیم شده"
+
+msgid "There is no key trusted for core updates (the official keys ship with Ravix, or add one as release:core:KEY in RAVIX_TRUSTED_PUBLIC_KEYS): the official update source stays disabled and no update package is accepted"
+msgstr "هیچ کلیدی برای به‌روزرسانی هسته مورد اعتماد نیست (کلیدهای رسمی همراه Ravix می‌آیند، یا یکی را به شکل release:core:KEY در RAVIX_TRUSTED_PUBLIC_KEYS بگذارید): منبع رسمی به‌روزرسانی غیرفعال می‌ماند و هیچ بستهٔ به‌روزرسانی پذیرفته نمی‌شود"
+
+msgid "No key is trusted for plugin packages (add one as publisher:plugin:KEY in RAVIX_TRUSTED_PUBLIC_KEYS); a signed package is not accepted"
+msgstr "هیچ کلیدی برای بستهٔ افزونه مورد اعتماد نیست (یکی را به شکل publisher:plugin:KEY در RAVIX_TRUSTED_PUBLIC_KEYS بگذارید)؛ بستهٔ امضاشده پذیرفته نمی‌شود"
+
+#, python-format
+msgid "RAVIX_TRUSTED_PUBLIC_KEYS has entries without a trust scope (%(keys)s); they are trusted for both plugins and core updates. Write them as label:plugin:KEY or label:core:KEY"
+msgstr "در RAVIX_TRUSTED_PUBLIC_KEYS ورودی‌هایی بدون دامنهٔ اعتماد هست (%(keys)s)؛ هم برای افزونه‌ها و هم برای به‌روزرسانی هسته مورد اعتمادند. آن‌ها را به شکل label:plugin:KEY یا label:core:KEY بنویسید"

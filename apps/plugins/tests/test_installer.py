@@ -184,7 +184,11 @@ class SignatureTests(InstallerCase):
     def test_no_trusted_keys_means_nothing_verifies(self):
         data = pkg()
         sig, kid = sig_for(data)
-        with override_settings(RAVIX_TRUSTED_PUBLIC_KEYS=[]), self.assertRaises(InstallError) as cm:
+        from unittest import mock
+
+        from apps.core import official
+
+        with override_settings(RAVIX_TRUSTED_PUBLIC_KEYS=[]), mock.patch.object(official, "OFFICIAL_PUBLIC_KEYS", ()), self.assertRaises(InstallError) as cm:
             installer.install_from_file(data, self.admin, signature=sig, key_id=kid)
         self.assertIn("کلید", str(cm.exception))
 

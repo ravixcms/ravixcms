@@ -14121,3 +14121,37 @@ msgstr "Kontoeinstellungen öffnen"
 
 msgid "Who can create an account, sign-in and sign-up rules, terms and invitations are in the account settings."
 msgstr "Wer ein Konto erstellen darf, Regeln für Anmeldung und Registrierung, Bedingungen und Einladungen finden Sie in den Kontoeinstellungen."
+
+msgid "Trust scope"
+msgstr "Vertrauensbereich"
+
+msgid "The trusted key entry format is invalid."
+msgstr "Das Format des vertrauenswürdigen Schlüsseleintrags ist ungültig."
+
+msgid "The trust scope is empty (use plugin, core or plugin+core)."
+msgstr "Der Vertrauensbereich ist leer (verwenden Sie plugin, core oder plugin+core)."
+
+#, python-format
+msgid "Unknown trust scope: %(scope)s (use plugin or core)."
+msgstr "Unbekannter Vertrauensbereich: %(scope)s (verwenden Sie plugin oder core)."
+
+msgid "This key is not trusted for this kind of package (plugin packages and core updates use separate trust scopes)."
+msgstr "Dieser Schlüssel ist für diese Art von Paket nicht vertrauenswürdig (Plugin-Pakete und Core-Updates haben getrennte Vertrauensbereiche)."
+
+msgid "Choose at least one trust scope."
+msgstr "Wählen Sie mindestens einen Vertrauensbereich."
+
+msgid "Some panel keys are trusted for both plugins and core updates. Narrow each key to the one purpose it is used for."
+msgstr "Einige Panel-Schlüssel sind sowohl für Plugins als auch für Core-Updates vertrauenswürdig. Beschränken Sie jeden Schlüssel auf den einen Zweck, für den er verwendet wird."
+
+msgid "Plugin packages"
+msgstr "Plugin-Pakete"
+
+msgid "Core and theme updates"
+msgstr "Core- und Theme-Updates"
+
+msgid "Trusted for"
+msgstr "Vertrauenswürdig für"
+
+msgid "Use separate keys: a key trusted for plugins cannot sign a core update, and the reverse. Tick both only for a key you fully control."
+msgstr "Verwenden Sie getrennte Schlüssel: Ein für Plugins vertrauenswürdiger Schlüssel kann kein Core-Update signieren, und umgekehrt. Aktivieren Sie beides nur für einen Schlüssel, den Sie vollständig kontrollieren."

@@ -102,36 +102,81 @@ def registry_signing_seed() -> str | None:
 
 
 # ------------------------------------------------------------------ اعتبارسنجی (سمت سایت)
+# دامنهٔ اعتماد هر کلید: «plugin» = بستهٔ افزونه (و مخزن افزونه/قالب)، «core» = به‌روزرسانی هسته/قالب و فهرست آن.
+# کلیدی که فقط برای یک دامنه مورد اعتماد است، برای دامنهٔ دیگر هرگز پذیرفته نمی‌شود.
+SCOPE_PLUGIN = "plugin"
+SCOPE_CORE = "core"
+SCOPES = (SCOPE_PLUGIN, SCOPE_CORE)
+ALL_SCOPES = frozenset(SCOPES)
+
+
+def parse_scopes(value, default=ALL_SCOPES) -> frozenset:
+    """«plugin+core» / «plugin,core» / فهرست را به مجموعهٔ دامنه‌ها تبدیل می‌کند؛ نام ناشناخته SigningError است؛ مقدار خالی = default."""
+    if isinstance(value, str):
+        value = [v for v in value.replace("+", ",").split(",")]
+    items = {str(v).strip().lower() for v in (value or []) if str(v).strip()}
+    if not items:
+        return frozenset(default)
+    bad = items - ALL_SCOPES
+    if bad:
+        raise SigningError((gettext("Unknown trust scope: %(scope)s (use plugin or core).") % {"scope": ", ".join(sorted(bad))}))
+    return frozenset(items)
+
+
+def parse_key_entry(item: str, default_label: str = "") -> tuple[str, str, frozenset, bool]:
+    """یک ورودی RAVIX_TRUSTED_PUBLIC_KEYS را می‌خواند. قالب‌ها:
+    ``کلید`` ، ``برچسب:کلید`` (قدیمی؛ هر دو دامنه) و ``برچسب:دامنه‌ها:کلید`` (دامنه‌ها با «+»، مثلاً ``publisher:plugin:KEY``).
+    خروجی: (برچسب، کلید_نرمال‌شده، دامنه‌ها، صریح_بودن_دامنه)."""
+    parts = [p.strip() for p in (item or "").split(":")]
+    if len(parts) == 1:
+        label, scopes, raw, explicit = default_label, ALL_SCOPES, parts[0], False
+    elif len(parts) == 2:
+        label, scopes, raw, explicit = parts[0], ALL_SCOPES, parts[1], False
+    elif len(parts) == 3:
+        label, raw, explicit = parts[0], parts[2], True
+        scopes = parse_scopes(parts[1], default=())
+        if not scopes:
+            raise SigningError(gettext("The trust scope is empty (use plugin, core or plugin+core)."))
+    else:
+        raise SigningError(gettext("The trusted key entry format is invalid."))
+    return (label or default_label), normalize_public_key(raw), frozenset(scopes), explicit
+
+
 @dataclass(frozen=True)
 class TrustedKeyInfo:
     key_id: str
     public_key: str
     label: str
     source: str  # builtin | env | db
+    scopes: frozenset = ALL_SCOPES
+
+    @property
+    def scopes_text(self) -> str:
+        return "+".join(s for s in SCOPES if s in self.scopes)
 
 
-def trusted_keys() -> dict[str, TrustedKeyInfo]:
-    """کلیدهای مورد اعتماد: کلیدهای رسمی داخل کد (apps/core/official.py) + RAVIX_TRUSTED_PUBLIC_KEYS + کلیدهای فعال ثبت‌شده توسط مدیرکل؛ منهای کلیدهای ابطال‌شده."""
+def trusted_keys(scope: str | None = None) -> dict[str, TrustedKeyInfo]:
+    """کلیدهای مورد اعتماد: کلیدهای رسمی داخل کد (apps/core/official.py) + RAVIX_TRUSTED_PUBLIC_KEYS + کلیدهای فعال ثبت‌شده توسط مدیرکل؛ منهای کلیدهای ابطال‌شده.
+    با scope=«plugin»/«core» فقط کلیدهایی که برای آن دامنه مورد اعتمادند؛ بدون scope همهٔ کلیدها (برای نمایش در پنل)."""
     from apps.core import official
 
     out: dict[str, TrustedKeyInfo] = {}
     for source, items in (("builtin", official.OFFICIAL_PUBLIC_KEYS), ("env", getattr(settings, "RAVIX_TRUSTED_PUBLIC_KEYS", []))):
         for item in items:
-            label, _, val = item.partition(":")
-            if not val:
-                label, val = source, item
             try:
-                val = normalize_public_key(val)
+                label, val, scopes, _ = parse_key_entry(item, source)
             except SigningError:
                 continue  # ورودی خراب نادیده گرفته می‌شود؛ preflight آن را گزارش می‌کند
             kid = key_id(val)
-            out.setdefault(kid, TrustedKeyInfo(kid, val, label.strip() or source, source))
+            out.setdefault(kid, TrustedKeyInfo(kid, val, label or source, source, scopes))
     from .models import TrustedKey
 
     for k in TrustedKey.objects.filter(is_active=True):
-        out.setdefault(k.key_id, TrustedKeyInfo(k.key_id, k.public_key, k.label, "db"))
+        out.setdefault(k.key_id, TrustedKeyInfo(k.key_id, k.public_key, k.label, "db", k.scope_set))
     for kid in revoked_key_ids():
         out.pop(kid, None)  # ابطال بر همهٔ منبع‌ها (کد، env، پنل) غالب است
+    if scope is not None:
+        out = {kid: k for kid, k in out.items() if scope in k.scopes}
     return out
 
 
@@ -153,20 +198,23 @@ class Verification:
         return self.state == "verified"
 
 
-def verify(slug: str, version: str, sha256: str, fingerprint: str, signature_b64: str, claimed_key_id: str = "") -> Verification:
+def verify_message(msg: bytes, signature_b64: str, claimed_key_id: str = "", scope: str = SCOPE_PLUGIN) -> Verification:
+    """امضای Ed25519 روی msg را فقط با کلیدهای مورد اعتماد برای همان دامنه (scope) می‌سنجد."""
     if not signature_b64:
         return Verification("unsigned", reason=gettext("The package has no signature."))
-    keys = trusted_keys()
-    if not keys:
+    every = trusted_keys()
+    if not every:
         return Verification("invalid", reason=gettext("No trusted key is configured."))
+    keys = {kid: k for kid, k in every.items() if scope in k.scopes}
     try:
         sig = _b64decode(signature_b64, 64)
     except SigningError:
         return Verification("invalid", reason=gettext("The signature format is invalid."))
+    if not keys or (claimed_key_id and claimed_key_id in every and claimed_key_id not in keys):
+        return Verification("invalid", key_id=claimed_key_id, reason=gettext("This key is not trusted for this kind of package (plugin packages and core updates use separate trust scopes)."))
     candidates = [keys[claimed_key_id]] if claimed_key_id in keys else ([] if claimed_key_id else list(keys.values()))
     if claimed_key_id and not candidates:
         return Verification("invalid", key_id=claimed_key_id, reason=gettext("The signing key is not in the list of trusted keys (or it has been disabled)."))
-    msg = message(slug, version, sha256, fingerprint)
     for k in candidates:
         try:
             Ed25519PublicKey.from_public_bytes(_b64decode(k.public_key, 32)).verify(sig, msg)
@@ -174,3 +222,8 @@ def verify(slug: str, version: str, sha256: str, fingerprint: str, signature_b64
         except InvalidSignature:
             continue
     return Verification("invalid", key_id=claimed_key_id, reason=gettext("The signature does not match the package contents (the package was modified or signed with a different key)."))
+
+
+def verify(slug: str, version: str, sha256: str, fingerprint: str, signature_b64: str, claimed_key_id: str = "") -> Verification:
+    """بستهٔ افزونه؛ فقط کلیدهای دامنهٔ «plugin»."""
+    return verify_message(message(slug, version, sha256, fingerprint), signature_b64, claimed_key_id, SCOPE_PLUGIN)

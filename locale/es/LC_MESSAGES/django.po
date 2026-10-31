@@ -14011,3 +14011,37 @@ msgstr "Abrir los ajustes de cuentas"
 
 msgid "Who can create an account, sign-in and sign-up rules, terms and invitations are in the account settings."
 msgstr "Quién puede crear una cuenta, las reglas de inicio de sesión y registro, los términos y las invitaciones están en los ajustes de cuentas."
+
+msgid "Trust scope"
+msgstr "Ámbito de confianza"
+
+msgid "The trusted key entry format is invalid."
+msgstr "El formato de la entrada de clave de confianza no es válido."
+
+msgid "The trust scope is empty (use plugin, core or plugin+core)."
+msgstr "El ámbito de confianza está vacío (use plugin, core o plugin+core)."
+
+#, python-format
+msgid "Unknown trust scope: %(scope)s (use plugin or core)."
+msgstr "Ámbito de confianza desconocido: %(scope)s (use plugin o core)."
+
+msgid "This key is not trusted for this kind of package (plugin packages and core updates use separate trust scopes)."
+msgstr "Esta clave no es de confianza para este tipo de paquete (los paquetes de plugins y las actualizaciones del núcleo usan ámbitos de confianza separados)."
+
+msgid "Choose at least one trust scope."
+msgstr "Elija al menos un ámbito de confianza."
+
+msgid "Some panel keys are trusted for both plugins and core updates. Narrow each key to the one purpose it is used for."
+msgstr "Algunas claves del panel son de confianza tanto para plugins como para actualizaciones del núcleo. Limite cada clave al único propósito para el que se usa."
+
+msgid "Plugin packages"
+msgstr "Paquetes de plugins"
+
+msgid "Core and theme updates"
+msgstr "Actualizaciones del núcleo y de temas"
+
+msgid "Trusted for"
+msgstr "De confianza para"
+
+msgid "Use separate keys: a key trusted for plugins cannot sign a core update, and the reverse. Tick both only for a key you fully control."
+msgstr "Use claves separadas: una clave de confianza para plugins no puede firmar una actualización del núcleo, y viceversa. Marque ambas solo para una clave que controle por completo."

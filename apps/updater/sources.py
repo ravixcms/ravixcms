@@ -165,7 +165,7 @@ def source_state() -> str:
     if settings.RAVIX_UPDATE_URL:
         from apps.plugins.signing import trusted_keys
 
-        return "ok" if trusted_keys() else "no_key"
+        return "ok" if trusted_keys("core") else "no_key"
     return "none"
 
 

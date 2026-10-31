@@ -64,15 +64,30 @@ python manage.py ravix_release keygen --key-file ~/ravix-keys/release-2026.key
 OFFICIAL_UPDATE_URL   = "https://updates.ravixcms.com"      # <URL>/updates/v1/index.json
 OFFICIAL_REGISTRY_URL = "https://plugins.ravixcms.com"     # مخزن افزونه‌ها (docs/registry.md)
 OFFICIAL_PUBLIC_KEYS  = (
-    "release-2026:<کلید عمومی base64>",
+    "release-2026:core:<کلید عمومی base64>",          # اصلی
+    "release-spare-2026:core:<کلید عمومی base64>",   # یدک
 )
 REVOKED_KEY_IDS = ()
 ```
 ۱. آدرس‌ها از پیش پر شده‌اند (`ravixcms.com`)؛ فقط `OFFICIAL_PUBLIC_KEYS` را پر کنید (فقط کلید **عمومی**). **تا وقتی هیچ کلید مورد اعتمادی نباشد، منبع رسمی به‌روزرسانی و مخزن افزونه غیرفعال می‌مانند**: چیزی دانلود نمی‌شود و پنل به‌روزرسانی و «سلامت سایت» پیام روشن (نه خطا) نشان می‌دهند.
-۲. آزمون `test_shipped_defaults_are_empty_placeholders` در `apps/updater/tests/test_official_source.py` عمداً می‌شکند تا شما آگاهانه مقدار تازه را در آن ثبت کنید.
+۲. آزمون `test_shipped_defaults_and_official_keys` در `apps/updater/tests/test_official_source.py` کلیدها و `key_id`هایشان را سنجاق می‌کند و عمداً با هر تغییر کلید می‌شکند تا آگاهانه مقدار تازه را ثبت کنید. `scripts/verify_release.py` (ZIP کامل) و `scripts/build_cpanel_zip.py` (بستهٔ cPanel) هم نبودِ دست‌کم دو کلید معتبر با دامنهٔ `core` در `apps/core/official.py` را خطا می‌گیرند.
+   - **دامنهٔ اعتماد:** کلید رسمی فقط `core` است؛ یعنی فقط بستهٔ به‌روزرسانی هسته/قالب و `index.json` را تأیید می‌کند و **هرگز** بستهٔ افزونه را. کلید ناشر افزونه‌ها (`plugin_sign`) جداگانه با دامنهٔ `plugin` ثبت می‌شود (بخش «دامنهٔ اعتماد کلیدها» پایین).
 ۳. `python manage.py test`، commit و نسخه‌دهی طبق «انتشار» بالا.
 ۴. از این نسخه به بعد هر نصب تازه کلید شما را از کد می‌شناسد. **سایت‌های قدیمی‌تر** از نسخه‌ای که این کلید را ندارد نمی‌توانند خودکار ارتقا یابند (کلیدی ندارند که امضای شما را بسنجد): مدیرشان یک‌بار کلید را با `RAVIX_TRUSTED_PUBLIC_KEYS=release-2026:<کلید>` یا از پنل ← افزونه‌ها ← کلیدهای مورد اعتماد (مدیرکل) اضافه می‌کند، یا نسخهٔ جدید را دستی نصب می‌کند.
 ۵. کلید عمومی را **جدا و از کانال معتمد** هم منتشر کنید (صفحهٔ رسمی/Release notes)، تا کاربران بتوانند با کد مقایسه کنند.
+
+### دامنهٔ اعتماد کلیدها (plugin / core)
+هر کلید مورد اعتماد یک **دامنه** دارد و فقط در همان دامنه معتبر است:
+
+| دامنه | چه چیزی را تأیید می‌کند | کلید معمول |
+|---|---|---|
+| `plugin` | بستهٔ افزونه (نصب دستی/وب و مخزن افزونه‌ها) | کلید ناشر افزونه‌ها (`plugin_sign`) |
+| `core` | بستهٔ به‌روزرسانی هسته و قالب و `index.json` | کلیدهای رسمی `release-*` (`ravix_release`) |
+
+- کلید `plugin` هسته را نمی‌تواند امضا کند و کلید `core` بستهٔ افزونه را؛ تلاش، خطای «این کلید برای این نوع بسته مورد اعتماد نیست» می‌دهد.
+- شکل ورودی env: `publisher:plugin:<کلید>` ، `release:core:<کلید>` ، دو دامنه با `+` (`x:plugin+core:<کلید>`). شکل قدیمی `برچسب:کلید` همچنان کار می‌کند (هر دو دامنه) ولی `ravix_preflight` هشدار می‌دهد.
+- کلیدهای ثبت‌شده در پنل (مدیرکل): فیلد «مورد اعتماد برای» هنگام ثبت (پیش‌فرض فقط افزونه) و قابل ویرایش در جدول. ردیف‌های پیش از این نسخه هر دو دامنه را نگه می‌دارند تا رفتارشان عوض نشود؛ مدیرکل آن‌ها را محدود کند. ابطال (`REVOKED_KEY_IDS`) بر همهٔ دامنه‌ها غالب است.
+- روی سرور نمونه: `RAVIX_TRUSTED_PUBLIC_KEYS=publisher:plugin:<کلید ناشر افزونه‌ها>` ؛ کلیدهای رسمی هسته از کد می‌آیند و در env لازم نیستند.
 
 ### ۳. آدرس پیش‌فرض و تغییر با متغیر محیطی
 | متغیر | پیش‌فرض | کار |
@@ -80,7 +95,7 @@ REVOKED_KEY_IDS = ()
 | `RAVIX_UPDATE_URL` | `official.OFFICIAL_UPDATE_URL` | آدرس سرور به‌روزرسانی؛ فقط `https://` (ریدایرکت دنبال نمی‌شود) |
 | `RAVIX_UPDATE_DIR` | خالی | منبع پوشه‌ای/آفلاین؛ بر `RAVIX_UPDATE_URL` مقدم است |
 | `RAVIX_OFFICIAL_REGISTRY_URL` | `official.OFFICIAL_REGISTRY_URL` | آدرس مخزن افزونه‌ها |
-| `RAVIX_TRUSTED_PUBLIC_KEYS` | خالی | کلیدهای عمومی اضافه: `برچسب:کلید` جداشده با ویرگول |
+| `RAVIX_TRUSTED_PUBLIC_KEYS` | خالی | کلیدهای عمومی اضافه: `برچسب:دامنه:کلید` جداشده با ویرگول؛ دامنه `plugin`، `core` یا `plugin+core` (بدون دامنه = هر دو، قدیمی؛ `ravix_preflight` هشدار می‌دهد) |
 | `RAVIX_REVOKED_KEY_IDS` | خالی | `key_id`های ابطال‌شده (ویرگول)؛ بر همهٔ منبع‌های کلید غالب است |
 | `RAVIX_UPDATE_REQUIRE_SIGNED_INDEX` | `false` | `true`: فهرست بدون `index.json.sig` معتبر رد می‌شود (توصیه برای سرور رسمی) |
 | `RAVIX_UPDATE_WEB_APPLY` | `false` | اعمال ارتقا از پنل (وگرنه فقط `ravix_update apply`) |
