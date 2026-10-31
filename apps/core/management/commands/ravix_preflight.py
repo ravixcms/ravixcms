@@ -55,7 +55,12 @@ class Command(BaseCommand):
         if hosting_mode:
             advise(connection.vendor == "mysql", cli_gettext("The database is MySQL/MariaDB"), cli_gettext("The database is %(a1)s (MySQL/MariaDB is recommended on shared hosting)") % {"a1": connection.vendor})
         else:
-            need(connection.vendor == "postgresql", cli_gettext("The database is PostgreSQL"), cli_gettext("The database is %(a1)s (PostgreSQL is required for production)") % {"a1": connection.vendor})
+            # Only a CI job that cannot run PostgreSQL (a compatibility probe on a new OS image) may downgrade this one error to a warning, and only
+            # with both --ci and RAVIX_CI_ALLOW_SQLITE=1 set explicitly; a real server never has either.
+            sqlite_ok_in_ci = ci and connection.vendor == "sqlite" and os.environ.get("RAVIX_CI_ALLOW_SQLITE", "").strip().lower() in {"1", "true", "yes", "on"}
+            (warns if sqlite_ok_in_ci else errors if connection.vendor != "postgresql" else oks).append(
+                cli_gettext("The database is PostgreSQL") if connection.vendor == "postgresql"
+                else cli_gettext("The database is %(a1)s (PostgreSQL is required for production)") % {"a1": connection.vendor})
         https_check = advise if (hosting_mode and not str(settings.SITE_URL).startswith("https://")) else need
         https_check(getattr(settings, "SECURE_SSL_REDIRECT", False), cli_gettext("HTTPS redirect is enabled"), cli_gettext("SECURE_SSL_REDIRECT is off"))
         https_check(settings.SESSION_COOKIE_SECURE and settings.CSRF_COOKIE_SECURE, cli_gettext("Cookies are Secure"), cli_gettext("Cookies are not Secure"))

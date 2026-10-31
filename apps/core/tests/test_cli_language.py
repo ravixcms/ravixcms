@@ -4,6 +4,8 @@ import subprocess
 import sys
 import tempfile
 from io import StringIO
+
+from django.db import connection
 from pathlib import Path
 
 from django.conf import settings
@@ -201,6 +203,18 @@ class PreflightCiModeTests(TestCase):
             self.assertIn("is not active", warnings)
             self.assertIn("plugin install folder", warnings)
             self.assertIn("CI mode", warnings)
+
+    def test_sqlite_is_an_error_unless_a_ci_probe_explicitly_allows_it(self):
+        """The one "database is sqlite" error can be downgraded only with --ci AND RAVIX_CI_ALLOW_SQLITE=1 (a compatibility probe without PostgreSQL)."""
+        needle = "PostgreSQL is required for production"
+        for args, env, expect in (((), None, "error"), (("--ci",), None, "error"), ((), {"RAVIX_CI_ALLOW_SQLITE": "1"}, "error"),
+                                  (("--ci",), {"RAVIX_CI_ALLOW_SQLITE": "1"}, "warning")):
+            out, _ = self.run_pf(*args, env=env)
+            errors, warnings = "\n".join(self.lines(out, "✘")), "\n".join(self.lines(out, "!"))
+            if connection.vendor == "postgresql":
+                continue
+            self.assertEqual(needle in errors, expect == "error", (args, env))
+            self.assertEqual(needle in warnings, expect == "warning", (args, env))
 
     def test_ci_mode_keeps_configuration_and_security_checks_strict(self):
         out, code = self.run_pf("--ci", DEBUG=True, SECRET_KEY="short", SESSION_COOKIE_SECURE=False)

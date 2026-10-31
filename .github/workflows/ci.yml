@@ -107,6 +107,7 @@ jobs:
           DJANGO_ALLOWED_HOSTS: example.com
           RAVIX_CI: "1"
           RAVIX_ALLOW_SQLITE_IN_PRODUCTION: "true"
+          RAVIX_CI_ALLOW_SQLITE: "1"   # this probe has no PostgreSQL; the single "database is sqlite" error becomes a warning (all other checks stay strict)
         run: |
           export RAVIX_CACHE_DIR="$RUNNER_TEMP/ravix-cache"; mkdir -p "$RAVIX_CACHE_DIR"
           python manage.py migrate --noinput -v 0
