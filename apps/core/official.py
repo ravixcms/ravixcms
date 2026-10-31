@@ -19,10 +19,12 @@ OFFICIAL_UPDATE_URL = "https://updates.ravixcms.com"
 # مخزن رسمی افزونه‌ها و قالب‌ها: <URL>/registry/v1/ ؛ فقط HTTPS.  متغیر محیطی: RAVIX_OFFICIAL_REGISTRY_URL (همان قاعدهٔ کلید)
 OFFICIAL_REGISTRY_URL = "https://plugins.ravixcms.com"
 
-# کلیدهای عمومی Ed25519 ناشر که همهٔ سایت‌ها به‌طور پیش‌فرض به آن‌ها اعتماد دارند: «برچسب:کلید_عمومی_base64».
+# کلیدهای عمومی Ed25519 به‌روزرسانی رسمی هسته/قالب: «برچسب:دامنه:کلید_عمومی_base64».
+# دامنه «core» است: این کلیدها فقط بستهٔ به‌روزرسانی هسته/قالب و فهرست آن را تأیید می‌کنند و **هیچ بستهٔ افزونه‌ای** را (دامنهٔ plugin جدا است؛ کلید ناشر افزونه‌ها در RAVIX_TRUSTED_PUBLIC_KEYS یا پنل می‌آید).
 # چرخش: کلید جدید را اضافه کنید (قدیمی بماند)، نسخه بدهید، بعد قدیمی را در REVOKED_KEY_IDS بنویسید.
 OFFICIAL_PUBLIC_KEYS: tuple[str, ...] = (
-    # "release-2026:AAAA...base64 با ۴۴ نویسه...=",
+    "release-2026:core:V7A0jGCwL7jkdHuM9ndDhScLIAIGBzbb8bFTh3y4BmI=",  # key_id 5e74e93d50dccd92 (اصلی)
+    "release-spare-2026:core:idipqBpJCvU6Y6hxiPpyVGborqdrXuYrNimaSeVFhI0=",  # key_id a65cb470630e2ad3 (یدک؛ فقط هنگام چرخش یا ابطال کلید اصلی)
 )
 
 # شناسهٔ (key_id، ۱۶ نویسهٔ hex) کلیدهای ابطال‌شده: حتی اگر در OFFICIAL_PUBLIC_KEYS، متغیر محیطی یا پنل باشند پذیرفته نمی‌شوند.

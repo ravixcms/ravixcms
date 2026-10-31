@@ -101,6 +101,11 @@ def main() -> int:
         for must in ("manage.py", "passenger_wsgi.py", "requirements-cpanel.txt", "config/settings/hosting.py", "apps/core/version.py", "ravix-hosting.marker", "locale/fa/LC_MESSAGES/django.mo"):
             if not (stage / must).exists():
                 raise SystemExit(f"missing in the package: {must}")
+        from verify_release import official_key_problems  # the same check the full ZIP gets
+
+        key_problems = official_key_problems((stage / "apps/core/official.py").read_text(encoding="utf-8"))
+        if key_problems:
+            raise SystemExit("the official update keys are missing or wrong in the package:\n  " + "\n  ".join(key_problems))
         out = Path(a.out)
         out.mkdir(parents=True, exist_ok=True)
         target = out / f"ravix-{RAVIX_VERSION}-cpanel.zip"

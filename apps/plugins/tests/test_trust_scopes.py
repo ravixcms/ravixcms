@@ -121,6 +121,15 @@ class PluginAndCoreSeparationTests(TestCase):
             self.assertEqual(psources.registry_state(), "no_key")
 
 
+class ShippedKeysTests(TestCase):
+    def test_official_keys_are_core_only_and_loaded_by_default(self):
+        with override_settings(RAVIX_TRUSTED_PUBLIC_KEYS=[]):
+            core = signing.trusted_keys("core")
+            self.assertEqual(set(core), {"5e74e93d50dccd92", "a65cb470630e2ad3"})
+            self.assertTrue(all(k.source == "builtin" and k.scopes == frozenset({"core"}) for k in core.values()))
+            self.assertEqual(signing.trusted_keys("plugin"), {})
+
+
 class DatabaseKeyTests(TestCase):
     def test_existing_rows_keep_both_scopes(self):
         k = TrustedKey.objects.create(key_id=signing.key_id(BPUB), public_key=BPUB, label="old")

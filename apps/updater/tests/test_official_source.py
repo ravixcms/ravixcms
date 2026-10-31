@@ -142,13 +142,26 @@ class OfficialDefaultsTests(TestCase):
             os.environ.pop(name, None)
         importlib.reload(base)
 
-    def test_shipped_defaults_and_empty_key(self):
+    def test_shipped_defaults_and_official_keys(self):
         # این آزمون عمداً می‌شکند تا ناشر پس از پر کردن official.py آن را آگاهانه به‌روز کند.
         self.assertEqual((official.OFFICIAL_WEBSITE_URL, official.OFFICIAL_DOCS_URL, official.OFFICIAL_REPO_URL, official.OFFICIAL_UPDATE_URL, official.OFFICIAL_REGISTRY_URL),
                          ("https://ravixcms.com", "https://ravixcms.com/docs", "https://github.com/ravixcms/ravixcms",
                           "https://updates.ravixcms.com", "https://plugins.ravixcms.com"))
-        # The publisher's public key is not known yet: it stays empty, which keeps the official sources disabled.
-        self.assertEqual((official.OFFICIAL_PUBLIC_KEYS, official.REVOKED_KEY_IDS), ((), ()))
+        # The two official core-update keys (main + spare), both trusted for core updates only; nothing is revoked yet.
+        self.assertEqual(official.REVOKED_KEY_IDS, ())
+        shipped = {}
+        for item in official.OFFICIAL_PUBLIC_KEYS:
+            label, pub, scopes, explicit = psigning.parse_key_entry(item)
+            self.assertTrue(explicit)
+            self.assertEqual(scopes, frozenset({"core"}))
+            shipped[psigning.key_id(pub)] = (label, pub)
+        self.assertEqual(shipped, {
+            "5e74e93d50dccd92": ("release-2026", "V7A0jGCwL7jkdHuM9ndDhScLIAIGBzbb8bFTh3y4BmI="),
+            "a65cb470630e2ad3": ("release-spare-2026", "idipqBpJCvU6Y6hxiPpyVGborqdrXuYrNimaSeVFhI0="),
+        })
+        with override_settings(RAVIX_TRUSTED_PUBLIC_KEYS=[]):
+            self.assertEqual(set(psigning.trusted_keys("core")), set(shipped))
+            self.assertEqual(psigning.trusted_keys("plugin"), {})
 
 
 class KeyTrustTests(TestCase):

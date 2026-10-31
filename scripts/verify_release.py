@@ -11,6 +11,8 @@
   ۵) مطابقت SHA-256 با SHA256SUMS کنار فایل (اگر موجود باشد).
 خروجی: فهرست PASS/FAIL، تعداد فایل‌ها، حجم و SHA-256؛ کد خروج ۰ فقط اگر همه PASS باشند.
 """
+import ast
+import base64
 import hashlib
 import re
 import sys
@@ -51,6 +53,38 @@ SECRET_PATTERNS = [
     (re.compile(rb"xox[baprs]-[A-Za-z0-9-]{10,}"), "توکن Slack"),
     (re.compile(rb"sk-[A-Za-z0-9]{32,}"), "کلید API"),
 ]
+MIN_OFFICIAL_KEYS = 2  # کلید اصلی + یدک
+
+
+def official_key_problems(text: str) -> list[str]:
+    """OFFICIAL_PUBLIC_KEYS در متن apps/core/official.py را (بدون import) می‌خواند: دست‌کم اصلی + یدک، هر کدام کلید عمومی ۳۲ بایتی معتبر با دامنهٔ core.
+    فهرست مشکل‌ها؛ خالی = سالم."""
+    try:
+        tree = ast.parse(text)
+        node = next(n.value for n in ast.walk(tree) if isinstance(n, (ast.Assign, ast.AnnAssign))
+                    and getattr(getattr(n, "target", None) or n.targets[0], "id", "") == "OFFICIAL_PUBLIC_KEYS")
+        items = ast.literal_eval(node)
+    except (SyntaxError, StopIteration, ValueError):
+        return ["OFFICIAL_PUBLIC_KEYS was not found in apps/core/official.py"]
+    problems, ids = [], set()
+    for item in items:
+        parts = str(item).split(":")
+        if len(parts) != 3 or not parts[0].strip() or parts[1] != "core":
+            problems.append(f"entry must look like label:core:KEY — {str(item)[:24]}")
+            continue
+        try:
+            raw = base64.b64decode(parts[2], validate=True)
+        except ValueError:
+            raw = b""
+        if len(raw) != 32:
+            problems.append(f"not a 32-byte public key — {parts[0]}")
+            continue
+        ids.add(hashlib.sha256(raw).hexdigest()[:16])
+    if len(ids) < MIN_OFFICIAL_KEYS:
+        problems.append(f"at least {MIN_OFFICIAL_KEYS} different official keys are required (main + spare); found {len(ids)}")
+    return problems
+
+
 TEXT_EXT = {".py", ".md", ".txt", ".yml", ".yaml", ".json", ".sh", ".conf", ".service", ".timer", ".html", ".css", ".js",
             ".example", ".lock", ".cfg", ".ini", ".toml", ""}
 
@@ -89,6 +123,10 @@ def main(argv):
     check("همهٔ فایل‌های ضروری هستند", not missing, ", ".join(missing))
     bad = [(r, why) for r in rel for pat, why in FORBIDDEN if re.search(pat, r)]
     check("هیچ فایل ممنوعی در بسته نیست", not bad, "; ".join(f"{r} ({w})" for r, w in bad[:8]))
+
+    off = next((n for n, r in zip(names, rel) if r == "apps/core/official.py"), None)
+    off_problems = official_key_problems(zf.read(off).decode("utf-8")) if off else ["apps/core/official.py is missing"]
+    check("کلیدهای رسمی به‌روزرسانی (اصلی + یدک، دامنهٔ core) در بسته هستند", not off_problems, "; ".join(off_problems))
 
     hits = []
     for n, r in zip(names, rel):
