@@ -22,3 +22,11 @@ class AccountsConfig(AppConfig):
                 active_urls=("accounts:user_list", "accounts:user_manage"),
             )
         )
+        register_nav_item(
+            NavItem(key="accounts.invitations", label=gettext_lazy("Invitations"), url_name="accounts:invitations", icon="users", section="system", order=11,
+                    capability="users.manage", active_urls=("accounts:invitations",))
+        )
+        register_nav_item(
+            NavItem(key="accounts.policy", label=gettext_lazy("Account settings"), url_name="accounts:policy", icon="settings", section="system", order=94,
+                    capability="settings.manage", active_urls=("accounts:policy",))
+        )

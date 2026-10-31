@@ -1036,3 +1036,7 @@ msgstr "فایل کار خوانده نشد."
 #, python-format
 msgid "Ravix is installed but its settings file is missing (%(path)s). Restore it from your backup; the installer stays locked."
 msgstr "Ravix نصب شده اما فایل تنظیمات آن گم شده است (%(path)s). آن را از پشتیبان خود برگردانید؛ نصب‌کننده قفل می‌ماند."
+
+#, python-format
+msgid "Sending the invitation to %s failed."
+msgstr "ارسال دعوت‌نامه %s ناموفق بود."

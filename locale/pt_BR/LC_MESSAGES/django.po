@@ -13747,3 +13747,195 @@ msgstr "Verificação concluída."
 
 msgid "Checking that you are human…"
 msgstr "Verificando se você é humano…"
+
+msgid "Account settings"
+msgstr "Configurações de contas"
+
+msgid "Invitations"
+msgstr "Convites"
+
+msgid "You must accept the terms to continue."
+msgstr "Você precisa aceitar os termos para continuar."
+
+msgid "Only people an administrator invites"
+msgstr "Somente pessoas que um administrador convida"
+
+msgid "Nobody signs up; administrators create accounts"
+msgstr "Ninguém se cadastra sozinho; administradores criam as contas"
+
+msgid "Choose the published page that holds the terms."
+msgstr "Escolha a página publicada que contém os termos."
+
+msgid "I have read and accept the terms of use"
+msgstr "Li e aceito os termos de uso"
+
+msgid "Who can create an account"
+msgstr "Quem pode criar uma conta"
+
+msgid "Anyone (public sign-up)"
+msgstr "Qualquer pessoa (cadastro público)"
+
+msgid "— none —"
+msgstr "— nenhuma —"
+
+msgid "Role of new sign-ups"
+msgstr "Função dos novos cadastros"
+
+msgid "People must open the link in the verification email before they can sign in. Needs working email (send a test first)."
+msgstr "As pessoas precisam abrir o link do e-mail de verificação antes de entrar. Requer e-mail funcionando (envie um teste antes)."
+
+msgid "Without “Remember me”, the sign-in ends when the browser is closed."
+msgstr "Sem “Lembrar de mim”, o login termina quando o navegador é fechado."
+
+msgid "Sign-in requires a verified email"
+msgstr "Entrar exige e-mail verificado"
+
+msgid "New accounts must accept the terms"
+msgstr "Contas novas devem aceitar os termos"
+
+msgid "Privacy policy page"
+msgstr "Página da política de privacidade"
+
+msgid "An invitation is valid for (days)"
+msgstr "Um convite vale por (dias)"
+
+msgid "Administrators may invite people"
+msgstr "Administradores podem convidar pessoas"
+
+msgid "Terms of use page"
+msgstr "Página dos termos de uso"
+
+msgid "“Remember me” lasts (days)"
+msgstr "“Lembrar de mim” dura (dias)"
+
+msgid "The role given to people who sign up on their own. Invitations carry their own role."
+msgstr "A função dada a quem se cadastra por conta própria. Os convites têm sua própria função."
+
+msgid "The invitation was withdrawn."
+msgstr "O convite foi retirado."
+
+msgid "Your account is ready. You can sign in now."
+msgstr "Sua conta está pronta. Você já pode entrar."
+
+msgid "Account settings were saved."
+msgstr "As configurações de contas foram salvas."
+
+#, python-format
+msgid "New user “%(username)s” accepted an invitation."
+msgstr "O usuário “%(username)s” aceitou um convite."
+
+msgid "The invitation was sent."
+msgstr "O convite foi enviado."
+
+msgid "The invitation was saved but the email could not be sent. Check the email settings and send it again."
+msgstr "O convite foi salvo, mas o e-mail não pôde ser enviado. Verifique as configurações de e-mail e envie de novo."
+
+#, python-format
+msgid "An invitation was sent to %(email)s."
+msgstr "Um convite foi enviado para %(email)s."
+
+msgid "Invitations are turned off in the account settings."
+msgstr "Os convites estão desativados nas configurações de contas."
+
+#, python-format
+msgid "Account settings were edited (%(changed)s)."
+msgstr "As configurações de contas foram editadas (%(changed)s)."
+
+msgid "Invitation"
+msgstr "Convite"
+
+#, python-format
+msgid "The invitation to %(email)s was withdrawn."
+msgstr "O convite para %(email)s foi retirado."
+
+#, python-format
+msgid "%(name)s invited you to %(site)s."
+msgstr "%(name)s convidou você para %(site)s."
+
+msgid "Open the link below to choose your name and password:"
+msgstr "Abra o link abaixo para escolher seu nome e senha:"
+
+msgid "If you were not expecting this invitation, ignore this email."
+msgstr "Se você não esperava este convite, ignore este e-mail."
+
+#, python-format
+msgid "You are invited to %(site)s."
+msgstr "Você foi convidado para %(site)s."
+
+#, python-format
+msgid "The link can be used once and works for %(days)s days."
+msgstr "O link pode ser usado uma vez e vale por %(days)s dias."
+
+#, python-format
+msgid "You are invited to %(site)s"
+msgstr "Convite para %(site)s"
+
+msgid "Waiting"
+msgstr "Aguardando"
+
+msgid "Expired"
+msgstr "Expirado"
+
+msgid "Accepted"
+msgstr "Aceito"
+
+msgid "Invited by"
+msgstr "Convidado por"
+
+msgid "Send invitation"
+msgstr "Enviar convite"
+
+msgid "Invite someone by email. They choose a name and a password and their address counts as verified."
+msgstr "Convide alguém por e-mail. A pessoa escolhe nome e senha e o endereço conta como verificado."
+
+msgid "Sent"
+msgstr "Enviado"
+
+msgid "No invitations yet."
+msgstr "Ainda não há convites."
+
+msgid "Invite someone"
+msgstr "Convidar alguém"
+
+msgid "This invitation link is invalid, has expired or was already used. Ask the person who invited you to send a new one."
+msgstr "Este link de convite é inválido, expirou ou já foi usado. Peça a quem convidou que envie um novo."
+
+msgid "Create my account"
+msgstr "Criar minha conta"
+
+msgid "The invitation is not valid"
+msgstr "O convite não é válido"
+
+#, python-format
+msgid "Create your account for %(email)s."
+msgstr "Crie sua conta para %(email)s."
+
+msgid "Read the terms of use"
+msgstr "Ler os termos de uso"
+
+msgid "You are invited"
+msgstr "Você foi convidado"
+
+msgid "Read the privacy policy"
+msgstr "Ler a política de privacidade"
+
+msgid "Accept the invitation"
+msgstr "Aceitar o convite"
+
+msgid "Who can create an account, what they must accept, and how long a sign-in lasts."
+msgstr "Quem pode criar uma conta, o que deve aceitar e quanto dura um login."
+
+msgid "Sign-in"
+msgstr "Entrar"
+
+msgid "Sign-up"
+msgstr "Cadastro"
+
+msgid "Terms and privacy"
+msgstr "Termos e privacidade"
+
+msgid "Open account settings"
+msgstr "Abrir configurações de contas"
+
+msgid "Who can create an account, sign-in and sign-up rules, terms and invitations are in the account settings."
+msgstr "Quem pode criar uma conta, as regras de login e cadastro, os termos e os convites estão nas configurações de contas."

@@ -13056,3 +13056,195 @@ msgstr "验证通过。"
 
 msgid "Checking that you are human…"
 msgstr "正在验证您是真人…"
+
+msgid "Account settings"
+msgstr "账户设置"
+
+msgid "Invitations"
+msgstr "邀请"
+
+msgid "You must accept the terms to continue."
+msgstr "您必须接受条款才能继续。"
+
+msgid "Only people an administrator invites"
+msgstr "仅限管理员邀请的人"
+
+msgid "Nobody signs up; administrators create accounts"
+msgstr "无人自行注册；由管理员创建账户"
+
+msgid "Choose the published page that holds the terms."
+msgstr "请选择包含条款的已发布页面。"
+
+msgid "I have read and accept the terms of use"
+msgstr "我已阅读并接受使用条款"
+
+msgid "Who can create an account"
+msgstr "谁可以创建账户"
+
+msgid "Anyone (public sign-up)"
+msgstr "任何人（公开注册）"
+
+msgid "— none —"
+msgstr "— 无 —"
+
+msgid "Role of new sign-ups"
+msgstr "新注册用户的角色"
+
+msgid "People must open the link in the verification email before they can sign in. Needs working email (send a test first)."
+msgstr "用户必须先打开验证邮件中的链接才能登录。需要可用的邮件（请先发送测试邮件）。"
+
+msgid "Without “Remember me”, the sign-in ends when the browser is closed."
+msgstr "未勾选“记住我”时，关闭浏览器后登录即结束。"
+
+msgid "Sign-in requires a verified email"
+msgstr "登录需要已验证的邮箱"
+
+msgid "New accounts must accept the terms"
+msgstr "新账户必须接受条款"
+
+msgid "Privacy policy page"
+msgstr "隐私政策页面"
+
+msgid "An invitation is valid for (days)"
+msgstr "邀请的有效期（天）"
+
+msgid "Administrators may invite people"
+msgstr "管理员可以邀请他人"
+
+msgid "Terms of use page"
+msgstr "使用条款页面"
+
+msgid "“Remember me” lasts (days)"
+msgstr "“记住我”的时长（天）"
+
+msgid "The role given to people who sign up on their own. Invitations carry their own role."
+msgstr "自行注册的用户所获得的角色。邀请自带角色。"
+
+msgid "The invitation was withdrawn."
+msgstr "邀请已撤回。"
+
+msgid "Your account is ready. You can sign in now."
+msgstr "您的账户已就绪，现在可以登录。"
+
+msgid "Account settings were saved."
+msgstr "账户设置已保存。"
+
+#, python-format
+msgid "New user “%(username)s” accepted an invitation."
+msgstr "用户“%(username)s”接受了邀请。"
+
+msgid "The invitation was sent."
+msgstr "邀请已发送。"
+
+msgid "The invitation was saved but the email could not be sent. Check the email settings and send it again."
+msgstr "邀请已保存，但邮件未能发出。请检查邮件设置后重新发送。"
+
+#, python-format
+msgid "An invitation was sent to %(email)s."
+msgstr "已向 %(email)s 发送邀请。"
+
+msgid "Invitations are turned off in the account settings."
+msgstr "账户设置中已关闭邀请。"
+
+#, python-format
+msgid "Account settings were edited (%(changed)s)."
+msgstr "账户设置已修改（%(changed)s）。"
+
+msgid "Invitation"
+msgstr "邀请"
+
+#, python-format
+msgid "The invitation to %(email)s was withdrawn."
+msgstr "发给 %(email)s 的邀请已撤回。"
+
+#, python-format
+msgid "%(name)s invited you to %(site)s."
+msgstr "%(name)s 邀请您加入 %(site)s。"
+
+msgid "Open the link below to choose your name and password:"
+msgstr "打开下面的链接来选择您的姓名和密码："
+
+msgid "If you were not expecting this invitation, ignore this email."
+msgstr "如果您没有预期这份邀请，请忽略此邮件。"
+
+#, python-format
+msgid "You are invited to %(site)s."
+msgstr "您受邀加入 %(site)s。"
+
+#, python-format
+msgid "The link can be used once and works for %(days)s days."
+msgstr "该链接只能使用一次，有效期 %(days)s 天。"
+
+#, python-format
+msgid "You are invited to %(site)s"
+msgstr "邀请加入 %(site)s"
+
+msgid "Waiting"
+msgstr "等待中"
+
+msgid "Expired"
+msgstr "已过期"
+
+msgid "Accepted"
+msgstr "已接受"
+
+msgid "Invited by"
+msgstr "邀请人"
+
+msgid "Send invitation"
+msgstr "发送邀请"
+
+msgid "Invite someone by email. They choose a name and a password and their address counts as verified."
+msgstr "通过邮箱邀请他人。对方自行选择姓名和密码，其邮箱视为已验证。"
+
+msgid "Sent"
+msgstr "已发送"
+
+msgid "No invitations yet."
+msgstr "暂无邀请。"
+
+msgid "Invite someone"
+msgstr "邀请某人"
+
+msgid "This invitation link is invalid, has expired or was already used. Ask the person who invited you to send a new one."
+msgstr "此邀请链接无效、已过期或已被使用。请联系邀请人重新发送。"
+
+msgid "Create my account"
+msgstr "创建我的账户"
+
+msgid "The invitation is not valid"
+msgstr "邀请无效"
+
+#, python-format
+msgid "Create your account for %(email)s."
+msgstr "为 %(email)s 创建您的账户。"
+
+msgid "Read the terms of use"
+msgstr "阅读使用条款"
+
+msgid "You are invited"
+msgstr "您已受邀"
+
+msgid "Read the privacy policy"
+msgstr "阅读隐私政策"
+
+msgid "Accept the invitation"
+msgstr "接受邀请"
+
+msgid "Who can create an account, what they must accept, and how long a sign-in lasts."
+msgstr "谁可以创建账户、必须接受什么以及登录保持多久。"
+
+msgid "Sign-in"
+msgstr "登录"
+
+msgid "Sign-up"
+msgstr "注册"
+
+msgid "Terms and privacy"
+msgstr "条款与隐私"
+
+msgid "Open account settings"
+msgstr "打开账户设置"
+
+msgid "Who can create an account, sign-in and sign-up rules, terms and invitations are in the account settings."
+msgstr "谁可以创建账户、登录与注册规则、条款和邀请都在账户设置中。"

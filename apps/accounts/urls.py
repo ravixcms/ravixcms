@@ -18,6 +18,10 @@ urlpatterns = [
     path("verify-email/<str:token>/", views.VerifyEmailView.as_view(), name="verify_email"),
     path("profile/", views.ProfileView.as_view(), name="profile"),
     path("profile/password/", views.PasswordChangeView.as_view(), name="password_change"),
+    path("invite/<str:token>/", views.InviteAcceptView.as_view(), name="invite_accept"),
+    path("settings/", views.AccountPolicyView.as_view(), name="policy"),
+    path("invitations/", views.InvitationListView.as_view(), name="invitations"),
+    path("invitations/<int:pk>/revoke/", views.InvitationRevokeView.as_view(), name="invitation_revoke"),
     path("users/", views.UserListView.as_view(), name="user_list"),
     path("users/<int:pk>/", views.UserManageView.as_view(), name="user_manage"),
 ]

@@ -13652,3 +13652,195 @@ msgstr "Проверка пройдена."
 
 msgid "Checking that you are human…"
 msgstr "Проверяем, что вы человек…"
+
+msgid "Account settings"
+msgstr "Настройки аккаунтов"
+
+msgid "Invitations"
+msgstr "Приглашения"
+
+msgid "You must accept the terms to continue."
+msgstr "Чтобы продолжить, примите условия."
+
+msgid "Only people an administrator invites"
+msgstr "Только те, кого приглашает администратор"
+
+msgid "Nobody signs up; administrators create accounts"
+msgstr "Никто не регистрируется сам; аккаунты создают администраторы"
+
+msgid "Choose the published page that holds the terms."
+msgstr "Выберите опубликованную страницу с условиями."
+
+msgid "I have read and accept the terms of use"
+msgstr "Я прочитал(а) и принимаю условия использования"
+
+msgid "Who can create an account"
+msgstr "Кто может создать аккаунт"
+
+msgid "Anyone (public sign-up)"
+msgstr "Любой (открытая регистрация)"
+
+msgid "— none —"
+msgstr "— нет —"
+
+msgid "Role of new sign-ups"
+msgstr "Роль новых регистраций"
+
+msgid "People must open the link in the verification email before they can sign in. Needs working email (send a test first)."
+msgstr "Перед входом нужно открыть ссылку из письма подтверждения. Требуется работающая почта (сначала отправьте тестовое письмо)."
+
+msgid "Without “Remember me”, the sign-in ends when the browser is closed."
+msgstr "Без «Запомнить меня» вход заканчивается при закрытии браузера."
+
+msgid "Sign-in requires a verified email"
+msgstr "Для входа нужен подтверждённый e-mail"
+
+msgid "New accounts must accept the terms"
+msgstr "Новые аккаунты должны принять условия"
+
+msgid "Privacy policy page"
+msgstr "Страница политики конфиденциальности"
+
+msgid "An invitation is valid for (days)"
+msgstr "Приглашение действует (дней)"
+
+msgid "Administrators may invite people"
+msgstr "Администраторы могут приглашать людей"
+
+msgid "Terms of use page"
+msgstr "Страница условий использования"
+
+msgid "“Remember me” lasts (days)"
+msgstr "«Запомнить меня» действует (дней)"
+
+msgid "The role given to people who sign up on their own. Invitations carry their own role."
+msgstr "Роль для тех, кто регистрируется сам. У приглашений своя роль."
+
+msgid "The invitation was withdrawn."
+msgstr "Приглашение отозвано."
+
+msgid "Your account is ready. You can sign in now."
+msgstr "Ваш аккаунт готов. Теперь можно войти."
+
+msgid "Account settings were saved."
+msgstr "Настройки аккаунтов сохранены."
+
+#, python-format
+msgid "New user “%(username)s” accepted an invitation."
+msgstr "Пользователь «%(username)s» принял приглашение."
+
+msgid "The invitation was sent."
+msgstr "Приглашение отправлено."
+
+msgid "The invitation was saved but the email could not be sent. Check the email settings and send it again."
+msgstr "Приглашение сохранено, но письмо отправить не удалось. Проверьте настройки почты и отправьте снова."
+
+#, python-format
+msgid "An invitation was sent to %(email)s."
+msgstr "Приглашение отправлено на %(email)s."
+
+msgid "Invitations are turned off in the account settings."
+msgstr "Приглашения отключены в настройках аккаунтов."
+
+#, python-format
+msgid "Account settings were edited (%(changed)s)."
+msgstr "Настройки аккаунтов изменены (%(changed)s)."
+
+msgid "Invitation"
+msgstr "Приглашение"
+
+#, python-format
+msgid "The invitation to %(email)s was withdrawn."
+msgstr "Приглашение для %(email)s отозвано."
+
+#, python-format
+msgid "%(name)s invited you to %(site)s."
+msgstr "%(name)s приглашает вас на %(site)s."
+
+msgid "Open the link below to choose your name and password:"
+msgstr "Откройте ссылку ниже, чтобы выбрать имя и пароль:"
+
+msgid "If you were not expecting this invitation, ignore this email."
+msgstr "Если вы не ждали это приглашение, проигнорируйте письмо."
+
+#, python-format
+msgid "You are invited to %(site)s."
+msgstr "Вас приглашают на %(site)s."
+
+#, python-format
+msgid "The link can be used once and works for %(days)s days."
+msgstr "Ссылку можно использовать один раз; она действует %(days)s дн."
+
+#, python-format
+msgid "You are invited to %(site)s"
+msgstr "Приглашение на %(site)s"
+
+msgid "Waiting"
+msgstr "Ожидает"
+
+msgid "Expired"
+msgstr "Истекло"
+
+msgid "Accepted"
+msgstr "Принято"
+
+msgid "Invited by"
+msgstr "Пригласил"
+
+msgid "Send invitation"
+msgstr "Отправить приглашение"
+
+msgid "Invite someone by email. They choose a name and a password and their address counts as verified."
+msgstr "Пригласите человека по e-mail. Он сам выберет имя и пароль, а адрес будет считаться подтверждённым."
+
+msgid "Sent"
+msgstr "Отправлено"
+
+msgid "No invitations yet."
+msgstr "Приглашений пока нет."
+
+msgid "Invite someone"
+msgstr "Пригласить человека"
+
+msgid "This invitation link is invalid, has expired or was already used. Ask the person who invited you to send a new one."
+msgstr "Ссылка недействительна, срок её действия истёк или она уже использована. Попросите пригласившего отправить новую."
+
+msgid "Create my account"
+msgstr "Создать мой аккаунт"
+
+msgid "The invitation is not valid"
+msgstr "Приглашение недействительно"
+
+#, python-format
+msgid "Create your account for %(email)s."
+msgstr "Создайте аккаунт для %(email)s."
+
+msgid "Read the terms of use"
+msgstr "Прочитать условия использования"
+
+msgid "You are invited"
+msgstr "Вы приглашены"
+
+msgid "Read the privacy policy"
+msgstr "Прочитать политику конфиденциальности"
+
+msgid "Accept the invitation"
+msgstr "Принять приглашение"
+
+msgid "Who can create an account, what they must accept, and how long a sign-in lasts."
+msgstr "Кто может создать аккаунт, что нужно принять и как долго длится вход."
+
+msgid "Sign-in"
+msgstr "Вход"
+
+msgid "Sign-up"
+msgstr "Регистрация"
+
+msgid "Terms and privacy"
+msgstr "Условия и конфиденциальность"
+
+msgid "Open account settings"
+msgstr "Открыть настройки аккаунтов"
+
+msgid "Who can create an account, sign-in and sign-up rules, terms and invitations are in the account settings."
+msgstr "Кто может создать аккаунт, правила входа и регистрации, условия и приглашения находятся в настройках аккаунтов."

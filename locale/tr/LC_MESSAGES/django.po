@@ -13632,3 +13632,195 @@ msgstr "Doğrulama geçildi."
 
 msgid "Checking that you are human…"
 msgstr "İnsan olduğunuz doğrulanıyor…"
+
+msgid "Account settings"
+msgstr "Hesap ayarları"
+
+msgid "Invitations"
+msgstr "Davetler"
+
+msgid "You must accept the terms to continue."
+msgstr "Devam etmek için koşulları kabul etmelisiniz."
+
+msgid "Only people an administrator invites"
+msgstr "Yalnızca bir yöneticinin davet ettiği kişiler"
+
+msgid "Nobody signs up; administrators create accounts"
+msgstr "Kimse kendi kendine kaydolmaz; hesapları yöneticiler oluşturur"
+
+msgid "Choose the published page that holds the terms."
+msgstr "Koşulları içeren yayımlanmış sayfayı seçin."
+
+msgid "I have read and accept the terms of use"
+msgstr "Kullanım koşullarını okudum ve kabul ediyorum"
+
+msgid "Who can create an account"
+msgstr "Kim hesap oluşturabilir"
+
+msgid "Anyone (public sign-up)"
+msgstr "Herkes (herkese açık kayıt)"
+
+msgid "— none —"
+msgstr "— yok —"
+
+msgid "Role of new sign-ups"
+msgstr "Yeni kayıtların rolü"
+
+msgid "People must open the link in the verification email before they can sign in. Needs working email (send a test first)."
+msgstr "Kişiler giriş yapmadan önce doğrulama e-postasındaki bağlantıyı açmalıdır. Çalışan e-posta gerekir (önce bir deneme e-postası gönderin)."
+
+msgid "Without “Remember me”, the sign-in ends when the browser is closed."
+msgstr "“Beni hatırla” olmadan oturum, tarayıcı kapanınca sona erer."
+
+msgid "Sign-in requires a verified email"
+msgstr "Giriş için doğrulanmış e-posta gerekir"
+
+msgid "New accounts must accept the terms"
+msgstr "Yeni hesaplar koşulları kabul etmelidir"
+
+msgid "Privacy policy page"
+msgstr "Gizlilik politikası sayfası"
+
+msgid "An invitation is valid for (days)"
+msgstr "Bir davet şu kadar geçerlidir (gün)"
+
+msgid "Administrators may invite people"
+msgstr "Yöneticiler kişileri davet edebilir"
+
+msgid "Terms of use page"
+msgstr "Kullanım koşulları sayfası"
+
+msgid "“Remember me” lasts (days)"
+msgstr "“Beni hatırla” süresi (gün)"
+
+msgid "The role given to people who sign up on their own. Invitations carry their own role."
+msgstr "Kendi kendine kaydolanlara verilen rol. Davetlerin kendi rolü vardır."
+
+msgid "The invitation was withdrawn."
+msgstr "Davet geri çekildi."
+
+msgid "Your account is ready. You can sign in now."
+msgstr "Hesabınız hazır. Artık giriş yapabilirsiniz."
+
+msgid "Account settings were saved."
+msgstr "Hesap ayarları kaydedildi."
+
+#, python-format
+msgid "New user “%(username)s” accepted an invitation."
+msgstr "“%(username)s” kullanıcısı daveti kabul etti."
+
+msgid "The invitation was sent."
+msgstr "Davet gönderildi."
+
+msgid "The invitation was saved but the email could not be sent. Check the email settings and send it again."
+msgstr "Davet kaydedildi ancak e-posta gönderilemedi. E-posta ayarlarını kontrol edip yeniden gönderin."
+
+#, python-format
+msgid "An invitation was sent to %(email)s."
+msgstr "%(email)s adresine bir davet gönderildi."
+
+msgid "Invitations are turned off in the account settings."
+msgstr "Davetler hesap ayarlarında kapalı."
+
+#, python-format
+msgid "Account settings were edited (%(changed)s)."
+msgstr "Hesap ayarları düzenlendi (%(changed)s)."
+
+msgid "Invitation"
+msgstr "Davet"
+
+#, python-format
+msgid "The invitation to %(email)s was withdrawn."
+msgstr "%(email)s adresine gönderilen davet geri çekildi."
+
+#, python-format
+msgid "%(name)s invited you to %(site)s."
+msgstr "%(name)s sizi %(site)s sitesine davet etti."
+
+msgid "Open the link below to choose your name and password:"
+msgstr "Adınızı ve parolanızı seçmek için aşağıdaki bağlantıyı açın:"
+
+msgid "If you were not expecting this invitation, ignore this email."
+msgstr "Bu daveti beklemiyorsanız bu e-postayı yok sayın."
+
+#, python-format
+msgid "You are invited to %(site)s."
+msgstr "%(site)s sitesine davet edildiniz."
+
+#, python-format
+msgid "The link can be used once and works for %(days)s days."
+msgstr "Bağlantı bir kez kullanılabilir ve %(days)s gün geçerlidir."
+
+#, python-format
+msgid "You are invited to %(site)s"
+msgstr "%(site)s daveti"
+
+msgid "Waiting"
+msgstr "Bekliyor"
+
+msgid "Expired"
+msgstr "Süresi doldu"
+
+msgid "Accepted"
+msgstr "Kabul edildi"
+
+msgid "Invited by"
+msgstr "Davet eden"
+
+msgid "Send invitation"
+msgstr "Davet gönder"
+
+msgid "Invite someone by email. They choose a name and a password and their address counts as verified."
+msgstr "Birini e-postayla davet edin. Adını ve parolasını kendisi seçer, adresi doğrulanmış sayılır."
+
+msgid "Sent"
+msgstr "Gönderildi"
+
+msgid "No invitations yet."
+msgstr "Henüz davet yok."
+
+msgid "Invite someone"
+msgstr "Birini davet et"
+
+msgid "This invitation link is invalid, has expired or was already used. Ask the person who invited you to send a new one."
+msgstr "Bu davet bağlantısı geçersiz, süresi dolmuş veya daha önce kullanılmış. Sizi davet edenden yenisini göndermesini isteyin."
+
+msgid "Create my account"
+msgstr "Hesabımı oluştur"
+
+msgid "The invitation is not valid"
+msgstr "Davet geçerli değil"
+
+#, python-format
+msgid "Create your account for %(email)s."
+msgstr "%(email)s için hesabınızı oluşturun."
+
+msgid "Read the terms of use"
+msgstr "Kullanım koşullarını oku"
+
+msgid "You are invited"
+msgstr "Davet edildiniz"
+
+msgid "Read the privacy policy"
+msgstr "Gizlilik politikasını oku"
+
+msgid "Accept the invitation"
+msgstr "Daveti kabul et"
+
+msgid "Who can create an account, what they must accept, and how long a sign-in lasts."
+msgstr "Kim hesap oluşturabilir, neyi kabul etmelidir ve bir oturum ne kadar sürer."
+
+msgid "Sign-in"
+msgstr "Giriş"
+
+msgid "Sign-up"
+msgstr "Kayıt"
+
+msgid "Terms and privacy"
+msgstr "Koşullar ve gizlilik"
+
+msgid "Open account settings"
+msgstr "Hesap ayarlarını aç"
+
+msgid "Who can create an account, sign-in and sign-up rules, terms and invitations are in the account settings."
+msgstr "Kimin hesap oluşturabileceği, giriş ve kayıt kuralları, koşullar ve davetler hesap ayarlarındadır."

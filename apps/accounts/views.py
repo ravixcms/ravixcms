@@ -25,6 +25,9 @@ from apps.core.models import SiteSettings
 
 from . import emailing, throttle
 from .forms import (
+    AccountPolicyForm,
+    InvitationForm,
+    InviteAcceptForm,
     LoginForm,
     PasswordResetRequestForm,
     ProfileForm,
@@ -34,7 +37,9 @@ from .forms import (
     StyledSetPasswordForm,
     UserManageForm,
 )
+from . import policy as account_policy
 from .mixins import CapabilityRequiredMixin
+from .models import AccountPolicy, Invitation, SecurityProfile
 from .permissions import Role
 
 User = get_user_model()
@@ -59,8 +64,10 @@ class LoginView(RedirectAuthenticatedMixin, DjangoLoginView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        if not form.cleaned_data.get("remember_me"):
-            self.request.session.set_expiry(0)  # با بستن مرورگر منقضی شود
+        if form.cleaned_data.get("remember_me"):
+            self.request.session.set_expiry(AccountPolicy.load().remember_days * 86400)  # the administrator's choice (default 30 days)
+        else:
+            self.request.session.set_expiry(0)  # ends when the browser is closed
         return response
 
 
@@ -107,6 +114,8 @@ class RegisterView(RedirectAuthenticatedMixin, FormView):
             except IntegrityError:  # two sign-ups with the same address at once: the other one won
                 existing = User.objects.filter(email__iexact=email).first()
             else:
+                if form.cleaned_data.get("accept_terms"):
+                    SecurityProfile.objects.update_or_create(user=user, defaults={"terms_accepted_at": timezone.now()})
                 log_event(self.request, "create", user, (gettext("New user “%(username)s” registered.") % {"username": user.username}), actor=user)
                 emailing.send_verification_email(self.request, user)
         if existing is not None:
@@ -319,3 +328,128 @@ class UserManageView(CapabilityRequiredMixin, UpdateView):
     def form_invalid(self, form):
         messages.error(self.request, gettext("Could not save. Please check the errors."))
         return super().form_invalid(form)
+
+
+# --- account settings and invitations (administrators) ---
+class AccountPolicyView(CapabilityRequiredMixin, UpdateView):
+    required_capability = "settings.manage"
+    template_name = "accounts/policy_form.html"
+    form_class = AccountPolicyForm
+    success_url = reverse_lazy("accounts:policy")
+
+    def get_object(self, queryset=None):
+        return AccountPolicy.load()
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        changed = gettext(", ").join(str(form.fields[f].label) for f in form.changed_data) or gettext("No changes")
+        log_event(self.request, "update", self.object, (gettext("Account settings were edited (%(changed)s).") % {"changed": changed}), object_type=gettext("Account settings"))
+        messages.success(self.request, gettext("Account settings were saved."))
+        return response
+
+    def form_invalid(self, form):
+        messages.error(self.request, gettext("The settings were not saved. Please check the form errors."))
+        return super().form_invalid(form)
+
+
+class InvitationListView(CapabilityRequiredMixin, FormView):
+    """Pending and past invitations, and a form to send a new one."""
+
+    required_capability = "users.manage"
+    template_name = "accounts/invitations.html"
+    form_class = InvitationForm
+    success_url = reverse_lazy("accounts:invitations")
+
+    def get_form_kwargs(self):
+        return {**super().get_form_kwargs(), "actor": self.request.user}
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["invitations"] = Invitation.objects.select_related("invited_by")[:100]
+        ctx["enabled"] = AccountPolicy.load().invitations_enabled
+        return ctx
+
+    def form_valid(self, form):
+        import secrets
+        from datetime import timedelta
+
+        policy = AccountPolicy.load()
+        if not policy.invitations_enabled:
+            messages.error(self.request, gettext("Invitations are turned off in the account settings."))
+            return redirect(self.success_url)
+        email = form.cleaned_data["email"]
+        token = secrets.token_urlsafe(32)
+        with transaction.atomic():
+            Invitation.objects.filter(email__iexact=email, used_at__isnull=True, revoked_at__isnull=True).update(revoked_at=timezone.now())  # a new one replaces the old
+            invitation = Invitation.objects.create(email=email, role=form.cleaned_data["role"], token_hash=Invitation.hash_token(token), invited_by=self.request.user,
+                                                   expires_at=timezone.now() + timedelta(days=policy.invitation_days))
+        log_event(self.request, "create", invitation, gettext("An invitation was sent to %(email)s.") % {"email": email}, object_type=gettext("Invitation"))
+        if emailing.send_invitation(self.request, invitation, token, self.request.user):
+            messages.success(self.request, gettext("The invitation was sent."))
+        else:
+            messages.error(self.request, gettext("The invitation was saved but the email could not be sent. Check the email settings and send it again."))
+        return redirect(self.success_url)
+
+
+class InvitationRevokeView(CapabilityRequiredMixin, View):
+    required_capability = "users.manage"
+    http_method_names = ["post"]
+
+    def post(self, request, pk):
+        invitation = get_object_or_404(Invitation, pk=pk)
+        if invitation.state == "pending":
+            invitation.revoked_at = timezone.now()
+            invitation.save(update_fields=["revoked_at"])
+            log_event(request, "update", invitation, gettext("The invitation to %(email)s was withdrawn.") % {"email": invitation.email}, object_type=gettext("Invitation"))
+            messages.success(request, gettext("The invitation was withdrawn."))
+        return redirect("accounts:invitations")
+
+
+class InviteAcceptView(FormView):
+    """The page behind the emailed link. Every link that cannot be used (unknown, used, withdrawn, expired, invitations turned off) shows the same page."""
+
+    template_name = "accounts/invite_accept.html"
+    form_class = InviteAcceptForm
+
+    def dispatch(self, request, *args, **kwargs):
+        self.invitation = Invitation.objects.filter(token_hash=Invitation.hash_token(kwargs["token"])).first()
+        self.usable = bool(self.invitation and self.invitation.state == "pending" and AccountPolicy.load().invitations_enabled
+                           and not User.objects.filter(email__iexact=self.invitation.email).exists())
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_form_kwargs(self):
+        return {**super().get_form_kwargs(), "invitation": self.invitation}
+
+    def get_form(self, form_class=None):
+        return super().get_form(form_class) if self.usable else None
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs) if self.usable else {}
+        ctx["usable"] = self.usable
+        if self.usable:
+            ctx["invited_email"] = self.invitation.email
+        return ctx
+
+    def post(self, request, *args, **kwargs):
+        if not self.usable:
+            return self.render_to_response(self.get_context_data())
+        return super().post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        try:
+            with transaction.atomic():
+                invitation = Invitation.objects.select_for_update().get(pk=self.invitation.pk)
+                if invitation.state != "pending":  # used a moment ago from another tab
+                    self.usable = False
+                    return self.render_to_response(self.get_context_data())
+                user = form.save()
+                invitation.used_at = timezone.now()
+                invitation.save(update_fields=["used_at"])
+                if form.cleaned_data.get("accept_terms"):
+                    SecurityProfile.objects.update_or_create(user=user, defaults={"terms_accepted_at": timezone.now()})
+        except IntegrityError:
+            self.usable = False
+            return self.render_to_response(self.get_context_data())
+        log_event(self.request, "create", user, gettext("New user “%(username)s” accepted an invitation.") % {"username": user.username}, actor=user)
+        messages.success(self.request, gettext("Your account is ready. You can sign in now."))
+        return redirect("accounts:login")

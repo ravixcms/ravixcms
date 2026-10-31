@@ -8,7 +8,8 @@ from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm, Pa
 
 from apps.core.forms import StyledFormMixin
 
-from . import captcha, emailing, throttle
+from . import captcha, emailing, policy as account_policy, throttle
+from .models import AccountPolicy, Invitation
 from .permissions import Role
 
 User = get_user_model()
@@ -72,7 +73,7 @@ class LoginForm(CaptchaMixin, StyledFormMixin, AuthenticationForm):
 
     def confirm_login_allowed(self, user):
         super().confirm_login_allowed(user)
-        if settings.RAVIX_REQUIRE_EMAIL_VERIFICATION and not user.email_verified_at:
+        if AccountPolicy.load().verification_required and not user.email_verified_at:
             raise forms.ValidationError(self.error_messages["unverified"], code="unverified")
 
     def _identifier(self) -> str:
@@ -128,6 +129,8 @@ class RegisterForm(CaptchaMixin, StyledFormMixin, UserCreationForm):
         self.fields["first_name"].required = True
         self.fields["password1"].widget.attrs.update({"dir": "ltr", "autocomplete": "new-password"})
         self.fields["password2"].widget.attrs.update({"dir": "ltr", "autocomplete": "new-password"})
+        self.policy = AccountPolicy.load()
+        add_terms_field(self, self.policy)
 
     def clean_email(self):
         return self.cleaned_data["email"].strip().lower()
@@ -143,10 +146,24 @@ class RegisterForm(CaptchaMixin, StyledFormMixin, UserCreationForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         user.username = unique_username(self.cleaned_data["email"])
-        user.role = Role.USER  # ثبت‌نام عمومی همیشه عضو عادی می‌سازد
+        user.role = self.policy.new_user_role  # the role the administrator chose for self sign-ups (a member by default)
         if commit:
             user.save()
         return user
+
+
+def add_terms_field(form, policy) -> None:
+    """When the site requires it, a checkbox "I accept the terms" (required) and the links to read them (``form.terms_url`` / ``form.privacy_url``)."""
+    from apps.public.builders import page_url
+
+    form.terms_url = form.privacy_url = ""
+    if not policy.require_terms:
+        return
+    for attr, page in (("terms_url", policy.terms_page), ("privacy_url", policy.privacy_page)):
+        if page is not None and page.is_live:
+            setattr(form, attr, page_url(page))
+    form.fields["accept_terms"] = forms.BooleanField(label=gettext_lazy("I have read and accept the terms of use"), required=True,
+                                                     error_messages={"required": gettext_lazy("You must accept the terms to continue.")})
 
 
 def unique_username(email: str) -> str:
@@ -306,3 +323,93 @@ class ResendVerificationForm(CaptchaMixin, StyledFormMixin, forms.Form):
         return cleaned
 
     email = forms.EmailField(label=gettext_lazy("Account email"), max_length=254, widget=forms.EmailInput(attrs={"autocomplete": "email", "dir": "ltr", "autofocus": True}))
+
+
+class AccountPolicyForm(StyledFormMixin, forms.ModelForm):
+    registration_mode = forms.ChoiceField(
+        label=gettext_lazy("Who can create an account"), widget=forms.RadioSelect,
+        choices=[(account_policy.OPEN, gettext_lazy("Anyone (public sign-up)")),
+                 (account_policy.INVITE, gettext_lazy("Only people an administrator invites")),
+                 (account_policy.CLOSED, gettext_lazy("Nobody signs up; administrators create accounts"))])
+
+    class Meta:
+        model = AccountPolicy
+        fields = ("default_role", "require_verified_email", "remember_days", "invitation_days", "require_terms", "terms_page", "privacy_page")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from apps.content.models import Page, PublishStatus
+
+        self.fields["registration_mode"].initial = account_policy.registration_mode()
+        pages = Page.objects.filter(status=PublishStatus.PUBLISHED).order_by("title")
+        for name in ("terms_page", "privacy_page"):
+            self.fields[name].queryset = pages
+            self.fields[name].empty_label = gettext("— none —")
+        self.order_fields(["registration_mode"] + list(self.Meta.fields))
+
+    def clean(self):
+        cleaned = super().clean()
+        if cleaned.get("require_terms") and not cleaned.get("terms_page"):
+            self.add_error("terms_page", gettext("Choose the published page that holds the terms."))
+        return cleaned
+
+    def save(self, commit=True):
+        obj = super().save(commit=commit)
+        if commit:
+            account_policy.set_registration_mode(self.cleaned_data["registration_mode"])
+        return obj
+
+
+class InvitationForm(StyledFormMixin, forms.Form):
+    email = forms.EmailField(label=gettext_lazy("Email"), max_length=254, widget=forms.EmailInput(attrs={"dir": "ltr", "autocomplete": "off"}))
+    role = forms.ChoiceField(label=gettext_lazy("Role"), choices=[])
+
+    def __init__(self, *args, actor, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.actor = actor
+        allowed = set(actor.assignable_roles())
+        self.fields["role"].choices = [(v, l) for v, l in Role.choices if v in allowed]
+
+    def clean_email(self):
+        email = self.cleaned_data["email"].strip().lower()
+        if User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError(gettext("A user with this email already exists."))  # shown to an administrator only
+        return email
+
+    def clean_role(self):
+        role = self.cleaned_data["role"]
+        if role not in self.actor.assignable_roles():
+            raise forms.ValidationError(gettext("You do not have permission to grant this role."))
+        return role
+
+
+class InviteAcceptForm(StyledFormMixin, UserCreationForm):
+    """The person who opens an invitation chooses their name and password; the email and role come from the invitation."""
+
+    class Meta:
+        model = User
+        fields = ("first_name", "last_name")
+
+    def __init__(self, *args, invitation, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.invitation = invitation
+        self.fields["first_name"].required = True
+        self.fields["password1"].widget.attrs.update({"dir": "ltr", "autocomplete": "new-password"})
+        self.fields["password2"].widget.attrs.update({"dir": "ltr", "autocomplete": "new-password"})
+        self.policy = AccountPolicy.load()
+        add_terms_field(self, self.policy)
+
+    def validate_unique(self):
+        pass
+
+    def save(self, commit=True):
+        from django.utils import timezone
+
+        user = super().save(commit=False)
+        user.email = self.invitation.email
+        user.username = unique_username(self.invitation.email)
+        user.role = self.invitation.role
+        user.email_verified_at = timezone.now()  # they received the invitation at this address
+        if commit:
+            user.save()
+        return user

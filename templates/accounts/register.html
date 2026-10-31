@@ -9,9 +9,10 @@
   {% include "partials/_form_errors.html" %}
   <div class="form-grid">
     {% for field in form %}
-      <div class="{% if field.name == 'username' or field.name == 'email' or field.name == 'password1' or field.name == 'password2' %}span-2{% endif %}">{% include "partials/_field.html" %}</div>
+      <div class="{% if field.name == 'email' or field.name == 'password1' or field.name == 'password2' or field.name == 'accept_terms' %}span-2{% endif %}">{% include "partials/_field.html" %}</div>
     {% endfor %}
   </div>
+  {% if form.terms_url or form.privacy_url %}<p class="help">{% if form.terms_url %}<a href="{{ form.terms_url }}" target="_blank" rel="noopener">{% trans "Read the terms of use" %}</a>{% endif %}{% if form.terms_url and form.privacy_url %} · {% endif %}{% if form.privacy_url %}<a href="{{ form.privacy_url }}" target="_blank" rel="noopener">{% trans "Read the privacy policy" %}</a>{% endif %}</p>{% endif %}
   {% include "accounts/_captcha.html" %}
   <button type="submit" class="btn btn-block">{% icon "plus" 18 %} {% trans "Sign up" %}</button>
 </form>

@@ -39,6 +39,9 @@ def free_port():
 SEED = '''
 from apps.core.models import SiteSettings
 SiteSettings.objects.update_or_create(pk=1, defaults={"registration_open": True})
+from django.contrib.auth import get_user_model
+from apps.accounts.permissions import Role
+get_user_model().objects.create_user("boss", "boss@example.com", "Sup3r-Secret-Pass!", role=Role.ADMIN)
 print("seeded")
 '''
 
@@ -83,10 +86,11 @@ def main():
     return 1 if failed else 0
 
 
-def verification_link(log):
+def emailed_link(log, kind):
+    """The last link of the given kind ("verify-email" or "invite") found in the console email log."""
     def find():
         text = quopri.decodestring(Path(log).read_bytes()).decode("utf-8", "replace")
-        found = re.findall(r"https?://[^\s\"<>]*/accounts/verify-email/[^\s\"<>]+", text)
+        found = re.findall(r"https?://[^\s\"<>]*/accounts/" + kind + r"/[^\s\"<>]+", text)
         return found[-1] if found else None
     return wait_for(find)
 
@@ -119,7 +123,7 @@ def run_scenarios(base, log):
         check("the server accepted the browser's answer and shows the generic page", "register/done" in page.url)
 
         print("\n[2] The verification email arrives and works")
-        link = verification_link(log)
+        link = emailed_link(log, "verify-email")
         check("a verification link was emailed", link is not None)
         page.goto(link)
         page.click("form button[type=submit]")
@@ -157,6 +161,48 @@ def run_scenarios(base, log):
         page.click("form button[type=submit]")
         page.wait_for_load_state()
         check("it is refused and nobody is signed up", "/register/done" not in page.url and page.locator("[data-pow]").count() == 1)
+        ctx.close()
+
+        print("\n[5] An administrator invites someone, who accepts in the browser")
+        ctx = browser.new_context()
+        page = ctx.new_page()
+        page.goto(base + "/accounts/login/")
+        page.fill("#id_username", "boss")
+        page.fill("#id_password", PASSWORD)
+        page.click("form button[type=submit]")
+        page.wait_for_url(lambda u: "/accounts/login" not in u)
+        page.goto(base + "/accounts/settings/")
+        page.check("input[name=registration_mode][value=invite]")
+        page.click("form:has(input[name=registration_mode]) button[type=submit]")
+        page.wait_for_load_state()
+        check("the sign-up mode was changed to invitation-only", page.locator("input[name=registration_mode][value=invite]").is_checked())
+        page.goto(base + "/accounts/invitations/")
+        page.fill("#id_email", "guest@example.com")
+        page.select_option("#id_role", "author")
+        page.click("form:has(#id_email) button[type=submit]")
+        page.wait_for_load_state()
+        invite = emailed_link(log, "invite")
+        check("the invitation email carries a link", invite is not None)
+        ctx.close()
+        ctx = browser.new_context()
+        page = ctx.new_page()
+        page.goto(base + "/accounts/register/")
+        check("public sign-up is closed now", "/accounts/login" in page.url)
+        page.goto(invite)
+        check("the invitation shows the invited address", page.locator("text=guest@example.com").count() >= 1)
+        page.fill("#id_first_name", "Guest")
+        page.fill("#id_last_name", "User")
+        page.fill("#id_password1", PASSWORD)
+        page.fill("#id_password2", PASSWORD)
+        page.click("form button[type=submit]")
+        page.wait_for_url("**/accounts/login/**")
+        page.fill("#id_username", "guest@example.com")
+        page.fill("#id_password", PASSWORD)
+        page.click("form button[type=submit]")
+        page.wait_for_url(lambda u: "/accounts/login" not in u)
+        check("the invited author signs in and reaches the panel (not the member page)", "/accounts/login" not in page.url and "/accounts/profile" not in page.url, page.url)
+        page.goto(invite)
+        check("the same link no longer works", page.locator("form input[name=password1]").count() == 0)
         ctx.close()
 
         check("no unexpected console errors", not problems, problems[:3])

@@ -1,6 +1,7 @@
 from django.utils.translation import gettext_lazy
 from django.contrib.auth.models import AbstractUser, UserManager as DjangoUserManager
-from django.core.validators import RegexValidator
+from django.conf import settings
+from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from django.db import models
 from django.utils import timezone
 
@@ -103,3 +104,96 @@ class User(AbstractUser):
         if self.is_super_admin:
             return [r.value for r in Role]
         return [r.value for r in Role if ROLE_LEVEL[r] < self.role_level]
+
+
+class AccountPolicy(models.Model):
+    """How accounts work on this site (a single row). Whether anybody may sign up on their own is ``SiteSettings.registration_open``
+    plus ``invitations_enabled`` here; the panel page edits both as one three-way choice (see ``policy.registration_mode``)."""
+
+    DEFAULT_ROLES = (Role.USER, Role.AUTHOR)
+
+    invitations_enabled = models.BooleanField(gettext_lazy("Administrators may invite people"), default=True)
+    default_role = models.CharField(gettext_lazy("Role of new sign-ups"), max_length=20, default=Role.USER,
+                                    choices=[(r.value, r.label) for r in DEFAULT_ROLES],
+                                    help_text=gettext_lazy("The role given to people who sign up on their own. Invitations carry their own role."))
+    require_verified_email = models.BooleanField(gettext_lazy("Sign-in requires a verified email"), default=False,
+                                                 help_text=gettext_lazy("People must open the link in the verification email before they can sign in. Needs working email (send a test first)."))
+    remember_days = models.PositiveSmallIntegerField(gettext_lazy("“Remember me” lasts (days)"), default=30,
+                                                     validators=[MinValueValidator(1), MaxValueValidator(365)],
+                                                     help_text=gettext_lazy("Without “Remember me”, the sign-in ends when the browser is closed."))
+    invitation_days = models.PositiveSmallIntegerField(gettext_lazy("An invitation is valid for (days)"), default=7,
+                                                       validators=[MinValueValidator(1), MaxValueValidator(30)])
+    require_terms = models.BooleanField(gettext_lazy("New accounts must accept the terms"), default=False)
+    terms_page = models.ForeignKey("content.Page", verbose_name=gettext_lazy("Terms of use page"), null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+    privacy_page = models.ForeignKey("content.Page", verbose_name=gettext_lazy("Privacy policy page"), null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+
+    class Meta:
+        verbose_name = gettext_lazy("Account settings")
+        verbose_name_plural = gettext_lazy("Account settings")
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def load(cls) -> "AccountPolicy":
+        obj, _ = cls.objects.get_or_create(pk=1, defaults={"require_verified_email": bool(getattr(settings, "RAVIX_REQUIRE_EMAIL_VERIFICATION", False))})
+        return obj
+
+    @property
+    def verification_required(self) -> bool:
+        """The environment variable can force it on; the panel switch turns it on for sites that did not set the variable."""
+        return bool(self.require_verified_email or getattr(settings, "RAVIX_REQUIRE_EMAIL_VERIFICATION", False))
+
+    @property
+    def new_user_role(self) -> str:
+        return self.default_role if self.default_role in {r.value for r in self.DEFAULT_ROLES} else Role.USER.value
+
+
+class SecurityProfile(models.Model):
+    """Per-user account facts that are not part of the profile (created when first needed)."""
+
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="security")
+    terms_accepted_at = models.DateTimeField(null=True, blank=True)
+
+    @classmethod
+    def for_user(cls, user) -> "SecurityProfile":
+        obj, _ = cls.objects.get_or_create(user=user)
+        return obj
+
+
+class Invitation(models.Model):
+    """An invitation to open an account. Only the SHA-256 of the secret token is stored; the token itself exists only in the emailed link."""
+
+    email = models.EmailField(gettext_lazy("Email"))
+    role = models.CharField(gettext_lazy("Role"), max_length=20, choices=Role.choices, default=Role.USER)
+    token_hash = models.CharField(max_length=64, unique=True)
+    invited_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+    created_at = models.DateTimeField(default=timezone.now)
+    expires_at = models.DateTimeField()
+    used_at = models.DateTimeField(null=True, blank=True)
+    revoked_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        indexes = [models.Index(fields=["email"])]
+
+    def __str__(self):
+        return self.email
+
+    @staticmethod
+    def hash_token(token: str) -> str:
+        import hashlib
+
+        return hashlib.sha256((token or "").encode()).hexdigest()
+
+    @property
+    def state(self) -> str:
+        """``used`` | ``revoked`` | ``expired`` | ``pending``."""
+        if self.used_at:
+            return "used"
+        if self.revoked_at:
+            return "revoked"
+        if self.expires_at <= timezone.now():
+            return "expired"
+        return "pending"

@@ -1,0 +1,10 @@
+{% load i18n %}{% autoescape off %}{% if inviter %}{% blocktrans with name=inviter site=site_name %}{{ name }} invited you to {{ site }}.{% endblocktrans %}{% else %}{% blocktrans with site=site_name %}You are invited to {{ site }}.{% endblocktrans %}{% endif %}
+
+{% trans "Open the link below to choose your name and password:" %}
+
+{{ link }}
+
+{% blocktrans with days=days %}The link can be used once and works for {{ days }} days.{% endblocktrans %}
+
+{% trans "If you were not expecting this invitation, ignore this email." %}
+{% endautoescape %}

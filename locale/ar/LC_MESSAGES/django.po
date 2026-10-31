@@ -13417,3 +13417,195 @@ msgstr "تم التحقق بنجاح."
 
 msgid "Checking that you are human…"
 msgstr "جارٍ التحقق من أنك إنسان…"
+
+msgid "Account settings"
+msgstr "إعدادات الحسابات"
+
+msgid "Invitations"
+msgstr "الدعوات"
+
+msgid "You must accept the terms to continue."
+msgstr "يجب قبول الشروط للمتابعة."
+
+msgid "Only people an administrator invites"
+msgstr "فقط من يدعوهم المسؤول"
+
+msgid "Nobody signs up; administrators create accounts"
+msgstr "لا أحد يسجّل بنفسه؛ المسؤولون ينشئون الحسابات"
+
+msgid "Choose the published page that holds the terms."
+msgstr "اختر الصفحة المنشورة التي تحتوي على الشروط."
+
+msgid "I have read and accept the terms of use"
+msgstr "قرأت شروط الاستخدام وأوافق عليها"
+
+msgid "Who can create an account"
+msgstr "من يمكنه إنشاء حساب"
+
+msgid "Anyone (public sign-up)"
+msgstr "أي شخص (تسجيل عام)"
+
+msgid "— none —"
+msgstr "— لا شيء —"
+
+msgid "Role of new sign-ups"
+msgstr "دور المسجّلين الجدد"
+
+msgid "People must open the link in the verification email before they can sign in. Needs working email (send a test first)."
+msgstr "يجب على الأشخاص فتح رابط رسالة التحقق قبل تسجيل الدخول. يتطلب بريدًا إلكترونيًا يعمل (أرسل رسالة اختبار أولًا)."
+
+msgid "Without “Remember me”, the sign-in ends when the browser is closed."
+msgstr "بدون «تذكّرني» ينتهي تسجيل الدخول عند إغلاق المتصفح."
+
+msgid "Sign-in requires a verified email"
+msgstr "تسجيل الدخول يتطلب بريدًا موثّقًا"
+
+msgid "New accounts must accept the terms"
+msgstr "على الحسابات الجديدة قبول الشروط"
+
+msgid "Privacy policy page"
+msgstr "صفحة سياسة الخصوصية"
+
+msgid "An invitation is valid for (days)"
+msgstr "صلاحية الدعوة (أيام)"
+
+msgid "Administrators may invite people"
+msgstr "يمكن للمسؤولين دعوة الأشخاص"
+
+msgid "Terms of use page"
+msgstr "صفحة شروط الاستخدام"
+
+msgid "“Remember me” lasts (days)"
+msgstr "مدة «تذكّرني» (أيام)"
+
+msgid "The role given to people who sign up on their own. Invitations carry their own role."
+msgstr "الدور الممنوح لمن يسجّلون بأنفسهم. للدعوات دورها الخاص."
+
+msgid "The invitation was withdrawn."
+msgstr "تم سحب الدعوة."
+
+msgid "Your account is ready. You can sign in now."
+msgstr "حسابك جاهز. يمكنك تسجيل الدخول الآن."
+
+msgid "Account settings were saved."
+msgstr "تم حفظ إعدادات الحسابات."
+
+#, python-format
+msgid "New user “%(username)s” accepted an invitation."
+msgstr "قبل المستخدم «%(username)s» الدعوة."
+
+msgid "The invitation was sent."
+msgstr "تم إرسال الدعوة."
+
+msgid "The invitation was saved but the email could not be sent. Check the email settings and send it again."
+msgstr "تم حفظ الدعوة لكن تعذّر إرسال البريد. تحقق من إعدادات البريد وأعد الإرسال."
+
+#, python-format
+msgid "An invitation was sent to %(email)s."
+msgstr "تم إرسال دعوة إلى %(email)s."
+
+msgid "Invitations are turned off in the account settings."
+msgstr "الدعوات متوقفة في إعدادات الحسابات."
+
+#, python-format
+msgid "Account settings were edited (%(changed)s)."
+msgstr "تم تعديل إعدادات الحسابات (%(changed)s)."
+
+msgid "Invitation"
+msgstr "دعوة"
+
+#, python-format
+msgid "The invitation to %(email)s was withdrawn."
+msgstr "تم سحب الدعوة المرسلة إلى %(email)s."
+
+#, python-format
+msgid "%(name)s invited you to %(site)s."
+msgstr "دعاك %(name)s إلى %(site)s."
+
+msgid "Open the link below to choose your name and password:"
+msgstr "افتح الرابط أدناه لاختيار اسمك وكلمة المرور:"
+
+msgid "If you were not expecting this invitation, ignore this email."
+msgstr "إذا لم تكن تتوقع هذه الدعوة، تجاهل هذه الرسالة."
+
+#, python-format
+msgid "You are invited to %(site)s."
+msgstr "أنت مدعو إلى %(site)s."
+
+#, python-format
+msgid "The link can be used once and works for %(days)s days."
+msgstr "يمكن استخدام الرابط مرة واحدة وهو صالح لمدة %(days)s أيام."
+
+#, python-format
+msgid "You are invited to %(site)s"
+msgstr "دعوة إلى %(site)s"
+
+msgid "Waiting"
+msgstr "قيد الانتظار"
+
+msgid "Expired"
+msgstr "منتهية"
+
+msgid "Accepted"
+msgstr "مقبولة"
+
+msgid "Invited by"
+msgstr "دعا بواسطة"
+
+msgid "Send invitation"
+msgstr "إرسال الدعوة"
+
+msgid "Invite someone by email. They choose a name and a password and their address counts as verified."
+msgstr "ادعُ شخصًا بالبريد الإلكتروني. يختار اسمه وكلمة مروره ويُعدّ بريده موثّقًا."
+
+msgid "Sent"
+msgstr "أُرسلت"
+
+msgid "No invitations yet."
+msgstr "لا توجد دعوات بعد."
+
+msgid "Invite someone"
+msgstr "دعوة شخص"
+
+msgid "This invitation link is invalid, has expired or was already used. Ask the person who invited you to send a new one."
+msgstr "رابط الدعوة غير صالح أو منتهي أو مستخدم من قبل. اطلب من الداعي إرسال دعوة جديدة."
+
+msgid "Create my account"
+msgstr "إنشاء حسابي"
+
+msgid "The invitation is not valid"
+msgstr "الدعوة غير صالحة"
+
+#, python-format
+msgid "Create your account for %(email)s."
+msgstr "أنشئ حسابك لـ %(email)s."
+
+msgid "Read the terms of use"
+msgstr "قراءة شروط الاستخدام"
+
+msgid "You are invited"
+msgstr "أنت مدعو"
+
+msgid "Read the privacy policy"
+msgstr "قراءة سياسة الخصوصية"
+
+msgid "Accept the invitation"
+msgstr "قبول الدعوة"
+
+msgid "Who can create an account, what they must accept, and how long a sign-in lasts."
+msgstr "من يمكنه إنشاء حساب، وما الذي عليه قبوله، ومدة بقاء تسجيل الدخول."
+
+msgid "Sign-in"
+msgstr "تسجيل الدخول"
+
+msgid "Sign-up"
+msgstr "التسجيل"
+
+msgid "Terms and privacy"
+msgstr "الشروط والخصوصية"
+
+msgid "Open account settings"
+msgstr "فتح إعدادات الحسابات"
+
+msgid "Who can create an account, sign-in and sign-up rules, terms and invitations are in the account settings."
+msgstr "من يمكنه إنشاء حساب وقواعد الدخول والتسجيل والشروط والدعوات موجودة في إعدادات الحسابات."

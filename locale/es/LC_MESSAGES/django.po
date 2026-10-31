@@ -13819,3 +13819,195 @@ msgstr "Comprobación superada."
 
 msgid "Checking that you are human…"
 msgstr "Comprobando que es una persona…"
+
+msgid "Account settings"
+msgstr "Ajustes de cuentas"
+
+msgid "Invitations"
+msgstr "Invitaciones"
+
+msgid "You must accept the terms to continue."
+msgstr "Debe aceptar los términos para continuar."
+
+msgid "Only people an administrator invites"
+msgstr "Solo las personas que invita un administrador"
+
+msgid "Nobody signs up; administrators create accounts"
+msgstr "Nadie se registra solo; los administradores crean las cuentas"
+
+msgid "Choose the published page that holds the terms."
+msgstr "Elija la página publicada que contiene los términos."
+
+msgid "I have read and accept the terms of use"
+msgstr "He leído y acepto los términos de uso"
+
+msgid "Who can create an account"
+msgstr "Quién puede crear una cuenta"
+
+msgid "Anyone (public sign-up)"
+msgstr "Cualquiera (registro público)"
+
+msgid "— none —"
+msgstr "— ninguna —"
+
+msgid "Role of new sign-ups"
+msgstr "Rol de los nuevos registros"
+
+msgid "People must open the link in the verification email before they can sign in. Needs working email (send a test first)."
+msgstr "Las personas deben abrir el enlace del correo de verificación antes de iniciar sesión. Requiere correo funcionando (envíe primero uno de prueba)."
+
+msgid "Without “Remember me”, the sign-in ends when the browser is closed."
+msgstr "Sin «Recordarme», el inicio de sesión termina al cerrar el navegador."
+
+msgid "Sign-in requires a verified email"
+msgstr "Iniciar sesión requiere un correo verificado"
+
+msgid "New accounts must accept the terms"
+msgstr "Las cuentas nuevas deben aceptar los términos"
+
+msgid "Privacy policy page"
+msgstr "Página de la política de privacidad"
+
+msgid "An invitation is valid for (days)"
+msgstr "Una invitación es válida durante (días)"
+
+msgid "Administrators may invite people"
+msgstr "Los administradores pueden invitar a personas"
+
+msgid "Terms of use page"
+msgstr "Página de los términos de uso"
+
+msgid "“Remember me” lasts (days)"
+msgstr "«Recordarme» dura (días)"
+
+msgid "The role given to people who sign up on their own. Invitations carry their own role."
+msgstr "El rol que se da a quienes se registran por su cuenta. Las invitaciones llevan su propio rol."
+
+msgid "The invitation was withdrawn."
+msgstr "La invitación se retiró."
+
+msgid "Your account is ready. You can sign in now."
+msgstr "Su cuenta está lista. Ya puede iniciar sesión."
+
+msgid "Account settings were saved."
+msgstr "Los ajustes de cuentas se guardaron."
+
+#, python-format
+msgid "New user “%(username)s” accepted an invitation."
+msgstr "El usuario «%(username)s» aceptó una invitación."
+
+msgid "The invitation was sent."
+msgstr "La invitación se envió."
+
+msgid "The invitation was saved but the email could not be sent. Check the email settings and send it again."
+msgstr "La invitación se guardó pero no se pudo enviar el correo. Revise los ajustes de correo y vuelva a enviarla."
+
+#, python-format
+msgid "An invitation was sent to %(email)s."
+msgstr "Se envió una invitación a %(email)s."
+
+msgid "Invitations are turned off in the account settings."
+msgstr "Las invitaciones están desactivadas en los ajustes de cuentas."
+
+#, python-format
+msgid "Account settings were edited (%(changed)s)."
+msgstr "Se editaron los ajustes de cuentas (%(changed)s)."
+
+msgid "Invitation"
+msgstr "Invitación"
+
+#, python-format
+msgid "The invitation to %(email)s was withdrawn."
+msgstr "Se retiró la invitación a %(email)s."
+
+#, python-format
+msgid "%(name)s invited you to %(site)s."
+msgstr "%(name)s le invitó a %(site)s."
+
+msgid "Open the link below to choose your name and password:"
+msgstr "Abra el enlace siguiente para elegir su nombre y contraseña:"
+
+msgid "If you were not expecting this invitation, ignore this email."
+msgstr "Si no esperaba esta invitación, ignore este correo."
+
+#, python-format
+msgid "You are invited to %(site)s."
+msgstr "Está invitado a %(site)s."
+
+#, python-format
+msgid "The link can be used once and works for %(days)s days."
+msgstr "El enlace puede usarse una vez y es válido durante %(days)s días."
+
+#, python-format
+msgid "You are invited to %(site)s"
+msgstr "Invitación a %(site)s"
+
+msgid "Waiting"
+msgstr "En espera"
+
+msgid "Expired"
+msgstr "Caducada"
+
+msgid "Accepted"
+msgstr "Aceptada"
+
+msgid "Invited by"
+msgstr "Invitado por"
+
+msgid "Send invitation"
+msgstr "Enviar invitación"
+
+msgid "Invite someone by email. They choose a name and a password and their address counts as verified."
+msgstr "Invite a alguien por correo. Elige su nombre y contraseña y su dirección cuenta como verificada."
+
+msgid "Sent"
+msgstr "Enviada"
+
+msgid "No invitations yet."
+msgstr "Aún no hay invitaciones."
+
+msgid "Invite someone"
+msgstr "Invitar a alguien"
+
+msgid "This invitation link is invalid, has expired or was already used. Ask the person who invited you to send a new one."
+msgstr "Este enlace de invitación no es válido, ha caducado o ya se usó. Pida a quien le invitó que envíe uno nuevo."
+
+msgid "Create my account"
+msgstr "Crear mi cuenta"
+
+msgid "The invitation is not valid"
+msgstr "La invitación no es válida"
+
+#, python-format
+msgid "Create your account for %(email)s."
+msgstr "Cree su cuenta para %(email)s."
+
+msgid "Read the terms of use"
+msgstr "Leer los términos de uso"
+
+msgid "You are invited"
+msgstr "Está invitado"
+
+msgid "Read the privacy policy"
+msgstr "Leer la política de privacidad"
+
+msgid "Accept the invitation"
+msgstr "Aceptar la invitación"
+
+msgid "Who can create an account, what they must accept, and how long a sign-in lasts."
+msgstr "Quién puede crear una cuenta, qué debe aceptar y cuánto dura un inicio de sesión."
+
+msgid "Sign-in"
+msgstr "Inicio de sesión"
+
+msgid "Sign-up"
+msgstr "Registro"
+
+msgid "Terms and privacy"
+msgstr "Términos y privacidad"
+
+msgid "Open account settings"
+msgstr "Abrir los ajustes de cuentas"
+
+msgid "Who can create an account, sign-in and sign-up rules, terms and invitations are in the account settings."
+msgstr "Quién puede crear una cuenta, las reglas de inicio de sesión y registro, los términos y las invitaciones están en los ajustes de cuentas."

@@ -96,7 +96,6 @@ class SiteSettingsForm(StyledFormMixin, forms.ModelForm):
             "contact_phone",
             "address",
             "footer_text",
-            "registration_open",
             "comments_require_approval",
             "comments_notify_admin",
             "comments_blocked_words",

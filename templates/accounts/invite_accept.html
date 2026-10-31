@@ -1,0 +1,23 @@
+{% extends "layouts/auth.html" %}
+{% load i18n %}
+{% load ravix_ui %}
+{% block title %}{% trans "Accept the invitation" %}{% endblock %}
+{% block auth_content %}
+{% if usable %}
+<h2 style="margin-bottom:.5rem">{% trans "You are invited" %}</h2>
+<p class="muted" style="margin-bottom:1.25rem">{% blocktrans trimmed with email=invited_email %}Create your account for {{ email }}.{% endblocktrans %}</p>
+<form method="post" novalidate data-once>
+  {% csrf_token %}
+  {% include "partials/_form_errors.html" %}
+  <div class="form-grid">
+    {% for field in form %}<div class="{% if field.name != 'first_name' and field.name != 'last_name' %}span-2{% endif %}">{% include "partials/_field.html" %}</div>{% endfor %}
+  </div>
+  {% if form.terms_url or form.privacy_url %}<p class="help">{% if form.terms_url %}<a href="{{ form.terms_url }}" target="_blank" rel="noopener">{% trans "Read the terms of use" %}</a>{% endif %}{% if form.terms_url and form.privacy_url %} · {% endif %}{% if form.privacy_url %}<a href="{{ form.privacy_url }}" target="_blank" rel="noopener">{% trans "Read the privacy policy" %}</a>{% endif %}</p>{% endif %}
+  <button type="submit" class="btn btn-block">{% icon "check" 18 %} {% trans "Create my account" %}</button>
+</form>
+{% else %}
+<h2 style="margin-bottom:.75rem">{% trans "The invitation is not valid" %}</h2>
+<p>{% trans "This invitation link is invalid, has expired or was already used. Ask the person who invited you to send a new one." %}</p>
+<p class="auth-switch"><a href="{% url 'accounts:login' %}">{% trans "Sign in" %}</a></p>
+{% endif %}
+{% endblock %}

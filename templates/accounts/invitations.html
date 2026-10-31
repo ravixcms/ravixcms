@@ -1,0 +1,43 @@
+{% extends "layouts/panel.html" %}
+{% load i18n %}
+{% load ravix_ui %}
+{% block title %}{% trans "Invitations" %}{% endblock %}
+{% block page_title %}{% trans "Invitations" %}{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>{% trans "Invitations" %}</h1><p>{% trans "Invite someone by email. They choose a name and a password and their address counts as verified." %}</p></div></div>
+<div class="card" style="margin-bottom:1.25rem">
+  <div class="card-header"><h2>{% trans "Invite someone" %}</h2></div>
+  <div class="card-body">
+    {% if enabled %}
+    <form method="post" novalidate data-once class="form-grid">
+      {% csrf_token %}
+      <div class="span-2">{% include "partials/_form_errors.html" %}</div>
+      <div>{% include "partials/_field.html" with field=form.email %}</div>
+      <div>{% include "partials/_field.html" with field=form.role %}</div>
+      <div class="span-2"><button type="submit" class="btn">{% icon "plus" 18 %} {% trans "Send invitation" %}</button></div>
+    </form>
+    {% else %}
+    <p class="help">{% trans "Invitations are turned off in the account settings." %} <a href="{% url 'accounts:policy' %}">{% trans "Account settings" %}</a></p>
+    {% endif %}
+  </div>
+</div>
+<div class="card">
+  {% if invitations %}
+  <div class="table-wrap"><table class="table">
+    <thead><tr><th>{% trans "Email" %}</th><th>{% trans "Role" %}</th><th>{% trans "Invited by" %}</th><th>{% trans "Sent" %}</th><th>{% trans "Status" %}</th><th></th></tr></thead>
+    <tbody>
+    {% for inv in invitations %}
+      <tr>
+        <td class="ltr">{{ inv.email }}</td>
+        <td>{{ inv.get_role_display }}</td>
+        <td>{{ inv.invited_by.display_name|default:"—" }}</td>
+        <td>{{ inv.created_at|jalali }}</td>
+        <td>{% if inv.state == "pending" %}{% trans "Waiting" %}{% elif inv.state == "used" %}{% trans "Accepted" %}{% elif inv.state == "revoked" %}{% trans "Withdrawn" %}{% else %}{% trans "Expired" %}{% endif %}</td>
+        <td>{% if inv.state == "pending" %}<form method="post" action="{% url 'accounts:invitation_revoke' inv.pk %}" data-once>{% csrf_token %}<button class="btn btn-light btn-sm" type="submit">{% trans "Withdraw" %}</button></form>{% endif %}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  {% else %}<div class="empty">{% trans "No invitations yet." %}</div>{% endif %}
+</div>
+{% endblock %}

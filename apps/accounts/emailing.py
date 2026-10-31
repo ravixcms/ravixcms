@@ -96,3 +96,24 @@ def send_registration_notice(request, user) -> bool:
         logger.exception(cli_gettext("Sending the verification email to user %s failed."), user.pk)
         return False
     return True
+
+
+def send_invitation(request, invitation, token: str, inviter) -> bool:
+    """The invitation email (in the site's default language: the invited person has no profile yet). False = it could not be sent."""
+    from django.utils import timezone
+
+    from apps.core.models import SiteSettings
+
+    days = max(1, round((invitation.expires_at - timezone.now()).total_seconds() / 86400))
+    ctx = {"link": absolute_url(request, reverse("accounts:invite_accept", args=[token])), "days": days, "inviter": inviter.display_name if inviter else "",
+           "site_name": SiteSettings.load().site_name}
+    with use_language(current_language()):
+        subject = " ".join(render_to_string("accounts/email/invitation_subject.txt", ctx).split())
+        body = render_to_string("accounts/email/invitation.txt", ctx)
+        message = build_message(subject, body, [invitation.email])
+    try:
+        message.send(fail_silently=False)
+    except Exception:  # noqa: BLE001 - the administrator is told it failed; nothing else changes
+        logger.exception(cli_gettext("Sending the invitation to %s failed."), invitation.pk)
+        return False
+    return True

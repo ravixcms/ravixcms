@@ -13468,3 +13468,195 @@ msgstr "بررسی انسان‌بودن انجام شد."
 
 msgid "Checking that you are human…"
 msgstr "در حال بررسی انسان‌بودن شما…"
+
+msgid "Account settings"
+msgstr "تنظیمات حساب‌ها"
+
+msgid "Invitations"
+msgstr "دعوت‌ها"
+
+msgid "You must accept the terms to continue."
+msgstr "برای ادامه باید شرایط را بپذیرید."
+
+msgid "Only people an administrator invites"
+msgstr "فقط کسانی که مدیر دعوت می‌کند"
+
+msgid "Nobody signs up; administrators create accounts"
+msgstr "کسی ثبت‌نام نمی‌کند؛ مدیران حساب می‌سازند"
+
+msgid "Choose the published page that holds the terms."
+msgstr "صفحهٔ منتشرشده‌ای را که شرایط در آن است انتخاب کنید."
+
+msgid "I have read and accept the terms of use"
+msgstr "شرایط استفاده را خوانده‌ام و می‌پذیرم"
+
+msgid "Who can create an account"
+msgstr "چه کسی می‌تواند حساب بسازد"
+
+msgid "Anyone (public sign-up)"
+msgstr "همه (ثبت‌نام عمومی)"
+
+msgid "— none —"
+msgstr "— هیچ —"
+
+msgid "Role of new sign-ups"
+msgstr "نقش ثبت‌نام‌های جدید"
+
+msgid "People must open the link in the verification email before they can sign in. Needs working email (send a test first)."
+msgstr "افراد باید پیش از ورود، پیوند ایمیل تأیید را باز کنند. به ایمیل کارا نیاز دارد (ابتدا یک ایمیل آزمایشی بفرستید)."
+
+msgid "Without “Remember me”, the sign-in ends when the browser is closed."
+msgstr "بدون «مرا به خاطر بسپار»، ورود با بسته‌شدن مرورگر پایان می‌یابد."
+
+msgid "Sign-in requires a verified email"
+msgstr "ورود به ایمیل تأییدشده نیاز دارد"
+
+msgid "New accounts must accept the terms"
+msgstr "حساب‌های تازه باید شرایط را بپذیرند"
+
+msgid "Privacy policy page"
+msgstr "صفحهٔ حریم خصوصی"
+
+msgid "An invitation is valid for (days)"
+msgstr "اعتبار دعوت‌نامه (روز)"
+
+msgid "Administrators may invite people"
+msgstr "مدیران می‌توانند دعوت کنند"
+
+msgid "Terms of use page"
+msgstr "صفحهٔ شرایط استفاده"
+
+msgid "“Remember me” lasts (days)"
+msgstr "«مرا به خاطر بسپار» چند روز بماند"
+
+msgid "The role given to people who sign up on their own. Invitations carry their own role."
+msgstr "نقشی که به کسانی داده می‌شود که خودشان ثبت‌نام می‌کنند. دعوت‌نامه‌ها نقش خودشان را دارند."
+
+msgid "The invitation was withdrawn."
+msgstr "دعوت‌نامه پس گرفته شد."
+
+msgid "Your account is ready. You can sign in now."
+msgstr "حساب شما آماده است. اکنون می‌توانید وارد شوید."
+
+msgid "Account settings were saved."
+msgstr "تنظیمات حساب‌ها ذخیره شد."
+
+#, python-format
+msgid "New user “%(username)s” accepted an invitation."
+msgstr "کاربر «%(username)s» دعوت‌نامه را پذیرفت."
+
+msgid "The invitation was sent."
+msgstr "دعوت‌نامه فرستاده شد."
+
+msgid "The invitation was saved but the email could not be sent. Check the email settings and send it again."
+msgstr "دعوت‌نامه ذخیره شد اما ایمیل فرستاده نشد. تنظیمات ایمیل را بررسی کنید و دوباره بفرستید."
+
+#, python-format
+msgid "An invitation was sent to %(email)s."
+msgstr "دعوت‌نامه‌ای به %(email)s فرستاده شد."
+
+msgid "Invitations are turned off in the account settings."
+msgstr "دعوت‌ها در تنظیمات حساب‌ها خاموش است."
+
+#, python-format
+msgid "Account settings were edited (%(changed)s)."
+msgstr "تنظیمات حساب‌ها ویرایش شد (%(changed)s)."
+
+msgid "Invitation"
+msgstr "دعوت‌نامه"
+
+#, python-format
+msgid "The invitation to %(email)s was withdrawn."
+msgstr "دعوت‌نامهٔ %(email)s پس گرفته شد."
+
+#, python-format
+msgid "%(name)s invited you to %(site)s."
+msgstr "%(name)s شما را به %(site)s دعوت کرد."
+
+msgid "Open the link below to choose your name and password:"
+msgstr "برای انتخاب نام و رمز عبور، پیوند زیر را باز کنید:"
+
+msgid "If you were not expecting this invitation, ignore this email."
+msgstr "اگر منتظر این دعوت نبودید، این ایمیل را نادیده بگیرید."
+
+#, python-format
+msgid "You are invited to %(site)s."
+msgstr "شما به %(site)s دعوت شده‌اید."
+
+#, python-format
+msgid "The link can be used once and works for %(days)s days."
+msgstr "این پیوند یک بار قابل استفاده است و %(days)s روز اعتبار دارد."
+
+#, python-format
+msgid "You are invited to %(site)s"
+msgstr "دعوت به %(site)s"
+
+msgid "Waiting"
+msgstr "در انتظار"
+
+msgid "Expired"
+msgstr "منقضی"
+
+msgid "Accepted"
+msgstr "پذیرفته‌شده"
+
+msgid "Invited by"
+msgstr "دعوت‌کننده"
+
+msgid "Send invitation"
+msgstr "فرستادن دعوت‌نامه"
+
+msgid "Invite someone by email. They choose a name and a password and their address counts as verified."
+msgstr "کسی را با ایمیل دعوت کنید. او نام و رمز عبور را خودش انتخاب می‌کند و نشانی‌اش تأییدشده حساب می‌شود."
+
+msgid "Sent"
+msgstr "ارسال"
+
+msgid "No invitations yet."
+msgstr "هنوز دعوتی نیست."
+
+msgid "Invite someone"
+msgstr "دعوت از یک نفر"
+
+msgid "This invitation link is invalid, has expired or was already used. Ask the person who invited you to send a new one."
+msgstr "این پیوند دعوت نامعتبر است، منقضی شده یا قبلاً استفاده شده. از دعوت‌کننده بخواهید دعوت‌نامهٔ تازه‌ای بفرستد."
+
+msgid "Create my account"
+msgstr "ساخت حساب من"
+
+msgid "The invitation is not valid"
+msgstr "دعوت‌نامه معتبر نیست"
+
+#, python-format
+msgid "Create your account for %(email)s."
+msgstr "حساب خود را برای %(email)s بسازید."
+
+msgid "Read the terms of use"
+msgstr "خواندن شرایط استفاده"
+
+msgid "You are invited"
+msgstr "شما دعوت شده‌اید"
+
+msgid "Read the privacy policy"
+msgstr "خواندن سیاست حریم خصوصی"
+
+msgid "Accept the invitation"
+msgstr "پذیرفتن دعوت‌نامه"
+
+msgid "Who can create an account, what they must accept, and how long a sign-in lasts."
+msgstr "چه کسی می‌تواند حساب بسازد، چه چیزی را باید بپذیرد و ورود چقدر ماندگار است."
+
+msgid "Sign-in"
+msgstr "ورود"
+
+msgid "Sign-up"
+msgstr "ثبت‌نام"
+
+msgid "Terms and privacy"
+msgstr "شرایط و حریم خصوصی"
+
+msgid "Open account settings"
+msgstr "باز کردن تنظیمات حساب‌ها"
+
+msgid "Who can create an account, sign-in and sign-up rules, terms and invitations are in the account settings."
+msgstr "اینکه چه کسی می‌تواند حساب بسازد، قوانین ورود و ثبت‌نام، شرایط و دعوت‌ها در تنظیمات حساب‌ها است."

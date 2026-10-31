@@ -1,0 +1,38 @@
+{% extends "layouts/panel.html" %}
+{% load i18n %}
+{% load ravix_ui %}
+{% block title %}{% trans "Account settings" %}{% endblock %}
+{% block page_title %}{% trans "Account settings" %}{% endblock %}
+{% block content_class %}content-narrow{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>{% trans "Account settings" %}</h1><p>{% trans "Who can create an account, what they must accept, and how long a sign-in lasts." %}</p></div></div>
+<form method="post" novalidate data-once>
+  {% csrf_token %}
+  {% include "partials/_form_errors.html" %}
+  <div class="card" style="margin-bottom:1.25rem">
+    <div class="card-header"><h2>{% trans "Sign-up" %}</h2></div>
+    <div class="card-body">
+      {% include "partials/_field.html" with field=form.registration_mode %}
+      {% include "partials/_field.html" with field=form.default_role %}
+      {% include "partials/_field.html" with field=form.invitation_days %}
+      <p class="help"><a href="{% url 'accounts:invitations' %}">{% trans "Invitations" %}</a></p>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:1.25rem">
+    <div class="card-header"><h2>{% trans "Sign-in" %}</h2></div>
+    <div class="card-body">
+      {% include "partials/_field.html" with field=form.require_verified_email %}
+      {% include "partials/_field.html" with field=form.remember_days %}
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:1.25rem">
+    <div class="card-header"><h2>{% trans "Terms and privacy" %}</h2></div>
+    <div class="card-body">
+      {% include "partials/_field.html" with field=form.require_terms %}
+      {% include "partials/_field.html" with field=form.terms_page %}
+      {% include "partials/_field.html" with field=form.privacy_page %}
+    </div>
+  </div>
+  <button type="submit" class="btn">{% icon "check" 18 %} {% trans "Save" %}</button>
+</form>
+{% endblock %}
