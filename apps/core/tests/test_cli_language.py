@@ -211,8 +211,8 @@ class PreflightCiModeTests(TestCase):
                                   (("--ci",), {"RAVIX_CI_ALLOW_SQLITE": "1"}, "warning")):
             out, _ = self.run_pf(*args, env=env)
             errors, warnings = "\n".join(self.lines(out, "✘")), "\n".join(self.lines(out, "!"))
-            if connection.vendor == "postgresql":
-                continue
+            if connection.vendor != "sqlite":
+                continue  # only meaningful on SQLite (the exception exists for a probe that runs SQLite)
             self.assertEqual(needle in errors, expect == "error", (args, env))
             self.assertEqual(needle in warnings, expect == "warning", (args, env))
 

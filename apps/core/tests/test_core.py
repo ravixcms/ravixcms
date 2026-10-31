@@ -38,7 +38,7 @@ class SiteSettingsViewTests(TestCase):
         self.assertContains(response, "با موفقیت ذخیره شد")
         site = SiteSettings.load()
         self.assertEqual(site.site_name, "سایت من")
-        self.assertTrue(site.registration_open)
+        self.assertFalse(site.registration_open)  # the sign-up switch lives in the account settings now; this page leaves it alone
 
     def test_blank_name_rejected(self):
         response = self.client.post(self.url, {**self.base, "site_name": "   "})
