@@ -4,7 +4,7 @@
 # (shared hosting has no compiler). No gunicorn (Passenger/LiteSpeed run the app) and no psycopg (MySQL/MariaDB or SQLite are used).
 Django>=5.2,<6.0
 djangorestframework>=3.16
-python-dotenv>=1.0
+python-dotenv>=1.2.4
 Pillow>=11.0          # native: needs a manylinux2014 (or newer) wheel
 cryptography>=43.0    # native: needs a manylinux2014 (or newer) wheel
 argon2-cffi>=23.1     # native bindings (argon2-cffi-bindings): pip picks the newest wheel your host accepts, a manylinux2014 one on old hosts
