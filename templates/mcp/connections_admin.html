@@ -1,0 +1,12 @@
+{% extends "layouts/panel.html" %}
+{% load i18n %}
+{% block title %}{% trans "Connected apps" %}{% endblock %}
+{% block page_title %}{% trans "Connected apps" %}{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>{% trans "AI assistants (MCP)" %}</h1><p>{% trans "Every app that is connected to this site, for every person." %}</p></div></div>
+{% include "mcp/_tabs.html" %}
+<div class="card">
+  {% if rows %}{% include "mcp/_connection_rows.html" with admin=True %}
+  {% else %}<div class="empty">{% trans "No app is connected." %}</div>{% endif %}
+</div>
+{% endblock %}

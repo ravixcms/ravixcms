@@ -14,6 +14,7 @@ class AuditLog(models.Model):
         LOGIN = "login", gettext_lazy("Sign in")
         LOGOUT = "logout", gettext_lazy("Sign out")
         LOGIN_FAILED = "login_failed", gettext_lazy("Failed sign-in")
+        MCP = "mcp", gettext_lazy("AI assistant")
 
     actor = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="audit_events", verbose_name=gettext_lazy("User")

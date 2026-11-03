@@ -1,0 +1,8 @@
+{% extends "layouts/auth.html" %}
+{% load i18n %}
+{% block title %}{% trans "Connection stopped" %}{% endblock %}
+{% block auth_content %}
+<h2 style="margin-bottom:1rem">{% trans "This connection was stopped" %}</h2>
+<p>{{ message }}</p>
+<p class="help">{% trans "Nothing was shared. You can close this page." %}</p>
+{% endblock %}

@@ -13331,3 +13331,295 @@ msgstr "您的密码不能是常用密码。"
 
 msgid "Passwords"
 msgstr "密码"
+
+msgid "Manage Ravix MCP: let AI assistants connect to the site, and see or end their connections (superadmin only)"
+msgstr "管理 Ravix MCP：允许 AI 助手连接此网站，并查看或结束它们的连接（仅限超级管理员）"
+
+msgid "AI assistant"
+msgstr "AI 助手"
+
+msgid "Ravix MCP"
+msgstr "Ravix MCP"
+
+msgid "AI assistants (MCP)"
+msgstr "AI 助手 (MCP)"
+
+msgid "succeeded"
+msgstr "成功"
+
+msgid "failed"
+msgstr "失败"
+
+msgid "refused: the access it needs was not granted"
+msgstr "已拒绝：未授予所需的访问权限"
+
+#, python-format
+msgid "Tool %(tool)s called by “%(app)s”: %(outcome)s"
+msgstr "工具 %(tool)s 被“%(app)s”调用：%(outcome)s"
+
+msgid "What a manager may give to an app"
+msgstr "经理可以授予应用的权限"
+
+msgid "What an author may give to an app"
+msgstr "作者可以授予应用的权限"
+
+msgid "Nothing is ticked by default: authors cannot connect apps until you allow it."
+msgstr "默认不勾选任何项：在您允许之前，作者无法连接应用。"
+
+msgid "Several sites share this installation, so Ravix MCP cannot be switched on: posts and pages are not separated per site yet."
+msgstr "多个站点共用此安装，因此无法开启 Ravix MCP：文章和页面尚未按站点分开。"
+
+#, python-format
+msgid "“%(value)s” is not a host name such as app.example.com."
+msgstr "“%(value)s”不是形如 app.example.com 的主机名。"
+
+#, python-format
+msgid "“%(value)s” is not an origin such as https://app.example.com."
+msgstr "“%(value)s”不是形如 https://app.example.com 的来源。"
+
+msgid "Allow, with a red warning on the consent page"
+msgstr "允许，并在同意页面显示红色警告"
+
+msgid "Only apps from trusted addresses"
+msgstr "仅限来自受信任地址的应用"
+
+msgid "Let AI assistants connect to this site"
+msgstr "允许 AI 助手连接此网站"
+
+msgid "Apps from addresses Ravix does not know"
+msgstr "来自 Ravix 不认识的地址的应用"
+
+msgid "Trusted addresses"
+msgstr "受信任的地址"
+
+msgid "One host name per line. claude.ai and claude.com are always trusted."
+msgstr "每行一个主机名。claude.ai 和 claude.com 始终受信任。"
+
+msgid "Access token lifetime (minutes)"
+msgstr "访问令牌有效期（分钟）"
+
+msgid "Calls per minute, per connection"
+msgstr "每个连接每分钟的调用次数"
+
+msgid "Writes per minute, per connection"
+msgstr "每个连接每分钟的写入次数"
+
+msgid "Extra allowed browser origins"
+msgstr "额外允许的浏览器来源"
+
+msgid "One origin per line, for example https://app.example.com. Apps that are not web pages send none."
+msgstr "每行一个来源，例如 https://app.example.com。不是网页的应用不会发送来源。"
+
+msgid "Ravix MCP settings"
+msgstr "Ravix MCP 设置"
+
+#, python-format
+msgid "This app could not be identified, so it cannot be connected. (%(why)s)"
+msgstr "无法识别此应用，因此无法连接。（%(why)s）"
+
+msgid "The address this app wants to return to is not one it registered, so the connection was stopped."
+msgstr "此应用想返回的地址不在其注册的地址之列，连接已停止。"
+
+msgid "Too many attempts. Please wait a few minutes."
+msgstr "尝试次数过多。请等待几分钟。"
+
+#, python-format
+msgid "A person declined to connect the app “%(app)s”."
+msgstr "有人拒绝连接应用“%(app)s”。"
+
+msgid "Please confirm that you trust this address, or choose Deny."
+msgstr "请确认您信任此地址，或选择“拒绝”。"
+
+#, python-format
+msgid "A person allowed the app “%(app)s” (%(host)s) to connect with: %(scopes)s."
+msgstr "有人允许应用“%(app)s”（%(host)s）以下列权限连接：%(scopes)s。"
+
+#, python-format
+msgid "An authorization code was used twice; the connection of “%(app)s” was ended."
+msgstr "授权码被使用了两次；“%(app)s”的连接已结束。"
+
+#, python-format
+msgid "A refresh token was used twice; the connection of “%(app)s” was ended."
+msgstr "刷新令牌被使用了两次；“%(app)s”的连接已结束。"
+
+#, python-format
+msgid "The app “%(app)s” ended its own connection."
+msgstr "应用“%(app)s”结束了自己的连接。"
+
+msgid "See whether the site is healthy (a short summary, no server details)"
+msgstr "查看网站是否健康（简短摘要，不含服务器细节）"
+
+msgid "Read posts, pages, categories, tags, media and menus"
+msgstr "读取文章、页面、分类、标签、媒体和菜单"
+
+msgid "Create and edit drafts of posts and pages (nothing goes live)"
+msgstr "创建和编辑文章与页面的草稿（不会上线）"
+
+msgid "Publish, unpublish and move posts and pages to the trash — this changes the live site"
+msgstr "发布、取消发布并将文章和页面移入回收站——这会改变线上网站"
+
+msgid "Upload images and files, and set their descriptions"
+msgstr "上传图片和文件，并设置其说明"
+
+msgid "Edit search-engine titles and descriptions"
+msgstr "编辑搜索引擎标题和描述"
+
+msgid "Edit the site menus"
+msgstr "编辑网站菜单"
+
+msgid "Edit page layouts made with Ravix Studio (drafts only)"
+msgstr "编辑用 Ravix Studio 制作的页面布局（仅限草稿）"
+
+msgid "Stay connected without asking you to sign in again"
+msgstr "保持连接，无需再次登录"
+
+#, python-format
+msgid "Ravix MCP settings were edited (%(changed)s)."
+msgstr "Ravix MCP 设置已编辑（%(changed)s）。"
+
+msgid "Ravix MCP is on. AI assistants can now connect to this site."
+msgstr "Ravix MCP 已开启。AI 助手现在可以连接此网站。"
+
+#, python-format
+msgid "The connection of “%(app)s” for %(user)s was ended by an administrator."
+msgstr "管理员结束了 %(user)s 的“%(app)s”连接。"
+
+msgid "The connection was ended."
+msgstr "连接已结束。"
+
+#, python-format
+msgid "The connection of “%(app)s” was ended by its owner."
+msgstr "“%(app)s”的连接已被其所有者结束。"
+
+msgid "Connected apps"
+msgstr "已连接的应用"
+
+msgid "App"
+msgstr "应用"
+
+msgid "Access"
+msgstr "访问权限"
+
+msgid "Connected"
+msgstr "已连接"
+
+msgid "Unknown address"
+msgstr "未知地址"
+
+msgid "End connection"
+msgstr "结束连接"
+
+msgid "AI assistants"
+msgstr "AI 助手"
+
+msgid "Every app that is connected to this site, for every person."
+msgstr "连接到此网站的所有应用（所有人）。"
+
+msgid "No app is connected."
+msgstr "没有已连接的应用。"
+
+msgid "AI assistants that can act on this site for you. Ending a connection stops it at once."
+msgstr "可以代您在此网站上操作的 AI 助手。结束连接会立即停止它。"
+
+msgid "No app is connected to your account."
+msgstr "没有应用连接到您的账户。"
+
+msgid "Connect an app"
+msgstr "连接应用"
+
+#, python-format
+msgid "“%(app)s” wants to connect to this site"
+msgstr "“%(app)s”想连接到此网站"
+
+#, python-format
+msgid "You are signed in as %(name)s (%(role)s). The app will never be able to do more than your account can do."
+msgstr "您已以 %(name)s（%(role)s）身份登录。应用的权限永远不会超过您的账户。"
+
+msgid "After you allow it, this page sends you back to:"
+msgstr "您允许后，此页面会把您带回："
+
+msgid "This is an address Ravix knows and trusts."
+msgstr "这是 Ravix 认识并信任的地址。"
+
+msgid "Ravix does not know this address."
+msgstr "Ravix 不认识此地址。"
+
+msgid "Anyone can register an app under any name. Connect it only if you started this yourself and recognise the address above."
+msgstr "任何人都可以用任意名称注册应用。只有在您自己发起并认得上面的地址时才连接。"
+
+msgid "The administrator of this site only allows apps from trusted addresses, so this one cannot be connected."
+msgstr "此网站的管理员只允许来自受信任地址的应用，因此无法连接此应用。"
+
+msgid "Your account is not allowed to give an app any of the access it asked for. Ask a superadmin if you need it."
+msgstr "您的账户无权向应用授予它请求的任何访问权限。如有需要，请联系超级管理员。"
+
+msgid "It is asking to:"
+msgstr "它请求："
+
+msgid "not available for your account"
+msgstr "对您的账户不可用"
+
+#, python-format
+msgid "I trust %(host)s"
+msgstr "我信任 %(host)s"
+
+msgid "Allow"
+msgstr "允许"
+
+msgid "Deny"
+msgstr "拒绝"
+
+msgid "You can end this connection at any time from “Connected apps” in your account."
+msgstr "您可以随时在账户的“已连接的应用”中结束此连接。"
+
+msgid "Connection stopped"
+msgstr "连接已停止"
+
+msgid "This connection was stopped"
+msgstr "此连接已停止"
+
+msgid "Nothing was shared. You can close this page."
+msgstr "未共享任何内容。您可以关闭此页面。"
+
+msgid "Let assistants such as Claude work on this site for the people who sign in, with only the access you allow."
+msgstr "让 Claude 这样的助手代表登录的人在此网站上工作，仅使用您允许的访问权限。"
+
+msgid "Several sites share this installation, so Ravix MCP cannot be switched on."
+msgstr "多个站点共用此安装，因此无法开启 Ravix MCP。"
+
+msgid "How to connect"
+msgstr "如何连接"
+
+#, python-format
+msgid "Apps connected: %(n)s."
+msgstr "已连接的应用：%(n)s。"
+
+msgid "Address to give the assistant"
+msgstr "要提供给助手的地址"
+
+msgid "Switch Ravix MCP on below and save."
+msgstr "在下方开启 Ravix MCP 并保存。"
+
+msgid "In Claude, open Settings, then Connectors, then Add custom connector, and paste the address above."
+msgstr "在 Claude 中打开“设置”，然后是“连接器”和“添加自定义连接器”，并粘贴上面的地址。"
+
+msgid "Sign in with your Ravix account when asked, check the address on the page, and allow."
+msgstr "按提示用您的 Ravix 账户登录，核对页面上的地址，然后允许。"
+
+msgid "This address is not HTTPS. Claude only connects to sites with a valid HTTPS address."
+msgstr "此地址不是 HTTPS。Claude 只连接有效 HTTPS 地址的网站。"
+
+msgid "Switch"
+msgstr "开关"
+
+msgid "What each role may give to an app"
+msgstr "每个角色可以授予应用的权限"
+
+msgid "A superadmin can always give everything their account can do. Whatever is ticked here is still limited, on every call, by what the person’s role can do at that moment."
+msgstr "超级管理员始终可以授予其账户能做的一切。此处勾选的内容在每次调用时仍受此人当时角色所能做之事的限制。"
+
+msgid "Unknown apps"
+msgstr "未知应用"
+
+msgid "Limits"
+msgstr "限制"

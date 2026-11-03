@@ -54,6 +54,7 @@ CAPABILITIES = {
     "shop.manage": gettext_lazy("Manage shop products"),
     "shop.orders": gettext_lazy("View and process shop orders"),
     "shop.gateways": gettext_lazy("Manage shop payment gateways (enable/disable and connection keys)"),
+    "mcp.manage": gettext_lazy("Manage Ravix MCP: let AI assistants connect to the site, and see or end their connections (superadmin only)"),
     "updates.view": gettext_lazy("View versions, available updates and the upgrade history"),
     "updates.manage": gettext_lazy("Apply/roll back core and theme updates (superadmin only; replaces the application code)"),
 }

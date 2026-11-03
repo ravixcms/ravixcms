@@ -1,0 +1,47 @@
+{% extends "layouts/auth.html" %}
+{% load i18n %}
+{% load ravix_ui %}
+{% block title %}{% trans "Connect an app" %}{% endblock %}
+{% block auth_content %}
+<h2 style="margin-bottom:.75rem">{% blocktrans trimmed with app=client.name %}“{{ app }}” wants to connect to this site{% endblocktrans %}</h2>
+<p>{% blocktrans trimmed with name=user.display_name role=role_label %}You are signed in as {{ name }} ({{ role }}). The app will never be able to do more than your account can do.{% endblocktrans %}</p>
+
+<div class="alert {% if trusted %}alert-success{% else %}alert-danger{% endif %}" role="{% if trusted %}status{% else %}alert{% endif %}" style="margin:1rem 0">
+  <p style="margin:0 0 .35rem">{% trans "After you allow it, this page sends you back to:" %}</p>
+  <p class="ltr" style="margin:0;font-size:1.25rem;font-weight:700;word-break:break-all"><bdi>{{ host }}</bdi></p>
+  {% if trusted %}
+    <p style="margin:.5rem 0 0">{% trans "This is an address Ravix knows and trusts." %}</p>
+  {% else %}
+    <p style="margin:.5rem 0 0"><strong>{% trans "Ravix does not know this address." %}</strong> {% trans "Anyone can register an app under any name. Connect it only if you started this yourself and recognise the address above." %}</p>
+  {% endif %}
+</div>
+
+{% if blocked_unknown %}
+  <div class="alert alert-danger" role="alert">{% trans "The administrator of this site only allows apps from trusted addresses, so this one cannot be connected." %}</div>
+{% elif nothing_allowed %}
+  <div class="alert alert-danger" role="alert">{% trans "Your account is not allowed to give an app any of the access it asked for. Ask a superadmin if you need it." %}</div>
+{% endif %}
+
+<h3 style="margin:1rem 0 .5rem">{% trans "It is asking to:" %}</h3>
+<ul class="check-list" style="padding-inline-start:1.2rem">
+  {% for row in rows %}
+    <li {% if not row.allowed %}class="muted"{% endif %}>
+      {% if row.allowed %}{{ row.label }}{% else %}<s>{{ row.label }}</s> — {% trans "not available for your account" %}{% endif %}
+    </li>
+  {% endfor %}
+</ul>
+{% if error %}<div class="alert alert-danger" role="alert">{{ error }}</div>{% endif %}
+
+<form method="post" action="{% url 'mcp:authorize' %}" novalidate>
+  {% csrf_token %}
+  {% for name, value in params.items %}<input type="hidden" name="{{ name }}" value="{{ value }}">{% endfor %}
+  {% if not trusted and not blocked %}
+    <label class="field-check" style="margin:1rem 0"><input type="checkbox" class="check" name="trust_host" value="{{ host }}" required> <span>{% blocktrans trimmed with host=host %}I trust {{ host }}{% endblocktrans %}</span></label>
+  {% endif %}
+  <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1rem">
+    {% if not blocked %}<button type="submit" name="decision" value="allow" class="btn">{% trans "Allow" %}</button>{% endif %}
+    <button type="submit" name="decision" value="deny" class="btn btn-light" formnovalidate>{% trans "Deny" %}</button>
+  </div>
+</form>
+<p class="help" style="margin-top:1rem">{% trans "You can end this connection at any time from “Connected apps” in your account." %}</p>
+{% endblock %}

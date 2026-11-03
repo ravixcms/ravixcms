@@ -27,7 +27,7 @@ class SecurityHeadersMiddleware:
 
 
 NON_LOCALIZED_PREFIXES = ("/panel/", "/accounts/", "/api/", "/django-admin/", "/static/", "/theme-assets/", "/studio-assets/", "/media/", "/ext/", "/registry/", "/install/",
-                          "/healthz", "/jsi18n/", "/i18n/")
+                          "/healthz", "/jsi18n/", "/i18n/", "/mcp/", "/oauth/", "/.well-known/")
 
 
 class SiteRegionalMiddleware:
@@ -83,7 +83,7 @@ class SiteRegionalMiddleware:
         from .regional import resolve_preferred_language, split_language_prefix
 
         path = request.path_info
-        if path.startswith(NON_LOCALIZED_PREFIXES) or path.startswith(f"/{settings.RAVIX_ADMIN_PATH}/"):
+        if path.startswith(NON_LOCALIZED_PREFIXES) or path == "/mcp" or path.startswith(f"/{settings.RAVIX_ADMIN_PATH}/"):
             return None  # system URLs are never language-prefixed (a missing one is just a 404)
         from apps.plugins.state import find_site_route
 

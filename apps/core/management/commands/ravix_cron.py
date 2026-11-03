@@ -128,6 +128,12 @@ class Command(BaseCommand):
         CronRun.objects.exclude(pk__in=keep).delete()
         from apps.core import hosthtaccess
 
+        try:
+            from apps.mcp.housekeeping import cleanup as mcp_cleanup
+
+            mcp_cleanup()
+        except Exception:  # noqa: BLE001 — the table may not exist yet; cleaning must never stop the other jobs
+            pass
         hosthtaccess.ensure()  # restore the protective .htaccess files if someone deleted them
         work = Path(getattr(settings, "RAVIX_UPDATE_WORK_DIR", ""))
         if work.is_dir():

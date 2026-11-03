@@ -1,0 +1,62 @@
+{% extends "layouts/panel.html" %}
+{% load i18n %}
+{% load ravix_ui %}
+{% block title %}{% trans "AI assistants (MCP)" %}{% endblock %}
+{% block page_title %}{% trans "AI assistants (MCP)" %}{% endblock %}
+{% block content_class %}content-narrow{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>{% trans "AI assistants (MCP)" %}</h1><p>{% trans "Let assistants such as Claude work on this site for the people who sign in, with only the access you allow." %}</p></div></div>
+{% include "mcp/_tabs.html" %}
+{% if multisite_blocked %}<div class="alert alert-danger" role="alert">{% trans "Several sites share this installation, so Ravix MCP cannot be switched on." %}</div>{% endif %}
+
+<div class="card" style="margin-bottom:1.25rem">
+  <div class="card-header"><h2>{% trans "How to connect" %}</h2></div>
+  <div class="card-body">
+    <p>{% if is_active %}<span class="badge badge-active">{% trans "On" %}</span>{% else %}<span class="badge badge-inactive">{% trans "Off" %}</span>{% endif %}
+       {% blocktrans trimmed with n=active_count %}Apps connected: {{ n }}.{% endblocktrans %}</p>
+    <label for="mcp-url" class="field-label">{% trans "Address to give the assistant" %}</label>
+    <input id="mcp-url" class="input ltr" readonly value="{{ endpoint_url }}" dir="ltr">
+    <ol class="help" style="margin-top:.75rem;padding-inline-start:1.2rem">
+      <li>{% trans "Switch Ravix MCP on below and save." %}</li>
+      <li>{% trans "In Claude, open Settings, then Connectors, then Add custom connector, and paste the address above." %}</li>
+      <li>{% trans "Sign in with your Ravix account when asked, check the address on the page, and allow." %}</li>
+    </ol>
+    {% if not https %}<div class="alert alert-danger" role="alert" style="margin-top:.75rem">{% trans "This address is not HTTPS. Claude only connects to sites with a valid HTTPS address." %}</div>{% endif %}
+  </div>
+</div>
+
+<form method="post" novalidate data-once>
+  {% csrf_token %}
+  {% include "partials/_form_errors.html" %}
+  <div class="card" style="margin-bottom:1.25rem">
+    <div class="card-header"><h2>{% trans "Switch" %}</h2></div>
+    <div class="card-body">{% include "partials/_field.html" with field=form.enabled %}</div>
+  </div>
+  <div class="card" style="margin-bottom:1.25rem">
+    <div class="card-header"><h2>{% trans "What each role may give to an app" %}</h2></div>
+    <div class="card-body">
+      <p class="help">{% trans "A superadmin can always give everything their account can do. Whatever is ticked here is still limited, on every call, by what the person’s role can do at that moment." %}</p>
+      {% include "partials/_field.html" with field=form.admin_scopes %}
+      {% include "partials/_field.html" with field=form.author_scopes %}
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:1.25rem">
+    <div class="card-header"><h2>{% trans "Unknown apps" %}</h2></div>
+    <div class="card-body">
+      {% include "partials/_field.html" with field=form.unknown_apps %}
+      {% include "partials/_field.html" with field=form.trusted_hosts %}
+      <p class="help ltr">{% for h in known_hosts %}{{ h }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:1.25rem">
+    <div class="card-header"><h2>{% trans "Limits" %}</h2></div>
+    <div class="card-body">
+      {% include "partials/_field.html" with field=form.access_token_minutes %}
+      {% include "partials/_field.html" with field=form.rate_per_minute %}
+      {% include "partials/_field.html" with field=form.write_per_minute %}
+      {% include "partials/_field.html" with field=form.allowed_origins %}
+    </div>
+  </div>
+  <button type="submit" class="btn">{% trans "Save settings" %}</button>
+</form>
+{% endblock %}

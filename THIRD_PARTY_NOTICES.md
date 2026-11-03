@@ -15,4 +15,6 @@ argon2-cffi – MIT, argon2-cffi-bindings – MIT (bundles the Argon2 reference 
 jdatetime – Python-2.0/MIT-style). See `requirements.lock` for exact versions;
 check each package's metadata (`pip show -v <name>`) for the authoritative license.
 
+Test-only (not shipped, not in `requirements.lock`): the official MCP Python SDK (`mcp`, `mcp_types`; MIT) and Playwright (Apache-2.0) are installed in CI only, for `scripts/e2e_mcp.py`.
+
 Logo: the official Ravix logo (`static/brand/`) is set in Space Grotesk Bold (SIL Open Font License 1.1); the text is converted to outlines, so no font file is shipped or needed.

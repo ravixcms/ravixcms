@@ -13907,3 +13907,295 @@ msgstr "Parolanız yaygın olarak kullanılan bir parola olamaz."
 
 msgid "Passwords"
 msgstr "Parolalar"
+
+msgid "Manage Ravix MCP: let AI assistants connect to the site, and see or end their connections (superadmin only)"
+msgstr "Ravix MCP'yi yönetin: yapay zekâ asistanlarının siteye bağlanmasına izin verin, bağlantılarını görün veya sonlandırın (yalnızca süper yönetici)"
+
+msgid "AI assistant"
+msgstr "Yapay zekâ asistanı"
+
+msgid "Ravix MCP"
+msgstr "Ravix MCP"
+
+msgid "AI assistants (MCP)"
+msgstr "Yapay zekâ asistanları (MCP)"
+
+msgid "succeeded"
+msgstr "başarılı"
+
+msgid "failed"
+msgstr "başarısız"
+
+msgid "refused: the access it needs was not granted"
+msgstr "reddedildi: gereken erişim verilmemişti"
+
+#, python-format
+msgid "Tool %(tool)s called by “%(app)s”: %(outcome)s"
+msgstr "%(tool)s aracı “%(app)s” tarafından çağrıldı: %(outcome)s"
+
+msgid "What a manager may give to an app"
+msgstr "Bir yöneticinin bir uygulamaya verebilecekleri"
+
+msgid "What an author may give to an app"
+msgstr "Bir yazarın bir uygulamaya verebilecekleri"
+
+msgid "Nothing is ticked by default: authors cannot connect apps until you allow it."
+msgstr "Varsayılan olarak hiçbir şey işaretli değildir: siz izin verene kadar yazarlar uygulama bağlayamaz."
+
+msgid "Several sites share this installation, so Ravix MCP cannot be switched on: posts and pages are not separated per site yet."
+msgstr "Bu kurulumu birden çok site paylaşıyor, bu yüzden Ravix MCP açılamaz: yazılar ve sayfalar henüz siteye göre ayrılmış değil."
+
+#, python-format
+msgid "“%(value)s” is not a host name such as app.example.com."
+msgstr "“%(value)s”, app.example.com gibi bir ana makine adı değil."
+
+#, python-format
+msgid "“%(value)s” is not an origin such as https://app.example.com."
+msgstr "“%(value)s”, https://app.example.com gibi bir kaynak (origin) değil."
+
+msgid "Allow, with a red warning on the consent page"
+msgstr "İzin ver, onay sayfasında kırmızı uyarıyla"
+
+msgid "Only apps from trusted addresses"
+msgstr "Yalnızca güvenilir adreslerden gelen uygulamalar"
+
+msgid "Let AI assistants connect to this site"
+msgstr "Yapay zekâ asistanlarının bu siteye bağlanmasına izin ver"
+
+msgid "Apps from addresses Ravix does not know"
+msgstr "Ravix'in tanımadığı adreslerden gelen uygulamalar"
+
+msgid "Trusted addresses"
+msgstr "Güvenilir adresler"
+
+msgid "One host name per line. claude.ai and claude.com are always trusted."
+msgstr "Her satıra bir ana makine adı. claude.ai ve claude.com her zaman güvenilirdir."
+
+msgid "Access token lifetime (minutes)"
+msgstr "Erişim belirtecinin ömrü (dakika)"
+
+msgid "Calls per minute, per connection"
+msgstr "Bağlantı başına dakikadaki çağrı sayısı"
+
+msgid "Writes per minute, per connection"
+msgstr "Bağlantı başına dakikadaki yazma sayısı"
+
+msgid "Extra allowed browser origins"
+msgstr "İzin verilen ek tarayıcı kaynakları"
+
+msgid "One origin per line, for example https://app.example.com. Apps that are not web pages send none."
+msgstr "Her satıra bir kaynak, örneğin https://app.example.com. Web sayfası olmayan uygulamalar kaynak göndermez."
+
+msgid "Ravix MCP settings"
+msgstr "Ravix MCP ayarları"
+
+#, python-format
+msgid "This app could not be identified, so it cannot be connected. (%(why)s)"
+msgstr "Bu uygulama tanımlanamadı, bu yüzden bağlanamaz. (%(why)s)"
+
+msgid "The address this app wants to return to is not one it registered, so the connection was stopped."
+msgstr "Bu uygulamanın dönmek istediği adres, kaydettiği adreslerden biri değil; bağlantı durduruldu."
+
+msgid "Too many attempts. Please wait a few minutes."
+msgstr "Çok fazla deneme. Lütfen birkaç dakika bekleyin."
+
+#, python-format
+msgid "A person declined to connect the app “%(app)s”."
+msgstr "Biri “%(app)s” uygulamasının bağlanmasını reddetti."
+
+msgid "Please confirm that you trust this address, or choose Deny."
+msgstr "Lütfen bu adrese güvendiğinizi onaylayın ya da Reddet'i seçin."
+
+#, python-format
+msgid "A person allowed the app “%(app)s” (%(host)s) to connect with: %(scopes)s."
+msgstr "Biri “%(app)s” uygulamasının (%(host)s) şu erişimle bağlanmasına izin verdi: %(scopes)s."
+
+#, python-format
+msgid "An authorization code was used twice; the connection of “%(app)s” was ended."
+msgstr "Bir yetkilendirme kodu iki kez kullanıldı; “%(app)s” bağlantısı sonlandırıldı."
+
+#, python-format
+msgid "A refresh token was used twice; the connection of “%(app)s” was ended."
+msgstr "Bir yenileme belirteci iki kez kullanıldı; “%(app)s” bağlantısı sonlandırıldı."
+
+#, python-format
+msgid "The app “%(app)s” ended its own connection."
+msgstr "“%(app)s” uygulaması kendi bağlantısını sonlandırdı."
+
+msgid "See whether the site is healthy (a short summary, no server details)"
+msgstr "Sitenin sağlıklı olup olmadığını görün (kısa özet, sunucu ayrıntısı yok)"
+
+msgid "Read posts, pages, categories, tags, media and menus"
+msgstr "Yazıları, sayfaları, kategorileri, etiketleri, medyayı ve menüleri okuyun"
+
+msgid "Create and edit drafts of posts and pages (nothing goes live)"
+msgstr "Yazı ve sayfa taslakları oluşturun ve düzenleyin (hiçbir şey yayına girmez)"
+
+msgid "Publish, unpublish and move posts and pages to the trash — this changes the live site"
+msgstr "Yazı ve sayfaları yayımlayın, yayından kaldırın ve çöp kutusuna taşıyın — bu canlı siteyi değiştirir"
+
+msgid "Upload images and files, and set their descriptions"
+msgstr "Görsel ve dosya yükleyin, açıklamalarını belirleyin"
+
+msgid "Edit search-engine titles and descriptions"
+msgstr "Arama motoru başlıklarını ve açıklamalarını düzenleyin"
+
+msgid "Edit the site menus"
+msgstr "Site menülerini düzenleyin"
+
+msgid "Edit page layouts made with Ravix Studio (drafts only)"
+msgstr "Ravix Studio ile yapılmış sayfa düzenlerini düzenleyin (yalnızca taslaklar)"
+
+msgid "Stay connected without asking you to sign in again"
+msgstr "Yeniden oturum açmanızı istemeden bağlı kalın"
+
+#, python-format
+msgid "Ravix MCP settings were edited (%(changed)s)."
+msgstr "Ravix MCP ayarları düzenlendi (%(changed)s)."
+
+msgid "Ravix MCP is on. AI assistants can now connect to this site."
+msgstr "Ravix MCP açık. Yapay zekâ asistanları artık bu siteye bağlanabilir."
+
+#, python-format
+msgid "The connection of “%(app)s” for %(user)s was ended by an administrator."
+msgstr "%(user)s için “%(app)s” bağlantısı bir yönetici tarafından sonlandırıldı."
+
+msgid "The connection was ended."
+msgstr "Bağlantı sonlandırıldı."
+
+#, python-format
+msgid "The connection of “%(app)s” was ended by its owner."
+msgstr "“%(app)s” bağlantısı sahibi tarafından sonlandırıldı."
+
+msgid "Connected apps"
+msgstr "Bağlı uygulamalar"
+
+msgid "App"
+msgstr "Uygulama"
+
+msgid "Access"
+msgstr "Erişim"
+
+msgid "Connected"
+msgstr "Bağlandı"
+
+msgid "Unknown address"
+msgstr "Bilinmeyen adres"
+
+msgid "End connection"
+msgstr "Bağlantıyı sonlandır"
+
+msgid "AI assistants"
+msgstr "Yapay zekâ asistanları"
+
+msgid "Every app that is connected to this site, for every person."
+msgstr "Bu siteye bağlı tüm uygulamalar, tüm kişiler için."
+
+msgid "No app is connected."
+msgstr "Hiçbir uygulama bağlı değil."
+
+msgid "AI assistants that can act on this site for you. Ending a connection stops it at once."
+msgstr "Sizin adınıza bu sitede çalışabilen yapay zekâ asistanları. Bir bağlantıyı sonlandırmak onu hemen durdurur."
+
+msgid "No app is connected to your account."
+msgstr "Hesabınıza bağlı uygulama yok."
+
+msgid "Connect an app"
+msgstr "Bir uygulama bağla"
+
+#, python-format
+msgid "“%(app)s” wants to connect to this site"
+msgstr "“%(app)s” bu siteye bağlanmak istiyor"
+
+#, python-format
+msgid "You are signed in as %(name)s (%(role)s). The app will never be able to do more than your account can do."
+msgstr "%(name)s (%(role)s) olarak oturum açtınız. Uygulama hiçbir zaman hesabınızın yapabildiğinden fazlasını yapamaz."
+
+msgid "After you allow it, this page sends you back to:"
+msgstr "İzin verdikten sonra bu sayfa sizi şuraya geri gönderir:"
+
+msgid "This is an address Ravix knows and trusts."
+msgstr "Bu, Ravix'in tanıdığı ve güvendiği bir adres."
+
+msgid "Ravix does not know this address."
+msgstr "Ravix bu adresi tanımıyor."
+
+msgid "Anyone can register an app under any name. Connect it only if you started this yourself and recognise the address above."
+msgstr "Herkes bir uygulamayı istediği adla kaydedebilir. Yalnızca bunu kendiniz başlattıysanız ve yukarıdaki adresi tanıyorsanız bağlayın."
+
+msgid "The administrator of this site only allows apps from trusted addresses, so this one cannot be connected."
+msgstr "Bu sitenin yöneticisi yalnızca güvenilir adreslerden gelen uygulamalara izin veriyor, bu yüzden bu uygulama bağlanamaz."
+
+msgid "Your account is not allowed to give an app any of the access it asked for. Ask a superadmin if you need it."
+msgstr "Hesabınızın bir uygulamaya istediği erişimlerin hiçbirini verme yetkisi yok. Gerekirse bir süper yöneticiye danışın."
+
+msgid "It is asking to:"
+msgstr "Şunu istiyor:"
+
+msgid "not available for your account"
+msgstr "hesabınız için kullanılamaz"
+
+#, python-format
+msgid "I trust %(host)s"
+msgstr "%(host)s adresine güveniyorum"
+
+msgid "Allow"
+msgstr "İzin ver"
+
+msgid "Deny"
+msgstr "Reddet"
+
+msgid "You can end this connection at any time from “Connected apps” in your account."
+msgstr "Bu bağlantıyı istediğiniz zaman hesabınızdaki “Bağlı uygulamalar” bölümünden sonlandırabilirsiniz."
+
+msgid "Connection stopped"
+msgstr "Bağlantı durduruldu"
+
+msgid "This connection was stopped"
+msgstr "Bu bağlantı durduruldu"
+
+msgid "Nothing was shared. You can close this page."
+msgstr "Hiçbir şey paylaşılmadı. Bu sayfayı kapatabilirsiniz."
+
+msgid "Let assistants such as Claude work on this site for the people who sign in, with only the access you allow."
+msgstr "Claude gibi asistanların, oturum açan kişiler adına yalnızca sizin izin verdiğiniz erişimle bu sitede çalışmasına izin verin."
+
+msgid "Several sites share this installation, so Ravix MCP cannot be switched on."
+msgstr "Bu kurulumu birden çok site paylaşıyor, bu yüzden Ravix MCP açılamaz."
+
+msgid "How to connect"
+msgstr "Nasıl bağlanır"
+
+#, python-format
+msgid "Apps connected: %(n)s."
+msgstr "Bağlı uygulamalar: %(n)s."
+
+msgid "Address to give the assistant"
+msgstr "Asistana vereceğiniz adres"
+
+msgid "Switch Ravix MCP on below and save."
+msgstr "Aşağıdan Ravix MCP'yi açın ve kaydedin."
+
+msgid "In Claude, open Settings, then Connectors, then Add custom connector, and paste the address above."
+msgstr "Claude'da Ayarlar'ı, sonra Bağlayıcılar'ı ve Özel bağlayıcı ekle'yi açın, yukarıdaki adresi yapıştırın."
+
+msgid "Sign in with your Ravix account when asked, check the address on the page, and allow."
+msgstr "İstendiğinde Ravix hesabınızla oturum açın, sayfadaki adresi kontrol edin ve izin verin."
+
+msgid "This address is not HTTPS. Claude only connects to sites with a valid HTTPS address."
+msgstr "Bu adres HTTPS değil. Claude yalnızca geçerli HTTPS adresi olan sitelere bağlanır."
+
+msgid "Switch"
+msgstr "Anahtar"
+
+msgid "What each role may give to an app"
+msgstr "Her rolün bir uygulamaya verebilecekleri"
+
+msgid "A superadmin can always give everything their account can do. Whatever is ticked here is still limited, on every call, by what the person’s role can do at that moment."
+msgstr "Süper yönetici, hesabının yapabildiği her şeyi her zaman verebilir. Burada işaretlenenler yine de her çağrıda, kişinin rolünün o anda yapabildikleriyle sınırlıdır."
+
+msgid "Unknown apps"
+msgstr "Bilinmeyen uygulamalar"
+
+msgid "Limits"
+msgstr "Sınırlar"

@@ -2,4 +2,5 @@
 <nav class="tabs" aria-label="{% trans "Account sections" %}">
   <a class="tab {% if tab == 'profile' %}active{% endif %}" href="{% url 'accounts:profile' %}">{% trans "Profile information" %}</a>
   <a class="tab {% if tab == 'password' %}active{% endif %}" href="{% url 'accounts:password_change' %}">{% trans "Change password" %}</a>
+  {% if mcp_enabled %}<a class="tab {% if tab == 'apps' %}active{% endif %}" href="{% url 'mcp:my_apps' %}">{% trans "Connected apps" %}</a>{% endif %}
 </nav>

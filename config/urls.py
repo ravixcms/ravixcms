@@ -17,6 +17,7 @@ urlpatterns = [
     path("jsi18n/", JavaScriptCatalog.as_view(packages=None), name="javascript-catalog"),
     path("i18n/setlang/", core_views.set_language, name="set_language"),
     path("theme-assets/<str:slug>/<path:path>", theme_assets.serve, name="theme_assets"),  # static of themes installed from the panel
+    path("", include("apps.mcp.urls")),  # Ravix MCP: /mcp/, /oauth/*, /.well-known/* (answer 404 while it is switched off)
     path("install/", include("apps.installer.urls")),  # پیش از سایت عمومی؛ پس از نصب ۴۰۴
     path("panel/", include("apps.dashboard.urls")),
     path("accounts/", include("apps.accounts.urls")),

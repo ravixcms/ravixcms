@@ -14204,3 +14204,295 @@ msgstr "Ihr Passwort darf kein häufig verwendetes Passwort sein."
 
 msgid "Passwords"
 msgstr "Passwörter"
+
+msgid "Manage Ravix MCP: let AI assistants connect to the site, and see or end their connections (superadmin only)"
+msgstr "Ravix MCP verwalten: KI-Assistenten mit der Website verbinden lassen und ihre Verbindungen ansehen oder beenden (nur Superadmin)"
+
+msgid "AI assistant"
+msgstr "KI-Assistent"
+
+msgid "Ravix MCP"
+msgstr "Ravix MCP"
+
+msgid "AI assistants (MCP)"
+msgstr "KI-Assistenten (MCP)"
+
+msgid "succeeded"
+msgstr "erfolgreich"
+
+msgid "failed"
+msgstr "fehlgeschlagen"
+
+msgid "refused: the access it needs was not granted"
+msgstr "abgelehnt: der nötige Zugriff wurde nicht erteilt"
+
+#, python-format
+msgid "Tool %(tool)s called by “%(app)s”: %(outcome)s"
+msgstr "Tool %(tool)s von „%(app)s“ aufgerufen: %(outcome)s"
+
+msgid "What a manager may give to an app"
+msgstr "Was ein Manager einer App geben darf"
+
+msgid "What an author may give to an app"
+msgstr "Was ein Autor einer App geben darf"
+
+msgid "Nothing is ticked by default: authors cannot connect apps until you allow it."
+msgstr "Standardmäßig ist nichts angekreuzt: Autoren können keine Apps verbinden, bis Sie es erlauben."
+
+msgid "Several sites share this installation, so Ravix MCP cannot be switched on: posts and pages are not separated per site yet."
+msgstr "Mehrere Websites teilen sich diese Installation, daher lässt sich Ravix MCP nicht einschalten: Beiträge und Seiten sind noch nicht pro Website getrennt."
+
+#, python-format
+msgid "“%(value)s” is not a host name such as app.example.com."
+msgstr "„%(value)s“ ist kein Hostname wie app.example.com."
+
+#, python-format
+msgid "“%(value)s” is not an origin such as https://app.example.com."
+msgstr "„%(value)s“ ist kein Origin wie https://app.example.com."
+
+msgid "Allow, with a red warning on the consent page"
+msgstr "Erlauben, mit rotem Warnhinweis auf der Zustimmungsseite"
+
+msgid "Only apps from trusted addresses"
+msgstr "Nur Apps von vertrauenswürdigen Adressen"
+
+msgid "Let AI assistants connect to this site"
+msgstr "KI-Assistenten dürfen sich mit dieser Website verbinden"
+
+msgid "Apps from addresses Ravix does not know"
+msgstr "Apps von Adressen, die Ravix nicht kennt"
+
+msgid "Trusted addresses"
+msgstr "Vertrauenswürdige Adressen"
+
+msgid "One host name per line. claude.ai and claude.com are always trusted."
+msgstr "Ein Hostname pro Zeile. claude.ai und claude.com sind immer vertrauenswürdig."
+
+msgid "Access token lifetime (minutes)"
+msgstr "Lebensdauer des Zugriffstokens (Minuten)"
+
+msgid "Calls per minute, per connection"
+msgstr "Aufrufe pro Minute und Verbindung"
+
+msgid "Writes per minute, per connection"
+msgstr "Schreibvorgänge pro Minute und Verbindung"
+
+msgid "Extra allowed browser origins"
+msgstr "Zusätzlich erlaubte Browser-Origins"
+
+msgid "One origin per line, for example https://app.example.com. Apps that are not web pages send none."
+msgstr "Ein Origin pro Zeile, zum Beispiel https://app.example.com. Apps, die keine Webseiten sind, senden keinen."
+
+msgid "Ravix MCP settings"
+msgstr "Ravix-MCP-Einstellungen"
+
+#, python-format
+msgid "This app could not be identified, so it cannot be connected. (%(why)s)"
+msgstr "Diese App konnte nicht identifiziert werden und kann daher nicht verbunden werden. (%(why)s)"
+
+msgid "The address this app wants to return to is not one it registered, so the connection was stopped."
+msgstr "Die Adresse, zu der diese App zurückkehren möchte, gehört nicht zu den von ihr registrierten Adressen; die Verbindung wurde gestoppt."
+
+msgid "Too many attempts. Please wait a few minutes."
+msgstr "Zu viele Versuche. Bitte warten Sie einige Minuten."
+
+#, python-format
+msgid "A person declined to connect the app “%(app)s”."
+msgstr "Eine Person hat die Verbindung der App „%(app)s“ abgelehnt."
+
+msgid "Please confirm that you trust this address, or choose Deny."
+msgstr "Bitte bestätigen Sie, dass Sie dieser Adresse vertrauen, oder wählen Sie „Ablehnen“."
+
+#, python-format
+msgid "A person allowed the app “%(app)s” (%(host)s) to connect with: %(scopes)s."
+msgstr "Eine Person hat der App „%(app)s“ (%(host)s) erlaubt, sich mit folgendem Zugriff zu verbinden: %(scopes)s."
+
+#, python-format
+msgid "An authorization code was used twice; the connection of “%(app)s” was ended."
+msgstr "Ein Autorisierungscode wurde zweimal verwendet; die Verbindung von „%(app)s“ wurde beendet."
+
+#, python-format
+msgid "A refresh token was used twice; the connection of “%(app)s” was ended."
+msgstr "Ein Refresh-Token wurde zweimal verwendet; die Verbindung von „%(app)s“ wurde beendet."
+
+#, python-format
+msgid "The app “%(app)s” ended its own connection."
+msgstr "Die App „%(app)s“ hat ihre eigene Verbindung beendet."
+
+msgid "See whether the site is healthy (a short summary, no server details)"
+msgstr "Sehen, ob die Website gesund ist (kurze Zusammenfassung, keine Serverdetails)"
+
+msgid "Read posts, pages, categories, tags, media and menus"
+msgstr "Beiträge, Seiten, Kategorien, Schlagwörter, Medien und Menüs lesen"
+
+msgid "Create and edit drafts of posts and pages (nothing goes live)"
+msgstr "Entwürfe von Beiträgen und Seiten erstellen und bearbeiten (nichts geht live)"
+
+msgid "Publish, unpublish and move posts and pages to the trash — this changes the live site"
+msgstr "Beiträge und Seiten veröffentlichen, zurückziehen und in den Papierkorb legen — das ändert die Live-Website"
+
+msgid "Upload images and files, and set their descriptions"
+msgstr "Bilder und Dateien hochladen und ihre Beschreibungen festlegen"
+
+msgid "Edit search-engine titles and descriptions"
+msgstr "Titel und Beschreibungen für Suchmaschinen bearbeiten"
+
+msgid "Edit the site menus"
+msgstr "Die Menüs der Website bearbeiten"
+
+msgid "Edit page layouts made with Ravix Studio (drafts only)"
+msgstr "Mit Ravix Studio gestaltete Seitenlayouts bearbeiten (nur Entwürfe)"
+
+msgid "Stay connected without asking you to sign in again"
+msgstr "Verbunden bleiben, ohne dass Sie sich erneut anmelden müssen"
+
+#, python-format
+msgid "Ravix MCP settings were edited (%(changed)s)."
+msgstr "Ravix-MCP-Einstellungen wurden bearbeitet (%(changed)s)."
+
+msgid "Ravix MCP is on. AI assistants can now connect to this site."
+msgstr "Ravix MCP ist eingeschaltet. KI-Assistenten können sich jetzt mit dieser Website verbinden."
+
+#, python-format
+msgid "The connection of “%(app)s” for %(user)s was ended by an administrator."
+msgstr "Die Verbindung von „%(app)s“ für %(user)s wurde von einem Administrator beendet."
+
+msgid "The connection was ended."
+msgstr "Die Verbindung wurde beendet."
+
+#, python-format
+msgid "The connection of “%(app)s” was ended by its owner."
+msgstr "Die Verbindung von „%(app)s“ wurde von ihrem Besitzer beendet."
+
+msgid "Connected apps"
+msgstr "Verbundene Apps"
+
+msgid "App"
+msgstr "App"
+
+msgid "Access"
+msgstr "Zugriff"
+
+msgid "Connected"
+msgstr "Verbunden"
+
+msgid "Unknown address"
+msgstr "Unbekannte Adresse"
+
+msgid "End connection"
+msgstr "Verbindung beenden"
+
+msgid "AI assistants"
+msgstr "KI-Assistenten"
+
+msgid "Every app that is connected to this site, for every person."
+msgstr "Alle Apps, die mit dieser Website verbunden sind, für alle Personen."
+
+msgid "No app is connected."
+msgstr "Keine App ist verbunden."
+
+msgid "AI assistants that can act on this site for you. Ending a connection stops it at once."
+msgstr "KI-Assistenten, die in Ihrem Namen auf dieser Website arbeiten können. Das Beenden einer Verbindung stoppt sie sofort."
+
+msgid "No app is connected to your account."
+msgstr "Mit Ihrem Konto ist keine App verbunden."
+
+msgid "Connect an app"
+msgstr "Eine App verbinden"
+
+#, python-format
+msgid "“%(app)s” wants to connect to this site"
+msgstr "„%(app)s“ möchte sich mit dieser Website verbinden"
+
+#, python-format
+msgid "You are signed in as %(name)s (%(role)s). The app will never be able to do more than your account can do."
+msgstr "Sie sind als %(name)s (%(role)s) angemeldet. Die App kann nie mehr tun, als Ihr Konto darf."
+
+msgid "After you allow it, this page sends you back to:"
+msgstr "Nach Ihrer Zustimmung führt diese Seite Sie zurück zu:"
+
+msgid "This is an address Ravix knows and trusts."
+msgstr "Diese Adresse kennt und vertraut Ravix."
+
+msgid "Ravix does not know this address."
+msgstr "Ravix kennt diese Adresse nicht."
+
+msgid "Anyone can register an app under any name. Connect it only if you started this yourself and recognise the address above."
+msgstr "Jeder kann eine App unter jedem Namen registrieren. Verbinden Sie sie nur, wenn Sie dies selbst gestartet haben und die obige Adresse erkennen."
+
+msgid "The administrator of this site only allows apps from trusted addresses, so this one cannot be connected."
+msgstr "Der Administrator dieser Website erlaubt nur Apps von vertrauenswürdigen Adressen, daher kann diese App nicht verbunden werden."
+
+msgid "Your account is not allowed to give an app any of the access it asked for. Ask a superadmin if you need it."
+msgstr "Ihr Konto darf einer App nichts von dem erlauben, was sie angefragt hat. Fragen Sie einen Superadmin, wenn Sie es brauchen."
+
+msgid "It is asking to:"
+msgstr "Sie möchte:"
+
+msgid "not available for your account"
+msgstr "für Ihr Konto nicht verfügbar"
+
+#, python-format
+msgid "I trust %(host)s"
+msgstr "Ich vertraue %(host)s"
+
+msgid "Allow"
+msgstr "Erlauben"
+
+msgid "Deny"
+msgstr "Ablehnen"
+
+msgid "You can end this connection at any time from “Connected apps” in your account."
+msgstr "Sie können diese Verbindung jederzeit unter „Verbundene Apps“ in Ihrem Konto beenden."
+
+msgid "Connection stopped"
+msgstr "Verbindung gestoppt"
+
+msgid "This connection was stopped"
+msgstr "Diese Verbindung wurde gestoppt"
+
+msgid "Nothing was shared. You can close this page."
+msgstr "Es wurde nichts geteilt. Sie können diese Seite schließen."
+
+msgid "Let assistants such as Claude work on this site for the people who sign in, with only the access you allow."
+msgstr "Assistenten wie Claude dürfen für die angemeldeten Personen auf dieser Website arbeiten, nur mit dem Zugriff, den Sie erlauben."
+
+msgid "Several sites share this installation, so Ravix MCP cannot be switched on."
+msgstr "Mehrere Websites teilen sich diese Installation, daher lässt sich Ravix MCP nicht einschalten."
+
+msgid "How to connect"
+msgstr "So verbinden Sie"
+
+#, python-format
+msgid "Apps connected: %(n)s."
+msgstr "Verbundene Apps: %(n)s."
+
+msgid "Address to give the assistant"
+msgstr "Adresse, die Sie dem Assistenten geben"
+
+msgid "Switch Ravix MCP on below and save."
+msgstr "Schalten Sie unten Ravix MCP ein und speichern Sie."
+
+msgid "In Claude, open Settings, then Connectors, then Add custom connector, and paste the address above."
+msgstr "Öffnen Sie in Claude Einstellungen, dann Konnektoren, dann „Benutzerdefinierten Konnektor hinzufügen“, und fügen Sie die obige Adresse ein."
+
+msgid "Sign in with your Ravix account when asked, check the address on the page, and allow."
+msgstr "Melden Sie sich auf Nachfrage mit Ihrem Ravix-Konto an, prüfen Sie die Adresse auf der Seite und erlauben Sie den Zugriff."
+
+msgid "This address is not HTTPS. Claude only connects to sites with a valid HTTPS address."
+msgstr "Diese Adresse ist nicht HTTPS. Claude verbindet sich nur mit Websites mit gültiger HTTPS-Adresse."
+
+msgid "Switch"
+msgstr "Schalter"
+
+msgid "What each role may give to an app"
+msgstr "Was jede Rolle einer App geben darf"
+
+msgid "A superadmin can always give everything their account can do. Whatever is ticked here is still limited, on every call, by what the person’s role can do at that moment."
+msgstr "Ein Superadmin kann immer alles geben, was sein Konto darf. Was hier angekreuzt ist, wird bei jedem Aufruf trotzdem durch das begrenzt, was die Rolle der Person in diesem Moment kann."
+
+msgid "Unknown apps"
+msgstr "Unbekannte Apps"
+
+msgid "Limits"
+msgstr "Grenzen"

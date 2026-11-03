@@ -224,6 +224,12 @@ jobs:
       - run: python scripts/e2e_studio.py
       - name: E2E صفحه‌های حساب (ثبت‌نام با CAPTCHA، تأیید ایمیل، ورود)
         run: python scripts/e2e_accounts.py
+      - name: E2E سرور MCP با SDK رسمی (OAuth، هر دو نسل پروتکل، قطع اتصال)
+        run: |
+          python -m venv "$RUNNER_TEMP/mcpvenv"
+          "$RUNNER_TEMP/mcpvenv/bin/pip" install "mcp>=2,<3" playwright
+          "$RUNNER_TEMP/mcpvenv/bin/playwright" install --with-deps chromium
+          RAVIX_PYTHON="$(command -v python)" "$RUNNER_TEMP/mcpvenv/bin/python" scripts/e2e_mcp.py
       - name: Lighthouse موبایل (صفحهٔ نمونهٔ Studio، حداقل ۹۰)
         run: python scripts/lighthouse_studio.py
 

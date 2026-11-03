@@ -24,7 +24,7 @@ class RandomUploadPath:
 RESERVED_PAGE_SLUGS = frozenset(
     {"panel", "accounts", "api", "django-admin", "blog", "category", "tag", "search", "static", "media",
      "sitemap.xml", "robots.txt", "favicon.ico", "admin", "login", "logout", "ext", "shop", "healthz", "registry", "feed",
-     "install", "i18n", "jsi18n",
+     "install", "i18n", "jsi18n", "mcp", "oauth", ".well-known",
      # language codes are public URL prefixes (/en/, /de/ …)
      "fa", "en", "ar", "tr", "es", "fr", "de", "ru", "pt-br", "zh-hans"}
 )

@@ -224,7 +224,7 @@ class Page(TimeStampedModel):
 
 
 # ============================================================ ریدایرکت
-RESERVED_REDIRECT_PREFIXES = ("/panel/", "/accounts/", "/api/", "/django-admin/", "/static/", "/media/", "/ext/", "/healthz", "/registry/")
+RESERVED_REDIRECT_PREFIXES = ("/panel/", "/accounts/", "/api/", "/django-admin/", "/static/", "/media/", "/ext/", "/healthz", "/registry/", "/mcp", "/oauth/", "/.well-known/")
 
 
 def normalize_redirect_path(value: str) -> str:

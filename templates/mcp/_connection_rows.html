@@ -1,0 +1,21 @@
+{% load i18n %}
+{% load ravix_ui %}
+<div class="table-wrap">
+<table class="table">
+  <thead><tr><th>{% trans "App" %}</th>{% if admin %}<th>{% trans "User" %}</th>{% endif %}<th>{% trans "Access" %}</th><th>{% trans "Connected" %}</th><th>{% trans "Last used" %}</th><th></th></tr></thead>
+  <tbody>
+  {% for r in rows %}
+    <tr>
+      <td><strong>{{ r.conn.client.name }}</strong>
+        <div class="muted ltr" style="font-size:.8rem">{% for h in r.hosts %}<bdi>{{ h }}</bdi>{% if not forloop.last %}, {% endif %}{% endfor %}</div>
+        {% if not r.trusted %}<span class="badge badge-inactive">{% trans "Unknown address" %}</span>{% endif %}</td>
+      {% if admin %}<td>{{ r.conn.user.display_name }}</td>{% endif %}
+      <td><ul style="margin:0;padding-inline-start:1rem">{% for key, label in r.scopes %}<li>{{ label }}</li>{% endfor %}</ul></td>
+      <td>{{ r.conn.created_at|jalali }}</td>
+      <td>{% if r.conn.last_used_at %}{{ r.conn.last_used_at|jalali }}{% if admin and r.conn.last_ip %}<div class="muted ltr" style="font-size:.8rem">{{ r.conn.last_ip }}</div>{% endif %}{% else %}<span class="muted">{% trans "Never" %}</span>{% endif %}</td>
+      <td><form method="post" action="{% if admin %}{% url 'mcp:admin_revoke' r.conn.pk %}{% else %}{% url 'mcp:my_revoke' r.conn.pk %}{% endif %}">{% csrf_token %}<button class="btn btn-danger btn-sm">{% trans "End connection" %}</button></form></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>

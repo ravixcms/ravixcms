@@ -1,0 +1,5 @@
+{% load i18n %}
+<nav class="tabs" aria-label="{% trans "AI assistants" %}">
+  <a class="tab {% if tab == 'settings' %}active{% endif %}" href="{% url 'mcp:settings' %}">{% trans "Settings" %}</a>
+  <a class="tab {% if tab == 'connections' %}active{% endif %}" href="{% url 'mcp:admin_connections' %}">{% trans "Connected apps" %}</a>
+</nav>
