@@ -13858,3 +13858,52 @@ msgstr "Şunun için güvenilir"
 
 msgid "Use separate keys: a key trusted for plugins cannot sign a core update, and the reverse. Tick both only for a key you fully control."
 msgstr "Ayrı anahtarlar kullanın: eklentiler için güvenilir bir anahtar çekirdek güncellemesini imzalayamaz, tersi de geçerlidir. İkisini de yalnızca tamamen kontrol ettiğiniz bir anahtar için işaretleyin."
+
+msgid "Choose a password that is different from the current one."
+msgstr "Mevcut parolanızdan farklı bir parola seçin."
+
+msgid "You must choose a new password before you can continue."
+msgstr "Devam etmeden önce yeni bir parola seçmelisiniz."
+
+msgid "Refuse common passwords"
+msgstr "Yaygın parolaları reddet"
+
+msgid "Applies to new passwords only; nobody is forced to change an existing one. A longer password is stronger than a complicated short one."
+msgstr "Yalnızca yeni parolalar için geçerlidir; kimse mevcut parolasını değiştirmeye zorlanmaz. Daha uzun bir parola, karmaşık ama kısa bir paroladan daha güçlüdür."
+
+msgid "Until they do, this person can only change their password or sign out."
+msgstr "Bunu yapana kadar bu kişi yalnızca parolasını değiştirebilir veya çıkış yapabilir."
+
+msgid "Checks a built-in list of widely used passwords, including Persian ones. Nothing is sent anywhere."
+msgstr "Farsça olanlar dahil, yaygın kullanılan parolaların yerleşik bir listesi denetlenir. Hiçbir şey hiçbir yere gönderilmez."
+
+msgid "Must choose a new password at the next sign-in"
+msgstr "Bir sonraki girişte yeni parola seçmeli"
+
+msgid "Minimum password length"
+msgstr "Asgari parola uzunluğu"
+
+msgid "Password last changed"
+msgstr "Parolanın son değiştirilme zamanı"
+
+msgid "Refuse passwords built on the site name or the person’s own details"
+msgstr "Site adına veya kişinin kendi bilgilerine dayanan parolaları reddet"
+
+#, python-format
+msgid "This password is too long (at most %(max)d characters)."
+msgstr "Bu parola çok uzun (en fazla %(max)d karakter)."
+
+msgid "Your password cannot be built on the site name or your own details."
+msgstr "Parolanız site adına veya kendi bilgilerinize dayanamaz."
+
+msgid "This password is too common. Choose something only you would think of."
+msgstr "Bu parola çok yaygın. Yalnızca sizin aklınıza gelecek bir şey seçin."
+
+msgid "This password is based on the site name or your own details. Choose something only you would think of."
+msgstr "Bu parola site adına veya kendi bilgilerinize dayanıyor. Yalnızca sizin aklınıza gelecek bir şey seçin."
+
+msgid "Your password cannot be a commonly used password."
+msgstr "Parolanız yaygın olarak kullanılan bir parola olamaz."
+
+msgid "Passwords"
+msgstr "Parolalar"

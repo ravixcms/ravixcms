@@ -14165,3 +14165,52 @@ msgstr "De confiance pour"
 
 msgid "Use separate keys: a key trusted for plugins cannot sign a core update, and the reverse. Tick both only for a key you fully control."
 msgstr "Utilisez des clés distinctes : une clé de confiance pour les plugins ne peut pas signer une mise à jour du noyau, et inversement. Ne cochez les deux que pour une clé que vous contrôlez entièrement."
+
+msgid "Choose a password that is different from the current one."
+msgstr "Choisissez un mot de passe différent de l'actuel."
+
+msgid "You must choose a new password before you can continue."
+msgstr "Vous devez choisir un nouveau mot de passe avant de continuer."
+
+msgid "Refuse common passwords"
+msgstr "Refuser les mots de passe courants"
+
+msgid "Applies to new passwords only; nobody is forced to change an existing one. A longer password is stronger than a complicated short one."
+msgstr "S'applique uniquement aux nouveaux mots de passe ; personne n'est obligé de changer celui qu'il a. Un mot de passe plus long est plus solide qu'un mot de passe court et compliqué."
+
+msgid "Until they do, this person can only change their password or sign out."
+msgstr "D'ici là, cette personne ne peut que changer son mot de passe ou se déconnecter."
+
+msgid "Checks a built-in list of widely used passwords, including Persian ones. Nothing is sent anywhere."
+msgstr "Une liste intégrée de mots de passe très utilisés, dont des mots persans, est vérifiée. Rien n'est envoyé nulle part."
+
+msgid "Must choose a new password at the next sign-in"
+msgstr "Doit choisir un nouveau mot de passe à la prochaine connexion"
+
+msgid "Minimum password length"
+msgstr "Longueur minimale du mot de passe"
+
+msgid "Password last changed"
+msgstr "Mot de passe modifié le"
+
+msgid "Refuse passwords built on the site name or the person’s own details"
+msgstr "Refuser les mots de passe construits sur le nom du site ou sur les informations de la personne"
+
+#, python-format
+msgid "This password is too long (at most %(max)d characters)."
+msgstr "Ce mot de passe est trop long (%(max)d caractères au maximum)."
+
+msgid "Your password cannot be built on the site name or your own details."
+msgstr "Votre mot de passe ne peut pas reposer sur le nom du site ou sur vos propres informations."
+
+msgid "This password is too common. Choose something only you would think of."
+msgstr "Ce mot de passe est trop courant. Choisissez quelque chose auquel vous seul penseriez."
+
+msgid "This password is based on the site name or your own details. Choose something only you would think of."
+msgstr "Ce mot de passe repose sur le nom du site ou sur vos propres informations. Choisissez quelque chose auquel vous seul penseriez."
+
+msgid "Your password cannot be a commonly used password."
+msgstr "Votre mot de passe ne peut pas être un mot de passe couramment utilisé."
+
+msgid "Passwords"
+msgstr "Mots de passe"

@@ -57,7 +57,8 @@ class PolicyPageTests(TestCase):
         cache.clear()
         self.admin = make_user("boss", Role.ADMIN)
         self.url = reverse("accounts:policy")
-        self.base = {"registration_mode": "closed", "default_role": "user", "remember_days": 30, "invitation_days": 7}
+        self.base = {"registration_mode": "closed", "default_role": "user", "remember_days": 30, "invitation_days": 7,
+                     "password_min_length": 10, "password_check_common": "on", "password_check_personal": "on"}
 
     def test_only_settings_managers_open_it(self):
         self.assertEqual(self.client.get(self.url).status_code, 302)

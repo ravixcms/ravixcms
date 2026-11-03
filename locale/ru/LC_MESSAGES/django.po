@@ -13878,3 +13878,52 @@ msgstr "Доверенный для"
 
 msgid "Use separate keys: a key trusted for plugins cannot sign a core update, and the reverse. Tick both only for a key you fully control."
 msgstr "Используйте раздельные ключи: ключ, доверенный для плагинов, не может подписать обновление ядра, и наоборот. Отмечайте оба пункта только для ключа, который вы полностью контролируете."
+
+msgid "Choose a password that is different from the current one."
+msgstr "Выберите пароль, отличный от текущего."
+
+msgid "You must choose a new password before you can continue."
+msgstr "Прежде чем продолжить, нужно выбрать новый пароль."
+
+msgid "Refuse common passwords"
+msgstr "Отклонять распространённые пароли"
+
+msgid "Applies to new passwords only; nobody is forced to change an existing one. A longer password is stronger than a complicated short one."
+msgstr "Действует только для новых паролей; никого не заставляют менять действующий. Более длинный пароль надёжнее короткого, но сложного."
+
+msgid "Until they do, this person can only change their password or sign out."
+msgstr "До тех пор этот человек может только сменить пароль или выйти."
+
+msgid "Checks a built-in list of widely used passwords, including Persian ones. Nothing is sent anywhere."
+msgstr "Проверяется встроенный список популярных паролей, в том числе персидских. Ничего никуда не отправляется."
+
+msgid "Must choose a new password at the next sign-in"
+msgstr "Должен выбрать новый пароль при следующем входе"
+
+msgid "Minimum password length"
+msgstr "Минимальная длина пароля"
+
+msgid "Password last changed"
+msgstr "Пароль последний раз изменён"
+
+msgid "Refuse passwords built on the site name or the person’s own details"
+msgstr "Отклонять пароли, построенные на названии сайта или данных самого человека"
+
+#, python-format
+msgid "This password is too long (at most %(max)d characters)."
+msgstr "Этот пароль слишком длинный (не более %(max)d символов)."
+
+msgid "Your password cannot be built on the site name or your own details."
+msgstr "Пароль не должен быть построен на названии сайта или ваших данных."
+
+msgid "This password is too common. Choose something only you would think of."
+msgstr "Этот пароль слишком распространён. Придумайте то, что пришло бы в голову только вам."
+
+msgid "This password is based on the site name or your own details. Choose something only you would think of."
+msgstr "Этот пароль построен на названии сайта или ваших данных. Придумайте то, что пришло бы в голову только вам."
+
+msgid "Your password cannot be a commonly used password."
+msgstr "Пароль не должен быть часто используемым."
+
+msgid "Passwords"
+msgstr "Пароли"

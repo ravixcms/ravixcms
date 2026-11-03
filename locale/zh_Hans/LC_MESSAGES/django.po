@@ -13282,3 +13282,52 @@ msgstr "信任用于"
 
 msgid "Use separate keys: a key trusted for plugins cannot sign a core update, and the reverse. Tick both only for a key you fully control."
 msgstr "请使用不同的密钥：被信任用于插件的密钥不能签署核心更新，反之亦然。仅对您完全掌控的密钥才同时勾选两者。"
+
+msgid "Choose a password that is different from the current one."
+msgstr "请选择与当前密码不同的密码。"
+
+msgid "You must choose a new password before you can continue."
+msgstr "继续之前，您必须选择一个新密码。"
+
+msgid "Refuse common passwords"
+msgstr "拒绝常见密码"
+
+msgid "Applies to new passwords only; nobody is forced to change an existing one. A longer password is stronger than a complicated short one."
+msgstr "仅适用于新密码；不会强迫任何人更改现有密码。较长的密码比复杂但简短的密码更安全。"
+
+msgid "Until they do, this person can only change their password or sign out."
+msgstr "在此之前，此人只能修改密码或退出登录。"
+
+msgid "Checks a built-in list of widely used passwords, including Persian ones. Nothing is sent anywhere."
+msgstr "会检查内置的常用密码列表（包括波斯语密码）。不会向任何地方发送任何内容。"
+
+msgid "Must choose a new password at the next sign-in"
+msgstr "下次登录时必须选择新密码"
+
+msgid "Minimum password length"
+msgstr "密码最短长度"
+
+msgid "Password last changed"
+msgstr "密码上次修改时间"
+
+msgid "Refuse passwords built on the site name or the person’s own details"
+msgstr "拒绝基于网站名称或本人信息的密码"
+
+#, python-format
+msgid "This password is too long (at most %(max)d characters)."
+msgstr "此密码过长（最多 %(max)d 个字符）。"
+
+msgid "Your password cannot be built on the site name or your own details."
+msgstr "您的密码不能基于网站名称或您自己的信息。"
+
+msgid "This password is too common. Choose something only you would think of."
+msgstr "此密码过于常见。请选择只有您自己才会想到的内容。"
+
+msgid "This password is based on the site name or your own details. Choose something only you would think of."
+msgstr "此密码基于网站名称或您自己的信息。请选择只有您自己才会想到的内容。"
+
+msgid "Your password cannot be a commonly used password."
+msgstr "您的密码不能是常用密码。"
+
+msgid "Passwords"
+msgstr "密码"

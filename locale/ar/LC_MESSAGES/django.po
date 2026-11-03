@@ -13643,3 +13643,52 @@ msgstr "موثوق لـ"
 
 msgid "Use separate keys: a key trusted for plugins cannot sign a core update, and the reverse. Tick both only for a key you fully control."
 msgstr "استخدم مفاتيح منفصلة: المفتاح الموثوق للإضافات لا يمكنه توقيع تحديث النواة، والعكس صحيح. حدّد الخيارين فقط لمفتاح تتحكم فيه بالكامل."
+
+msgid "Choose a password that is different from the current one."
+msgstr "اختر كلمة مرور مختلفة عن الحالية."
+
+msgid "You must choose a new password before you can continue."
+msgstr "يجب أن تختار كلمة مرور جديدة قبل المتابعة."
+
+msgid "Refuse common passwords"
+msgstr "رفض كلمات المرور الشائعة"
+
+msgid "Applies to new passwords only; nobody is forced to change an existing one. A longer password is stronger than a complicated short one."
+msgstr "تُطبَّق على كلمات المرور الجديدة فقط؛ لا يُجبَر أحد على تغيير كلمة مروره الحالية. كلمة المرور الأطول أقوى من القصيرة المعقدة."
+
+msgid "Until they do, this person can only change their password or sign out."
+msgstr "إلى أن يفعل ذلك، لا يستطيع هذا الشخص سوى تغيير كلمة مروره أو تسجيل الخروج."
+
+msgid "Checks a built-in list of widely used passwords, including Persian ones. Nothing is sent anywhere."
+msgstr "تُفحص قائمة مدمجة بكلمات المرور الشائعة، بما فيها الفارسية. لا يُرسل أي شيء إلى أي مكان."
+
+msgid "Must choose a new password at the next sign-in"
+msgstr "يجب أن يختار كلمة مرور جديدة عند تسجيل الدخول القادم"
+
+msgid "Minimum password length"
+msgstr "الحد الأدنى لطول كلمة المرور"
+
+msgid "Password last changed"
+msgstr "آخر تغيير لكلمة المرور"
+
+msgid "Refuse passwords built on the site name or the person’s own details"
+msgstr "رفض كلمات المرور المبنية على اسم الموقع أو بيانات الشخص نفسه"
+
+#, python-format
+msgid "This password is too long (at most %(max)d characters)."
+msgstr "كلمة المرور هذه طويلة جدًا (%(max)d حرفًا كحد أقصى)."
+
+msgid "Your password cannot be built on the site name or your own details."
+msgstr "لا يمكن بناء كلمة المرور على اسم الموقع أو بياناتك الشخصية."
+
+msgid "This password is too common. Choose something only you would think of."
+msgstr "كلمة المرور هذه شائعة جدًا. اختر شيئًا لا يخطر إلا ببالك."
+
+msgid "This password is based on the site name or your own details. Choose something only you would think of."
+msgstr "كلمة المرور هذه مبنية على اسم الموقع أو بياناتك الشخصية. اختر شيئًا لا يخطر إلا ببالك."
+
+msgid "Your password cannot be a commonly used password."
+msgstr "لا يمكن أن تكون كلمة مرورك من كلمات المرور الشائعة."
+
+msgid "Passwords"
+msgstr "كلمات المرور"

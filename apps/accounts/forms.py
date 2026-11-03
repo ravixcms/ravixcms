@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.utils.translation import gettext, gettext_lazy
 import logging
 
@@ -202,9 +203,22 @@ class ProfileForm(StyledFormMixin, forms.ModelForm):
         return email
 
 
-class StyledPasswordChangeForm(StyledFormMixin, PasswordChangeForm):
+class PasswordChosenMixin:
+    """After a new password is saved: the "must change" flag is cleared and the time is kept."""
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.must_change_password = False
+        user.password_changed_at = timezone.now()
+        if commit:
+            user.save()
+        return user
+
+
+class StyledPasswordChangeForm(PasswordChosenMixin, StyledFormMixin, PasswordChangeForm):
     error_messages = {
         **PasswordChangeForm.error_messages,
+        "password_same": gettext_lazy("Choose a password that is different from the current one."),
         "password_incorrect": gettext_lazy("The current password is incorrect."),
         "password_mismatch": gettext_lazy("The two new passwords do not match."),
     }
@@ -217,13 +231,20 @@ class StyledPasswordChangeForm(StyledFormMixin, PasswordChangeForm):
         self.fields["new_password1"].widget.attrs["autocomplete"] = "new-password"
         self.fields["new_password2"].widget.attrs["autocomplete"] = "new-password"
 
+    def clean_new_password1(self):
+        new = self.cleaned_data.get("new_password1")
+        old = self.data.get("old_password")
+        if new and old and new == old:
+            raise forms.ValidationError(self.error_messages["password_same"], code="password_same")
+        return new
+
 
 class UserManageForm(StyledFormMixin, forms.ModelForm):
     """ویرایش نقش و وضعیت فعال بودن کاربر توسط مدیران."""
 
     class Meta:
         model = User
-        fields = ("role", "is_active")
+        fields = ("role", "is_active", "must_change_password")
         labels = {"is_active": gettext_lazy("Account is active")}
 
     def __init__(self, *args, actor, **kwargs):
@@ -298,7 +319,7 @@ class PasswordResetRequestForm(CaptchaMixin, StyledFormMixin, PasswordResetForm)
             logging.getLogger(__name__).exception(gettext("Sending the password reset email failed."))
 
 
-class StyledSetPasswordForm(StyledFormMixin, SetPasswordForm):
+class StyledSetPasswordForm(PasswordChosenMixin, StyledFormMixin, SetPasswordForm):
     error_messages = {"password_mismatch": gettext_lazy("The passwords entered do not match.")}
 
     def __init__(self, *args, **kwargs):
@@ -334,7 +355,8 @@ class AccountPolicyForm(StyledFormMixin, forms.ModelForm):
 
     class Meta:
         model = AccountPolicy
-        fields = ("default_role", "require_verified_email", "remember_days", "invitation_days", "require_terms", "terms_page", "privacy_page")
+        fields = ("default_role", "require_verified_email", "remember_days", "invitation_days", "require_terms", "terms_page", "privacy_page",
+                  "password_min_length", "password_check_common", "password_check_personal")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -236,6 +236,7 @@ class NoStrayNamesTests(SimpleTestCase):
         "config/settings/", "deploy/", "scripts/", "docs/", "CHANGELOG.md", "migrations/", "/tests/", ".github/",
         "apps/updater/signing.py", "apps/accounts/emailing.py", "apps/shop/payments/vault.py",  # ثابت‌های پروتکل/رمزنگاری
         "templates/pluginhub/",  # فیلد مدل ravin_spec (ستون دیتابیس)
+        "apps/accounts/password_validators.py",  # the former product name is a word people used in passwords
         "apps/plugins/", "apps/core/models.py", "apps/core/apps.py",
     )
 

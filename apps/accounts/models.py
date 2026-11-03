@@ -37,6 +37,9 @@ class User(AbstractUser):
     language = models.CharField(gettext_lazy("Language"), max_length=10, blank=True, default="",
                                 help_text=gettext_lazy("Your preferred interface language. Leave empty to use the site default."))
     avatar = models.ImageField(gettext_lazy("Profile picture"), upload_to=RandomUploadPath("avatars"), blank=True, validators=[validate_image_file])
+    must_change_password = models.BooleanField(gettext_lazy("Must choose a new password at the next sign-in"), default=False,
+                                               help_text=gettext_lazy("Until they do, this person can only change their password or sign out."))
+    password_changed_at = models.DateTimeField(gettext_lazy("Password last changed"), null=True, blank=True, editable=False)
 
     objects = UserManager()
 
@@ -65,6 +68,13 @@ class User(AbstractUser):
     @property
     def email_verified(self) -> bool:
         return self.email_verified_at is not None
+
+    def mark_password_changed(self):
+        """Call after the person chose a new password: clears the "must change" flag and stamps the time. (``set_password`` itself
+        does neither, because Django also calls it to re-hash a correct password at sign-in, which is not a change.)"""
+        self.must_change_password = False
+        self.password_changed_at = timezone.now()
+        self.save(update_fields=["password", "must_change_password", "password_changed_at"])
 
     # ---------------------------------------------------------------- نقش‌ها
     @property
@@ -126,6 +136,11 @@ class AccountPolicy(models.Model):
     require_terms = models.BooleanField(gettext_lazy("New accounts must accept the terms"), default=False)
     terms_page = models.ForeignKey("content.Page", verbose_name=gettext_lazy("Terms of use page"), null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
     privacy_page = models.ForeignKey("content.Page", verbose_name=gettext_lazy("Privacy policy page"), null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+    password_min_length = models.PositiveSmallIntegerField(gettext_lazy("Minimum password length"), default=10, validators=[MinValueValidator(8), MaxValueValidator(64)],
+                                                           help_text=gettext_lazy("Applies to new passwords only; nobody is forced to change an existing one. A longer password is stronger than a complicated short one."))
+    password_check_common = models.BooleanField(gettext_lazy("Refuse common passwords"), default=True,
+                                                help_text=gettext_lazy("Checks a built-in list of widely used passwords, including Persian ones. Nothing is sent anywhere."))
+    password_check_personal = models.BooleanField(gettext_lazy("Refuse passwords built on the site name or the person’s own details"), default=True)
 
     class Meta:
         verbose_name = gettext_lazy("Account settings")

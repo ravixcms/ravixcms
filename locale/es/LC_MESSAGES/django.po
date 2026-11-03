@@ -14045,3 +14045,52 @@ msgstr "De confianza para"
 
 msgid "Use separate keys: a key trusted for plugins cannot sign a core update, and the reverse. Tick both only for a key you fully control."
 msgstr "Use claves separadas: una clave de confianza para plugins no puede firmar una actualización del núcleo, y viceversa. Marque ambas solo para una clave que controle por completo."
+
+msgid "Choose a password that is different from the current one."
+msgstr "Elija una contraseña distinta de la actual."
+
+msgid "You must choose a new password before you can continue."
+msgstr "Debe elegir una nueva contraseña antes de continuar."
+
+msgid "Refuse common passwords"
+msgstr "Rechazar contraseñas comunes"
+
+msgid "Applies to new passwords only; nobody is forced to change an existing one. A longer password is stronger than a complicated short one."
+msgstr "Solo se aplica a las contraseñas nuevas; nadie está obligado a cambiar la que tiene. Una contraseña más larga es más fuerte que una corta y complicada."
+
+msgid "Until they do, this person can only change their password or sign out."
+msgstr "Hasta entonces, esta persona solo puede cambiar su contraseña o cerrar sesión."
+
+msgid "Checks a built-in list of widely used passwords, including Persian ones. Nothing is sent anywhere."
+msgstr "Se comprueba una lista incorporada de contraseñas muy usadas, incluidas las persas. No se envía nada a ningún sitio."
+
+msgid "Must choose a new password at the next sign-in"
+msgstr "Debe elegir una nueva contraseña en el próximo inicio de sesión"
+
+msgid "Minimum password length"
+msgstr "Longitud mínima de la contraseña"
+
+msgid "Password last changed"
+msgstr "Última modificación de la contraseña"
+
+msgid "Refuse passwords built on the site name or the person’s own details"
+msgstr "Rechazar contraseñas basadas en el nombre del sitio o en los datos de la propia persona"
+
+#, python-format
+msgid "This password is too long (at most %(max)d characters)."
+msgstr "Esta contraseña es demasiado larga (máximo %(max)d caracteres)."
+
+msgid "Your password cannot be built on the site name or your own details."
+msgstr "Su contraseña no puede basarse en el nombre del sitio ni en sus propios datos."
+
+msgid "This password is too common. Choose something only you would think of."
+msgstr "Esta contraseña es demasiado común. Elija algo que solo a usted se le ocurriría."
+
+msgid "This password is based on the site name or your own details. Choose something only you would think of."
+msgstr "Esta contraseña se basa en el nombre del sitio o en sus propios datos. Elija algo que solo a usted se le ocurriría."
+
+msgid "Your password cannot be a commonly used password."
+msgstr "Su contraseña no puede ser una contraseña de uso común."
+
+msgid "Passwords"
+msgstr "Contraseñas"

@@ -115,6 +115,7 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
+    "apps.accounts.middleware.ForcePasswordChangeMiddleware",  # a flagged person can only change their password or sign out
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "apps.core.middleware.NumericOverflowMiddleware",  # عدد بزرگ در query ← ۴۰۰ به‌جای ۵۰۰
     "apps.core.middleware.SecurityHeadersMiddleware",  # CSP برای پنل/حساب‌ها/API + Permissions-Policy
@@ -220,9 +221,20 @@ AUTHENTICATION_BACKENDS = ["apps.accounts.backends.EmailOrUsernameBackend"]
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator", "OPTIONS": {"min_length": 8}},
-    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "apps.accounts.password_validators.LengthPolicyValidator"},  # the minimum length is an account setting (never below 8)
+    {"NAME": "apps.accounts.password_validators.CommonPasswordPolicyValidator"},  # Django's list + the local Persian/ravix list (apps/accounts/data)
+    {"NAME": "apps.accounts.password_validators.SiteContextValidator"},  # site name, domain, product name, the person's own details
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
+]
+
+# Argon2id first (when the argon2-cffi package is installed; it is in requirements*.txt). Old PBKDF2 hashes keep working and are re-made as Argon2
+# the next time their owner signs in. Without the package the list falls back to PBKDF2 and `ravix_preflight` says so.
+import importlib.util as _importlib_util  # noqa: E402
+
+PASSWORD_HASHERS = [
+    *(["apps.accounts.hashers.RavixArgon2PasswordHasher"] if _importlib_util.find_spec("argon2") else []),
+    "django.contrib.auth.hashers.PBKDF2PasswordHasher",
+    "django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher",
 ]
 
 # --- ایمیل: بازیابی رمز و تأیید ایمیل ---

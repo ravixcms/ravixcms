@@ -1044,3 +1044,10 @@ msgstr "هیچ کلیدی برای بستهٔ افزونه مورد اعتماد
 #, python-format
 msgid "RAVIX_TRUSTED_PUBLIC_KEYS has entries without a trust scope (%(keys)s); they are trusted for both plugins and core updates. Write them as label:plugin:KEY or label:core:KEY"
 msgstr "در RAVIX_TRUSTED_PUBLIC_KEYS ورودی‌هایی بدون دامنهٔ اعتماد هست (%(keys)s)؛ هم برای افزونه‌ها و هم برای به‌روزرسانی هسته مورد اعتمادند. آن‌ها را به شکل label:plugin:KEY یا label:core:KEY بنویسید"
+
+msgid "Passwords are stored with Argon2id"
+msgstr "رمزهای عبور با Argon2id ذخیره می‌شوند"
+
+
+msgid "The argon2-cffi package is not installed, so passwords are stored with PBKDF2 (still safe, but Argon2id is recommended): pip install argon2-cffi"
+msgstr "بستهٔ argon2-cffi نصب نیست و رمزهای عبور با PBKDF2 ذخیره می‌شوند (همچنان امن است، ولی Argon2id توصیه می‌شود): pip install argon2-cffi"

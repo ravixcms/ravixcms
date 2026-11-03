@@ -40,6 +40,7 @@ PERSIAN_DATA = {
     "apps/shop/forms.py": "Persian/Arabic-Indic digit tables used to normalise input",
     "apps/core/localefmt.py": "digit tables and the Persian thousands separator (formatting data)",
     "apps/shop/views.py": "values of the SHOP_CURRENCY_LABEL setting that are translated for display",
+    "apps/accounts/password_validators.py": "Persian/Arabic character-folding tables used to compare passwords with the common-password list",
     "config/settings/base.py": "language names are endonyms; currency labels are display data",
 }
 # Template text that is deliberately not translated: technical tokens and API names.

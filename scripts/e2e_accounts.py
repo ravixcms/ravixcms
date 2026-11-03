@@ -23,6 +23,14 @@ ROOT = Path(__file__).resolve().parent.parent
 PY = os.environ.get("RAVIX_PYTHON") or sys.executable
 PASSWORD = "Sup3r-Secret-Pass!"
 results = []
+ENV = {}
+
+
+def stored_hash(email):
+    """The password hash stored for the account (read straight from the database)."""
+    code = "from django.contrib.auth import get_user_model as g; print('HASH=' + g().objects.get(email=%r).password)" % email
+    out = subprocess.run([PY, "manage.py", "shell", "-v0", "-c", code], cwd=ROOT, env=ENV, capture_output=True, text=True, check=True).stdout
+    return out.split("HASH=", 1)[1].strip()
 
 
 def check(name, ok, detail=""):
@@ -42,6 +50,11 @@ SiteSettings.objects.update_or_create(pk=1, defaults={"registration_open": True}
 from django.contrib.auth import get_user_model
 from apps.accounts.permissions import Role
 get_user_model().objects.create_user("boss", "boss@example.com", "Sup3r-Secret-Pass!", role=Role.ADMIN)
+from django.contrib.auth.hashers import make_password
+legacy = get_user_model().objects.create_user("legacy", "legacy@example.com", "x", role=Role.ADMIN)
+legacy.password = make_password("Legacy-Pass-2468x!", hasher="pbkdf2_sha256")  # an account made before Argon2
+legacy.must_change_password = True
+legacy.save()
 print("seeded")
 '''
 
@@ -64,6 +77,7 @@ def main():
     log = tmp / "server.log"
     env = {**os.environ, "DATABASE_URL": "sqlite:///" + rel, "DJANGO_SETTINGS_MODULE": "config.settings.development", "PYTHONUNBUFFERED": "1",
            "RAVIX_CAPTCHA_ENABLED": "true", "RAVIX_CAPTCHA_BITS": "16", "RAVIX_INSTALLER_ENABLED": "false"}
+    ENV.update(env)
     server = None
     try:
         subprocess.run([PY, "manage.py", "migrate", "-v0"], cwd=ROOT, env=env, check=True)
@@ -203,6 +217,37 @@ def run_scenarios(base, log):
         check("the invited author signs in and reaches the panel (not the member page)", "/accounts/login" not in page.url and "/accounts/profile" not in page.url, page.url)
         page.goto(invite)
         check("the same link no longer works", page.locator("form input[name=password1]").count() == 0)
+        ctx.close()
+
+        print("\n[5] Argon2: an old PBKDF2 password is upgraded at sign-in; a forced change comes first")
+        have_argon2 = subprocess.run([PY, "-c", "import argon2"], capture_output=True).returncode == 0
+        check("the legacy account starts on PBKDF2", stored_hash("legacy@example.com").startswith("pbkdf2_sha256$"))
+        ctx = browser.new_context()
+        page = ctx.new_page()
+        page.goto(base + "/accounts/login/")
+        page.fill("#id_username", "legacy@example.com")
+        page.fill("#id_password", "Legacy-Pass-2468x!")
+        page.click("form button[type=submit]")
+        page.wait_for_url(lambda u: "/accounts/login" not in u)
+        check("the flagged account lands on the password page", "/accounts/password" in page.url, page.url)
+        check("the page forces a change (no profile tabs)", page.locator("#id_new_password1").count() == 1)
+        if have_argon2:
+            check("signing in upgraded the stored hash to Argon2id", stored_hash("legacy@example.com").startswith("argon2$argon2id$"))
+        page.goto(base + "/")
+        check("any other page sends it back to the password page", "/accounts/password" in page.url, page.url)
+        page.fill("#id_old_password", "Legacy-Pass-2468x!")
+        page.fill("#id_new_password1", "Legacy-Pass-2468x!")
+        page.fill("#id_new_password2", "Legacy-Pass-2468x!")
+        page.click("form button[type=submit]")
+        check("the old password is refused as the new one", "/accounts/password" in page.url and page.locator(".invalid-feedback, .errorlist, .text-danger").count() >= 1, page.url)
+        page.fill("#id_old_password", "Legacy-Pass-2468x!")
+        page.fill("#id_new_password1", "summit-lantern-47-quiet")
+        page.fill("#id_new_password2", "summit-lantern-47-quiet")
+        page.click("form button[type=submit]")
+        page.goto(base + "/")
+        check("after choosing a new password the site is open again", "/accounts/password" not in page.url, page.url)
+        if have_argon2:
+            check("the new password is stored with Argon2id", stored_hash("legacy@example.com").startswith("argon2$argon2id$"))
         ctx.close()
 
         check("no unexpected console errors", not problems, problems[:3])

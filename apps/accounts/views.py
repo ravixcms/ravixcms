@@ -17,6 +17,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils import timezone
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views import View
 from django.views.generic import FormView, ListView, TemplateView, UpdateView
 
@@ -252,6 +253,19 @@ class PasswordChangeView(LoginRequiredMixin, DjangoPasswordChangeView):
     form_class = StyledPasswordChangeForm
     success_url = reverse_lazy("accounts:password_change")
 
+    def get_success_url(self):
+        # after a forced change the person goes on to where they were heading
+        nxt = self.request.POST.get("next") or self.request.GET.get("next") or ""
+        if nxt and url_has_allowed_host_and_scheme(nxt, allowed_hosts={self.request.get_host()}, require_https=self.request.is_secure()):
+            return nxt
+        return super().get_success_url()
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["forced"] = bool(getattr(self.request.user, "must_change_password", False))
+        ctx["next"] = self.request.POST.get("next") or self.request.GET.get("next") or ""
+        return ctx
+
     def form_valid(self, form):
         messages.success(self.request, gettext("Your password was changed successfully."))
         return super().form_valid(form)  # نشست فعلی با update_session_auth_hash حفظ می‌شود
@@ -313,13 +327,15 @@ class UserManageView(CapabilityRequiredMixin, UpdateView):
         return kwargs
 
     def form_valid(self, form):
-        old_role, old_active = form.initial.get("role"), form.initial.get("is_active")
+        old_role, old_active, old_flag = form.initial.get("role"), form.initial.get("is_active"), form.initial.get("must_change_password")
         response = super().form_valid(form)
         changes = []
         if old_role != self.object.role:
             changes.append((gettext("Role from “%(label)s” to “%(label2)s”") % {"label": Role(old_role).label, "label2": Role(self.object.role).label}))
         if old_active != self.object.is_active:
             changes.append((gettext("Account %(value)s") % {"value": (gettext("was enabled") if self.object.is_active else gettext("was disabled"))}))
+        if old_flag != self.object.must_change_password:
+            changes.append(gettext("Must choose a new password at the next sign-in") + ": " + (gettext("yes") if self.object.must_change_password else gettext("no")))
         if changes:
             log_event(self.request, "update", self.object, (gettext("User “%(username)s”: %(changes)s.") % {"username": self.object.username, "changes": gettext("; ").join(changes)}))
         messages.success(self.request, (gettext("Changes to user “%(display_name)s” were saved.") % {"display_name": self.object.display_name}))

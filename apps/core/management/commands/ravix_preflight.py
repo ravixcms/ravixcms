@@ -49,6 +49,8 @@ class Command(BaseCommand):
             warns.append(cli_gettext("CI mode: server-only checks (systemd timers, folders and their permissions) are reported as warnings; never use this mode to approve a real server"))
 
         need(not settings.DEBUG, cli_gettext("DEBUG is off"), cli_gettext("DEBUG is on"))
+        advise(settings.PASSWORD_HASHERS[0].endswith("Argon2PasswordHasher"), cli_gettext("Passwords are stored with Argon2id"),
+               cli_gettext("The argon2-cffi package is not installed, so passwords are stored with PBKDF2 (still safe, but Argon2id is recommended): pip install argon2-cffi"))
         need(len(settings.SECRET_KEY) >= 32 and "insecure" not in settings.SECRET_KEY.lower(), cli_gettext("SECRET_KEY is strong"), cli_gettext("SECRET_KEY is weak or the default"))
         need("*" not in settings.ALLOWED_HOSTS and settings.ALLOWED_HOSTS, cli_gettext("ALLOWED_HOSTS is set"), cli_gettext("ALLOWED_HOSTS is empty or *"))
         hosting_mode = bool(getattr(settings, "RAVIX_HOSTING", False))  # shared hosting (cPanel): MySQL/MariaDB or SQLite are fine; HTTPS depends on the host's certificate

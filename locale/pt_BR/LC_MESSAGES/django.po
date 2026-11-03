@@ -13973,3 +13973,52 @@ msgstr "Confiável para"
 
 msgid "Use separate keys: a key trusted for plugins cannot sign a core update, and the reverse. Tick both only for a key you fully control."
 msgstr "Use chaves separadas: uma chave confiável para plugins não pode assinar uma atualização do núcleo, e vice-versa. Marque ambos apenas para uma chave que você controla totalmente."
+
+msgid "Choose a password that is different from the current one."
+msgstr "Escolha uma senha diferente da atual."
+
+msgid "You must choose a new password before you can continue."
+msgstr "Você precisa escolher uma nova senha antes de continuar."
+
+msgid "Refuse common passwords"
+msgstr "Recusar senhas comuns"
+
+msgid "Applies to new passwords only; nobody is forced to change an existing one. A longer password is stronger than a complicated short one."
+msgstr "Vale apenas para senhas novas; ninguém é obrigado a trocar a que já tem. Uma senha mais longa é mais forte do que uma curta e complicada."
+
+msgid "Until they do, this person can only change their password or sign out."
+msgstr "Até lá, esta pessoa só pode trocar a senha ou sair."
+
+msgid "Checks a built-in list of widely used passwords, including Persian ones. Nothing is sent anywhere."
+msgstr "Uma lista interna de senhas muito usadas, incluindo as persas, é verificada. Nada é enviado a lugar nenhum."
+
+msgid "Must choose a new password at the next sign-in"
+msgstr "Precisa escolher uma nova senha no próximo acesso"
+
+msgid "Minimum password length"
+msgstr "Tamanho mínimo da senha"
+
+msgid "Password last changed"
+msgstr "Senha alterada pela última vez em"
+
+msgid "Refuse passwords built on the site name or the person’s own details"
+msgstr "Recusar senhas baseadas no nome do site ou nos dados da própria pessoa"
+
+#, python-format
+msgid "This password is too long (at most %(max)d characters)."
+msgstr "Esta senha é longa demais (no máximo %(max)d caracteres)."
+
+msgid "Your password cannot be built on the site name or your own details."
+msgstr "Sua senha não pode se basear no nome do site nem em seus próprios dados."
+
+msgid "This password is too common. Choose something only you would think of."
+msgstr "Esta senha é comum demais. Escolha algo em que só você pensaria."
+
+msgid "This password is based on the site name or your own details. Choose something only you would think of."
+msgstr "Esta senha se baseia no nome do site ou em seus próprios dados. Escolha algo em que só você pensaria."
+
+msgid "Your password cannot be a commonly used password."
+msgstr "Sua senha não pode ser uma senha muito usada."
+
+msgid "Passwords"
+msgstr "Senhas"

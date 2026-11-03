@@ -13694,3 +13694,52 @@ msgstr "مورد اعتماد برای"
 
 msgid "Use separate keys: a key trusted for plugins cannot sign a core update, and the reverse. Tick both only for a key you fully control."
 msgstr "کلیدها را جدا نگه دارید: کلیدی که برای افزونه‌ها مورد اعتماد است نمی‌تواند به‌روزرسانی هسته را امضا کند و برعکس. فقط برای کلیدی که کاملاً در اختیار خودتان است هر دو را علامت بزنید."
+
+msgid "Choose a password that is different from the current one."
+msgstr "رمزی انتخاب کنید که با رمز فعلی فرق داشته باشد."
+
+msgid "You must choose a new password before you can continue."
+msgstr "پیش از ادامه باید رمز عبور جدیدی انتخاب کنید."
+
+msgid "Refuse common passwords"
+msgstr "رد کردن رمزهای رایج"
+
+msgid "Applies to new passwords only; nobody is forced to change an existing one. A longer password is stronger than a complicated short one."
+msgstr "فقط برای رمزهای جدید اعمال می‌شود؛ هیچ‌کس مجبور نمی‌شود رمز فعلی‌اش را عوض کند. رمز بلندتر از رمز کوتاهِ پیچیده قوی‌تر است."
+
+msgid "Until they do, this person can only change their password or sign out."
+msgstr "تا آن موقع، این شخص فقط می‌تواند رمزش را عوض کند یا خارج شود."
+
+msgid "Checks a built-in list of widely used passwords, including Persian ones. Nothing is sent anywhere."
+msgstr "فهرستی داخلی از رمزهای پرکاربرد، از جمله رمزهای فارسی، بررسی می‌شود. هیچ چیزی به جایی فرستاده نمی‌شود."
+
+msgid "Must choose a new password at the next sign-in"
+msgstr "در ورود بعدی باید رمز جدیدی انتخاب کند"
+
+msgid "Minimum password length"
+msgstr "حداقل طول رمز عبور"
+
+msgid "Password last changed"
+msgstr "آخرین تغییر رمز عبور"
+
+msgid "Refuse passwords built on the site name or the person’s own details"
+msgstr "رد کردن رمزهای ساخته‌شده روی نام سایت یا مشخصات خود شخص"
+
+#, python-format
+msgid "This password is too long (at most %(max)d characters)."
+msgstr "این رمز عبور بیش از حد بلند است (حداکثر %(max)d نویسه)."
+
+msgid "Your password cannot be built on the site name or your own details."
+msgstr "رمز عبور شما نباید بر پایهٔ نام سایت یا مشخصات خودتان ساخته شود."
+
+msgid "This password is too common. Choose something only you would think of."
+msgstr "این رمز عبور بیش از حد رایج است. چیزی انتخاب کنید که فقط خودتان به آن فکر کنید."
+
+msgid "This password is based on the site name or your own details. Choose something only you would think of."
+msgstr "این رمز عبور بر پایهٔ نام سایت یا مشخصات خودتان ساخته شده است. چیزی انتخاب کنید که فقط خودتان به آن فکر کنید."
+
+msgid "Your password cannot be a commonly used password."
+msgstr "رمز عبور شما نباید یکی از رمزهای پرکاربرد باشد."
+
+msgid "Passwords"
+msgstr "رمزهای عبور"

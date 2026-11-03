@@ -7,6 +7,7 @@ djangorestframework>=3.16
 python-dotenv>=1.0
 Pillow>=11.0          # native: needs a manylinux2014 (or newer) wheel
 cryptography>=43.0    # native: needs a manylinux2014 (or newer) wheel
+argon2-cffi>=23.1     # native bindings (argon2-cffi-bindings): pip picks the newest wheel your host accepts, a manylinux2014 one on old hosts
 nh3>=0.2              # native: needs a manylinux2014 (or newer) wheel
 whitenoise>=6.8
 jdatetime>=5.0
