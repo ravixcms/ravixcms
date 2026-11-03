@@ -239,7 +239,7 @@ def run_scenarios(base, log):
         page.fill("#id_new_password1", "Legacy-Pass-2468x!")
         page.fill("#id_new_password2", "Legacy-Pass-2468x!")
         page.click("form:has(#id_new_password1) button[type=submit]")
-        check("the old password is refused as the new one", "/profile/password" in page.url and page.locator(".invalid-feedback, .errorlist, .text-danger").count() >= 1, page.url)
+        check("the old password is refused as the new one", "/profile/password" in page.url and page.locator(".error-text").count() >= 1, page.url)
         page.fill("#id_old_password", "Legacy-Pass-2468x!")
         page.fill("#id_new_password1", "summit-lantern-47-quiet")
         page.fill("#id_new_password2", "summit-lantern-47-quiet")
