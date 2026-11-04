@@ -1051,3 +1051,18 @@ msgstr "رمزهای عبور با Argon2id ذخیره می‌شوند"
 
 msgid "The argon2-cffi package is not installed, so passwords are stored with PBKDF2 (still safe, but Argon2id is recommended): pip install argon2-cffi"
 msgstr "بستهٔ argon2-cffi نصب نیست و رمزهای عبور با PBKDF2 ذخیره می‌شوند (همچنان امن است، ولی Argon2id توصیه می‌شود): pip install argon2-cffi"
+
+msgid "nginx hands private plugin files over (X-Accel-Redirect location is in place)"
+msgstr "nginx فایل‌های خصوصی افزونه را تحویل می‌دهد (بلاک X-Accel-Redirect سرجایش است)"
+
+#, python-format
+msgid "RAVIX_ACCEL_REDIRECT_PREFIX is set but the nginx configuration has no location for it; every private plugin file (a plugin's download) will answer 404. Run install.sh again, or add: location %(prefix)s { internal; alias %(dir)s/; }"
+msgstr "RAVIX_ACCEL_REDIRECT_PREFIX تنظیم شده ولی پیکربندی nginx برایش location ندارد؛ هر فایل خصوصی افزونه (دانلود افزونه) ۴۰۴ می‌دهد. install.sh را دوباره اجرا کنید یا این را اضافه کنید: location %(prefix)s { internal; alias %(dir)s/; }"
+
+#, python-format
+msgid "The nginx location %(prefix)s is not marked internal; private plugin files could be fetched directly. Add internal; to it"
+msgstr "location %(prefix)s در nginx «internal» نیست؛ فایل‌های خصوصی افزونه را می‌شود مستقیم گرفت. internal; را به آن اضافه کنید"
+
+#, python-format
+msgid "The nginx location %(prefix)s does not point at RAVIX_PLUGIN_DATA_DIR (%(dir)s); private plugin files will answer 404"
+msgstr "location %(prefix)s در nginx به RAVIX_PLUGIN_DATA_DIR (%(dir)s) اشاره نمی‌کند؛ فایل‌های خصوصی افزونه ۴۰۴ می‌دهند"

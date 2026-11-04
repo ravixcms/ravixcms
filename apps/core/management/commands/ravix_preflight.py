@@ -246,6 +246,18 @@ class Command(BaseCommand):
         media_root_p = Path(settings.MEDIA_ROOT).resolve()
         need(not (data_dir == media_root_p or media_root_p in data_dir.parents), cli_gettext("The plugin private-files folder is outside the public media"),
              cli_gettext("RAVIX_PLUGIN_DATA_DIR (%(path)s) is inside the public media; private plugin files would leak") % {"path": data_dir})
+        if getattr(settings, "RAVIX_ACCEL_REDIRECT_PREFIX", ""):
+            from apps.core import nginxcheck
+
+            plugin_files = nginxcheck.current_status()
+            if plugin_files == nginxcheck.OK:
+                oks.append(cli_gettext("nginx hands private plugin files over (X-Accel-Redirect location is in place)"))
+            elif plugin_files == nginxcheck.MISSING:
+                warns.append(cli_gettext("RAVIX_ACCEL_REDIRECT_PREFIX is set but the nginx configuration has no location for it; every private plugin file (a plugin's download) will answer 404. Run install.sh again, or add: location %(prefix)s { internal; alias %(dir)s/; }") % {"prefix": settings.RAVIX_ACCEL_REDIRECT_PREFIX, "dir": str(settings.RAVIX_PLUGIN_DATA_DIR).rstrip("/")})
+            elif plugin_files == nginxcheck.NOT_INTERNAL:
+                warns.append(cli_gettext("The nginx location %(prefix)s is not marked internal; private plugin files could be fetched directly. Add internal; to it") % {"prefix": settings.RAVIX_ACCEL_REDIRECT_PREFIX})
+            elif plugin_files == nginxcheck.WRONG_ALIAS:
+                warns.append(cli_gettext("The nginx location %(prefix)s does not point at RAVIX_PLUGIN_DATA_DIR (%(dir)s); private plugin files will answer 404") % {"prefix": settings.RAVIX_ACCEL_REDIRECT_PREFIX, "dir": str(settings.RAVIX_PLUGIN_DATA_DIR).rstrip("/")})
         bad_keys, broad_keys = [], []
         for item in settings.RAVIX_TRUSTED_PUBLIC_KEYS:
             try:

@@ -379,3 +379,108 @@ class InstallTokenTests(SimpleTestCase):
             subprocess.run([sys.executable, "manage.py", "createsuperuser", "--noinput", "--username", "legacy", "--email", "l@example.com"],
                            cwd=ROOT, capture_output=True, text=True, env={**os.environ, **env}, check=True)
             self.assertIn("rc=0", run_bash(code, PATH=os.environ["PATH"]).stdout)  # an older site: a user exists
+
+
+# --------------------------------------------------------------------------------------------------------------------------- private plugin files
+PLUGIN_FUNCS = "\n".join(bash_function(n) for n in ("nginx_safe_prefix", "nginx_safe_dir", "nginx_plugin_location_exists", "nginx_render_plugin_files", "nginx_add_plugin_files"))
+PF_CERTBOT_SITE = """\
+server {
+    server_name example.com;
+    location /static/ { alias /srv/ravix/app/staticfiles/; }
+    location / {
+        include /etc/nginx/ravix-proxy.conf;
+    }
+    listen 443 ssl; # managed by Certbot
+}
+server {
+    if ($host = example.com) { return 301 https://$host$request_uri; } # managed by Certbot
+    listen 80;
+    server_name example.com;
+    return 404; # managed by Certbot
+}
+"""
+PF_MANUAL_SITE = PF_CERTBOT_SITE.replace("    location / {", "    location /_plugin_files/ {\n        internal;\n        alias /srv/ravix/plugin_data/;\n    }\n    location / {", 1)
+
+
+def add_block(text: str, prefix="/_plugin_files/", folder="/srv/ravix/plugin_data") -> tuple[int, str]:
+    with tempfile.TemporaryDirectory() as tmp:
+        path = Path(tmp, "site")
+        path.write_text(text)
+        proc = run_bash(f"{PLUGIN_FUNCS}\nnginx_add_plugin_files {path} '{prefix}' '{folder}'; echo \"rc=$?\"")
+        return int(re.search(r"rc=(\d+)", proc.stdout).group(1)), path.read_text()
+
+
+class PluginFilesLocationTests(SimpleTestCase):
+    def test_the_template_has_an_internal_location_with_the_plugin_data_folder(self):
+        block = re.search(r"location /_plugin_files/ \{([^}]*)\}", NGINX).group(1)
+        self.assertIn("internal;", block)
+        self.assertIn("alias /srv/ravix/plugin_data/;", block)
+        self.assertIn("plugin_data", SCRIPT)  # install.sh sets RAVIX_PLUGIN_DATA_DIR to this same folder
+        self.assertIn('env_set RAVIX_ACCEL_REDIRECT_PREFIX "/_plugin_files/"', SCRIPT)
+        self.assertIn('env_set RAVIX_PLUGIN_DATA_DIR "$BASE/plugin_data"', SCRIPT)
+
+    def test_a_site_file_without_the_block_gets_it_before_location_slash(self):
+        rc, text = add_block(PF_CERTBOT_SITE)
+        self.assertEqual(rc, 0)
+        block = re.search(r"location /_plugin_files/ \{([^}]*)\}", text).group(1)
+        self.assertIn("internal;", block)
+        self.assertIn("alias /srv/ravix/plugin_data/;", block)
+        self.assertLess(text.index("location /_plugin_files/"), text.index("    location / {"))
+        self.assertEqual(text.count("location /_plugin_files/"), 1)  # the port-80 redirect block has no "location /": nothing was added there
+
+    def test_running_it_again_changes_nothing(self):
+        _rc, once = add_block(PF_CERTBOT_SITE)
+        rc, twice = add_block(once)
+        self.assertEqual(rc, 1)
+        self.assertEqual(once, twice)
+
+    def test_the_hand_made_block_on_the_live_site_is_not_duplicated(self):
+        rc, text = add_block(PF_MANUAL_SITE)
+        self.assertEqual(rc, 1)
+        self.assertEqual(text, PF_MANUAL_SITE)
+        self.assertEqual(text.count("_plugin_files"), 1)
+
+    def test_a_custom_prefix_and_folder_are_used_and_matched_exactly(self):
+        rc, text = add_block(PF_CERTBOT_SITE, "/private-files/", "/data/ravix/plugin_data/")
+        self.assertEqual(rc, 0)
+        self.assertIn("location /private-files/ {", text)
+        self.assertIn("alias /data/ravix/plugin_data/;", text)
+        rc2, _ = add_block(text, "/private/", "/data/ravix/plugin_data")  # /private/ is not /private-files/
+        self.assertEqual(rc2, 0)
+
+    def test_unsafe_values_are_refused(self):
+        for prefix, folder in (("/x/ {} location /evil/ {", "/srv/a"), ("/x/", "/srv/a; root /;"), ("x/", "/srv/a"), ("/x", "/srv/a"), ("/x/", "relative/dir")):
+            rc, text = add_block(PF_CERTBOT_SITE, prefix, folder)
+            self.assertEqual(rc, 1, (prefix, folder))
+            self.assertEqual(text, PF_CERTBOT_SITE)
+
+    def test_a_file_without_location_slash_is_left_alone(self):
+        rc, text = add_block("server {\n    listen 80;\n}\n")
+        self.assertEqual(rc, 1)
+
+    def test_the_template_is_rewritten_for_the_real_prefix_and_folder(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp, "site")
+            path.write_text(NGINX)
+            proc = run_bash(f"{PLUGIN_FUNCS}\nnginx_render_plugin_files {path} /files/ /data/pd/; echo rc=$?")
+            self.assertIn("rc=0", proc.stdout)
+            text = path.read_text()
+            self.assertIn("location /files/ {", text)
+            self.assertIn("alias /data/pd/;", text)
+            self.assertNotIn("/_plugin_files/", text)
+
+    @skipUnless(shutil.which("nginx"), "nginx is not installed")
+    def test_the_patched_file_passes_nginx_t_and_the_location_is_internal(self):
+        _rc, text = add_block(NGINX.replace("location /_plugin_files/", "location /gone/"), "/_plugin_files/", "/tmp")
+        with tempfile.TemporaryDirectory() as tmp:
+            proc = nginx_test(text.replace("/srv/ravix/", f"{tmp}/").replace("include /etc/nginx/ravix-proxy.conf;", "return 204;"), tmp)
+            self.assertEqual(proc.returncode, 0, proc.stderr)
+
+
+class ShellcheckTests(SimpleTestCase):
+    @skipUnless(shutil.which("shellcheck"), "shellcheck is not installed")
+    def test_the_deployment_scripts_have_no_shellcheck_findings(self):
+        # SC1111: the typographic quotes in the messages are the keys of deploy/install.fa.tsv; SC2016: intentional single-quoted code handed to bash -c / awk;
+        # SC1091: /etc/os-release is not part of the repository.
+        proc = subprocess.run(["shellcheck", "-e", "SC1111,SC2016,SC1091", "-f", "gcc", str(ROOT / "install.sh")], capture_output=True, text=True)
+        self.assertEqual(proc.stdout.strip(), "", proc.stdout)

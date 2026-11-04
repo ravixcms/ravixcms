@@ -217,6 +217,27 @@ def check_code_dirs() -> list[Check]:
     return [_c("code_dirs", g, gettext("Code folders"), GOOD, gettext("The plugin and theme folders are readable by the web service."))]
 
 
+def check_plugin_files() -> list[Check]:
+    """With nginx in front, private plugin files are handed over through an internal location; without it their downloads answer 404."""
+    from . import nginxcheck
+
+    if not getattr(settings, "RAVIX_ACCEL_REDIRECT_PREFIX", ""):
+        return []
+    g = gettext("Cache and storage")
+    title = gettext("Private plugin files (nginx)")
+    status = nginxcheck.current_status()
+    if status == nginxcheck.OK:
+        return [_c("plugin_files", g, title, GOOD, gettext("nginx has the internal location for private plugin files."))]
+    if status == nginxcheck.UNKNOWN:
+        return [_c("plugin_files", g, title, UNKNOWN, gettext("The nginx configuration could not be read, so the private plugin-files location was not checked."))]
+    detail = {
+        nginxcheck.MISSING: gettext("RAVIX_ACCEL_REDIRECT_PREFIX is set but nginx has no location for it: downloads of private plugin files answer 404."),
+        nginxcheck.NOT_INTERNAL: gettext("The nginx location for private plugin files is not marked internal: the files could be fetched directly."),
+        nginxcheck.WRONG_ALIAS: gettext("The nginx location for private plugin files does not point at RAVIX_PLUGIN_DATA_DIR: downloads answer 404."),
+    }[status]
+    return [_c("plugin_files", g, title, CRITICAL, detail, gettext("Run install.sh again (it adds the location safely), or add the location by hand as described in docs/installer.md."))]
+
+
 def check_timers(now=None) -> list[Check]:
     if getattr(settings, "RAVIX_HOSTING", False):
         return check_cron(now)
@@ -464,7 +485,7 @@ def check_hosting_if_active() -> list[Check]:
 
 def run_all(request=None) -> list[Check]:
     checks: list[Check] = []
-    for fn in (lambda: check_https(request), lambda: check_client_ip(request), check_email, check_cache, check_database, check_code_dirs, check_timers, check_backup, check_hosting_if_active, check_versions, check_content):
+    for fn in (lambda: check_https(request), lambda: check_client_ip(request), check_email, check_cache, check_database, check_code_dirs, check_plugin_files, check_timers, check_backup, check_hosting_if_active, check_versions, check_content):
         try:
             checks.extend(fn())
         except Exception as exc:  # noqa: BLE001 — یک بررسی خراب نباید کل صفحه را بیندازد

@@ -14506,3 +14506,24 @@ msgstr "Applications inconnues"
 
 msgid "Limits"
 msgstr "Limites"
+
+msgid "Private plugin files (nginx)"
+msgstr "Fichiers privés des plugins (nginx)"
+
+msgid "nginx has the internal location for private plugin files."
+msgstr "nginx dispose de la location interne pour les fichiers privés des plugins."
+
+msgid "The nginx configuration could not be read, so the private plugin-files location was not checked."
+msgstr "La configuration de nginx n’a pas pu être lue ; la location des fichiers privés des plugins n’a donc pas été vérifiée."
+
+msgid "RAVIX_ACCEL_REDIRECT_PREFIX is set but nginx has no location for it: downloads of private plugin files answer 404."
+msgstr "RAVIX_ACCEL_REDIRECT_PREFIX est défini mais nginx n’a pas de location pour lui : les téléchargements de fichiers privés de plugins répondent 404."
+
+msgid "The nginx location for private plugin files is not marked internal: the files could be fetched directly."
+msgstr "La location nginx des fichiers privés des plugins n’est pas marquée internal : les fichiers pourraient être récupérés directement."
+
+msgid "The nginx location for private plugin files does not point at RAVIX_PLUGIN_DATA_DIR: downloads answer 404."
+msgstr "La location nginx des fichiers privés des plugins ne pointe pas vers RAVIX_PLUGIN_DATA_DIR : les téléchargements répondent 404."
+
+msgid "Run install.sh again (it adds the location safely), or add the location by hand as described in docs/installer.md."
+msgstr "Relancez install.sh (il ajoute la location en toute sécurité) ou ajoutez-la à la main comme décrit dans docs/installer.md."

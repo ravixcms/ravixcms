@@ -14199,3 +14199,24 @@ msgstr "Bilinmeyen uygulamalar"
 
 msgid "Limits"
 msgstr "Sınırlar"
+
+msgid "Private plugin files (nginx)"
+msgstr "Eklentilerin özel dosyaları (nginx)"
+
+msgid "nginx has the internal location for private plugin files."
+msgstr "nginx, eklentilerin özel dosyaları için iç location’a sahip."
+
+msgid "The nginx configuration could not be read, so the private plugin-files location was not checked."
+msgstr "nginx yapılandırması okunamadı; eklentilerin özel dosyaları için location denetlenmedi."
+
+msgid "RAVIX_ACCEL_REDIRECT_PREFIX is set but nginx has no location for it: downloads of private plugin files answer 404."
+msgstr "RAVIX_ACCEL_REDIRECT_PREFIX ayarlı ama nginx’te bunun için location yok: eklentilerin özel dosyalarının indirilmesi 404 döner."
+
+msgid "The nginx location for private plugin files is not marked internal: the files could be fetched directly."
+msgstr "Eklentilerin özel dosyaları için nginx location’ı internal olarak işaretli değil: dosyalar doğrudan alınabilir."
+
+msgid "The nginx location for private plugin files does not point at RAVIX_PLUGIN_DATA_DIR: downloads answer 404."
+msgstr "Eklentilerin özel dosyaları için nginx location’ı RAVIX_PLUGIN_DATA_DIR’i göstermiyor: indirmeler 404 döner."
+
+msgid "Run install.sh again (it adds the location safely), or add the location by hand as described in docs/installer.md."
+msgstr "install.sh’i yeniden çalıştırın (location’ı güvenle ekler) ya da docs/installer.md’de anlatıldığı gibi elle ekleyin."

@@ -13984,3 +13984,24 @@ msgstr "تطبيقات غير معروفة"
 
 msgid "Limits"
 msgstr "الحدود"
+
+msgid "Private plugin files (nginx)"
+msgstr "ملفات الإضافات الخاصة (nginx)"
+
+msgid "nginx has the internal location for private plugin files."
+msgstr "لدى nginx الموقع الداخلي لملفات الإضافات الخاصة."
+
+msgid "The nginx configuration could not be read, so the private plugin-files location was not checked."
+msgstr "تعذّرت قراءة إعدادات nginx، لذلك لم يُفحص موقع ملفات الإضافات الخاصة."
+
+msgid "RAVIX_ACCEL_REDIRECT_PREFIX is set but nginx has no location for it: downloads of private plugin files answer 404."
+msgstr "تم تعيين RAVIX_ACCEL_REDIRECT_PREFIX لكن nginx لا يملك location له: تنزيلات ملفات الإضافات الخاصة تعيد 404."
+
+msgid "The nginx location for private plugin files is not marked internal: the files could be fetched directly."
+msgstr "موقع ملفات الإضافات الخاصة في nginx غير معلَّم بـ internal: يمكن جلب الملفات مباشرة."
+
+msgid "The nginx location for private plugin files does not point at RAVIX_PLUGIN_DATA_DIR: downloads answer 404."
+msgstr "موقع ملفات الإضافات الخاصة في nginx لا يشير إلى RAVIX_PLUGIN_DATA_DIR: التنزيلات تعيد 404."
+
+msgid "Run install.sh again (it adds the location safely), or add the location by hand as described in docs/installer.md."
+msgstr "شغّل install.sh مرة أخرى (يضيف الموقع بأمان) أو أضفه يدويًا كما في docs/installer.md."

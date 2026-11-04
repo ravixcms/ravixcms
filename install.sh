@@ -156,6 +156,35 @@ nginx_enable_http2() {  # nginx_enable_http2 FILE VERSION: turns HTTP/2 on in ev
     sed -i -E '/^[[:space:]]*listen[[:space:]]+[^;#]*443[^;#]*[[:space:]]ssl/{/http2/!s/\bssl\b/ssl http2/}' "$f"
   fi
 }
+nginx_safe_prefix() { [[ "$1" =~ ^/[A-Za-z0-9_.-]+(/[A-Za-z0-9_.-]+)*/$ ]]; }   # a URL prefix that is safe to put into an nginx location (ends with /)
+nginx_safe_dir() { [[ "$1" =~ ^/[A-Za-z0-9_.-]+(/[A-Za-z0-9_.-]+)*/?$ ]]; }   # an absolute folder that is safe to put into an nginx alias
+nginx_plugin_location_exists() {  # nginx_plugin_location_exists FILE PREFIX: 0 = FILE already has "location PREFIX {" (also "location ^~ PREFIX {")
+  local esc
+  esc="$(printf '%s' "$2" | sed 's/[][\.*^$/]/\\&/g')"
+  grep -qE "^[[:space:]]*location[[:space:]]+(\^~[[:space:]]+)?${esc}[[:space:]]*\{" "$1"
+}
+nginx_render_plugin_files() {  # nginx_render_plugin_files FILE PREFIX DIR: makes the template's /_plugin_files/ block use the real prefix and folder
+  local f="$1" prefix="$2" dir="${3%/}"
+  nginx_safe_prefix "$prefix" && nginx_safe_dir "$dir" || return 1
+  sed -i -E "s|^([[:space:]]*location[[:space:]]+)/_plugin_files/([[:space:]]*\{)|\1${prefix}\2|; s|^([[:space:]]*alias[[:space:]]+)/srv/ravix/plugin_data/;|\1${dir}/;|" "$f"
+}
+nginx_add_plugin_files() {  # nginx_add_plugin_files FILE PREFIX DIR: adds the internal plugin-files location before "location / {". 0 = added, 1 = nothing to do
+  local f="$1" prefix="$2" dir="${3%/}" tmp
+  nginx_safe_prefix "$prefix" && nginx_safe_dir "$dir" || return 1
+  nginx_plugin_location_exists "$f" "$prefix" && return 1
+  grep -qE '^[[:space:]]*location[[:space:]]+/[[:space:]]*\{' "$f" || return 1
+  tmp="$(mktemp)"
+  awk -v prefix="$prefix" -v dir="$dir" '/^[[:space:]]*location[[:space:]]+\/[[:space:]]*\{/ { match($0, /^[[:space:]]*/); ind = substr($0, 1, RLENGTH)
+      print ind "# Private plugin files: reachable only through X-Accel-Redirect from the application (never directly), always as a download."
+      print ind "location " prefix " {"
+      print ind "    internal;"
+      print ind "    alias " dir "/;"
+      print ind "    add_header X-Content-Type-Options nosniff;"
+      print ind "    add_header Content-Security-Policy \"default-src '"'"'none'"'"'; sandbox\";"
+      print ind "}" }
+    { print }' "$f" > "$tmp"
+  cat "$tmp" > "$f"; rm -f "$tmp"
+}
 site_installed() {  # 0 = the site is already installed (read-only check against the real database; any failure means "not installed")
   [ -f "$ENV_FILE" ] && [ -x "$VENV/bin/python" ] && [ -n "$(env_get DATABASE_URL)" ] || return 1
   envsh "$VENV/bin/python" -c 'import sys, django; django.setup(); from apps.accounts.models import User; from apps.core.models import SiteSettings; sys.exit(0 if (SiteSettings.objects.filter(pk=1, installed_at__isnull=False).exists() or User.objects.exists()) else 1)' >/dev/null 2>&1
@@ -418,6 +447,8 @@ if [ "$NGINX" = 1 ]; then
   TMP_SITE="$(mktemp)"
   sed "s/server_name example.com www.example.com;/server_name $SERVER_NAMES;/" "$CODE/deploy/nginx-ravix.conf" > "$TMP_SITE"
   PROXY_SRC="$CODE/deploy/ravix-proxy.conf"
+  ACCEL_PREFIX="$(env_get RAVIX_ACCEL_REDIRECT_PREFIX)"; PLUGIN_DIR="$(env_get RAVIX_PLUGIN_DATA_DIR)"
+  [ -n "$ACCEL_PREFIX" ] && [ -n "$PLUGIN_DIR" ] && { nginx_render_plugin_files "$TMP_SITE" "$ACCEL_PREFIX" "$PLUGIN_DIR" || warn "RAVIX_ACCEL_REDIRECT_PREFIX or RAVIX_PLUGIN_DATA_DIR has unusual characters; the template's plugin-files location was left as it is."; }
   # a kernel without IPv6 (seen in some containers/VPSs): `listen [::]` makes nginx -t fail
   [ -e /proc/net/if_inet6 ] || { sed -i '/listen \[::\]/d' "$TMP_SITE"; warn "IPv6 is not enabled on this system; the listen [::] lines were removed"; }
   if [ "$SSL" = 0 ]; then  # TLS ends elsewhere: accept the upstream X-Forwarded-Proto
@@ -486,6 +517,29 @@ if [ "$NGINX" = 1 ] && [ "$SSL" = 1 ] && [ "$DRY_RUN" = 0 ] && [ -f "${SITE:-/no
     fi
   else ok "HTTP/2 is enabled (or the HTTPS block does not exist yet)"; fi
   rm -f "$H2_TMP"
+fi
+
+# ----------------------------------------------------------------- 10c. private plugin files (X-Accel-Redirect) in a file nginx tooling has already changed
+if [ "$NGINX" = 1 ] && [ "$DRY_RUN" = 0 ] && [ -f "${SITE:-/nonexistent}" ]; then
+  ACCEL_PREFIX="$(env_get RAVIX_ACCEL_REDIRECT_PREFIX)"; PLUGIN_DIR="$(env_get RAVIX_PLUGIN_DATA_DIR)"
+  if [ -n "$ACCEL_PREFIX" ] && [ -n "$PLUGIN_DIR" ]; then
+    PF_TMP="$(mktemp)"; cp "$SITE" "$PF_TMP"
+    if nginx_add_plugin_files "$PF_TMP" "$ACCEL_PREFIX" "$PLUGIN_DIR"; then
+      if confirm "Add the private plugin-files location (%s) to %s (a backup copy is kept)?" "$ACCEL_PREFIX" "$SITE"; then
+        PF_BAK="$SITE.bak.$(date +%s)"
+        run cp -a "$SITE" "$PF_BAK"
+        run install -m 644 "$PF_TMP" "$SITE"
+        if nginx -t >/dev/null 2>&1; then
+          if have_systemd; then systemctl reload nginx; fi
+          ok "The plugin-files location was added"
+        else
+          run cp -a "$PF_BAK" "$SITE"
+          warn "nginx rejected the plugin-files location; the previous configuration was restored."
+        fi
+      fi
+    else ok "The plugin-files location is in place (or the site file has no location / yet)"; fi
+    rm -f "$PF_TMP"
+  fi
 fi
 
 # ----------------------------------------------------------------- 11. final check

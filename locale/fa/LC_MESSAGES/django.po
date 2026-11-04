@@ -14035,3 +14035,24 @@ msgstr "برنامه‌های ناشناس"
 
 msgid "Limits"
 msgstr "محدودیت‌ها"
+
+msgid "Private plugin files (nginx)"
+msgstr "فایل‌های خصوصی افزونه (nginx)"
+
+msgid "nginx has the internal location for private plugin files."
+msgstr "nginx بلاک داخلی فایل‌های خصوصی افزونه را دارد."
+
+msgid "The nginx configuration could not be read, so the private plugin-files location was not checked."
+msgstr "پیکربندی nginx خوانده نشد؛ پس بلاک فایل‌های خصوصی افزونه بررسی نشد."
+
+msgid "RAVIX_ACCEL_REDIRECT_PREFIX is set but nginx has no location for it: downloads of private plugin files answer 404."
+msgstr "RAVIX_ACCEL_REDIRECT_PREFIX تنظیم شده ولی nginx برایش location ندارد؛ دانلود فایل‌های خصوصی افزونه ۴۰۴ می‌دهد."
+
+msgid "The nginx location for private plugin files is not marked internal: the files could be fetched directly."
+msgstr "location فایل‌های خصوصی افزونه در nginx «internal» نیست؛ فایل‌ها را می‌شود مستقیم گرفت."
+
+msgid "The nginx location for private plugin files does not point at RAVIX_PLUGIN_DATA_DIR: downloads answer 404."
+msgstr "location فایل‌های خصوصی افزونه در nginx به RAVIX_PLUGIN_DATA_DIR اشاره نمی‌کند؛ دانلودها ۴۰۴ می‌دهند."
+
+msgid "Run install.sh again (it adds the location safely), or add the location by hand as described in docs/installer.md."
+msgstr "install.sh را دوباره اجرا کنید (بلاک را امن اضافه می‌کند) یا طبق docs/installer.md آن را دستی اضافه کنید."

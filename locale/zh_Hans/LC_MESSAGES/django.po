@@ -13623,3 +13623,24 @@ msgstr "未知应用"
 
 msgid "Limits"
 msgstr "限制"
+
+msgid "Private plugin files (nginx)"
+msgstr "插件私有文件（nginx）"
+
+msgid "nginx has the internal location for private plugin files."
+msgstr "nginx 已有插件私有文件的内部 location。"
+
+msgid "The nginx configuration could not be read, so the private plugin-files location was not checked."
+msgstr "无法读取 nginx 配置，因此未检查插件私有文件的 location。"
+
+msgid "RAVIX_ACCEL_REDIRECT_PREFIX is set but nginx has no location for it: downloads of private plugin files answer 404."
+msgstr "已设置 RAVIX_ACCEL_REDIRECT_PREFIX，但 nginx 没有对应的 location：插件私有文件的下载会返回 404。"
+
+msgid "The nginx location for private plugin files is not marked internal: the files could be fetched directly."
+msgstr "nginx 中插件私有文件的 location 未标记为 internal：文件可能被直接访问。"
+
+msgid "The nginx location for private plugin files does not point at RAVIX_PLUGIN_DATA_DIR: downloads answer 404."
+msgstr "nginx 中插件私有文件的 location 未指向 RAVIX_PLUGIN_DATA_DIR：下载会返回 404。"
+
+msgid "Run install.sh again (it adds the location safely), or add the location by hand as described in docs/installer.md."
+msgstr "请再次运行 install.sh（它会安全地添加该 location），或按 docs/installer.md 的说明手动添加。"

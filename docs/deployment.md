@@ -116,6 +116,14 @@ sudo ln -s /etc/nginx/sites-available/ravix /etc/nginx/sites-enabled/ravix && su
 sudo nginx -t && sudo systemctl reload nginx
 ```
 مسیر `alias` برای `/static/` باید به `STATIC_ROOT` (پیش‌فرض `/srv/ravix/app/staticfiles/`) و برای `/media/` به `/srv/ravix/media/` اشاره کند.
+**فایل‌های خصوصی افزونه‌ها** با `X-Accel-Redirect` از Nginx می‌روند. قالب بالا این بلاک را دارد (باید در بلاک HTTPS هم باشد):
+```nginx
+location /_plugin_files/ {          # = RAVIX_ACCEL_REDIRECT_PREFIX
+    internal;
+    alias /srv/ravix/plugin_data/;  # = RAVIX_PLUGIN_DATA_DIR، با / پایانی
+}
+```
+بدون آن هر دانلود فایل خصوصی افزونه ۴۰۴ می‌شود. `ravix_preflight` و «سلامت سایت» وجود آن را بررسی می‌کنند؛ بعد از certbot، `sudo ./install.sh` را دوباره اجرا کنید تا اگر نبود، امن (با `.bak` و `nginx -t`) اضافه شود و اگر بود تکرار نشود. جزئیات: docs/installer.md.
 مطمئن شوید `MEDIA_ROOT` در تولید همان `/srv/ravix/media` است (در `config/settings/base.py` پیش‌فرض `BASE_DIR/media` است؛ یا پوشهٔ media را symlink کنید: `ln -s /srv/ravix/media /srv/ravix/app/media`).
 
 ## ۹. HTTPS (Let's Encrypt)

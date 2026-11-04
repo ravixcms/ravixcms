@@ -134,3 +134,8 @@ nginx rejected the HTTP/2 change; the previous configuration was restored.	nginx
 HTTP/2 is enabled (or the HTTPS block does not exist yet)	HTTP/2 روشن است (یا بلاک HTTPS هنوز ساخته نشده)
   The site is already installed. Sign in to the panel:	  سایت از قبل نصب شده است. وارد پنل شوید:
   After installing, run “sudo ./install.sh” again (or delete the RAVIX_INSTALL_TOKEN line in %s): the token is then removed from the settings.	  بعد از نصب، «sudo ./install.sh» را دوباره اجرا کنید (یا خط RAVIX_INSTALL_TOKEN را از %s پاک کنید): آن‌وقت توکن از تنظیمات حذف می‌شود.
+RAVIX_ACCEL_REDIRECT_PREFIX or RAVIX_PLUGIN_DATA_DIR has unusual characters; the template's plugin-files location was left as it is.	RAVIX_ACCEL_REDIRECT_PREFIX یا RAVIX_PLUGIN_DATA_DIR نویسهٔ غیرعادی دارد؛ بلاک فایل‌های افزونهٔ قالب دست‌نخورده ماند.
+Add the private plugin-files location (%s) to %s (a backup copy is kept)?	بلاک فایل‌های خصوصی افزونه (%s) به %s اضافه شود؟ (یک نسخهٔ پشتیبان نگه داشته می‌شود)
+The plugin-files location was added	بلاک فایل‌های افزونه اضافه شد
+nginx rejected the plugin-files location; the previous configuration was restored.	nginx بلاک فایل‌های افزونه را نپذیرفت؛ پیکربندی قبلی برگردانده شد.
+The plugin-files location is in place (or the site file has no location / yet)	بلاک فایل‌های افزونه سرجایش است (یا فایل سایت هنوز location / ندارد)
