@@ -482,5 +482,6 @@ class ShellcheckTests(SimpleTestCase):
     def test_the_deployment_scripts_have_no_shellcheck_findings(self):
         # SC1111: the typographic quotes in the messages are the keys of deploy/install.fa.tsv; SC2016: intentional single-quoted code handed to bash -c / awk;
         # SC1091: /etc/os-release is not part of the repository.
-        proc = subprocess.run(["shellcheck", "-e", "SC1111,SC2016,SC1091", "-f", "gcc", str(ROOT / "install.sh")], capture_output=True, text=True)
+        scripts = [str(ROOT / "install.sh"), *sorted(str(p) for p in (ROOT / "deploy").glob("*.sh"))]  # default severity (style): notes count too
+        proc = subprocess.run(["shellcheck", "-s", "bash", "-e", "SC1111,SC2016,SC1091", "-f", "gcc", *scripts], capture_output=True, text=True)
         self.assertEqual(proc.stdout.strip(), "", proc.stdout)

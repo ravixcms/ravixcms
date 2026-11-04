@@ -44,7 +44,7 @@ LANG_CODE="${LANG_CODE//-/_}"
 load_messages() {  # deploy/install.<lang>.tsv (msgid<TAB>translation); a language without a file simply stays English
   local code f k v
   for code in "$LANG_CODE" "${LANG_CODE%%_*}"; do
-    [ -n "$code" ] && [ "$code" != en ] || continue
+    if [ -z "$code" ] || [ "$code" = en ]; then continue; fi
     f="$HERE/deploy/install.$code.tsv"
     [ -f "$f" ] || continue
     while IFS=$'\t' read -r k v || [ -n "$k" ]; do [ -n "$k" ] && I18N["$k"]="$v"; done < "$f"
@@ -126,7 +126,7 @@ as_app() { runuser -u "$APP_USER" -- "$@"; }
 envsh() {  # run a command as the service user with the variables of ravix.env
   runuser -u "$APP_USER" -- bash -c 'set -a; . "$1"; set +a; shift; cd '"$APP_DIR"'; exec "$@"' _ "$ENV_FILE" "$@"
 }
-env_get() { [ -r "$ENV_FILE" ] && grep -E "^$1=" "$ENV_FILE" | head -1 | cut -d= -f2- || true; }
+env_get() { if [ -r "$ENV_FILE" ]; then grep -E "^$1=" "$ENV_FILE" | head -1 | cut -d= -f2- || true; fi; return 0; }
 env_set() {  # env_set KEY VALUE — adds the key only if missing; never changes an existing value
   if [ -n "$(env_get "$1")" ]; then return 0; fi
   [ "$DRY_RUN" = 1 ] && { printf '  [dry-run] '; t "%s ← (would be set)" "$1"; echo; return 0; }
@@ -209,7 +209,7 @@ if [ "${ID:-}" != "ubuntu" ] || { [ "${VERSION_ID:-}" != "22.04" ] && [ "${VERSI
 fi
 [ "${VERSION_ID:-}" = "26.04" ] && warn "Ubuntu 26.04 is new: it brings PostgreSQL 18, Python 3.13 and systemd 259. The code is tested on it in CI, but this installer has not yet been run on a real 26.04 server; read the output of every step."
 ok "Operating system: %s" "${PRETTY_NAME:-?}"
-[ -f "$SRC/manage.py" ] && [ -f "$SRC/requirements.lock" ] || die "The Ravix code was not found in %s (manage.py / requirements.lock). Pass --source." "$SRC"
+if [ ! -f "$SRC/manage.py" ] || [ ! -f "$SRC/requirements.lock" ]; then die "The Ravix code was not found in %s (manage.py / requirements.lock). Pass --source." "$SRC"; fi
 ok "Code: %s" "$SRC"
 if have_systemd; then ok "systemd is active"; else warn "systemd is not running; no service/timer is created (normal in a container)"; SYSTEMD=no; fi
 

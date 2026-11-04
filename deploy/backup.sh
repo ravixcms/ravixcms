@@ -6,6 +6,7 @@
 set -euo pipefail
 . "$(dirname "${BASH_SOURCE[0]}")/_legacy.sh"
 ENV_FILE="$(rav_env_file)"
+# shellcheck source=/dev/null
 [ -r "$ENV_FILE" ] && set -a && . "$ENV_FILE" && set +a
 rav_legacy_vars
 : "${DATABASE_URL:?DATABASE_URL تنظیم نشده}"
@@ -37,7 +38,7 @@ pack "${RAVIX_REGISTRY_STORAGE:-$(rav_path /srv/ravix/app/registry_packages)}" r
 # نگهداری: فقط پشتیبان‌های «کامل» (دارای .sha256) شمرده می‌شوند و KEEP_COUNT تای آخر می‌مانند؛ بقیه پاک می‌شوند.
 # (اجرای ناقصِ شکست‌خورده جای پشتیبان سالم را نمی‌گیرد؛ بقایای ناقص بیش از ۱ روز قدیمی پاک می‌شوند.)
 # حذف فقط پس از موفقیت این اجرا انجام می‌شود (بالا set -e است).
-mapfile -t DONE < <(cd "$BACKUP_DIR" && ls -1 ravi[nx]-????????-??????.sha256 2>/dev/null | sed 's/\.sha256$//' | sort -r)
+mapfile -t DONE < <(cd "$BACKUP_DIR" && find . -maxdepth 1 -name 'ravi[nx]-????????-??????.sha256' -printf '%f\n' 2>/dev/null | sed 's/\.sha256$//' | sort -r)
 if [ "${#DONE[@]}" -gt "$KEEP_COUNT" ]; then
   for old in "${DONE[@]:$KEEP_COUNT}"; do rm -f -- "$BACKUP_DIR/$old".*; done
 fi

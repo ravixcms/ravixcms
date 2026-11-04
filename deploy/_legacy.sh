@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # منبع‌شدنی. سازگاری با نصب‌های قدیمی (نام ravin) تا Ravix 2.0 — docs/upgrade.md
 # 1) فایل تنظیمات: اگر /etc/ravix/ravix.env نیست ولی /etc/ravin/ravin.env هست، همان خوانده می‌شود.
 # 2) هر RAVIN_X که RAVIX_X متناظر ندارد، به RAVIX_X کپی می‌شود (با هشدار روی stderr).

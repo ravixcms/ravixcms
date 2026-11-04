@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # منبع‌شدنی: DATABASE_URL را به متغیرهای PG* تبدیل می‌کند تا رمز دیتابیس در آرگومان پروسه‌ها (ps) دیده نشود.
 eval "$(python3 - <<'PY'
 import os, shlex

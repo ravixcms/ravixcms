@@ -4,7 +4,7 @@
 # خروجی: «OK: ...» با کد ۰، یا «LEAK: ...» با کد ۱ (در این صورت لاگ را نفرستید و به من خبر دهید). مقدار رازها را چاپ نمی‌کند.
 set -u
 ENVF="${1:-/etc/ravix/ravix.env}"; LOGF="${2:-/root/ravix-vps-smoke.log}"; leak=0
-[ -r "$ENVF" ] && [ -r "$LOGF" ] || { echo "فایل env یا لاگ خوانا نیست"; exit 2; }
+if [ ! -r "$ENVF" ] || [ ! -r "$LOGF" ]; then echo "فایل env یا لاگ خوانا نیست"; exit 2; fi
 for k in DJANGO_SECRET_KEY RAVIX_SECRETS_KEY; do
   v="$(grep "^$k=" "$ENVF" | tail -1 | cut -d= -f2-)"
   if [ -n "$v" ] && grep -qF -- "$v" "$LOGF"; then echo "LEAK: $k"; leak=1; fi
