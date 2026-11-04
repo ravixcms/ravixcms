@@ -163,6 +163,39 @@ class AuthorizeTests(McpTestCase):
         self.assertIn("form-action 'self' https://claude.ai", resp["Content-Security-Policy"])
         self.assertNotContains(resp, "trust_host")  # a known address needs no extra confirmation
 
+    def form_action(self, resp):
+        csp = {d.split()[0]: d.split()[1:] for d in (x.strip() for x in resp["Content-Security-Policy"].split(";")) if d}
+        return csp["form-action"]
+
+    def test_the_consent_page_lets_the_form_lead_only_to_the_registered_address(self):
+        # After "Allow" the browser follows a redirect to the app. A form-action that did not name that address would make the browser refuse it,
+        # and a wildcard would let the page send the form anywhere: it must be exactly 'self' plus the one registered origin (with its port).
+        self.http.force_login(self.boss)
+        for redirect, origin in (("https://claude.ai/api/mcp/auth_callback", "https://claude.ai"),
+                                 ("https://apps.example.org:8443/cb", "https://apps.example.org:8443"),
+                                 ("http://127.0.0.1:53211/callback", "http://127.0.0.1:53211")):
+            cid = self.client_id(redirect, "App " + origin)
+            params, _ = self.authorize_params(cid, redirect=redirect)
+            resp = self.http.get("/oauth/authorize", params)
+            self.assertEqual(resp.status_code, 200, redirect)
+            self.assertEqual(self.form_action(resp), ["'self'", origin], redirect)
+
+    def test_a_client_with_several_addresses_only_opens_the_one_it_asked_for(self):
+        resp = self.http.post("/oauth/register", data=json.dumps({"client_name": "Two", "redirect_uris": ["https://one.example.org/cb", "https://two.example.org/cb"]}),
+                              content_type="application/json")
+        cid = resp.json()["client_id"]
+        self.http.force_login(self.boss)
+        params, _ = self.authorize_params(cid, redirect="https://two.example.org/cb")
+        self.assertEqual(self.form_action(self.http.get("/oauth/authorize", params)), ["'self'", "https://two.example.org"])
+
+    def test_an_address_that_is_not_registered_never_reaches_the_consent_page(self):
+        self.http.force_login(self.boss)
+        params, _ = self.authorize_params(self.cid, redirect="https://evil.example.net/cb")
+        resp = self.http.get("/oauth/authorize", params)
+        self.assertNotEqual(resp.status_code, 302)
+        self.assertNotIn("evil.example.net", resp.get("Content-Security-Policy", ""))
+        self.assertNotContains(resp, 'name="decision"', status_code=resp.status_code)
+
     def test_an_unknown_address_gets_a_warning_and_needs_confirmation(self):
         cid = self.client_id("https://apps.example.org/cb", "Claude")
         params, _ = self.authorize_params(cid, redirect="https://apps.example.org/cb")

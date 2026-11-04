@@ -9,14 +9,21 @@ Run:  RAVIX_PYTHON=/path/to/python CHROMIUM_PATH=... python scripts/e2e_mcp.py
 from __future__ import annotations
 
 import asyncio
+import base64
+import hashlib
+import importlib.metadata
+import http.server
 import os
 import shutil
 import socket
+import ssl
 import subprocess
 import sys
+import secrets
 import tempfile
 import threading
 import time
+from functools import partial
 from pathlib import Path
 from urllib.parse import parse_qs, urlsplit
 
@@ -74,47 +81,94 @@ class Memory:
         self.info = info
 
 
-def with_browser(fn, *args):
+class CallbackServer:
+    """A real little web server standing in for the app's redirect address (what a real client does), so the test never depends on how a
+    browser-automation tool treats redirects. ``tls`` serves https with a throw-away certificate for the host name ``fake_host``."""
+
+    def __init__(self, tls: bool = False, fake_host: str = "127.0.0.1", tmp: Path | None = None):
+        self.hits: list[str] = []
+        self.event = threading.Event()
+        outer = self
+
+        class Handler(http.server.BaseHTTPRequestHandler):
+            def do_GET(self):
+                if "code=" in self.path:  # a browser also asks for /favicon.ico; only the redirect carries the code
+                    outer.hits.append(self.path)
+                    outer.event.set()
+                body = b"connected"
+                self.send_response(200)
+                self.send_header("Content-Type", "text/plain")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+            def log_message(self, *args):
+                pass
+
+        self.server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+        self.port = self.server.server_address[1]
+        self.tls = tls
+        self.host = fake_host
+        if tls:
+            crt, key = tmp / "cb.crt", tmp / "cb.key"
+            subprocess.run(["openssl", "req", "-x509", "-newkey", "rsa:2048", "-nodes", "-days", "2", "-keyout", str(key), "-out", str(crt), "-subj", f"/CN={fake_host}",
+                            "-addext", f"subjectAltName=DNS:{fake_host}"], check=True, capture_output=True)
+            ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+            ctx.load_cert_chain(crt, key)
+            self.server.socket = ctx.wrap_socket(self.server.socket, server_side=True)
+        threading.Thread(target=self.server.serve_forever, daemon=True).start()
+
+    @property
+    def origin(self) -> str:
+        return f"{'https' if self.tls else 'http'}://{self.host}:{self.port}"
+
+    def stop(self):
+        self.server.shutdown()
+        self.server.server_close()
+
+
+def with_browser(fn, *args, resolver_rules: str = ""):
     """Playwright's sync API cannot share a thread with asyncio, so every browser step runs in its own worker thread with its own browser."""
     with sync_playwright() as pw:
         kw = {"headless": not os.environ.get("HEADED")}
         if os.environ.get("CHROMIUM_PATH"):
             kw["executable_path"] = os.environ["CHROMIUM_PATH"]
+        kw["args"] = ["--proxy-server=direct://", "--proxy-bypass-list=*"]  # every address here is on this machine; a proxy in the environment must not get in the way
+        if resolver_rules:
+            kw["args"].append(f"--host-resolver-rules={resolver_rules}")
         browser = pw.chromium.launch(**kw)
+        print(f"   (browser: Chromium {browser.version}, Playwright {importlib.metadata.version('playwright')})")
         try:
             return fn(*args, browser)
         finally:
             browser.close()
 
 
-def browser_approve(auth_url: str, callback_origin: str, browser) -> AuthorizationCodeResult:
-    """What the person does: sign in, read the page, tick "I trust" (the callback is a local address Ravix does not know), press Allow."""
-    seen: dict = {}
-    ctx = browser.new_context()
+def browser_approve(auth_url: str, cb: CallbackServer, expect_host: str, browser) -> AuthorizationCodeResult:
+    """What the person does: sign in, read the page, tick "I trust" (the callback is an address Ravix does not know), press Allow.
+    The browser must then really arrive at the app's address: ``cb`` records the request it receives."""
+    ctx = browser.new_context(ignore_https_errors=cb.tls)
     page = ctx.new_page()
-
-    def catch(route):
-        seen["url"] = route.request.url
-        route.fulfill(status=200, body="connected", content_type="text/plain")
-
-    page.route(callback_origin + "/**", catch)
+    consent: dict = {}
+    page.on("response", lambda r: consent.update(csp=r.headers.get("content-security-policy", "")) if r.request.method == "GET" and "/oauth/authorize" in r.url and r.status == 200 else None)
     page.goto(auth_url)
     if "/accounts/login" in page.url:
         page.fill("#id_username", "boss@example.com")
         page.fill("#id_password", PASSWORD)
         page.click("form:has(#id_password) button[type=submit]")
         page.wait_for_load_state()
-    check("the consent page shows the address the person returns to", page.locator("text=127.0.0.1").count() >= 1)
+    check("the consent page shows the address the person returns to", page.locator(f"text={expect_host}").count() >= 1)
     check("an address Ravix does not know is flagged in red", page.locator(".alert-danger").count() >= 1)
+    form_action = next((d for d in consent.get("csp", "").split(";") if d.strip().startswith("form-action")), "")
+    check("the page lets a form lead only to itself and the app's own address", form_action.split() == ["form-action", "'self'", cb.origin], form_action)
     page.check("input[name=trust_host]")
     page.click("button[name=decision][value=allow]")
-    page.wait_for_url(callback_origin + "/**", timeout=15000) if "url" not in seen else None
-    for _ in range(50):
-        if "url" in seen:
-            break
-        time.sleep(0.1)
+    arrived = cb.event.wait(15)
+    check("after Allow the browser really arrives at the app's address", arrived, page.url)
     ctx.close()
-    q = parse_qs(urlsplit(seen["url"]).query)
+    if not arrived:
+        raise SystemExit("the browser never reached the redirect address")
+    q = parse_qs(urlsplit(cb.hits[0]).query)
     return AuthorizationCodeResult(code=q["code"][0], state=q.get("state", [None])[0], iss=q.get("iss", [None])[0])
 
 
@@ -134,15 +188,15 @@ def end_connection(base: str, browser) -> None:
     ctx.close()
 
 
-async def run(base: str):
+async def run(base: str, tmp: Path):
     mcp_url = base + "/mcp/"
-    cb_port = free_port()
-    cb_origin = f"http://127.0.0.1:{cb_port}"
+    cb = CallbackServer()  # a real web server on a free port
+    cb_origin = cb.origin
     storage = Memory()
     pending: dict = {}
 
     async def redirect_handler(url: str):
-        pending["result"] = await asyncio.to_thread(with_browser, browser_approve, url, cb_origin)
+        pending["result"] = await asyncio.to_thread(with_browser, browser_approve, url, cb, "127.0.0.1")
 
     async def callback_handler():
         return pending["result"]
@@ -188,6 +242,29 @@ async def run(base: str):
         refreshed = http.post("/oauth/token", data={"grant_type": "refresh_token", "refresh_token": storage.tokens.refresh_token, "client_id": storage.info.client_id})
         check("the refresh token is dead too", refreshed.status_code == 400 and refreshed.json()["error"] == "invalid_grant")
 
+    print("\n[5] An app on another website (https, its own origin) — the browser must really get back to it after Allow")
+    ext = CallbackServer(tls=True, fake_host="claude-fake.test", tmp=tmp)
+    try:
+        redirect = ext.origin + "/api/mcp/auth_callback"
+        with httpx.Client(base_url=base) as http:
+            reg = http.post("/oauth/register", json={"client_name": "Fake claude.ai", "redirect_uris": [redirect], "token_endpoint_auth_method": "none",
+                                                     "grant_types": ["authorization_code", "refresh_token"], "response_types": ["code"]})
+            cid = reg.json()["client_id"]
+            verifier = secrets.token_urlsafe(48)
+            challenge = base64.urlsafe_b64encode(hashlib.sha256(verifier.encode()).digest()).rstrip(b"=").decode()
+            state = secrets.token_urlsafe(16)
+            query = httpx.QueryParams({"response_type": "code", "client_id": cid, "redirect_uri": redirect, "code_challenge": challenge, "code_challenge_method": "S256",
+                                       "state": state, "scope": "site:read", "resource": mcp_url})
+            got = await asyncio.to_thread(partial(with_browser, browser_approve, f"{base}/oauth/authorize?{query}", ext, "claude-fake.test", resolver_rules="MAP claude-fake.test 127.0.0.1"))
+            check("the redirect carries the state and the issuer", got.state == state and got.iss == base, (got.state, got.iss))
+            tok = http.post("/oauth/token", data={"grant_type": "authorization_code", "code": got.code, "redirect_uri": redirect, "client_id": cid, "code_verifier": verifier, "resource": mcp_url})
+            check("the code from the other website's redirect is redeemed", tok.status_code == 200 and tok.json().get("access_token"), tok.text[:200])
+            init = http.post("/mcp/", headers={"Authorization": "Bearer " + tok.json()["access_token"]},
+                             json={"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {"protocolVersion": "2025-11-25", "capabilities": {}, "clientInfo": {"name": "t", "version": "1"}}})
+            check("that token works on /mcp/", init.status_code == 200 and "result" in init.json(), init.text[:200])
+    finally:
+        ext.stop()
+
 
 def main():
     tmp = Path(tempfile.mkdtemp(prefix="ravix-e2e-mcp-"))
@@ -207,7 +284,7 @@ def main():
                     break
                 except OSError:
                     time.sleep(0.5)
-            asyncio.run(run(base))
+            asyncio.run(run(base, tmp))
     finally:
         if server:
             server.terminate()
