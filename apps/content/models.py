@@ -118,12 +118,16 @@ class Post(TimeStampedModel):
     is_sample = models.BooleanField(gettext_lazy("Sample content"), default=False, editable=False, db_index=True,
                                     help_text=gettext_lazy("A sample post created during installation; after its first edit it no longer counts as a sample."))
 
+    translation_group = models.UUIDField(gettext_lazy("Translation group"), null=True, blank=True, db_index=True, editable=False,
+                                         help_text=gettext_lazy("Posts that share a group are translations of each other (at most one per language)."))
+
     objects = PostQuerySet.as_manager()
 
     class Meta:
         verbose_name = gettext_lazy("Post")
         verbose_name_plural = gettext_lazy("Posts")
         ordering = ["-created_at", "-id"]
+        constraints = [models.UniqueConstraint(fields=["translation_group", "language"], name="post_one_translation_per_language")]  # NULL groups never collide
 
     def __str__(self):
         return self.title
@@ -199,10 +203,14 @@ class Page(TimeStampedModel):
     is_sample = models.BooleanField(gettext_lazy("Sample content"), default=False, editable=False, db_index=True,
                                     help_text=gettext_lazy("A sample page created during installation; after its first edit it no longer counts as a sample."))
 
+    translation_group = models.UUIDField(gettext_lazy("Translation group"), null=True, blank=True, db_index=True, editable=False,
+                                         help_text=gettext_lazy("Pages that share a group are translations of each other (at most one per language)."))
+
     class Meta:
         verbose_name = gettext_lazy("Page")
         verbose_name_plural = gettext_lazy("Pages")
         ordering = ["title"]
+        constraints = [models.UniqueConstraint(fields=["translation_group", "language"], name="page_one_translation_per_language")]
 
     def __str__(self):
         return self.title

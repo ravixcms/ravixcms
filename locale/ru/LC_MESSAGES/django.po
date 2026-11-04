@@ -14240,3 +14240,73 @@ msgstr "Location nginx для закрытых файлов плагинов н�
 
 msgid "Run install.sh again (it adds the location safely), or add the location by hand as described in docs/installer.md."
 msgstr "Запустите install.sh ещё раз (он безопасно добавит location) или добавьте его вручную, как описано в docs/installer.md."
+
+msgid "Translation group"
+msgstr "Группа переводов"
+
+msgid "Posts that share a group are translations of each other (at most one per language)."
+msgstr "Записи одной группы — переводы друг друга (не более одной на язык)."
+
+msgid "Pages that share a group are translations of each other (at most one per language)."
+msgstr "Страницы одной группы — переводы друг друга (не более одной на язык)."
+
+msgid "The item you are translating was not found."
+msgstr "Переводимый материал не найден."
+
+#, python-format
+msgid "The language “%(language)s” is already used by another item of this group: “%(title)s”."
+msgstr "Язык «%(language)s» уже занят другим материалом этой группы: «%(title)s»."
+
+msgid "Translations are not available while several sites are enabled."
+msgstr "Переводы недоступны, пока включено несколько сайтов."
+
+msgid "At least two items are needed to make translations."
+msgstr "Для переводов нужно не менее двух материалов."
+
+msgid "A post can only be a translation of a post, and a page of a page."
+msgstr "Запись может быть переводом только записи, а страница — только страницы."
+
+msgid "These items already belong to different translation groups. Detach one of them first."
+msgstr "Эти материалы уже входят в разные группы переводов. Сначала отсоедините один из них."
+
+#, python-format
+msgid "“%(title)s” was detached from its translations."
+msgstr "«%(title)s» отсоединён от своих переводов."
+
+msgid "No item with this slug was found."
+msgstr "Материал с таким slug не найден."
+
+msgid "An item cannot be its own translation."
+msgstr "Материал не может быть переводом самого себя."
+
+#, python-format
+msgid "“%(other)s” was attached as a translation of “%(title)s”."
+msgstr "«%(other)s» привязан как перевод «%(title)s»."
+
+msgid "Translations"
+msgstr "Переводы"
+
+msgid "Texts that are translations of each other. Search engines are told about them (hreflang) and the language selector on the site goes to the translation. A language can appear once."
+msgstr "Тексты, являющиеся переводами друг друга. Поисковые системы узнают об этом (hreflang), а переключатель языка на сайте ведёт к переводу. Каждый язык — один раз."
+
+msgid "this one"
+msgstr "этот"
+
+msgid "Create a translation"
+msgstr "Создать перевод"
+
+msgid "Attach an existing item as a translation (its slug)"
+msgstr "Привязать существующий материал как перевод (его slug)"
+
+msgid "Attach"
+msgstr "Привязать"
+
+msgid "Detach this item from its translations?"
+msgstr "Отсоединить этот материал от его переводов?"
+
+msgid "Detach from translations"
+msgstr "Отсоединить от переводов"
+
+#, python-format
+msgid "This will be saved as a translation of “%(title)s” (%(language)s)."
+msgstr "Это будет сохранено как перевод «%(title)s» (%(language)s)."

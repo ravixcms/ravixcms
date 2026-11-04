@@ -210,8 +210,14 @@ def set_language(request):
 
         # The prefix in ``next`` decides how it resolves, whatever language this request itself runs in.
         source = split_language_prefix(urlsplit(next_url).path)[0] or code
-        with translation.override(source):
-            next_url = translate_url(next_url, code)
+        from apps.content.translations import translation_redirect
+
+        target = translation_redirect(urlsplit(next_url).path, code)  # a post or page that has a translation: go to it
+        if target:
+            next_url = target
+        else:
+            with translation.override(source):
+                next_url = translate_url(next_url, code)
     response = HttpResponseRedirect(next_url)
     if code:
         set_language_cookie(response, code)

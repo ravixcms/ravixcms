@@ -13644,3 +13644,73 @@ msgstr "nginx 中插件私有文件的 location 未指向 RAVIX_PLUGIN_DATA_DIR�
 
 msgid "Run install.sh again (it adds the location safely), or add the location by hand as described in docs/installer.md."
 msgstr "请再次运行 install.sh（它会安全地添加该 location），或按 docs/installer.md 的说明手动添加。"
+
+msgid "Translation group"
+msgstr "翻译组"
+
+msgid "Posts that share a group are translations of each other (at most one per language)."
+msgstr "同一组的文章互为译文（每种语言至多一篇）。"
+
+msgid "Pages that share a group are translations of each other (at most one per language)."
+msgstr "同一组的页面互为译文（每种语言至多一页）。"
+
+msgid "The item you are translating was not found."
+msgstr "未找到你正在翻译的内容。"
+
+#, python-format
+msgid "The language “%(language)s” is already used by another item of this group: “%(title)s”."
+msgstr "该组中已有其他内容使用“%(language)s”语言：“%(title)s”。"
+
+msgid "Translations are not available while several sites are enabled."
+msgstr "启用多个站点时无法使用翻译功能。"
+
+msgid "At least two items are needed to make translations."
+msgstr "至少需要两项内容才能建立翻译关系。"
+
+msgid "A post can only be a translation of a post, and a page of a page."
+msgstr "文章只能是文章的译文，页面只能是页面的译文。"
+
+msgid "These items already belong to different translation groups. Detach one of them first."
+msgstr "这些内容已属于不同的翻译组，请先将其中一项分离。"
+
+#, python-format
+msgid "“%(title)s” was detached from its translations."
+msgstr "“%(title)s”已与其译文分离。"
+
+msgid "No item with this slug was found."
+msgstr "未找到使用此 slug 的内容。"
+
+msgid "An item cannot be its own translation."
+msgstr "内容不能是自己的译文。"
+
+#, python-format
+msgid "“%(other)s” was attached as a translation of “%(title)s”."
+msgstr "已将“%(other)s”关联为“%(title)s”的译文。"
+
+msgid "Translations"
+msgstr "翻译"
+
+msgid "Texts that are translations of each other. Search engines are told about them (hreflang) and the language selector on the site goes to the translation. A language can appear once."
+msgstr "互为译文的文本。搜索引擎会得知这种关系（hreflang），网站上的语言选择器会跳转到译文。每种语言只能出现一次。"
+
+msgid "this one"
+msgstr "当前"
+
+msgid "Create a translation"
+msgstr "创建译文"
+
+msgid "Attach an existing item as a translation (its slug)"
+msgstr "将现有内容关联为译文（其 slug）"
+
+msgid "Attach"
+msgstr "关联"
+
+msgid "Detach this item from its translations?"
+msgstr "要将此内容与其译文分离吗？"
+
+msgid "Detach from translations"
+msgstr "与译文分离"
+
+#, python-format
+msgid "This will be saved as a translation of “%(title)s” (%(language)s)."
+msgstr "这将保存为“%(title)s”（%(language)s）的译文。"

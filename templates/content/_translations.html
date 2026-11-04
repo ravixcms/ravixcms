@@ -1,0 +1,31 @@
+{% load i18n %}
+{% if translations_enabled %}
+{% if translation_rows %}
+<div class="card" id="translations"><div class="card-header"><h2>{% trans "Translations" %}</h2></div><div class="card-body">
+  <p class="help">{% trans "Texts that are translations of each other. Search engines are told about them (hreflang) and the language selector on the site goes to the translation. A language can appear once." %}</p>
+  <table class="table"><thead><tr><th>{% trans "Language" %}</th><th>{% trans "Title" %}</th><th>{% trans "Status" %}</th></tr></thead><tbody>
+  {% for row in translation_rows %}
+    <tr><td>{{ row.language }}</td><td>{% if row.current %}<strong>{{ row.obj.title }}</strong> <span class="muted">({% trans "this one" %})</span>{% else %}<a href="{{ row.edit_url }}">{{ row.obj.title }}</a>{% endif %}</td><td>{{ row.obj.get_status_display }}</td></tr>
+  {% endfor %}
+  </tbody></table>
+  {% if translation_missing %}
+  <p><strong>{% trans "Create a translation" %}</strong></p>
+  <p>{% for item in translation_missing %}<a class="btn btn-light" href="{{ item.url }}">{{ item.name }}</a> {% endfor %}</p>
+  {% endif %}
+  <form method="post" action="{{ translation_link_url }}" class="form-actions" style="align-items:end;gap:.5rem;flex-wrap:wrap">
+    {% csrf_token %}
+    <div><label for="translation-slug">{% trans "Attach an existing item as a translation (its slug)" %}</label>
+    <input id="translation-slug" name="slug" class="input" dir="ltr" required></div>
+    <button type="submit" class="btn btn-light">{% trans "Attach" %}</button>
+  </form>
+  {% if translation_rows|length > 1 %}
+  <form method="post" action="{{ translation_unlink_url }}" class="form-actions" data-confirm="{% trans 'Detach this item from its translations?' %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">{% trans "Detach from translations" %}</button>
+  </form>
+  {% endif %}
+</div></div>
+{% elif translation_origin_title %}
+<div class="card"><div class="card-body"><p style="margin:0">{% blocktrans trimmed with title=translation_origin_title language=translation_origin_language %}This will be saved as a translation of “{{ title }}” ({{ language }}).{% endblocktrans %}</p></div></div>
+{% endif %}
+{% endif %}

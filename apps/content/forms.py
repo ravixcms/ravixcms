@@ -35,9 +35,62 @@ class LanguageFieldMixin:
         self.initial.setdefault("language", current)
 
     def clean_language(self):
+        from . import translations
         from .models import default_content_language
 
-        return self.cleaned_data.get("language") or (self.instance.language if self.instance.pk else "") or default_content_language()
+        language = self.cleaned_data.get("language") or (self.instance.language if self.instance.pk else "") or default_content_language()
+        if self.instance.pk and translations.enabled():  # an item of a translation group cannot take a language another member already has
+            try:
+                translations.check_language_change(self.instance, language)
+            except translations.TranslationError as exc:
+                raise forms.ValidationError(str(exc)) from exc
+        return language
+
+    def _translation_origin_field(self):
+        """New item opened with "create a translation": a hidden field carries the item it translates; the group is made when the item is saved."""
+        from . import translations
+
+        self.translation_origin = None
+        if self.instance.pk or not translations.enabled():
+            return
+        self.fields["translation_of"] = forms.IntegerField(required=False, widget=forms.HiddenInput)
+
+    def clean_translation_of(self):
+        from . import translations
+
+        pk = self.cleaned_data.get("translation_of")
+        if not pk:
+            return None
+        origin = type(self.instance).objects.filter(pk=pk).first()
+        if origin is None or not self.user_can_edit_origin(origin):
+            raise forms.ValidationError(gettext("The item you are translating was not found."))
+        self.translation_origin = origin
+        return pk
+
+    def user_can_edit_origin(self, origin) -> bool:
+        check = getattr(origin, "user_can_edit", None)
+        return check(self.user) if check else self.user.has_cap("pages.manage")
+
+    def clean(self):
+        from . import translations
+
+        cleaned = super().clean()
+        origin = getattr(self, "translation_origin", None)
+        if origin is not None and cleaned.get("language"):
+            clash = next((m for m in translations.members(origin) if m.language == cleaned["language"]), None)
+            if clash is not None:
+                self.add_error("language", gettext("The language “%(language)s” is already used by another item of this group: “%(title)s”.")
+                               % {"language": translations.language_name(cleaned["language"]), "title": clash.title})
+        return cleaned
+
+    def link_translation_origin(self, obj):
+        """Called after the new item is saved."""
+        from . import translations
+
+        origin = getattr(self, "translation_origin", None)
+        if origin is not None:
+            origin.refresh_from_db()
+            translations.link([origin, obj])
 
 
 class PostForm(LanguageFieldMixin, StyledFormMixin, forms.ModelForm):
@@ -68,6 +121,7 @@ class PostForm(LanguageFieldMixin, StyledFormMixin, forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.user = user
         self._language_field()
+        self._translation_origin_field()
         self.can_publish = user.has_cap("content.publish")
         self.fields["status"].initial = self.instance.status if self.instance.pk else PublishStatus.DRAFT
         self.fields["categories"].queryset = Category.objects.all()
@@ -119,6 +173,7 @@ class PostForm(LanguageFieldMixin, StyledFormMixin, forms.ModelForm):
         if commit:
             post.save()
             self.save_m2m()
+            self.link_translation_origin(post)
         return post
 
 
@@ -138,6 +193,7 @@ class PageForm(LanguageFieldMixin, StyledFormMixin, forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.user = user
         self._language_field()
+        self._translation_origin_field()
 
     def clean_slug(self):
         slug = (self.cleaned_data.get("slug") or "").strip().lower()
@@ -153,6 +209,7 @@ class PageForm(LanguageFieldMixin, StyledFormMixin, forms.ModelForm):
             page.author = self.user
         if commit:
             page.save()
+            self.link_translation_origin(page)
         return page
 
 

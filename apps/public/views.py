@@ -14,6 +14,7 @@ from django.views import View
 
 from apps.accounts.mixins import CapabilityRequiredMixin
 from apps.studio.public import published_body
+from apps.content import translations
 from apps.content.models import Category, Post, Tag
 from apps.plugins.hooks import apply_filter
 from apps.themes.models import ThemeConfig  # noqa: F401  (برای وابستگی مهاجرت)
@@ -158,10 +159,12 @@ class PostDetailView(PublicView):
                 article["image"] = [absolute_url(request, item.image_url)]
             data = make_seo(request, site, title=post.effective_title_tag, description=post.seo_description or item.excerpt,
                             path=item.url, og_type="article", og_image=item.image_url, jsonld=[article], alternates=not b.separated_language(),
+                            alternate_entries=translations.hreflang_entries(post, lambda path: absolute_url(request, path)),
                             robots="noindex,follow" if post.noindex else "",
                             published_time=item.date_iso, modified_time=date_iso(post.updated_at))
             return finish_seo(request, apply_filter("public.seo", data, kind="post", obj_id=post.pk, site=site, request=request))
 
+        request.ravix_translation_paths = translations.switcher_paths(post)  # the language switcher goes to the translation of this very post
         ctx = {"post": item, "related": related, "breadcrumbs": _crumbs(*crumbs),
                "comments": b.build_comments(post, state=state, notice=notice, reply_to=reply_to)}
         return self.respond(request, ctx, seo=seo, status=status, edit_url=reverse("content:post_update", args=[post.pk]))
@@ -260,9 +263,11 @@ class PageDetailView(PublicView):
             request.csp_frame_hosts = set(built.frame_hosts)
 
         def seo(site):
-            data = make_seo(request, site, title=page.effective_title_tag, description=page.seo_description or item.excerpt, path=item.url, alternates=not b.separated_language())
+            data = make_seo(request, site, title=page.effective_title_tag, description=page.seo_description or item.excerpt, path=item.url, alternates=not b.separated_language(),
+                            alternate_entries=translations.hreflang_entries(page, lambda path: absolute_url(request, path)))
             return finish_seo(request, apply_filter("public.seo", data, kind="page", obj_id=page.pk, site=site, request=request))
 
+        request.ravix_translation_paths = translations.switcher_paths(page)
         ctx = {"page": item, "breadcrumbs": _crumbs((gettext("Home"), reverse("public:home")), (page.title, ""))}
         return self.respond(request, ctx, seo=seo, edit_url=reverse("content:page_update", args=[page.pk]))
 
@@ -334,12 +339,15 @@ class SitemapView(View):
         entries.extend((e["path"], e["lastmod"] or None, e["alternates"]) for e in extra if e["path"] not in known)
         languages = [code for code, _name in language_choices()]
         default = regional_for(load_site_settings(request))[0]
+        grouped = translations.sitemap_alternates(lambda path: absolute_url(request, path))  # posts/pages that are translations of each other
         lines = ['<?xml version="1.0" encoding="UTF-8"?>',
                  '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">']
         for path, modified, with_alternates in entries[: self.LIMIT]:
             lastmod = (f"<lastmod>{modified if isinstance(modified, str) else modified.date().isoformat()}</lastmod>") if modified else ""
             alternates = ""
-            if with_alternates and swap_language_prefix(path, "fa") is not None:
+            if path in grouped:
+                alternates = "".join(f'<xhtml:link rel="alternate" hreflang="{lang}" href="{escape(href)}"/>' for lang, href in grouped[path])
+            elif with_alternates and swap_language_prefix(path, "fa") is not None:
                 links = [(hreflang(code), swap_language_prefix(path, code)) for code in languages]
                 links.append(("x-default", swap_language_prefix(path, default)))
                 alternates = "".join(

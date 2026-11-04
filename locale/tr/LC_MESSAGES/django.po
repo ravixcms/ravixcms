@@ -14220,3 +14220,73 @@ msgstr "Eklentilerin özel dosyaları için nginx location’ı RAVIX_PLUGIN_DAT
 
 msgid "Run install.sh again (it adds the location safely), or add the location by hand as described in docs/installer.md."
 msgstr "install.sh’i yeniden çalıştırın (location’ı güvenle ekler) ya da docs/installer.md’de anlatıldığı gibi elle ekleyin."
+
+msgid "Translation group"
+msgstr "Çeviri grubu"
+
+msgid "Posts that share a group are translations of each other (at most one per language)."
+msgstr "Aynı gruptaki yazılar birbirinin çevirisidir (her dilde en fazla bir tane)."
+
+msgid "Pages that share a group are translations of each other (at most one per language)."
+msgstr "Aynı gruptaki sayfalar birbirinin çevirisidir (her dilde en fazla bir tane)."
+
+msgid "The item you are translating was not found."
+msgstr "Çevirdiğiniz öğe bulunamadı."
+
+#, python-format
+msgid "The language “%(language)s” is already used by another item of this group: “%(title)s”."
+msgstr "“%(language)s” dilini bu gruptaki başka bir öğe zaten kullanıyor: “%(title)s”."
+
+msgid "Translations are not available while several sites are enabled."
+msgstr "Birden çok site etkinken çeviriler kullanılamaz."
+
+msgid "At least two items are needed to make translations."
+msgstr "Çeviri oluşturmak için en az iki öğe gerekir."
+
+msgid "A post can only be a translation of a post, and a page of a page."
+msgstr "Bir yazı yalnızca bir yazının, bir sayfa yalnızca bir sayfanın çevirisi olabilir."
+
+msgid "These items already belong to different translation groups. Detach one of them first."
+msgstr "Bu öğeler zaten farklı çeviri gruplarında. Önce birini ayırın."
+
+#, python-format
+msgid "“%(title)s” was detached from its translations."
+msgstr "“%(title)s” çevirilerinden ayrıldı."
+
+msgid "No item with this slug was found."
+msgstr "Bu slug’a sahip öğe bulunamadı."
+
+msgid "An item cannot be its own translation."
+msgstr "Bir öğe kendi çevirisi olamaz."
+
+#, python-format
+msgid "“%(other)s” was attached as a translation of “%(title)s”."
+msgstr "“%(other)s”, “%(title)s” öğesinin çevirisi olarak bağlandı."
+
+msgid "Translations"
+msgstr "Çeviriler"
+
+msgid "Texts that are translations of each other. Search engines are told about them (hreflang) and the language selector on the site goes to the translation. A language can appear once."
+msgstr "Birbirinin çevirisi olan metinler. Arama motorlarına bildirilir (hreflang) ve sitedeki dil seçici çeviriye gider. Her dil bir kez görünür."
+
+msgid "this one"
+msgstr "bu"
+
+msgid "Create a translation"
+msgstr "Çeviri oluştur"
+
+msgid "Attach an existing item as a translation (its slug)"
+msgstr "Var olan bir öğeyi çeviri olarak bağla (slug’ı)"
+
+msgid "Attach"
+msgstr "Bağla"
+
+msgid "Detach this item from its translations?"
+msgstr "Bu öğe çevirilerinden ayrılsın mı?"
+
+msgid "Detach from translations"
+msgstr "Çevirilerden ayır"
+
+#, python-format
+msgid "This will be saved as a translation of “%(title)s” (%(language)s)."
+msgstr "Bu, “%(title)s” (%(language)s) öğesinin çevirisi olarak kaydedilecek."

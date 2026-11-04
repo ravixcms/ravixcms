@@ -14005,3 +14005,73 @@ msgstr "موقع ملفات الإضافات الخاصة في nginx لا يشي
 
 msgid "Run install.sh again (it adds the location safely), or add the location by hand as described in docs/installer.md."
 msgstr "شغّل install.sh مرة أخرى (يضيف الموقع بأمان) أو أضفه يدويًا كما في docs/installer.md."
+
+msgid "Translation group"
+msgstr "مجموعة الترجمة"
+
+msgid "Posts that share a group are translations of each other (at most one per language)."
+msgstr "المقالات التي تشترك في مجموعة هي ترجمات لبعضها (واحدة على الأكثر لكل لغة)."
+
+msgid "Pages that share a group are translations of each other (at most one per language)."
+msgstr "الصفحات التي تشترك في مجموعة هي ترجمات لبعضها (واحدة على الأكثر لكل لغة)."
+
+msgid "The item you are translating was not found."
+msgstr "لم يُعثر على العنصر الذي تترجمه."
+
+#, python-format
+msgid "The language “%(language)s” is already used by another item of this group: “%(title)s”."
+msgstr "اللغة «%(language)s» مستخدمة بالفعل في عنصر آخر من هذه المجموعة: «%(title)s»."
+
+msgid "Translations are not available while several sites are enabled."
+msgstr "الترجمات غير متاحة أثناء تفعيل عدة مواقع."
+
+msgid "At least two items are needed to make translations."
+msgstr "يلزم عنصران على الأقل لإنشاء ترجمات."
+
+msgid "A post can only be a translation of a post, and a page of a page."
+msgstr "لا يمكن أن تكون المقالة ترجمة إلا لمقالة، والصفحة لصفحة."
+
+msgid "These items already belong to different translation groups. Detach one of them first."
+msgstr "هذه العناصر تنتمي بالفعل إلى مجموعات ترجمة مختلفة. افصل أحدها أولاً."
+
+#, python-format
+msgid "“%(title)s” was detached from its translations."
+msgstr "تم فصل «%(title)s» عن ترجماته."
+
+msgid "No item with this slug was found."
+msgstr "لم يُعثر على عنصر بهذا الـ slug."
+
+msgid "An item cannot be its own translation."
+msgstr "لا يمكن أن يكون العنصر ترجمة لنفسه."
+
+#, python-format
+msgid "“%(other)s” was attached as a translation of “%(title)s”."
+msgstr "تم ربط «%(other)s» كترجمة لـ«%(title)s»."
+
+msgid "Translations"
+msgstr "الترجمات"
+
+msgid "Texts that are translations of each other. Search engines are told about them (hreflang) and the language selector on the site goes to the translation. A language can appear once."
+msgstr "نصوص هي ترجمات لبعضها. تُبلَّغ محركات البحث بها (hreflang) ويذهب محدد اللغة في الموقع إلى الترجمة. تظهر كل لغة مرة واحدة."
+
+msgid "this one"
+msgstr "هذا العنصر"
+
+msgid "Create a translation"
+msgstr "إنشاء ترجمة"
+
+msgid "Attach an existing item as a translation (its slug)"
+msgstr "ربط عنصر موجود كترجمة (الـ slug الخاص به)"
+
+msgid "Attach"
+msgstr "ربط"
+
+msgid "Detach this item from its translations?"
+msgstr "هل تريد فصل هذا العنصر عن ترجماته؟"
+
+msgid "Detach from translations"
+msgstr "فصل عن الترجمات"
+
+#, python-format
+msgid "This will be saved as a translation of “%(title)s” (%(language)s)."
+msgstr "سيُحفظ هذا كترجمة لـ«%(title)s» (%(language)s)."

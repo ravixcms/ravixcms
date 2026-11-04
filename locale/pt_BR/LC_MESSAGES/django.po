@@ -14335,3 +14335,73 @@ msgstr "A location do nginx para arquivos privados de plugins não aponta para R
 
 msgid "Run install.sh again (it adds the location safely), or add the location by hand as described in docs/installer.md."
 msgstr "Execute o install.sh novamente (ele adiciona a location com segurança) ou adicione-a manualmente, como descrito em docs/installer.md."
+
+msgid "Translation group"
+msgstr "Grupo de tradução"
+
+msgid "Posts that share a group are translations of each other (at most one per language)."
+msgstr "Posts de um mesmo grupo são traduções uns dos outros (no máximo um por idioma)."
+
+msgid "Pages that share a group are translations of each other (at most one per language)."
+msgstr "Páginas de um mesmo grupo são traduções umas das outras (no máximo uma por idioma)."
+
+msgid "The item you are translating was not found."
+msgstr "O item que você está traduzindo não foi encontrado."
+
+#, python-format
+msgid "The language “%(language)s” is already used by another item of this group: “%(title)s”."
+msgstr "O idioma “%(language)s” já é usado por outro item deste grupo: “%(title)s”."
+
+msgid "Translations are not available while several sites are enabled."
+msgstr "As traduções não estão disponíveis enquanto vários sites estiverem ativados."
+
+msgid "At least two items are needed to make translations."
+msgstr "São necessários pelo menos dois itens para criar traduções."
+
+msgid "A post can only be a translation of a post, and a page of a page."
+msgstr "Um post só pode ser tradução de um post, e uma página de uma página."
+
+msgid "These items already belong to different translation groups. Detach one of them first."
+msgstr "Estes itens já pertencem a grupos de tradução diferentes. Separe um deles primeiro."
+
+#, python-format
+msgid "“%(title)s” was detached from its translations."
+msgstr "“%(title)s” foi separado de suas traduções."
+
+msgid "No item with this slug was found."
+msgstr "Nenhum item com este slug foi encontrado."
+
+msgid "An item cannot be its own translation."
+msgstr "Um item não pode ser tradução de si mesmo."
+
+#, python-format
+msgid "“%(other)s” was attached as a translation of “%(title)s”."
+msgstr "“%(other)s” foi vinculado como tradução de “%(title)s”."
+
+msgid "Translations"
+msgstr "Traduções"
+
+msgid "Texts that are translations of each other. Search engines are told about them (hreflang) and the language selector on the site goes to the translation. A language can appear once."
+msgstr "Textos que são traduções uns dos outros. Os buscadores são informados (hreflang) e o seletor de idioma do site leva à tradução. Cada idioma aparece uma vez."
+
+msgid "this one"
+msgstr "este"
+
+msgid "Create a translation"
+msgstr "Criar uma tradução"
+
+msgid "Attach an existing item as a translation (its slug)"
+msgstr "Vincular um item existente como tradução (seu slug)"
+
+msgid "Attach"
+msgstr "Vincular"
+
+msgid "Detach this item from its translations?"
+msgstr "Separar este item de suas traduções?"
+
+msgid "Detach from translations"
+msgstr "Separar das traduções"
+
+#, python-format
+msgid "This will be saved as a translation of “%(title)s” (%(language)s)."
+msgstr "Isto será salvo como tradução de “%(title)s” (%(language)s)."

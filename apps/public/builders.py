@@ -366,8 +366,11 @@ def language_links(request) -> tuple:
         separated = bool(separated_language())
     prefixed = split_language_prefix(request.path_info)[0] != ""
     links = []
+    translated = getattr(request, "ravix_translation_paths", None) or {}  # this post/page's live translations (set by the detail views)
     for code, name in settings.LANGUAGES:
-        if route in _BLOG_HOME_ROUTES:
+        if code in translated:
+            url = translated[code]
+        elif route in _BLOG_HOME_ROUTES:
             with translation.override(code):
                 url = reverse("public:post_list")
         elif separated:

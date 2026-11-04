@@ -7,6 +7,7 @@
 <div class="page-head"><div><h1>{{ heading }}</h1></div>{% studio_edit_button "page" object "btn" %}</div>
 <form method="post" novalidate data-once>
   {% csrf_token %}
+  {% if form.translation_of %}{{ form.translation_of }}{% endif %}
   {% include "partials/_form_errors.html" %}
   <div class="editor-layout">
     <div class="card"><div class="card-body">
@@ -28,4 +29,5 @@
     </aside>
   </div>
 </form>
+{% include "content/_translations.html" %}
 {% endblock %}

@@ -14517,3 +14517,73 @@ msgstr "Die nginx-Location für private Plugin-Dateien zeigt nicht auf RAVIX_PLU
 
 msgid "Run install.sh again (it adds the location safely), or add the location by hand as described in docs/installer.md."
 msgstr "Führen Sie install.sh erneut aus (es fügt die Location sicher hinzu) oder tragen Sie sie wie in docs/installer.md beschrieben von Hand ein."
+
+msgid "Translation group"
+msgstr "Übersetzungsgruppe"
+
+msgid "Posts that share a group are translations of each other (at most one per language)."
+msgstr "Beiträge derselben Gruppe sind Übersetzungen voneinander (höchstens einer je Sprache)."
+
+msgid "Pages that share a group are translations of each other (at most one per language)."
+msgstr "Seiten derselben Gruppe sind Übersetzungen voneinander (höchstens eine je Sprache)."
+
+msgid "The item you are translating was not found."
+msgstr "Das zu übersetzende Element wurde nicht gefunden."
+
+#, python-format
+msgid "The language “%(language)s” is already used by another item of this group: “%(title)s”."
+msgstr "Die Sprache „%(language)s“ wird in dieser Gruppe bereits von „%(title)s“ verwendet."
+
+msgid "Translations are not available while several sites are enabled."
+msgstr "Übersetzungen sind nicht verfügbar, solange mehrere Sites aktiv sind."
+
+msgid "At least two items are needed to make translations."
+msgstr "Für Übersetzungen sind mindestens zwei Elemente nötig."
+
+msgid "A post can only be a translation of a post, and a page of a page."
+msgstr "Ein Beitrag kann nur die Übersetzung eines Beitrags sein, eine Seite nur die einer Seite."
+
+msgid "These items already belong to different translation groups. Detach one of them first."
+msgstr "Diese Elemente gehören bereits zu verschiedenen Übersetzungsgruppen. Lösen Sie zuerst eines davon."
+
+#, python-format
+msgid "“%(title)s” was detached from its translations."
+msgstr "„%(title)s“ wurde von seinen Übersetzungen gelöst."
+
+msgid "No item with this slug was found."
+msgstr "Es wurde kein Element mit diesem Slug gefunden."
+
+msgid "An item cannot be its own translation."
+msgstr "Ein Element kann nicht seine eigene Übersetzung sein."
+
+#, python-format
+msgid "“%(other)s” was attached as a translation of “%(title)s”."
+msgstr "„%(other)s“ wurde als Übersetzung von „%(title)s“ verknüpft."
+
+msgid "Translations"
+msgstr "Übersetzungen"
+
+msgid "Texts that are translations of each other. Search engines are told about them (hreflang) and the language selector on the site goes to the translation. A language can appear once."
+msgstr "Texte, die Übersetzungen voneinander sind. Suchmaschinen erfahren davon (hreflang) und die Sprachauswahl der Website führt zur Übersetzung. Jede Sprache kommt einmal vor."
+
+msgid "this one"
+msgstr "dieses hier"
+
+msgid "Create a translation"
+msgstr "Übersetzung erstellen"
+
+msgid "Attach an existing item as a translation (its slug)"
+msgstr "Vorhandenes Element als Übersetzung verknüpfen (sein Slug)"
+
+msgid "Attach"
+msgstr "Verknüpfen"
+
+msgid "Detach this item from its translations?"
+msgstr "Dieses Element von seinen Übersetzungen lösen?"
+
+msgid "Detach from translations"
+msgstr "Von Übersetzungen lösen"
+
+#, python-format
+msgid "This will be saved as a translation of “%(title)s” (%(language)s)."
+msgstr "Dies wird als Übersetzung von „%(title)s“ (%(language)s) gespeichert."

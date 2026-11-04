@@ -18,6 +18,10 @@ from apps.core.crud import (
 )
 from apps.core.markup import render_markdown
 
+from django.shortcuts import get_object_or_404
+from django.urls import reverse
+
+from . import translations
 from .forms import CategoryForm, PageForm, PostForm, RedirectForm, TagForm
 from .models import Category, Page, Post, PublishStatus, Redirect, Tag
 
@@ -117,14 +121,65 @@ class PostFormMixin:
             self.audit("publish", post, (gettext("The status of post “%(post)s” was changed to “%(label)s”.") % {"post": post, "label": label}))
 
 
-class PostCreateView(PostFormMixin, AuditedCreateView):
+class TranslationContextMixin:
+    """The "Translations" card of the edit form, and the starting point of "create a translation"."""
+
+    def get_initial(self):
+        initial = super().get_initial()
+        origin = self.translation_origin()
+        if origin is not None:
+            initial["translation_of"] = origin.pk
+            language = self.request.GET.get("language", "")
+            if language in dict(settings.LANGUAGES) and language in dict(translations.free_languages(origin)):
+                initial["language"] = language
+        return initial
+
+    def translation_origin(self):
+        if not translations.enabled():
+            return None
+        try:
+            pk = int(self.request.GET.get("translation_of", ""))
+        except ValueError:
+            return None
+        origin = self.model.objects.filter(pk=pk).first()
+        if origin is None:
+            return None
+        check = getattr(origin, "user_can_edit", None)
+        return origin if (check(self.request.user) if check else True) else None
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["translations_enabled"] = translations.enabled()
+        if not ctx["translations_enabled"]:
+            return ctx
+        obj = ctx.get("object") if getattr(self, "object", None) is not None and self.object.pk else None
+        origin = obj or self.translation_origin()
+        ctx["translation_origin"] = self.translation_origin() if obj is None else None
+        if obj is not None:
+            ctx["translation_rows"] = [{"obj": m, "language": translations.language_name(m.language), "current": m.pk == obj.pk,
+                                        "edit_url": reverse(f"content:{self.kind}_update", args=[m.pk])} for m in translations.members(obj)]
+            ctx["translation_missing"] = [{"code": code, "name": name, "url": f"{reverse(f'content:{self.kind}_create')}?translation_of={obj.pk}&language={code}"}
+                                          for code, name in translations.free_languages(obj)]
+            ctx["translation_link_url"] = reverse(f"content:{self.kind}_translation_link", args=[obj.pk])
+            ctx["translation_unlink_url"] = reverse(f"content:{self.kind}_translation_unlink", args=[obj.pk])
+        elif origin is not None:
+            ctx["translation_origin_title"] = origin.title
+            ctx["translation_origin_language"] = translations.language_name(origin.language)
+        return ctx
+
+
+class PostCreateView(TranslationContextMixin, PostFormMixin, AuditedCreateView):
+    kind = "post"
+
     def form_valid(self, form):
         response = super().form_valid(form)
         self.log_publish_transition(None)
         return response
 
 
-class PostUpdateView(PostFormMixin, AuditedUpdateView):
+class PostUpdateView(TranslationContextMixin, PostFormMixin, AuditedUpdateView):
+    kind = "post"
+
     def check_object_permission(self, obj):
         return obj.user_can_edit(self.request.user)
 
@@ -190,12 +245,12 @@ class PageFormMixin:
     template_name = "content/page_form.html"
 
 
-class PageCreateView(PageFormMixin, AuditedCreateView):
-    pass
+class PageCreateView(TranslationContextMixin, PageFormMixin, AuditedCreateView):
+    kind = "page"
 
 
-class PageUpdateView(PageFormMixin, AuditedUpdateView):
-    pass
+class PageUpdateView(TranslationContextMixin, PageFormMixin, AuditedUpdateView):
+    kind = "page"
 
 
 class PageDeleteView(AuditedDeleteView):
@@ -337,3 +392,69 @@ class MarkdownPreviewView(CapabilityRequiredMixin, View):
         if len(text) > self.max_length:
             return JsonResponse({"error": gettext("The text is too long.")}, status=413)
         return JsonResponse({"html": render_markdown(text)})
+
+
+# ------------------------------------------------------------------ ترجمه‌ها: وصل کردن و جدا کردن
+class TranslationActionView(CapabilityRequiredMixin, View):
+    """POST only. ``link``: attach an existing item (by slug) of the same kind as the translation of this one. ``unlink``: take this one out of its group."""
+
+    http_method_names = ["post"]
+    model = None
+    kind = ""
+    action = ""
+    required_capability = "content.write"
+
+    def post(self, request, pk):
+        from django.contrib import messages
+        from django.http import HttpResponseRedirect
+
+        from apps.audit.services import log_event
+
+        obj = get_object_or_404(self.model, pk=pk)
+        if not self.can_edit(obj):
+            raise PermissionDenied
+        back = reverse(f"content:{self.kind}_update", args=[obj.pk])
+        if not translations.enabled():
+            messages.error(request, gettext("Translations are not available while several sites are enabled."))
+            return HttpResponseRedirect(back)
+        try:
+            if self.action == "unlink":
+                translations.unlink(obj)
+                message = gettext("“%(title)s” was detached from its translations.") % {"title": obj.title}
+            else:
+                slug = (request.POST.get("slug") or "").strip().strip("/").rsplit("/", 1)[-1]
+                other = self.model.objects.filter(slug=slug).first() if slug else None
+                if other is None:
+                    raise translations.TranslationError(gettext("No item with this slug was found."))
+                if other.pk == obj.pk:
+                    raise translations.TranslationError(gettext("An item cannot be its own translation."))
+                if not self.can_edit(other):
+                    raise PermissionDenied
+                translations.link([obj, other])
+                message = gettext("“%(other)s” was attached as a translation of “%(title)s”.") % {"other": other.title, "title": obj.title}
+        except translations.TranslationError as exc:
+            messages.error(request, str(exc))
+            return HttpResponseRedirect(back)
+        log_event(request, "update", obj, message)
+        messages.success(request, message)
+        return HttpResponseRedirect(back)
+
+    def can_edit(self, obj) -> bool:
+        check = getattr(obj, "user_can_edit", None)
+        return check(self.request.user) if check else True
+
+
+class PostTranslationLinkView(TranslationActionView):
+    model, kind, action, required_capability = Post, "post", "link", "content.write"
+
+
+class PostTranslationUnlinkView(TranslationActionView):
+    model, kind, action, required_capability = Post, "post", "unlink", "content.write"
+
+
+class PageTranslationLinkView(TranslationActionView):
+    model, kind, action, required_capability = Page, "page", "link", "pages.manage"
+
+
+class PageTranslationUnlinkView(TranslationActionView):
+    model, kind, action, required_capability = Page, "page", "unlink", "pages.manage"

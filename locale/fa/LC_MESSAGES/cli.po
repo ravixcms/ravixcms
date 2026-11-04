@@ -1066,3 +1066,30 @@ msgstr "location %(prefix)s در nginx «internal» نیست؛ فایل‌های
 #, python-format
 msgid "The nginx location %(prefix)s does not point at RAVIX_PLUGIN_DATA_DIR (%(dir)s); private plugin files will answer 404"
 msgstr "location %(prefix)s در nginx به RAVIX_PLUGIN_DATA_DIR (%(dir)s) اشاره نمی‌کند؛ فایل‌های خصوصی افزونه ۴۰۴ می‌دهند"
+
+msgid "Puts posts or pages that are translations of each other into one translation group (at most one per language)."
+msgstr "نوشته‌ها یا برگه‌هایی را که ترجمهٔ هم‌اند در یک گروه ترجمه می‌گذارد (از هر زبان حداکثر یکی)."
+
+msgid "What the slugs are: post or page."
+msgstr "slugها چه هستند: post (نوشته) یا page (برگه)."
+
+msgid "Two or more slugs of the same type, each in a different language."
+msgstr "دو یا چند slug از یک نوع، هرکدام به زبانی متفاوت."
+
+msgid "Only report; change nothing."
+msgstr "فقط گزارش بده؛ چیزی را تغییر نده."
+
+msgid "Translations are not available while several sites are enabled (RAVIX_MULTISITE_ENABLED)."
+msgstr "تا وقتی چند سایت فعال است (RAVIX_MULTISITE_ENABLED) ترجمه‌ها در دسترس نیستند."
+
+#, python-format
+msgid "Not found: %(slugs)s"
+msgstr "پیدا نشد: %(slugs)s"
+
+#, python-format
+msgid "Dry run: these %(count)s items could be linked; nothing was changed."
+msgstr "اجرای آزمایشی: این %(count)s مورد قابل وصل‌اند؛ چیزی تغییر نکرد."
+
+#, python-format
+msgid "%(count)s items are now translations of each other (group %(group)s)."
+msgstr "%(count)s مورد اکنون ترجمهٔ همدیگرند (گروه %(group)s)."
