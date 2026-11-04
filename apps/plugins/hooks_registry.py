@@ -3,6 +3,7 @@
 # نام ← نوع. filter: مقدار را می‌گیرد و مقدار (تغییرداده‌شده) برمی‌گرداند. action: فقط اجرا می‌شود.
 HOOKS = {
     "public.seo": "filter",         # (seo: dict, api, kind, obj_id, site, request) -> dict
+    "public.jsonld": "filter",      # (nodes: list[dict], api, kind, obj_id, site, request) -> list[dict] — schema.org JSON-LD nodes of a public page (kind: home, post, page). Each node needs an "@type"; "@context" is added by the core; invalid answers are ignored
     "public.sitemap": "filter",     # (entries: list[dict], api, language, request) -> list[dict] — extra sitemap URLs of the language: {"path": "/en/page/", "lastmod": date|datetime|"YYYY-MM-DD" (optional), "alternates": bool (optional, default true)}
     "panel.floating_actions": "filter",  # (actions: list[dict], api, request) -> list[dict] — floating buttons on every panel page: {"label", "icon", "url": "/panel/…", "capability": optional}. The page opens in a side drawer (same origin)
     "shop.gateways": "filter",      # (gateways: dict[str, type[BaseGateway]], api) -> dict — افزودن درگاه پرداخت (فقط افزونهٔ فعال و تأییدشده)

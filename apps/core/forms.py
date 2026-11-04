@@ -31,8 +31,25 @@ class SiteSettingsForm(StyledFormMixin, forms.ModelForm):
     timezone = forms.ChoiceField(label=gettext_lazy("Time zone"), choices=timezone_choices, required=False,
                                  help_text=gettext_lazy("Dates and times in the panel and on the site are shown in this time zone."))
 
+    identity_alternate_names = forms.CharField(
+        label=gettext_lazy("Alternative names"), required=False, widget=forms.Textarea(attrs={"rows": 3, "dir": "auto"}),
+        help_text=gettext_lazy("Other names people use for it, for example the name in another script. One per line."))
+    identity_same_as = forms.CharField(
+        label=gettext_lazy("Social profiles and other official pages"), required=False, widget=forms.Textarea(attrs={"rows": 4, "dir": "ltr"}),
+        help_text=gettext_lazy("Addresses of the same organization or person elsewhere (sameAs). One https address per line."))
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        from apps.media_library.models import Media
+
+        self.initial["identity_alternate_names"] = "\n".join(self.instance.identity_alternate_names or [])
+        self.initial["identity_same_as"] = "\n".join(self.instance.identity_same_as or [])
+        ids = list(Media.objects.filter(kind=Media.Kind.IMAGE).order_by("-created_at", "-id").values_list("pk", flat=True)[:300])
+        if self.instance.identity_logo_id:
+            ids.append(self.instance.identity_logo_id)  # the saved choice stays selectable even when it is older than the list
+        self.fields["identity_logo"].queryset = Media.objects.filter(pk__in=ids).order_by("-created_at", "-id")
+        self.fields["identity_logo"].required = False
+        self.fields["identity_type"].required = False  # a form that does not send it (older scripts, tests) keeps the saved type
         # Per-language texts (name, tagline, description, footer): one optional field per language and text. An empty field
         # means "use the default-language text".
         saved = self.instance.translations if isinstance(self.instance.translations, dict) else {}
@@ -100,6 +117,12 @@ class SiteSettingsForm(StyledFormMixin, forms.ModelForm):
             "comments_notify_admin",
             "comments_blocked_words",
             "content_per_language",
+            "identity_type",
+            "identity_name",
+            "identity_logo",
+            "identity_alternate_names",
+            "identity_same_as",
+            "identity_description",
         )
         widgets = {
             "description": forms.Textarea(attrs={"rows": 4}),
@@ -107,6 +130,19 @@ class SiteSettingsForm(StyledFormMixin, forms.ModelForm):
             "admin_email": forms.EmailInput(attrs={"dir": "ltr"}),
             "contact_phone": forms.TextInput(attrs={"dir": "ltr"}),
         }
+
+    def clean_identity_type(self):
+        return self.cleaned_data.get("identity_type") or self.instance.identity_type or "organization"
+
+    def clean_identity_alternate_names(self):
+        from .identity import clean_names
+
+        return clean_names(self.cleaned_data.get("identity_alternate_names", ""))
+
+    def clean_identity_same_as(self):
+        from .identity import clean_profiles
+
+        return clean_profiles(self.cleaned_data.get("identity_same_as", ""))
 
     def clean_site_name(self):
         name = self.cleaned_data["site_name"].strip()

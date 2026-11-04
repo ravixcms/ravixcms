@@ -14310,3 +14310,55 @@ msgstr "Отсоединить от переводов"
 #, python-format
 msgid "This will be saved as a translation of “%(title)s” (%(language)s)."
 msgstr "Это будет сохранено как перевод «%(title)s» (%(language)s)."
+
+msgid "Site identity for search engines"
+msgstr "Идентичность сайта для поисковых систем"
+
+msgid "Tells search engines who is behind the site (schema.org). It is added to the head of the home page, posts and pages as structured data."
+msgstr "Сообщает поисковым системам, кто стоит за сайтом (schema.org). Добавляется как структурированные данные в заголовок главной страницы, записей и страниц."
+
+msgid "Organization"
+msgstr "Организация"
+
+msgid "Person"
+msgstr "Человек"
+
+msgid "The name search engines should know. If left empty, the site name is used."
+msgstr "Имя, которое должны знать поисковые системы. Если пусто, используется название сайта."
+
+msgid "Alternative names"
+msgstr "Другие названия"
+
+msgid "Other names people use for it, for example the name in another script. One per line."
+msgstr "Другие названия, которыми пользуются люди, например название другим письмом. По одному в строке."
+
+msgid "Logo for search engines"
+msgstr "Логотип для поисковых систем"
+
+msgid "An image from the media library. If left empty, the site logo is used."
+msgstr "Изображение из медиатеки. Если пусто, используется логотип сайта."
+
+msgid "Social profiles and other official pages"
+msgstr "Профили в соцсетях и другие официальные страницы"
+
+msgid "Addresses of the same organization or person elsewhere (sameAs). One https address per line."
+msgstr "Адреса той же организации или человека в других местах (sameAs). По одному https-адресу в строке."
+
+msgid "Short description"
+msgstr "Краткое описание"
+
+msgid "One or two sentences. If left empty, the site description is used."
+msgstr "Одно-два предложения. Если пусто, используется описание сайта."
+
+msgid "Each name can have at most %(n)d characters."
+msgstr "Каждое название может содержать не более %(n)d символов."
+
+msgid "Enter at most %(n)d alternative names."
+msgstr "Укажите не более %(n)d других названий."
+
+#, python-format
+msgid "“%(value)s” is not a full https:// address."
+msgstr "«%(value)s» — не полный адрес https://."
+
+msgid "Enter at most %(n)d addresses."
+msgstr "Укажите не более %(n)d адресов."

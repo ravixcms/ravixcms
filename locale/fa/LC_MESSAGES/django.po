@@ -14126,3 +14126,55 @@ msgstr "جدا کردن از ترجمه‌ها"
 #, python-format
 msgid "This will be saved as a translation of “%(title)s” (%(language)s)."
 msgstr "این مورد به‌عنوان ترجمهٔ «%(title)s» (%(language)s) ذخیره می‌شود."
+
+msgid "Site identity for search engines"
+msgstr "هویت سایت برای موتورهای جستجو"
+
+msgid "Tells search engines who is behind the site (schema.org). It is added to the head of the home page, posts and pages as structured data."
+msgstr "به موتورهای جستجو می‌گوید چه کسی پشت سایت است (schema.org). به‌صورت داده ساختاریافته در سرصفحهٔ صفحهٔ اصلی، نوشته‌ها و برگه‌ها اضافه می‌شود."
+
+msgid "Organization"
+msgstr "سازمان"
+
+msgid "Person"
+msgstr "شخص"
+
+msgid "The name search engines should know. If left empty, the site name is used."
+msgstr "نامی که موتورهای جستجو باید بشناسند. اگر خالی بماند نام سایت استفاده می‌شود."
+
+msgid "Alternative names"
+msgstr "نام‌های دیگر"
+
+msgid "Other names people use for it, for example the name in another script. One per line."
+msgstr "نام‌های دیگری که مردم به کار می‌برند، مثلاً نام به خط دیگر. هر خط یک نام."
+
+msgid "Logo for search engines"
+msgstr "لوگو برای موتورهای جستجو"
+
+msgid "An image from the media library. If left empty, the site logo is used."
+msgstr "تصویری از کتابخانهٔ رسانه. اگر خالی بماند لوگوی سایت استفاده می‌شود."
+
+msgid "Social profiles and other official pages"
+msgstr "شبکه‌های اجتماعی و صفحه‌های رسمی دیگر"
+
+msgid "Addresses of the same organization or person elsewhere (sameAs). One https address per line."
+msgstr "نشانی‌های همین سازمان یا شخص در جاهای دیگر (sameAs). هر خط یک نشانی https."
+
+msgid "Short description"
+msgstr "توضیح کوتاه"
+
+msgid "One or two sentences. If left empty, the site description is used."
+msgstr "یک یا دو جمله. اگر خالی بماند توضیح سایت استفاده می‌شود."
+
+msgid "Each name can have at most %(n)d characters."
+msgstr "هر نام حداکثر %(n)d نویسه می‌تواند باشد."
+
+msgid "Enter at most %(n)d alternative names."
+msgstr "حداکثر %(n)d نام دیگر وارد کنید."
+
+#, python-format
+msgid "“%(value)s” is not a full https:// address."
+msgstr "«%(value)s» نشانی کامل https:// نیست."
+
+msgid "Enter at most %(n)d addresses."
+msgstr "حداکثر %(n)d نشانی وارد کنید."

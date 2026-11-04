@@ -2,6 +2,10 @@
 قالب: [Keep a Changelog](https://keepachangelog.com/)، نسخه‌بندی [SemVer](https://semver.org/).
 
 ## [Unreleased]
+### Added (هویت سایت برای موتورهای جستجو — schema.org JSON-LD)
+- کارت «هویت سایت برای موتورهای جستجو» در تنظیمات سایت: نوع (سازمان/شخص)، نام، نام‌های دیگر، لوگو از کتابخانهٔ رسانه، `sameAs` (فقط نشانی کامل `https://`؛ بقیه رد می‌شود) و توضیح کوتاه؛ برچسب‌ها ده‌زبانه (migration `core.0017`).
+- JSON-LD در `<head>` (یک `@graph`): صفحهٔ اصلی هر زبان ← `WebSite` + `Organization`/`Person` (+ `SearchAction`)؛ نوشته ← `BlogPosting` (+ `workTranslation` از گروه ترجمه) + `BreadcrumbList`؛ برگه ← `WebPage` + `BreadcrumbList`. `@id`های ثابت: `<سایت>/#organization`، `<سایت>/#website`، `<نشانی>#article`. نوشتهٔ پیش‌نویس و `noindex` JSON-LD ندارد. خروجی با `json.dumps` و escape کردن `<`، `>`، `&`.
+- هوک جدید افزونه `public.jsonld` (فیلتر) برای افزودن/تغییر گره‌ها (مثلاً `SoftwareApplication`)؛ خروجی افزونه پاک‌سازی می‌شود. مستندات: `docs/plugins.md`.
 ### Added (ترجمهٔ محتوا و سئو)
 - **گروه ترجمه** برای نوشته و برگه (`translation_group`، از هر زبان یکی؛ قید در فرم و دیتابیس؛ migration `content.0010`) با کارت «ترجمه‌ها» در پنل (ساخت ترجمه، وصل‌کردن، جدا کردن)، `<link rel="alternate" hreflang>` با `x-default` (انگلیسی، وگرنه زبان پیش‌فرض)، `xhtml:link` در sitemap، انتخابگر زبانی که به ترجمه می‌رود و دستور `ravix_link_translations [--dry-run]`. در حالت چندسایتی خاموش است. مستندات: `docs/content-translations.md`.
 - لینک **داخلی** در بدنهٔ Markdown دیگر `nofollow` نمی‌گیرد (بیرونی و دیدگاه‌ها بدون تغییر)؛ `content.0011` بدنه‌های ذخیره‌شده را دوباره می‌سازد.

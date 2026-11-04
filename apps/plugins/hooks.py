@@ -136,7 +136,34 @@ def sanitize_comment(original: dict, result) -> dict:
     return out
 
 
-_SANITIZERS = {"public.seo": sanitize_seo, "comments.before_save": sanitize_comment}
+MAX_JSONLD_NODES = 30
+MAX_JSONLD_BYTES = 60000
+
+
+def sanitize_jsonld(original: list, result) -> list:
+    """schema.org nodes from a plugin: a list of dicts that each have an ``@type``; ``@context`` is dropped (the core sets it); the whole answer
+    must be plain JSON data and small. Anything else is ignored and the nodes stay as they were."""
+    import json
+
+    if not isinstance(result, (list, tuple)) or len(result) > MAX_JSONLD_NODES:
+        return original
+    out = []
+    for node in result:
+        if not isinstance(node, dict):
+            return original
+        kind = node.get("@type")
+        if not (isinstance(kind, str) and kind) and not (isinstance(kind, list) and kind and all(isinstance(k, str) and k for k in kind)):
+            return original
+        out.append({k: v for k, v in node.items() if k != "@context" and isinstance(k, str)})
+    try:
+        if len(json.dumps(out, allow_nan=False)) > MAX_JSONLD_BYTES:
+            return original
+    except (TypeError, ValueError):
+        return original
+    return out
+
+
+_SANITIZERS = {"public.seo": sanitize_seo, "public.jsonld": sanitize_jsonld, "comments.before_save": sanitize_comment}
 
 
 def apply_filter(name, value, **ctx):

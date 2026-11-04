@@ -14587,3 +14587,55 @@ msgstr "Von Übersetzungen lösen"
 #, python-format
 msgid "This will be saved as a translation of “%(title)s” (%(language)s)."
 msgstr "Dies wird als Übersetzung von „%(title)s“ (%(language)s) gespeichert."
+
+msgid "Site identity for search engines"
+msgstr "Website-Identität für Suchmaschinen"
+
+msgid "Tells search engines who is behind the site (schema.org). It is added to the head of the home page, posts and pages as structured data."
+msgstr "Teilt Suchmaschinen mit, wer hinter der Website steht (schema.org). Wird als strukturierte Daten in den Kopfbereich der Startseite, der Beiträge und der Seiten eingefügt."
+
+msgid "Organization"
+msgstr "Organisation"
+
+msgid "Person"
+msgstr "Person"
+
+msgid "The name search engines should know. If left empty, the site name is used."
+msgstr "Der Name, den Suchmaschinen kennen sollen. Bleibt das Feld leer, wird der Website-Name verwendet."
+
+msgid "Alternative names"
+msgstr "Alternative Namen"
+
+msgid "Other names people use for it, for example the name in another script. One per line."
+msgstr "Andere Namen, die Leute verwenden, z. B. der Name in einer anderen Schrift. Einer pro Zeile."
+
+msgid "Logo for search engines"
+msgstr "Logo für Suchmaschinen"
+
+msgid "An image from the media library. If left empty, the site logo is used."
+msgstr "Ein Bild aus der Mediathek. Bleibt das Feld leer, wird das Website-Logo verwendet."
+
+msgid "Social profiles and other official pages"
+msgstr "Soziale Profile und andere offizielle Seiten"
+
+msgid "Addresses of the same organization or person elsewhere (sameAs). One https address per line."
+msgstr "Adressen derselben Organisation oder Person anderswo (sameAs). Eine https-Adresse pro Zeile."
+
+msgid "Short description"
+msgstr "Kurzbeschreibung"
+
+msgid "One or two sentences. If left empty, the site description is used."
+msgstr "Ein oder zwei Sätze. Bleibt das Feld leer, wird die Website-Beschreibung verwendet."
+
+msgid "Each name can have at most %(n)d characters."
+msgstr "Jeder Name darf höchstens %(n)d Zeichen lang sein."
+
+msgid "Enter at most %(n)d alternative names."
+msgstr "Geben Sie höchstens %(n)d alternative Namen ein."
+
+#, python-format
+msgid "“%(value)s” is not a full https:// address."
+msgstr "„%(value)s“ ist keine vollständige https://-Adresse."
+
+msgid "Enter at most %(n)d addresses."
+msgstr "Geben Sie höchstens %(n)d Adressen ein."

@@ -65,6 +65,19 @@ class SiteSettings(models.Model):
                                                          "Logged-in users, carts, forms and pages with a security token are never served from it."))
     keep_alive = models.BooleanField(gettext_lazy("Keep the application awake from the scheduled job"), default=True,
                                      help_text=gettext_lazy("The scheduled job opens the home page each time it runs so the first visitor does not wait for the application to start (shared hosting)."))
+    # --- identity for search engines (schema.org JSON-LD on the home page, posts and pages)
+    IDENTITY_TYPES = (("organization", gettext_lazy("Organization")), ("person", gettext_lazy("Person")))
+    identity_type = models.CharField(gettext_lazy("Type"), max_length=12, choices=IDENTITY_TYPES, default="organization")
+    identity_name = models.CharField(gettext_lazy("Name"), max_length=120, blank=True,
+                                     help_text=gettext_lazy("The name search engines should know. If left empty, the site name is used."))
+    identity_alternate_names = models.JSONField(gettext_lazy("Alternative names"), default=list, blank=True,
+                                                help_text=gettext_lazy("Other names people use for it, for example the name in another script. One per line."))
+    identity_logo = models.ForeignKey("media_library.Media", null=True, blank=True, on_delete=models.SET_NULL, related_name="+", verbose_name=gettext_lazy("Logo for search engines"),
+                                      help_text=gettext_lazy("An image from the media library. If left empty, the site logo is used."))
+    identity_same_as = models.JSONField(gettext_lazy("Social profiles and other official pages"), default=list, blank=True,
+                                        help_text=gettext_lazy("Addresses of the same organization or person elsewhere (sameAs). One https address per line."))
+    identity_description = models.CharField(gettext_lazy("Short description"), max_length=300, blank=True,
+                                            help_text=gettext_lazy("One or two sentences. If left empty, the site description is used."))
     updated_at = models.DateTimeField(gettext_lazy("Last edit"), auto_now=True)
 
     #: Texts a site owner can set per language. The plain fields above are the text in the site's default language and the

@@ -14290,3 +14290,55 @@ msgstr "Çevirilerden ayır"
 #, python-format
 msgid "This will be saved as a translation of “%(title)s” (%(language)s)."
 msgstr "Bu, “%(title)s” (%(language)s) öğesinin çevirisi olarak kaydedilecek."
+
+msgid "Site identity for search engines"
+msgstr "Arama motorları için site kimliği"
+
+msgid "Tells search engines who is behind the site (schema.org). It is added to the head of the home page, posts and pages as structured data."
+msgstr "Arama motorlarına siteyi kimin yaptığını bildirir (schema.org). Ana sayfanın, yazıların ve sayfaların başlığına yapılandırılmış veri olarak eklenir."
+
+msgid "Organization"
+msgstr "Kuruluş"
+
+msgid "Person"
+msgstr "Kişi"
+
+msgid "The name search engines should know. If left empty, the site name is used."
+msgstr "Arama motorlarının bilmesi gereken ad. Boş bırakılırsa site adı kullanılır."
+
+msgid "Alternative names"
+msgstr "Alternatif adlar"
+
+msgid "Other names people use for it, for example the name in another script. One per line."
+msgstr "İnsanların kullandığı diğer adlar, örneğin başka bir yazıdaki ad. Her satıra bir tane."
+
+msgid "Logo for search engines"
+msgstr "Arama motorları için logo"
+
+msgid "An image from the media library. If left empty, the site logo is used."
+msgstr "Medya kütüphanesinden bir görsel. Boş bırakılırsa site logosu kullanılır."
+
+msgid "Social profiles and other official pages"
+msgstr "Sosyal profiller ve diğer resmî sayfalar"
+
+msgid "Addresses of the same organization or person elsewhere (sameAs). One https address per line."
+msgstr "Aynı kuruluşun veya kişinin başka yerlerdeki adresleri (sameAs). Her satıra bir https adresi."
+
+msgid "Short description"
+msgstr "Kısa açıklama"
+
+msgid "One or two sentences. If left empty, the site description is used."
+msgstr "Bir veya iki cümle. Boş bırakılırsa site açıklaması kullanılır."
+
+msgid "Each name can have at most %(n)d characters."
+msgstr "Her ad en fazla %(n)d karakter olabilir."
+
+msgid "Enter at most %(n)d alternative names."
+msgstr "En fazla %(n)d alternatif ad girin."
+
+#, python-format
+msgid "“%(value)s” is not a full https:// address."
+msgstr "“%(value)s” tam bir https:// adresi değil."
+
+msgid "Enter at most %(n)d addresses."
+msgstr "En fazla %(n)d adres girin."

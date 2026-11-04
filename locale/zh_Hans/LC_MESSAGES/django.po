@@ -13714,3 +13714,55 @@ msgstr "与译文分离"
 #, python-format
 msgid "This will be saved as a translation of “%(title)s” (%(language)s)."
 msgstr "这将保存为“%(title)s”（%(language)s）的译文。"
+
+msgid "Site identity for search engines"
+msgstr "面向搜索引擎的站点身份"
+
+msgid "Tells search engines who is behind the site (schema.org). It is added to the head of the home page, posts and pages as structured data."
+msgstr "告诉搜索引擎网站背后是谁（schema.org）。以结构化数据的形式添加到首页、文章和页面的头部。"
+
+msgid "Organization"
+msgstr "组织"
+
+msgid "Person"
+msgstr "个人"
+
+msgid "The name search engines should know. If left empty, the site name is used."
+msgstr "搜索引擎应当知道的名称。留空则使用站点名称。"
+
+msgid "Alternative names"
+msgstr "别名"
+
+msgid "Other names people use for it, for example the name in another script. One per line."
+msgstr "人们使用的其他名称，例如另一种文字的名称。每行一个。"
+
+msgid "Logo for search engines"
+msgstr "搜索引擎使用的徽标"
+
+msgid "An image from the media library. If left empty, the site logo is used."
+msgstr "媒体库中的一张图片。留空则使用站点徽标。"
+
+msgid "Social profiles and other official pages"
+msgstr "社交主页及其他官方页面"
+
+msgid "Addresses of the same organization or person elsewhere (sameAs). One https address per line."
+msgstr "同一组织或个人在其他地方的地址（sameAs）。每行一个 https 地址。"
+
+msgid "Short description"
+msgstr "简短描述"
+
+msgid "One or two sentences. If left empty, the site description is used."
+msgstr "一两句话。留空则使用站点描述。"
+
+msgid "Each name can have at most %(n)d characters."
+msgstr "每个名称最多 %(n)d 个字符。"
+
+msgid "Enter at most %(n)d alternative names."
+msgstr "最多输入 %(n)d 个别名。"
+
+#, python-format
+msgid "“%(value)s” is not a full https:// address."
+msgstr "“%(value)s”不是完整的 https:// 地址。"
+
+msgid "Enter at most %(n)d addresses."
+msgstr "最多输入 %(n)d 个地址。"

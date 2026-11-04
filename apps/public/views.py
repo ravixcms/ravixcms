@@ -20,6 +20,7 @@ from apps.plugins.hooks import apply_filter
 from apps.themes.models import ThemeConfig  # noqa: F401  (برای وابستگی مهاجرت)
 
 from . import builders as b
+from . import jsonld
 from .dto import Crumb, Link
 from .feeds import feed_links
 from .formatting import date_iso
@@ -67,16 +68,10 @@ class HomeView(PublicView):
             return {"sections": tuple(b.build_sections(resolved.doc, resolved.theme.home_sections, base["site"]))}
 
         def seo(site):
-            url = absolute_url(request, reverse("public:home"))
-            data = {
-                "@context": "https://schema.org", "@type": "WebSite", "name": site["name"], "url": url,
-                "potentialAction": {
-                    "@type": "SearchAction",
-                    "target": absolute_url(request, reverse("public:search")) + "?q={search_term_string}",
-                    "query-input": "required name=search_term_string",
-                },
-            }
-            return make_seo(request, site, path=reverse("public:home"), jsonld=[data])
+            from apps.core.models import SiteSettings
+
+            nodes = jsonld.home_nodes(request, site, SiteSettings.load())
+            return make_seo(request, site, path=reverse("public:home"), jsonld=jsonld.build(request, site, nodes, kind="home"))
 
         return self.respond(request, context, seo=seo)
 
@@ -147,20 +142,14 @@ class PostDetailView(PublicView):
         crumbs.append((post.title, ""))
 
         def seo(site):
-            article = {
-                "@context": "https://schema.org", "@type": "Article", "headline": post.title[:110],
-                "datePublished": item.date_iso, "dateModified": date_iso(post.updated_at),
-                "mainEntityOfPage": absolute_url(request, item.url),
-                "publisher": {"@type": "Organization", "name": site["name"]},
-            }
-            if item.author_name:
-                article["author"] = {"@type": "Person", "name": item.author_name}
-            if item.image_url:
-                article["image"] = [absolute_url(request, item.image_url)]
+            from apps.core.models import SiteSettings
+
+            links = translations.hreflang_entries(post, lambda path: absolute_url(request, path))
+            robots = "noindex,follow" if post.noindex else ""
+            nodes = jsonld.post_nodes(request, site, SiteSettings.load(), post, item, crumbs=crumbs, translations=links)
             data = make_seo(request, site, title=post.effective_title_tag, description=post.seo_description or item.excerpt,
-                            path=item.url, og_type="article", og_image=item.image_url, jsonld=[article], alternates=not b.separated_language(),
-                            alternate_entries=translations.hreflang_entries(post, lambda path: absolute_url(request, path)),
-                            robots="noindex,follow" if post.noindex else "",
+                            path=item.url, og_type="article", og_image=item.image_url, jsonld=jsonld.build(request, site, nodes, kind="post", obj_id=post.pk, robots=robots),
+                            alternates=not b.separated_language(), alternate_entries=links, robots=robots,
                             published_time=item.date_iso, modified_time=date_iso(post.updated_at))
             return finish_seo(request, apply_filter("public.seo", data, kind="post", obj_id=post.pk, site=site, request=request))
 
@@ -262,13 +251,19 @@ class PageDetailView(PublicView):
             item = b.page_item(page, body_html=built.html, builder=True, show_title=built.show_title, full_width=built.template == "full_width")
             request.csp_frame_hosts = set(built.frame_hosts)
 
+        crumbs = [(gettext("Home"), reverse("public:home")), (page.title, "")]
+
         def seo(site):
+            from apps.core.models import SiteSettings
+
+            links = translations.hreflang_entries(page, lambda path: absolute_url(request, path))
+            nodes = jsonld.page_nodes(request, site, SiteSettings.load(), page, item, crumbs=crumbs, translations=links)
             data = make_seo(request, site, title=page.effective_title_tag, description=page.seo_description or item.excerpt, path=item.url, alternates=not b.separated_language(),
-                            alternate_entries=translations.hreflang_entries(page, lambda path: absolute_url(request, path)))
+                            alternate_entries=links, jsonld=jsonld.build(request, site, nodes, kind="page", obj_id=page.pk))
             return finish_seo(request, apply_filter("public.seo", data, kind="page", obj_id=page.pk, site=site, request=request))
 
         request.ravix_translation_paths = translations.switcher_paths(page)
-        ctx = {"page": item, "breadcrumbs": _crumbs((gettext("Home"), reverse("public:home")), (page.title, ""))}
+        ctx = {"page": item, "breadcrumbs": _crumbs(*crumbs)}
         return self.respond(request, ctx, seo=seo, edit_url=reverse("content:page_update", args=[page.pk]))
 
 

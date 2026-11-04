@@ -14075,3 +14075,55 @@ msgstr "فصل عن الترجمات"
 #, python-format
 msgid "This will be saved as a translation of “%(title)s” (%(language)s)."
 msgstr "سيُحفظ هذا كترجمة لـ«%(title)s» (%(language)s)."
+
+msgid "Site identity for search engines"
+msgstr "هوية الموقع لمحركات البحث"
+
+msgid "Tells search engines who is behind the site (schema.org). It is added to the head of the home page, posts and pages as structured data."
+msgstr "يخبر محركات البحث بمن يقف وراء الموقع (schema.org). يُضاف كبيانات منظمة إلى رأس الصفحة الرئيسية والمقالات والصفحات."
+
+msgid "Organization"
+msgstr "منظمة"
+
+msgid "Person"
+msgstr "شخص"
+
+msgid "The name search engines should know. If left empty, the site name is used."
+msgstr "الاسم الذي يجب أن تعرفه محركات البحث. إذا تُرك فارغًا يُستخدم اسم الموقع."
+
+msgid "Alternative names"
+msgstr "أسماء بديلة"
+
+msgid "Other names people use for it, for example the name in another script. One per line."
+msgstr "أسماء أخرى يستخدمها الناس، مثل الاسم بخط آخر. اسم واحد في كل سطر."
+
+msgid "Logo for search engines"
+msgstr "الشعار لمحركات البحث"
+
+msgid "An image from the media library. If left empty, the site logo is used."
+msgstr "صورة من مكتبة الوسائط. إذا تُرك فارغًا يُستخدم شعار الموقع."
+
+msgid "Social profiles and other official pages"
+msgstr "الحسابات الاجتماعية وصفحات رسمية أخرى"
+
+msgid "Addresses of the same organization or person elsewhere (sameAs). One https address per line."
+msgstr "عناوين المنظمة أو الشخص نفسه في أماكن أخرى (sameAs). عنوان https واحد في كل سطر."
+
+msgid "Short description"
+msgstr "وصف قصير"
+
+msgid "One or two sentences. If left empty, the site description is used."
+msgstr "جملة أو جملتان. إذا تُرك فارغًا يُستخدم وصف الموقع."
+
+msgid "Each name can have at most %(n)d characters."
+msgstr "يمكن أن يتكون كل اسم من %(n)d حرفًا على الأكثر."
+
+msgid "Enter at most %(n)d alternative names."
+msgstr "أدخل %(n)d اسمًا بديلًا على الأكثر."
+
+#, python-format
+msgid "“%(value)s” is not a full https:// address."
+msgstr "«%(value)s» ليس عنوان https:// كاملًا."
+
+msgid "Enter at most %(n)d addresses."
+msgstr "أدخل %(n)d عنوانًا على الأكثر."
