@@ -48,6 +48,11 @@ class RavixTestRunner(DiscoverRunner):
         self._media_tmp = tempfile.mkdtemp(prefix="ravix-test-media-")
         self._media_before = settings.MEDIA_ROOT
         settings.MEDIA_ROOT = self._media_tmp
+        # ravix_cron keeps its lock under RAVIX_DATA_DIR (default: <project>/run). Tests run it, so they get a temporary data folder as well
+        # and the project folder stays clean.
+        self._data_dir_before = getattr(settings, "RAVIX_DATA_DIR", None)
+        self._data_tmp = tempfile.mkdtemp(prefix="ravix-test-data-")
+        settings.RAVIX_DATA_DIR = self._data_tmp
 
     def teardown_test_environment(self, **kwargs):
         from apps.updater import middleware as maintenance
@@ -61,4 +66,9 @@ class RavixTestRunner(DiscoverRunner):
         settings.BUILTIN_MODULES_DEFAULT_ON = self._modules_default
         settings.LANGUAGE_CODE, settings.RAVIX_CLI_LANG = self._language_before
         shutil.rmtree(self._media_tmp, ignore_errors=True)
+        if self._data_dir_before is None:
+            del settings.RAVIX_DATA_DIR
+        else:
+            settings.RAVIX_DATA_DIR = self._data_dir_before
+        shutil.rmtree(self._data_tmp, ignore_errors=True)
         super().teardown_test_environment(**kwargs)

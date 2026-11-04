@@ -29,3 +29,6 @@ env/
 *.log
 certs/
 install_token
+
+# runtime data written by ravix_cron (lock file); never part of the repository
+/run/
