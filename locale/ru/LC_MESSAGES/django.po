@@ -14414,3 +14414,104 @@ msgstr "В заметках о выпуске неизвестный язык и
 #, python-format
 msgid "The update index is for the “%(got)s” channel but this site follows “%(want)s”."
 msgstr "Индекс обновлений относится к каналу «%(got)s», а этот сайт использует «%(want)s»."
+
+msgid "The update was interrupted; the site was put back to the previous version automatically."
+msgstr "Обновление было прервано; сайт автоматически возвращён к предыдущей версии."
+
+msgid "The update process stopped unexpectedly (killed or the server lost power)."
+msgstr "Процесс обновления неожиданно остановился (был завершён или у сервера пропало питание)."
+
+msgid "Another update executor is already running."
+msgstr "Другой исполнитель обновлений уже запущен."
+
+msgid "The update process stopped unexpectedly; recovery follows."
+msgstr "Процесс обновления неожиданно остановился; далее будет выполнено восстановление."
+
+msgid "This site has no update executor configured (RAVIX_UPDATE_EXECUTOR); apply the update with the command line instead."
+msgstr "Для этого сайта не настроен исполнитель обновлений (RAVIX_UPDATE_EXECUTOR); примените обновление из командной строки."
+
+msgid "Another upgrade is in progress; try again after it finishes."
+msgstr "Выполняется другое обновление; повторите попытку после его завершения."
+
+msgid "Cancelled before it started."
+msgstr "Отменено до начала."
+
+msgid "No health-check address is configured (RAVIX_HEALTHZ_URL)."
+msgstr "Адрес проверки работоспособности не задан (RAVIX_HEALTHZ_URL)."
+
+msgid "no answer"
+msgstr "нет ответа"
+
+msgid "The health-check address must be http(s)."
+msgstr "Адрес проверки работоспособности должен быть http(s)."
+
+msgid "Waiting to start"
+msgstr "Ожидает запуска"
+
+msgid "The application did not restart in time."
+msgstr "Приложение не перезапустилось вовремя."
+
+msgid "Only an upgrade that stopped half-way (needing recovery) can be recovered."
+msgstr "Восстановить можно только обновление, остановившееся на полпути (требующее восстановления)."
+
+#, python-format
+msgid "Restoring the Python environment: %(sanitize)s"
+msgstr "Восстановление среды Python: %(sanitize)s"
+
+msgid "After the recovery, the version on disk could not be verified."
+msgstr "После восстановления не удалось проверить версию на диске."
+
+#, python-format
+msgid "The new version did not answer /healthz after the restart (%(detail)s)."
+msgstr "Новая версия не ответила на /healthz после перезапуска (%(detail)s)."
+
+#, python-format
+msgid "After the rollback the application does not answer /healthz (%(detail)s)."
+msgstr "После отката приложение не отвечает на /healthz (%(detail)s)."
+
+#, python-format
+msgid "After the recovery the application does not answer /healthz (%(detail)s)."
+msgstr "После восстановления приложение не отвечает на /healthz (%(detail)s)."
+
+msgid "The upgrade was interrupted and the site was put back to the previous version automatically (files, database and Python environment)."
+msgstr "Обновление было прервано, и сайт автоматически возвращён к предыдущей версии (файлы, база данных и среда Python)."
+
+msgid "The previous Python environment could not be restored."
+msgstr "Не удалось восстановить предыдущую среду Python."
+
+msgid "The wheelhouse folder was not found."
+msgstr "Папка wheelhouse не найдена."
+
+msgid "The wheelhouse folder has no .whl files."
+msgstr "В папке wheelhouse нет файлов .whl."
+
+msgid "The environment for this version is already the active one."
+msgstr "Среда для этой версии уже активна."
+
+msgid "Not enough disk space to build the new Python environment (about 600 MB are needed)."
+msgstr "Недостаточно места на диске для создания новой среды Python (нужно около 600 МБ)."
+
+msgid "pip did not finish in time."
+msgstr "pip не завершился вовремя."
+
+#, python-format
+msgid "The new Python environment could not be created: %(out)s"
+msgstr "Не удалось создать новую среду Python: %(out)s"
+
+#, python-format
+msgid "The new packages could not be installed (nothing was changed on your site): %(out)s"
+msgstr "Не удалось установить новые пакеты (на вашем сайте ничего не изменено): %(out)s"
+
+#, python-format
+msgid "The new packages could not be installed: %(out)s"
+msgstr "Не удалось установить новые пакеты: %(out)s"
+
+msgid "This release needs other Python packages, and this server is not yet in the layout that can switch them safely. Run “sudo ./install.sh” from the new release once (it keeps your data) and try again."
+msgstr "Этой версии нужны другие пакеты Python, а этот сервер ещё не имеет структуры, позволяющей безопасно их заменить. Один раз запустите «sudo ./install.sh» из новой версии (данные сохранятся) и повторите попытку."
+
+msgid "This release needs newer Python packages that this hosting update does not carry. Nothing was changed. Install the full cPanel ZIP of the new version instead; your data stay as they are."
+msgstr "Этой версии нужны более новые пакеты Python, которых нет в этом обновлении для хостинга. Ничего не изменено. Установите вместо этого полный ZIP для cPanel новой версии; ваши данные сохранятся."
+
+#, python-format
+msgid "The version %(version)s cannot be used as a folder name."
+msgstr "Версию %(version)s нельзя использовать как имя папки."

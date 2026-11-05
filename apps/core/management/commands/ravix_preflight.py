@@ -271,6 +271,20 @@ class Command(BaseCommand):
                 oks.append(cli_gettext("nginx serves the update files at /updates/v1/"))
             elif updates in (nginxcheck.MISSING, nginxcheck.WRONG_ALIAS):
                 warns.append(cli_gettext("nginx does not serve %(path)s at /updates/v1/; sites cannot fetch updates. Run install.sh again with --serve-updates %(path)s") % {"path": publish_dir})
+        executor = (getattr(settings, "RAVIX_UPDATE_EXECUTOR", "") or "").strip().lower()
+        if executor:
+            from apps.updater import venvs
+
+            jobs_dir = Path(settings.RAVIX_UPDATE_JOBS_DIR)
+            advise(jobs_dir.is_dir() and os.access(jobs_dir, os.R_OK), cli_gettext("The update jobs folder exists"),
+                   cli_gettext("The update jobs folder (%(path)s) does not exist; run install.sh again") % {"path": str(jobs_dir)})
+            if executor == "systemd":
+                advise((jobs_dir / "queue").is_dir() and os.access(jobs_dir / "queue", os.W_OK), cli_gettext("The web service can queue an update"),
+                       cli_gettext("The web service cannot write %(path)s, so the panel cannot queue an update; run install.sh again") % {"path": str(jobs_dir / "queue")})
+            if venvs.mode() == venvs.LEGACY:
+                warns.append(cli_gettext("The Python environment is a plain folder; run “sudo ./install.sh” once so that updates can switch it safely"))
+            elif venvs.mode() == venvs.VERSIONED:
+                oks.append(cli_gettext("The Python environment is versioned (an update switches it atomically)"))
         bad_keys, broad_keys = [], []
         for item in settings.RAVIX_TRUSTED_PUBLIC_KEYS:
             try:

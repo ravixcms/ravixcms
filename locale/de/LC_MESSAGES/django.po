@@ -14691,3 +14691,104 @@ msgstr "Die Versionshinweise enthalten eine unbekannte Sprache oder einen Wert, 
 #, python-format
 msgid "The update index is for the “%(got)s” channel but this site follows “%(want)s”."
 msgstr "Der Update-Index gehört zum Kanal „%(got)s“, diese Website folgt aber „%(want)s“."
+
+msgid "The update was interrupted; the site was put back to the previous version automatically."
+msgstr "Das Update wurde unterbrochen; die Website wurde automatisch auf die vorherige Version zurückgesetzt."
+
+msgid "The update process stopped unexpectedly (killed or the server lost power)."
+msgstr "Der Update-Prozess wurde unerwartet beendet (abgebrochen oder Stromausfall des Servers)."
+
+msgid "Another update executor is already running."
+msgstr "Ein anderer Update-Executor läuft bereits."
+
+msgid "The update process stopped unexpectedly; recovery follows."
+msgstr "Der Update-Prozess wurde unerwartet beendet; die Wiederherstellung folgt."
+
+msgid "This site has no update executor configured (RAVIX_UPDATE_EXECUTOR); apply the update with the command line instead."
+msgstr "Für diese Website ist kein Update-Executor eingerichtet (RAVIX_UPDATE_EXECUTOR); wenden Sie das Update stattdessen auf der Kommandozeile an."
+
+msgid "Another upgrade is in progress; try again after it finishes."
+msgstr "Ein anderes Upgrade läuft gerade; versuchen Sie es nach dessen Ende erneut."
+
+msgid "Cancelled before it started."
+msgstr "Vor dem Start abgebrochen."
+
+msgid "No health-check address is configured (RAVIX_HEALTHZ_URL)."
+msgstr "Es ist keine Adresse für die Gesundheitsprüfung eingerichtet (RAVIX_HEALTHZ_URL)."
+
+msgid "no answer"
+msgstr "keine Antwort"
+
+msgid "The health-check address must be http(s)."
+msgstr "Die Adresse der Gesundheitsprüfung muss http(s) sein."
+
+msgid "Waiting to start"
+msgstr "Wartet auf den Start"
+
+msgid "The application did not restart in time."
+msgstr "Die Anwendung wurde nicht rechtzeitig neu gestartet."
+
+msgid "Only an upgrade that stopped half-way (needing recovery) can be recovered."
+msgstr "Nur ein Upgrade, das auf halbem Weg stehen geblieben ist (und eine Wiederherstellung braucht), kann wiederhergestellt werden."
+
+#, python-format
+msgid "Restoring the Python environment: %(sanitize)s"
+msgstr "Wiederherstellung der Python-Umgebung: %(sanitize)s"
+
+msgid "After the recovery, the version on disk could not be verified."
+msgstr "Nach der Wiederherstellung konnte die Version auf der Festplatte nicht verifiziert werden."
+
+#, python-format
+msgid "The new version did not answer /healthz after the restart (%(detail)s)."
+msgstr "Die neue Version antwortete nach dem Neustart nicht auf /healthz (%(detail)s)."
+
+#, python-format
+msgid "After the rollback the application does not answer /healthz (%(detail)s)."
+msgstr "Nach dem Rollback antwortet die Anwendung nicht auf /healthz (%(detail)s)."
+
+#, python-format
+msgid "After the recovery the application does not answer /healthz (%(detail)s)."
+msgstr "Nach der Wiederherstellung antwortet die Anwendung nicht auf /healthz (%(detail)s)."
+
+msgid "The upgrade was interrupted and the site was put back to the previous version automatically (files, database and Python environment)."
+msgstr "Das Upgrade wurde unterbrochen und die Website wurde automatisch auf die vorherige Version zurückgesetzt (Dateien, Datenbank und Python-Umgebung)."
+
+msgid "The previous Python environment could not be restored."
+msgstr "Die vorherige Python-Umgebung konnte nicht wiederhergestellt werden."
+
+msgid "The wheelhouse folder was not found."
+msgstr "Der Wheelhouse-Ordner wurde nicht gefunden."
+
+msgid "The wheelhouse folder has no .whl files."
+msgstr "Der Wheelhouse-Ordner enthält keine .whl-Dateien."
+
+msgid "The environment for this version is already the active one."
+msgstr "Die Umgebung für diese Version ist bereits die aktive."
+
+msgid "Not enough disk space to build the new Python environment (about 600 MB are needed)."
+msgstr "Nicht genug Speicherplatz, um die neue Python-Umgebung zu erstellen (etwa 600 MB nötig)."
+
+msgid "pip did not finish in time."
+msgstr "pip wurde nicht rechtzeitig fertig."
+
+#, python-format
+msgid "The new Python environment could not be created: %(out)s"
+msgstr "Die neue Python-Umgebung konnte nicht erstellt werden: %(out)s"
+
+#, python-format
+msgid "The new packages could not be installed (nothing was changed on your site): %(out)s"
+msgstr "Die neuen Pakete konnten nicht installiert werden (an Ihrer Website wurde nichts geändert): %(out)s"
+
+#, python-format
+msgid "The new packages could not be installed: %(out)s"
+msgstr "Die neuen Pakete konnten nicht installiert werden: %(out)s"
+
+msgid "This release needs other Python packages, and this server is not yet in the layout that can switch them safely. Run “sudo ./install.sh” from the new release once (it keeps your data) and try again."
+msgstr "Diese Version braucht andere Python-Pakete, und dieser Server hat noch nicht das Layout, das sie sicher austauschen kann. Führen Sie einmal „sudo ./install.sh“ aus der neuen Version aus (Ihre Daten bleiben erhalten) und versuchen Sie es erneut."
+
+msgid "This release needs newer Python packages that this hosting update does not carry. Nothing was changed. Install the full cPanel ZIP of the new version instead; your data stay as they are."
+msgstr "Diese Version braucht neuere Python-Pakete, die dieses Hosting-Update nicht mitbringt. Es wurde nichts geändert. Installieren Sie stattdessen das vollständige cPanel-ZIP der neuen Version; Ihre Daten bleiben erhalten."
+
+#, python-format
+msgid "The version %(version)s cannot be used as a folder name."
+msgstr "Die Version %(version)s kann nicht als Ordnername verwendet werden."

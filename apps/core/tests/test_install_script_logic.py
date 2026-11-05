@@ -581,3 +581,70 @@ class ShellcheckTests(SimpleTestCase):
         scripts = [str(ROOT / "install.sh"), *sorted(str(p) for p in (ROOT / "deploy").glob("*.sh"))]  # default severity (style): notes count too
         proc = subprocess.run(["shellcheck", "-s", "bash", "-e", "SC1111,SC2016,SC1091", "-f", "gcc", *scripts], capture_output=True, text=True)
         self.assertEqual(proc.stdout.strip(), "", proc.stdout)
+
+
+class VersionedVirtualenvTests(SimpleTestCase):
+    """install.sh moves an existing install to venv-<version> + a symlink without reinstalling anything else; these run the real helpers on real folders."""
+
+    def run_fn(self, code, **env):
+        return run_bash(bash_function("venv_layout") + bash_function("venv_version_ok") + bash_function("venv_activate") + textwrap.dedent(code), **env)
+
+    def make_python(self, folder: Path):
+        (folder / "bin").mkdir(parents=True)
+        (folder / "bin" / "python").write_text("#!/bin/sh\n")
+        (folder / "bin" / "python").chmod(0o755)
+
+    def test_layout_tells_link_folder_and_nothing_apart(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            (Path(tmp) / "real").mkdir()
+            os.symlink("real", Path(tmp) / "link")
+            out = self.run_fn(f'venv_layout {tmp}/real; venv_layout {tmp}/link; venv_layout {tmp}/none')
+            self.assertEqual(out.stdout.split(), ["dir", "link", "none"])
+
+    def test_version_names_are_safe_for_a_folder(self):
+        for good in ("0.10.0", "1.2.3-rc.1", "2026.11+local"):
+            self.assertEqual(self.run_fn(f'venv_version_ok "{good}"').returncode, 0, good)
+        for bad in ("", "../x", "1/2", "a b", ".hidden", "$(id)", "1;ls"):
+            self.assertNotEqual(run_bash(bash_function("venv_version_ok") + f"venv_version_ok '{bad}'").returncode, 0, bad)
+
+    def test_a_plain_folder_is_moved_aside_and_replaced_by_a_link_to_the_new_environment(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            self.make_python(base / "venv")  # the old, plain virtualenv
+            (base / "venv" / "marker").write_text("old")
+            self.make_python(base / "venv-0.10.0")
+            out = self.run_fn(f'venv_activate {tmp}/venv venv-0.10.0 20261105-1200')
+            self.assertEqual(out.returncode, 0, out.stderr)
+            self.assertTrue((base / "venv").is_symlink())
+            self.assertEqual(os.readlink(base / "venv"), "venv-0.10.0")  # relative: the whole folder can be moved
+            self.assertEqual((base / "venv.legacy-20261105-1200" / "marker").read_text(), "old")  # the old one is kept, not deleted
+            self.assertTrue((base / "venv" / "bin" / "python").exists())
+
+    def test_a_second_run_changes_nothing_and_a_new_version_only_repoints_the_link(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            self.make_python(base / "venv-0.10.0")
+            self.make_python(base / "venv-0.11.0")
+            os.symlink("venv-0.10.0", base / "venv")
+            self.assertEqual(self.run_fn(f'venv_activate {tmp}/venv venv-0.10.0').returncode, 0)
+            self.assertEqual(os.readlink(base / "venv"), "venv-0.10.0")
+            self.assertEqual(self.run_fn(f'venv_activate {tmp}/venv venv-0.11.0').returncode, 0)
+            self.assertEqual(os.readlink(base / "venv"), "venv-0.11.0")
+            self.assertEqual([p.name for p in base.iterdir() if "legacy" in p.name or p.name.endswith(".new")], [])
+            self.assertTrue((base / "venv-0.10.0").exists())  # the previous environment is the way back
+
+    def test_an_environment_without_python_is_never_activated(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            self.make_python(base / "venv")
+            (base / "venv-0.10.0").mkdir()  # a half-built folder
+            self.assertNotEqual(self.run_fn(f'venv_activate {tmp}/venv venv-0.10.0').returncode, 0)
+            self.assertTrue((base / "venv").is_dir() and not (base / "venv").is_symlink())  # the working one is untouched
+
+    def test_the_install_step_builds_with_hashes_checks_the_new_environment_and_switches_last(self):
+        step = SCRIPT[SCRIPT.index('step "virtualenv and dependencies"'):SCRIPT.index("# ----------------------------------------------------------------- 5. PostgreSQL")]
+        self.assertIn('--require-hashes', step)
+        self.assertLess(step.index('pip" install'), step.index("manage.py check"))
+        self.assertLess(step.index("manage.py check"), step.index('venv_activate "$VENV"'))
+        self.assertIn("as_deploy", step)  # built by the user that will own it later updates
+        self.assertNotIn("rm -rf \"$VENV\"", step)  # the old environment is never deleted by the installer

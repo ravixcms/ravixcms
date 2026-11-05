@@ -1,0 +1,9 @@
+[Unit]
+Description=Ravix - restart the web service on request of the update executor
+
+[Service]
+Type=oneshot
+# Runs as root and executes exactly this one command; nothing is read from the request file (its existence is the whole request).
+ExecStart=/bin/systemctl restart ravix.service
+# Removed even when the restart failed, so a failed request is not repeated in a loop.
+ExecStopPost=/bin/rm -f -- /srv/ravix/jobs/restart-request

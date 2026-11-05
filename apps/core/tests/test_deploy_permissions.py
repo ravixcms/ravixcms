@@ -62,7 +62,7 @@ class UnitGroupsMatchInstallScript(SimpleTestCase):
         match = re.search(r"UNITS=\(([^)]*)\)", INSTALL)
         self.assertIsNotNone(match)
         installed = set(match.group(1).split())
-        on_disk = {p.name for p in DEPLOY.glob("ravix*.service")} | {p.name for p in DEPLOY.glob("ravix*.timer")}
+        on_disk = {p.name for p in DEPLOY.glob("ravix*.service")} | {p.name for p in DEPLOY.glob("ravix*.timer")} | {p.name for p in DEPLOY.glob("ravix*.path")}
         self.assertEqual(installed, on_disk)
 
     def test_every_service_run_as_the_app_user_can_read_the_code(self):
@@ -96,3 +96,82 @@ class UnitGroupsMatchInstallScript(SimpleTestCase):
         for path in service_units():
             for value in unit_settings(path).get("ReadWritePaths", []):
                 self.assertNotRegex(value, r"/srv/ravix/app(/|\s|$)", path.name)
+
+
+class UpdateExecutorUnits(SimpleTestCase):
+    """The update executor is a separate user; only a fixed, content-free request reaches root."""
+
+    def test_the_executor_runs_as_the_deploy_user_in_the_app_group(self):
+        s = unit_settings(DEPLOY / "ravix-update.service")
+        self.assertEqual(s["User"], ["ravix-deploy"])
+        self.assertIn("ravix", process_groups(s))
+        self.assertEqual(s["Type"], ["oneshot"])
+        self.assertEqual(s["ExecStart"], ["/srv/ravix/venv/bin/python manage.py ravix_update_exec"])  # through the symlink an update switches
+        self.assertIn("/etc/ravix/ravix.env", s["EnvironmentFile"])
+        self.assertEqual(s["NoNewPrivileges"], ["true"])
+
+    def test_the_web_service_starts_from_the_same_symlink(self):
+        self.assertIn("/srv/ravix/venv/bin/gunicorn", unit_settings(DEPLOY / "ravix.service")["ExecStart"][0])
+        self.assertEqual(unit_settings(DEPLOY / "ravix.service")["User"], ["ravix"])  # the web service is not the deploy user
+
+    def test_the_restart_unit_runs_one_fixed_command_as_root(self):
+        s = unit_settings(DEPLOY / "ravix-restart.service")
+        self.assertEqual(s["ExecStart"], ["/bin/systemctl restart ravix.service"])
+        self.assertNotIn("User", s)  # root, so it may restart the service
+        self.assertNotIn("EnvironmentFile", s)  # nothing from the application's environment, and nothing from the request file, reaches it
+        self.assertEqual(s["ExecStopPost"], ["/bin/rm -f -- /srv/ravix/jobs/restart-request"])  # even a failed restart is not retried in a loop
+
+    def test_the_path_units_watch_exactly_the_files_the_application_writes(self):
+        from apps.updater import jobs, lifecycle
+
+        text = (DEPLOY / "ravix-update.path").read_text(encoding="utf-8")
+        self.assertIn(f"PathExistsGlob=/srv/ravix/jobs/{jobs.QUEUE_NAME}/*", text)
+        self.assertIn("Unit=ravix-update.service", text)
+        restart = (DEPLOY / "ravix-restart.path").read_text(encoding="utf-8")
+        self.assertIn(f"PathExists=/srv/ravix/jobs/{lifecycle.REQUEST_NAME}", restart)
+        self.assertIn("Unit=ravix-restart.service", restart)
+
+    def test_root_never_runs_anything_from_a_folder_the_deploy_user_writes(self):
+        for name in ("ravix-restart.service", "ravix-restart.path"):
+            text = (DEPLOY / name).read_text(encoding="utf-8")
+            self.assertNotIn("/srv/ravix/app", text)  # the code folder belongs to ravix-deploy: a root unit must not execute it
+            self.assertNotIn("/srv/ravix/venv", text)
+
+    def test_install_script_gives_the_code_to_the_deploy_user_and_only_the_queue_to_the_web_user(self):
+        self.assertRegex(INSTALL, r'chown -R "\$DEPLOY_USER:\$APP_USER" "\$APP_DIR"')
+        self.assertRegex(INSTALL, r'chmod -R u\+rwX,g\+rX,g-w,o-rwx "\$APP_DIR"')
+        self.assertRegex(INSTALL, r'chown "\$DEPLOY_USER:\$APP_USER" "\$BASE"; chmod 750 "\$BASE"')  # the web user cannot repoint the venv symlink
+        self.assertRegex(INSTALL, r'chown "\$DEPLOY_USER:\$APP_USER" "\$JOBS_DIR/queue"; chmod 2770 "\$JOBS_DIR/queue"')
+        self.assertRegex(INSTALL, r'chown "\$DEPLOY_USER:\$APP_USER" "\$JOBS_DIR"; chmod 2750 "\$JOBS_DIR"')
+        self.assertRegex(INSTALL, r"(?m)^DEPLOY_USER=ravix-deploy")
+        self.assertRegex(INSTALL, r'adduser --system --ingroup "\$APP_USER" --no-create-home')
+
+    def test_install_script_writes_the_executor_settings_only_when_missing_and_only_with_systemd(self):
+        for key in ("RAVIX_VENV_LINK", "RAVIX_UPDATE_JOBS_DIR", "RAVIX_UPDATE_EXECUTOR systemd", "RAVIX_UPDATE_RESTART systemd"):
+            self.assertIn(f"env_set {key}", INSTALL)
+        self.assertRegex(INSTALL, r"if have_systemd; then env_set RAVIX_UPDATE_EXECUTOR systemd")
+        self.assertRegex(INSTALL, r'\[ -d "\$APP_DIR/update_backups" \] \|\| env_set RAVIX_UPDATE_BACKUP_DIR')  # an older install keeps its backups where its runs point
+
+    def test_the_executor_units_are_installed_and_enabled(self):
+        for unit in ("ravix-update.service", "ravix-update.path", "ravix-update.timer", "ravix-restart.service", "ravix-restart.path"):
+            self.assertIn(unit, re.search(r"UNITS=\(([^)]*)\)", INSTALL).group(1))
+        self.assertRegex(INSTALL, r"systemctl enable --now ravix\.service .*ravix-update\.path ravix-update\.timer ravix-restart\.path")
+
+
+class SystemdSyntaxTests(SimpleTestCase):
+    """The units are parsed by the real ``systemd-analyze verify`` (present on the CI runners and on every Ubuntu server)."""
+
+    def test_every_unit_parses(self):
+        import shutil
+        import subprocess
+
+        if not shutil.which("systemd-analyze"):
+            self.fail("systemd-analyze is required to check the units (it ships with systemd on Ubuntu)")
+        names = sorted(p.name for pattern in ("ravix*.service", "ravix*.timer", "ravix*.path") for p in DEPLOY.glob(pattern))
+        self.assertGreaterEqual(len(names), 12)
+        r = subprocess.run(["systemd-analyze", "verify", *names], cwd=DEPLOY, capture_output=True, text=True, timeout=60)
+        # Only real syntax problems count: the binaries (/srv/ravix/venv/...) do not exist on the machine that runs the tests, and newer systemd
+        # versions add notes of their own about old-but-valid settings.
+        bad = ("unknown key", "unknown section", "unknown lvalue", "invalid", "failed to parse", "assignment outside of section", "missing", "unit has no", "bad unit")
+        problems = [line for line in (r.stdout + r.stderr).splitlines() if any(word in line.lower() for word in bad) and "is not executable" not in line]
+        self.assertEqual(problems, [])

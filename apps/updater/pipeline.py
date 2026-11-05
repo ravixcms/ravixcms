@@ -28,10 +28,11 @@ from apps.core.deprecation import read_legacy_key
 from apps.core.version import PLUGIN_API_VERSION, THEME_API_VERSION
 
 from . import backup as backups
-from . import package, signing, sources, versions
+from . import lifecycle as lifecycle_mod
+from . import package, signing, sources, venvs, versions
 from .errors import UpdateBlocked, UpdateBusy, UpdateError
 from .logs import sanitize
-from .models import UpdateLock, UpdateRun
+from .models import UpdateJob, UpdateLock, UpdateRun
 from .runner import SubprocessRunner
 
 logger = logging.getLogger("ravix.updater")
@@ -82,6 +83,13 @@ def _stale_cutoff():
     return timezone.now() - timedelta(minutes=settings.RAVIX_UPDATE_LOCK_STALE_MINUTES)
 
 
+HEARTBEAT_STALE_SECONDS = 120  # an executor refreshes its heartbeat every ~10 s; this long without one means the process died
+
+
+def heartbeat_cutoff():
+    return timezone.now() - timedelta(seconds=HEARTBEAT_STALE_SECONDS)
+
+
 def mark_interrupted():
     """اجرای «در حال اجرا»یی که قفل زنده‌ای ندارد (کرش/قطع برق) ⇐ نیازمند بازیابی دستی."""
     live = set(UpdateLock.objects.filter(run__isnull=False).values_list("run_id", flat=True))
@@ -98,6 +106,7 @@ def mark_interrupted():
 def update_lock(operation: str, run: UpdateRun | None = None):
     holder = uuid.uuid4().hex
     UpdateLock.objects.filter(acquired_at__lt=_stale_cutoff()).delete()
+    UpdateLock.objects.filter(heartbeat__lt=heartbeat_cutoff()).delete()  # its executor died (kill -9, power loss): the lock is dead too
     mark_interrupted()
     try:
         with transaction.atomic():
@@ -122,7 +131,7 @@ def _set_lock(holder: str, operation: str):
 
 
 def lock_state():
-    lock = UpdateLock.objects.filter(name="global", acquired_at__gte=_stale_cutoff()).first()
+    lock = UpdateLock.objects.filter(name="global", acquired_at__gte=_stale_cutoff()).exclude(heartbeat__lt=heartbeat_cutoff()).first()
     return {"operation": lock.operation, "since": lock.acquired_at} if lock else None
 
 
@@ -362,15 +371,37 @@ def _history_restore(rows):
     _restore_table(UpdateRun, fixed)
 
 
+def _jobs_restore(rows, run_ids):
+    """The job rows are put back as they were just before the database was replaced, so the executor's own record of this very update survives its rollback."""
+    from django.contrib.auth import get_user_model
+
+    users = set(get_user_model().objects.values_list("pk", flat=True))
+    fixed = []
+    for r in sorted(rows, key=lambda x: x["id"]):
+        r = dict(r)
+        if r.get("requested_by_id") not in users:
+            r["requested_by_id"] = None
+        if r.get("run_id") not in run_ids:
+            r["run_id"] = None
+        fixed.append(r)
+    _restore_table(UpdateJob, fixed)
+
+
 def _db_restore(backend, info: dict, holder: str, run: UpdateRun):
     """دیتابیس را از پشتیبانِ تأییدشده برمی‌گرداند؛ تاریخچه و قفل جاری حفظ می‌شود (حتی اگر شمای جدول‌های updater در پشتیبان فرق داشته باشد)."""
     d = backups.verify_backup(info)
     safe_save(run)
     snap = _history_snapshot()
+    job_rows = list(UpdateJob.objects.values())
     lock_rows = list(UpdateLock.objects.filter(holder=holder).values())
     backend.restore(d / info["db_file"])
-    _restore_table(UpdateLock, [])  # قفل‌ها به ردیف‌های تاریخچه ارجاع دارند؛ اول خالی، بعد تاریخچه، بعد قفل جاری
+    has_jobs = UpdateJob._meta.db_table in connection.introspection.table_names()  # a backup from before the job table has none
+    _restore_table(UpdateLock, [])  # قفل‌ها و کارها به ردیف‌های تاریخچه ارجاع دارند؛ اول خالی، بعد تاریخچه، بعد کارها و قفل جاری
+    if has_jobs:
+        _restore_table(UpdateJob, [])
     _history_restore(snap)
+    if has_jobs:
+        _jobs_restore(job_rows, {r["id"] for r in snap})
     _restore_table(UpdateLock, lock_rows)
     from .middleware import reset_cache
 
@@ -379,14 +410,19 @@ def _db_restore(backend, info: dict, holder: str, run: UpdateRun):
 
 # ------------------------------------------------------------------ ارتقای هسته
 def apply_core(version: str | None = None, user=None, *, source=None, runner=None, db_backend=None, root: Path | None = None,
-               dry_run: bool = False) -> UpdateRun:
+               dry_run: bool = False, lifecycle=None, on_run=None) -> UpdateRun:
+    """``on_run(run)`` is called as soon as the run exists (the executor links its job to it); ``lifecycle`` (the executor passes one): restarts the application after the switch and confirms ``/healthz``; without it the owner restarts."""
     root = Path(root or versions.app_root())
     src = source or sources.get_source()
     runner = runner or SubprocessRunner(root)
     index = src.index()
     entry = pick_entry(index["core"], version)
     run = _new_run("core", "", UpdateRun.Kind.UPGRADE, entry["version"], user, src.ref)
+    if on_run:
+        on_run(run)
     work = None
+    plan = None
+    life = lifecycle or lifecycle_mod.Lifecycle()
     try:
         with update_lock("prepare-core", run) as holder:
             UpdateLock.objects.filter(holder=holder).update(run=run)
@@ -406,17 +442,20 @@ def apply_core(version: str | None = None, user=None, *, source=None, runner=Non
             step(run, "validate", True, (gettext("%(files)s files") % {"files": ex.files}))
             req = dict(ex.release.get("requires") or {})
             req_lines = (tree / "requirements.txt").read_text(encoding="utf-8").splitlines()
-            req["packages"] = [*(req.get("packages") or []), *req_lines]
+            req["packages"] = [*(req.get("packages") or []), *([] if venvs.manages_packages() else req_lines)]  # a managed install gets the new packages installed, not just checked
             problems, warnings = compat(entry["version"], req)
             if problems:
                 raise UpdateBlocked((gettext("Incompatible with the new package: %(problems)s") % {"problems": gettext("; ").join(problems)}))
             step(run, "compat", True, gettext("; ").join(warnings))
+            plan = venvs.prepare(tree, entry["version"], build=not dry_run)
+            if plan.changed:
+                step(run, "deps", True, plan.describe())
             if dry_run:
                 step(run, "dry_run", True, gettext("Dry run; no files were changed"))
                 run.recovery = gettext("Dry run: the package was downloaded and fully validated but no files were changed.")
                 finish(run, UpdateRun.Status.SUCCEEDED)
                 return run
-            _apply_core_files(run, holder, root, tree, work, runner, db_backend)
+            _apply_core_files(run, holder, root, tree, work, runner, db_backend, plan, life)
         return run
     except UpdateError as exc:
         if run.status == UpdateRun.Status.RUNNING:
@@ -430,6 +469,8 @@ def apply_core(version: str | None = None, user=None, *, source=None, runner=Non
     finally:
         if work:
             shutil.rmtree(work, ignore_errors=True)
+        if plan is not None and plan.new_dir is not None and run.status != UpdateRun.Status.SUCCEEDED:
+            venvs.discard_new(plan.as_dict())  # never the environment the link points at
 
 
 def core_blocked_by_plugins() -> bool:
@@ -438,9 +479,19 @@ def core_blocked_by_plugins() -> bool:
     return PluginOperationLock.objects.filter(acquired_at__gte=timezone.now() - timedelta(minutes=15)).exists()
 
 
-def _apply_core_files(run, holder, root: Path, tree: Path, work: Path, runner, db_backend):
+def _runner_for(runner, plan):
+    """The runner that checks and migrates the *new* code with the *new* environment (a fake runner in tests has no ``with_python``)."""
+    if plan is not None and plan.new_dir is not None and hasattr(runner, "with_python"):
+        return runner.with_python(plan.python)
+    return runner
+
+
+def _apply_core_files(run, holder, root: Path, tree: Path, work: Path, runner, db_backend, plan=None, life=None):
+    plan = plan or venvs.DepsPlan()
+    life = life or lifecycle_mod.Lifecycle()
     backend = db_backend or backups.default_db_backend()
     run.backup = backups.create_backup(f"core-{run.from_version}-to-{run.to_version}", root, backend)
+    run.backup = {**run.backup, "env": plan.as_dict()}
     run.recovery = recovery_text(run)
     step(run, "backup", True, run.backup["dir"])
     backups.verify_backup(run.backup)
@@ -449,6 +500,7 @@ def _apply_core_files(run, holder, root: Path, tree: Path, work: Path, runner, d
     old_dir = work / "old"
     swapped = False
     db_touched = False
+    restarted = False
     try:
         step(run, "swap", True, gettext("Started replacing files"))
         swap_entries(root, tree, package.CORE_ENTRIES, old_dir)
@@ -457,35 +509,69 @@ def _apply_core_files(run, holder, root: Path, tree: Path, work: Path, runner, d
         if disk != run.to_version:
             raise UpdateError((gettext("After replacement, the version on disk (%(disk)s) does not match the target version.") % {"disk": disk}))
         step(run, "swap", True, gettext("Files replaced"))
-        runner.check()
+        if plan.wheelhouse is not None:
+            venvs.install_wheelhouse(plan)
+            step(run, "deps_install", True, plan.describe())
+        new_runner = _runner_for(runner, plan)
+        new_runner.check()
         step(run, "code_check", True)
         db_touched = True
-        out = runner.migrate()
+        out = new_runner.migrate()
         run.migration_output = sanitize(out, 6000)
         after = migration_state()
         run.migrations_applied = sorted(set(after) - set(run.migrations_before))
         step(run, "migrate", True, (gettext("%(migrations_applied_count)s new migrations") % {"migrations_applied_count": len(run.migrations_applied)}))
-        runner.check()
+        new_runner.check()
         step(run, "verify", True)
+        if plan.new_dir is not None:
+            venvs.switch(plan)
+            step(run, "venv_switch", True, plan.new_dir.name)
+        if life.automatic:
+            _prepare_static(run, new_runner)
+            restarted = True
+            if not life.restart():
+                raise UpdateError(gettext("The application did not restart in time."))
+            step(run, "restart", True)
+            healthy, detail = life.wait_healthy()
+            step(run, "health", healthy, detail)
+            if not healthy:
+                raise UpdateError((gettext("The new version did not answer /healthz after the restart (%(detail)s).") % {"detail": detail}))
     except BaseException as exc:  # noqa: BLE001 - حتی KeyboardInterrupt باید بازگردانده شود
         err = sanitize(str(exc) if isinstance(exc, UpdateError) else f"{type(exc).__name__}: {exc}")
         step(run, "failed", False, err)
-        _auto_rollback(run, holder, root, old_dir, work, backend, swapped, db_touched, err)
+        _auto_rollback(run, holder, root, old_dir, work, backend, swapped, db_touched, err, plan=plan, life=life, restarted=restarted)
         if isinstance(exc, (KeyboardInterrupt, SystemExit)):
             raise
         raise UpdateError((gettext("The upgrade failed (%(status)s): %(err)s") % {"status": run.get_status_display(), "err": err})) from None
     shutil.rmtree(old_dir, ignore_errors=True)
-    run.restart_required = not _restart_hosting_app()
+    if life.automatic:
+        run.restart_required = False
+    else:
+        run.restart_required = not _restart_hosting_app()
     if run.restart_required:
         run.recovery = gettext("The upgrade succeeded. Restart the web service to load the new code. If there is a problem: `python manage.py ravix_update rollback --run %d`.") % run.pk
     else:
         run.recovery = gettext("The upgrade succeeded and the application was restarted. If there is a problem: `python manage.py ravix_update rollback --run %d`.") % run.pk
     finish(run, UpdateRun.Status.SUCCEEDED)
+    if plan.new_dir is not None:
+        venvs.prune()
     try:
         backups.prune(settings.RAVIX_UPDATE_BACKUPS_KEEP)
     except OSError:
         pass
     _clear_caches()
+
+
+def _prepare_static(run, runner):
+    """Byte-compile the new code and collect its static files before the restart. Neither may stop the update: a missing static file degrades to its plain URL."""
+    try:
+        if hasattr(runner, "compile"):
+            runner.compile()
+        if hasattr(runner, "collectstatic") and Path(settings.STATIC_ROOT).is_dir():
+            runner.collectstatic()
+            step(run, "static", True)
+    except Exception as exc:  # noqa: BLE001
+        step(run, "static", False, sanitize(exc, 300))
 
 
 def _clear_caches():
@@ -497,8 +583,9 @@ def _clear_caches():
         pass
 
 
-def _auto_rollback(run, holder, root, old_dir, work, backend, swapped, db_touched, err):
+def _auto_rollback(run, holder, root, old_dir, work, backend, swapped, db_touched, err, *, plan=None, life=None, restarted=False):
     problems = []
+    life = life or lifecycle_mod.Lifecycle()
     if db_touched:
         try:
             _db_restore(backend, run.backup, holder, run)
@@ -530,7 +617,23 @@ def _auto_rollback(run, holder, root, old_dir, work, backend, swapped, db_touche
             done_files = True
         except Exception as exc:  # noqa: BLE001
             problems.append((gettext("Restoring files from the backup archive: %(sanitize)s") % {"sanitize": sanitize(exc)}))
+    if plan is not None and plan.new_dir is not None and plan.switched:
+        try:
+            back = venvs.switch_back(plan.as_dict())
+            plan.switched = not back
+            step(run, "rollback_env", back, plan.old_target)
+            if not back:
+                problems.append(gettext("The previous Python environment could not be restored."))
+        except OSError as exc:
+            problems.append((gettext("Restoring the Python environment: %(sanitize)s") % {"sanitize": sanitize(exc)}))
     ok = not problems and (versions.disk_version(root) == run.from_version)
+    if restarted and life.automatic:  # the new code was running: bring the old one back up and confirm it answers
+        again = life.restart()
+        healthy, detail = life.wait_healthy() if again else (False, gettext("The application did not restart in time."))
+        step(run, "rollback_restart", healthy, detail)
+        if not healthy:
+            problems.append((gettext("After the rollback the application does not answer /healthz (%(detail)s).") % {"detail": detail}))
+            ok = False
     step(run, "rollback_files", ok, gettext("The previous version is on disk") if ok else gettext("; ").join(problems) or gettext("The version on disk could not be verified"))
     if ok:
         run.recovery = gettext("The upgrade failed and the site was rolled back to the previous version (files and database). The cause is given in the error section.")
@@ -541,8 +644,75 @@ def _auto_rollback(run, holder, root, old_dir, work, backend, swapped, db_touche
     _clear_caches()
 
 
+# ------------------------------------------------------------------ بازیابی خودکار پس از مرگ ناگهانی اجراکننده
+def interrupted_runs():
+    """Core upgrades that stopped half-way (the process died) and still need to be put back."""
+    mark_interrupted()
+    runs = UpdateRun.objects.filter(component="core", kind=UpdateRun.Kind.UPGRADE, status=UpdateRun.Status.NEEDS_RECOVERY).exclude(backup={}).order_by("id")
+    return [r for r in runs if sum(1 for x in r.steps if x.get("name") == "recover_failed") < 3]  # a recovery that keeps failing is left to the owner (no retry loop)
+
+
+def recover_run(run_id: int, *, db_backend=None, root: Path | None = None, lifecycle=None) -> UpdateRun:
+    """Puts the files, the database and the Python environment of a core upgrade that died half-way back to the verified backup taken before it.
+    Safe to repeat. A run without a verified backup is left for the manual steps in its ``recovery`` text."""
+    root = Path(root or versions.app_root())
+    mark_interrupted()
+    run = UpdateRun.objects.filter(pk=run_id, component="core", kind=UpdateRun.Kind.UPGRADE).first()
+    if run is None:
+        raise UpdateBlocked(gettext("The core upgrade run was not found."))
+    if run.status != UpdateRun.Status.NEEDS_RECOVERY:
+        raise UpdateBlocked(gettext("Only an upgrade that stopped half-way (needing recovery) can be recovered."))
+    if not (run.backup or {}).get("dir"):
+        raise UpdateBlocked(gettext("No backup was recorded for this upgrade."))
+    backend = db_backend or backups.default_db_backend()
+    life = lifecycle or lifecycle_mod.Lifecycle()
+    done = {x["name"] for x in run.steps if x.get("ok")}
+    work = None
+    try:
+        with update_lock("prepare-recover", run) as holder:
+            info = run.backup
+            backups.verify_backup(info)
+            step(run, "recover_verify", True, info["dir"])
+            _set_lock(holder, "apply-recover")
+            work = _work_dir()
+            d = backups.backup_dir() / info["dir"]
+            tmp = backups.extract_archive(d / info["files_archive"], work / "restore")
+            swap_entries(root, tmp, package.CORE_ENTRIES, work / "old", remove_missing=True)
+            step(run, "recover_files", True)
+            if "code_check" in done:  # the migrations had (or were about to) start: the database goes back too
+                _db_restore(backend, info, holder, run)
+                step(run, "recover_db", True)
+            env = info.get("env") or {}
+            if env.get("new_dir"):
+                venvs.switch_back(env)
+                venvs.discard_new(env)
+                step(run, "recover_env", True)
+            if versions.disk_version(root) != run.from_version:
+                raise UpdateError(gettext("After the recovery, the version on disk could not be verified."))
+            if life.automatic:
+                healthy, detail = life.wait_healthy() if life.restart() else (False, gettext("The application did not restart in time."))
+                step(run, "recover_restart", healthy, detail)
+                if not healthy:
+                    raise UpdateError((gettext("After the recovery the application does not answer /healthz (%(detail)s).") % {"detail": detail}))
+            run.recovery = gettext("The upgrade was interrupted and the site was put back to the previous version automatically (files, database and Python environment).")
+            finish(run, UpdateRun.Status.ROLLED_BACK, run.error)
+            _clear_caches()
+        return run
+    except UpdateBusy:
+        raise
+    except UpdateError as exc:
+        step(run, "recover_failed", False, sanitize(exc))
+        run.recovery = recovery_text(run)
+        run.status = UpdateRun.Status.NEEDS_RECOVERY
+        safe_save(run)
+        raise
+    finally:
+        if work:
+            shutil.rmtree(work, ignore_errors=True)
+
+
 # ------------------------------------------------------------------ بازگشت دستی به نسخهٔ قبل
-def rollback_run(run_id: int, user=None, *, confirm_data_loss: bool = False, runner=None, db_backend=None, root: Path | None = None) -> UpdateRun:
+def rollback_run(run_id: int, user=None, *, confirm_data_loss: bool = False, runner=None, db_backend=None, root: Path | None = None, lifecycle=None) -> UpdateRun:
     """هستهٔ سایت را به وضعیت پیش از یک ارتقای موفق برمی‌گرداند (فایل‌ها + دیتابیس). داده‌های ثبت‌شده پس از ارتقا از بین می‌روند."""
     root = Path(root or versions.app_root())
     parent = UpdateRun.objects.filter(pk=run_id, component="core", kind="upgrade").first()
@@ -582,6 +752,11 @@ def rollback_run(run_id: int, user=None, *, confirm_data_loss: bool = False, run
                 step(run, "restore_db", True)
                 if versions.disk_version(root) != parent.from_version:
                     raise UpdateError(gettext("After the rollback, the version on disk could not be verified."))
+                env = info.get("env") or {}
+                if env.get("new_dir"):  # the upgrade also switched the Python environment: switch it back with the code
+                    if not venvs.switch_back(env):
+                        raise UpdateError(gettext("The previous Python environment could not be restored."))
+                    step(run, "restore_env", True, env.get("old_target", ""))
             except Exception as exc:  # noqa: BLE001
                 err = sanitize(exc)
                 step(run, "failed", False, err)
@@ -590,7 +765,13 @@ def rollback_run(run_id: int, user=None, *, confirm_data_loss: bool = False, run
                 raise UpdateError((gettext("The rollback failed; manual recovery required: %(err)s") % {"err": err})) from None
             Parent = UpdateRun.objects.filter(pk=parent.pk)
             Parent.update(status=UpdateRun.Status.REVERTED)
-            run.restart_required = not _restart_hosting_app()
+            life = lifecycle or lifecycle_mod.Lifecycle()
+            if life.automatic:
+                healthy, detail = life.wait_healthy() if life.restart() else (False, gettext("The application did not restart in time."))
+                step(run, "restart", healthy, detail)
+                run.restart_required = not healthy
+            else:
+                run.restart_required = not _restart_hosting_app()
             run.recovery = gettext("Rollback completed. Restart the web service.")
             finish(run, UpdateRun.Status.SUCCEEDED)
             _clear_caches()

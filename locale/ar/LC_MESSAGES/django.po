@@ -14179,3 +14179,104 @@ msgstr "تحتوي ملاحظات الإصدار على لغة غير معروف
 #, python-format
 msgid "The update index is for the “%(got)s” channel but this site follows “%(want)s”."
 msgstr "فهرس التحديثات مخصص للقناة «%(got)s» لكن هذا الموقع يتبع القناة «%(want)s»."
+
+msgid "The update was interrupted; the site was put back to the previous version automatically."
+msgstr "توقف التحديث في منتصفه؛ أُعيد الموقع تلقائيًا إلى الإصدار السابق."
+
+msgid "The update process stopped unexpectedly (killed or the server lost power)."
+msgstr "توقفت عملية التحديث بشكل غير متوقع (أُنهيت أو انقطعت الطاقة عن الخادم)."
+
+msgid "Another update executor is already running."
+msgstr "منفّذ تحديث آخر قيد التشغيل بالفعل."
+
+msgid "The update process stopped unexpectedly; recovery follows."
+msgstr "توقفت عملية التحديث بشكل غير متوقع؛ ستتم الاستعادة."
+
+msgid "This site has no update executor configured (RAVIX_UPDATE_EXECUTOR); apply the update with the command line instead."
+msgstr "لم يُضبط منفّذ تحديث لهذا الموقع (RAVIX_UPDATE_EXECUTOR)؛ طبّق التحديث من سطر الأوامر بدلًا من ذلك."
+
+msgid "Another upgrade is in progress; try again after it finishes."
+msgstr "هناك ترقية أخرى قيد التنفيذ؛ حاول مرة أخرى بعد انتهائها."
+
+msgid "Cancelled before it started."
+msgstr "أُلغي قبل أن يبدأ."
+
+msgid "No health-check address is configured (RAVIX_HEALTHZ_URL)."
+msgstr "لم يُضبط عنوان فحص السلامة (RAVIX_HEALTHZ_URL)."
+
+msgid "no answer"
+msgstr "لا توجد استجابة"
+
+msgid "The health-check address must be http(s)."
+msgstr "يجب أن يكون عنوان فحص السلامة http أو https."
+
+msgid "Waiting to start"
+msgstr "في انتظار البدء"
+
+msgid "The application did not restart in time."
+msgstr "لم يُعد التطبيق تشغيله في الوقت المناسب."
+
+msgid "Only an upgrade that stopped half-way (needing recovery) can be recovered."
+msgstr "لا يمكن استعادة إلا الترقية التي توقفت في منتصفها (وتحتاج إلى استعادة)."
+
+#, python-format
+msgid "Restoring the Python environment: %(sanitize)s"
+msgstr "استعادة بيئة بايثون: %(sanitize)s"
+
+msgid "After the recovery, the version on disk could not be verified."
+msgstr "بعد الاستعادة، تعذّر التحقق من الإصدار الموجود على القرص."
+
+#, python-format
+msgid "The new version did not answer /healthz after the restart (%(detail)s)."
+msgstr "لم يستجب الإصدار الجديد لـ /healthz بعد إعادة التشغيل (%(detail)s)."
+
+#, python-format
+msgid "After the rollback the application does not answer /healthz (%(detail)s)."
+msgstr "بعد التراجع لا يستجيب التطبيق لـ /healthz (%(detail)s)."
+
+#, python-format
+msgid "After the recovery the application does not answer /healthz (%(detail)s)."
+msgstr "بعد الاستعادة لا يستجيب التطبيق لـ /healthz (%(detail)s)."
+
+msgid "The upgrade was interrupted and the site was put back to the previous version automatically (files, database and Python environment)."
+msgstr "توقفت الترقية في منتصفها وأُعيد الموقع تلقائيًا إلى الإصدار السابق (الملفات وقاعدة البيانات وبيئة بايثون)."
+
+msgid "The previous Python environment could not be restored."
+msgstr "تعذّرت استعادة بيئة بايثون السابقة."
+
+msgid "The wheelhouse folder was not found."
+msgstr "لم يُعثر على مجلد wheelhouse."
+
+msgid "The wheelhouse folder has no .whl files."
+msgstr "لا يحتوي مجلد wheelhouse على ملفات .whl."
+
+msgid "The environment for this version is already the active one."
+msgstr "بيئة هذا الإصدار هي النشطة بالفعل."
+
+msgid "Not enough disk space to build the new Python environment (about 600 MB are needed)."
+msgstr "لا توجد مساحة قرص كافية لبناء بيئة بايثون الجديدة (يلزم نحو 600 ميغابايت)."
+
+msgid "pip did not finish in time."
+msgstr "لم ينتهِ pip في الوقت المناسب."
+
+#, python-format
+msgid "The new Python environment could not be created: %(out)s"
+msgstr "تعذّر إنشاء بيئة بايثون الجديدة: %(out)s"
+
+#, python-format
+msgid "The new packages could not be installed (nothing was changed on your site): %(out)s"
+msgstr "تعذّر تثبيت الحزم الجديدة (لم يتغير شيء في موقعك): %(out)s"
+
+#, python-format
+msgid "The new packages could not be installed: %(out)s"
+msgstr "تعذّر تثبيت الحزم الجديدة: %(out)s"
+
+msgid "This release needs other Python packages, and this server is not yet in the layout that can switch them safely. Run “sudo ./install.sh” from the new release once (it keeps your data) and try again."
+msgstr "يحتاج هذا الإصدار إلى حزم بايثون أخرى، وهذا الخادم ليس بعد في التخطيط الذي يتيح تبديلها بأمان. شغّل «sudo ./install.sh» من الإصدار الجديد مرة واحدة (تبقى بياناتك) ثم حاول مجددًا."
+
+msgid "This release needs newer Python packages that this hosting update does not carry. Nothing was changed. Install the full cPanel ZIP of the new version instead; your data stay as they are."
+msgstr "يحتاج هذا الإصدار إلى حزم بايثون أحدث لا يحملها تحديث الاستضافة هذا. لم يتغير شيء. ثبّت بدلًا من ذلك ملف cPanel ZIP الكامل للإصدار الجديد؛ تبقى بياناتك كما هي."
+
+#, python-format
+msgid "The version %(version)s cannot be used as a folder name."
+msgstr "لا يمكن استخدام الإصدار %(version)s كاسم مجلد."

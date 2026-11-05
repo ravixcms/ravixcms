@@ -1,0 +1,20 @@
+[Unit]
+Description=Ravix - update executor (runs queued updates as the separate deploy user)
+After=network.target postgresql.service
+
+[Service]
+Type=oneshot
+# The only process that writes the code. The web service (user ravix) runs from the same files but cannot change them.
+User=ravix-deploy
+Group=ravix
+EnvironmentFile=/etc/ravix/ravix.env
+WorkingDirectory=/srv/ravix/app
+# One run does everything that is waiting: recovers an update that died half-way, then applies the queued update (download, verify the
+# signature and every file hash, back up, build the new Python environment, swap, migrate, restart, check /healthz, roll back if it is unhealthy).
+ExecStart=/srv/ravix/venv/bin/python manage.py ravix_update_exec
+TimeoutStartSec=3600
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+# The restart itself is NOT done here: the executor drops /srv/ravix/jobs/restart-request and ravix-restart.path (root) runs the one fixed command.

@@ -8,10 +8,10 @@ from apps.updater.models import UpdateRun
 
 
 class Command(BaseCommand):
-    help = "status | check | apply core|theme|plugin | rollback --run ID | history"
+    help = "status | check | queue | jobs | recover | apply core|theme|plugin | rollback --run ID | history"
 
     def add_arguments(self, p):
-        p.add_argument("action", choices=["status", "check", "apply", "rollback", "history"])
+        p.add_argument("action", choices=["status", "check", "queue", "jobs", "recover", "apply", "rollback", "history"])
         p.add_argument("target", nargs="?", choices=["core", "theme", "plugin"])
         p.add_argument("--slug", default="")
         p.add_argument("--to", dest="target_version", default="", help=cli_gettext("Specific version (default: the latest compatible version)"))
@@ -72,6 +72,24 @@ class Command(BaseCommand):
                         self.stdout.write(self.style.ERROR(cli_gettext("Blocker: ") + p))
                     for w in plan["warnings"]:
                         self.stdout.write(self.style.WARNING(cli_gettext("Warning: ") + w))
+            elif act == "queue":
+                from apps.updater import jobs
+
+                job = jobs.enqueue(o["target_version"] or None, self._user(o["user"]))
+                self.stdout.write(self.style.SUCCESS(cli_gettext("The update was queued (job #%(a1)s); the executor starts it shortly.") % {"a1": job.pk}))
+            elif act == "jobs":
+                from apps.updater import jobs
+
+                for j in jobs.UpdateJob.objects.all()[:20]:
+                    self.stdout.write(f"#{j.pk} {j.requested_at:%Y-%m-%d %H:%M} {j.target_version or 'latest'} [{j.status}] {j.message[:80]}")
+            elif act == "recover":
+                from apps.updater import jobs
+
+                runs = [pipeline.recover_run(o["run"])] if o["run"] else [r for r, ok in jobs.recover_dead() if ok]
+                if not runs:
+                    self.stdout.write(cli_gettext("Nothing needed recovery."))
+                for r in runs:
+                    self.stdout.write(self.style.SUCCESS(cli_gettext("Run #%(a1)s was put back to the previous version.") % {"a1": r.pk}))
             elif act == "history":
                 for r in UpdateRun.objects.all()[:20]:
                     self.stdout.write(f"#{r.pk} {r.started_at:%Y-%m-%d %H:%M} {r.component}:{r.slug or '-'} {r.from_version}→{r.to_version} [{r.status}]")

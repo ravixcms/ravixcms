@@ -1,0 +1,10 @@
+[Unit]
+Description=Ravix - start the update executor when an update is queued
+
+[Path]
+# The web service writes one empty file per queued update here; the request itself (version, who asked) is in the database.
+PathExistsGlob=/srv/ravix/jobs/queue/*
+Unit=ravix-update.service
+
+[Install]
+WantedBy=multi-user.target

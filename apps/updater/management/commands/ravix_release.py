@@ -25,6 +25,7 @@ class Command(BaseCommand):
         p.add_argument("--min-from", default="", help=cli_gettext("Minimum source version"))
         p.add_argument("--notes", default="")
         p.add_argument("--notes-i18n", default="", help=cli_gettext("JSON file with the release notes per language, such as {\"fa\": \"…\", \"en\": \"…\"}"))
+        p.add_argument("--wheelhouse", default="", help=cli_gettext("Folder of .whl files to carry in the package (only for releases that change Python packages; shared hosting installs them offline)"))
         p.add_argument("--channel", default="stable", help=cli_gettext("Release channel written into index.json (stable, beta, …)"))
         p.add_argument("--no-sign", action="store_true", help=cli_gettext("Unsigned (sites will refuse to install it)"))
 
@@ -70,7 +71,7 @@ class Command(BaseCommand):
                 from apps.core.version import PLUGIN_API_VERSION, THEME_API_VERSION
 
                 req.update(plugin_api=PLUGIN_API_VERSION, theme_api=THEME_API_VERSION)
-                entry = release.build_core(Path(o["source"]), out, seed=seed, requires=req, notes=o["notes"], notes_i18n=notes_i18n)
+                entry = release.build_core(Path(o["source"]), out, seed=seed, requires=req, notes=o["notes"], notes_i18n=notes_i18n, wheelhouse=Path(o["wheelhouse"]) if o["wheelhouse"] else None)
                 path = release.write_index(out, core=[entry], seed=seed, channel=o["channel"])
             else:
                 if not o["theme_dir"]:

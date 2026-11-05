@@ -1,8 +1,11 @@
 """حالت تعمیر: فقط در لحظهٔ جایگزینی فایل‌ها و مهاجرت (عملیات «apply») پاسخ ۵۰۳ با Retry-After می‌دهد؛ صفحهٔ وضعیت به‌روزرسانی و /healthz آزادند."""
 from django.utils.translation import gettext
 import time
+from datetime import timedelta
 
+from django.db.models import Q
 from django.http import HttpResponse
+from django.utils import timezone
 
 _cache = {"at": float("-inf"), "on": False}
 TTL = 1.0  # seconds a process trusts its last answer; the test runner makes it long so query-counting tests are deterministic
@@ -17,7 +20,8 @@ def maintenance_active() -> bool:
         from .models import UpdateLock
 
         try:
-            _cache["on"] = UpdateLock.objects.filter(operation__startswith="apply").exists()
+            fresh = timezone.now() - timedelta(seconds=120)  # an executor refreshes its lock's heartbeat; a lock whose heartbeat stopped belongs to a dead process
+            _cache["on"] = UpdateLock.objects.filter(operation__startswith="apply").filter(Q(heartbeat__isnull=True) | Q(heartbeat__gte=fresh)).exists()
         except DatabaseError:
             _cache["on"] = False  # جدول نیست/دیتابیس در حال تعویض: مزاحم درخواست‌ها نشو
         _cache["at"] = now

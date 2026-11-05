@@ -189,7 +189,7 @@ class CronTests(TmpMixin, TestCase):
         run = CronRun.objects.get()
         self.assertTrue(run.ok)
         self.assertIsNotNone(run.finished_at)
-        self.assertEqual(set(run.summary), {"publish", "orders", "mail", "cleanup"})
+        self.assertEqual(set(run.summary), {"updates", "publish", "orders", "mail", "cleanup"})
         self.assertIn("finished", out)
 
     def test_publishes_a_due_scheduled_post(self):
@@ -838,3 +838,20 @@ class SettingsPagesTests(TestCase):
             r = self.client.post(reverse("core:site_health_test_email"), follow=True)
         self.assertContains(r, "handed to the mail server")
         self.assertEqual(r.redirect_chain[-1][0], reverse("core:site_health"))
+
+
+class CronStartsTheUpdateExecutorTests(TestCase):
+    def test_the_cron_run_reports_the_update_step_and_starts_the_executor_for_a_waiting_job(self):
+        from unittest import mock
+
+        from apps.updater import jobs
+        from apps.updater.models import UpdateJob
+
+        with override_settings(RAVIX_UPDATE_EXECUTOR="cron"):
+            UpdateJob.objects.create()
+            with mock.patch.object(jobs, "start_detached") as start:
+                call_command("ravix_cron", "--no-backup", "--no-keep-alive", stdout=io.StringIO())
+            start.assert_called_once()
+            from apps.core.models import CronRun
+
+            self.assertEqual(CronRun.objects.latest("pk").summary["updates"], "started")

@@ -49,6 +49,10 @@ HOSTING = True
 RAVIX_HOSTING = True
 RAVIX_DATA_DIR = DATA_DIR
 RAVIX_ENV_FILE = hosting.env_file()
+# safe update: ravix_cron starts the executor (every 5 minutes at most), the restart is tmp/restart.txt, the queue lives in the private data folder
+RAVIX_UPDATE_EXECUTOR = RAVIX_UPDATE_EXECUTOR or "cron"  # noqa: F405
+RAVIX_UPDATE_RESTART = RAVIX_UPDATE_RESTART or "touch"  # noqa: F405
+RAVIX_UPDATE_JOBS_DIR = Path(env("RAVIX_UPDATE_JOBS_DIR", str(DATA_DIR / "jobs")))
 RAVIX_INSTALL_KEY_MODE = True  # the installer asks for the one-time install key before showing anything
 
 # ---------------------------------------------------------------- URL prefix (site installed in a sub-folder such as example.com/site/)

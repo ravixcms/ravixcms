@@ -1131,3 +1131,47 @@ msgstr "ویرایش‌شده با دست (به‌روزرسانی آن را ب�
 #, python-format
 msgid "Your own file in a managed folder (an update will remove it): %(a1)s"
 msgstr "فایل شخصی شما در پوشهٔ مدیریت‌شده (به‌روزرسانی آن را حذف می‌کند): %(a1)s"
+
+msgid "Folder of .whl files to carry in the package (only for releases that change Python packages; shared hosting installs them offline)"
+msgstr "پوشهٔ فایل‌های .whl که در بسته می‌آید (فقط برای انتشارهایی که بسته‌های پایتون را عوض می‌کنند؛ هاست اشتراکی آن‌ها را آفلاین نصب می‌کند)"
+
+#, python-format
+msgid "The update was queued (job #%(a1)s); the executor starts it shortly."
+msgstr "به‌روزرسانی در صف قرار گرفت (کار #%(a1)s)؛ اجراکننده به‌زودی آن را شروع می‌کند."
+
+msgid "Nothing needed recovery."
+msgstr "چیزی برای بازیابی نبود."
+
+#, python-format
+msgid "Run #%(a1)s was put back to the previous version."
+msgstr "اجرای #%(a1)s به نسخهٔ قبلی برگردانده شد."
+
+msgid "Runs the waiting update jobs (and recovers an update that stopped half-way). Started by the systemd path unit or by ravix_cron."
+msgstr "کارهای به‌روزرسانیِ منتظر را اجرا می‌کند (و به‌روزرسانیِ نیمه‌کاره را بازیابی می‌کند). واحد path در systemd یا ravix_cron آن را شروع می‌کند."
+
+msgid "No update job was waiting."
+msgstr "هیچ کار به‌روزرسانی در انتظار نبود."
+
+#, python-format
+msgid "Update job #%(a1)s: %(a2)s"
+msgstr "کار به‌روزرسانی #%(a1)s: %(a2)s"
+
+msgid "The update jobs folder exists"
+msgstr "پوشهٔ کارهای به‌روزرسانی هست"
+
+#, python-format
+msgid "The update jobs folder (%(path)s) does not exist; run install.sh again"
+msgstr "پوشهٔ کارهای به‌روزرسانی (%(path)s) وجود ندارد؛ install.sh را دوباره اجرا کنید"
+
+msgid "The web service can queue an update"
+msgstr "سرویس وب می‌تواند به‌روزرسانی را در صف بگذارد"
+
+#, python-format
+msgid "The web service cannot write %(path)s, so the panel cannot queue an update; run install.sh again"
+msgstr "سرویس وب نمی‌تواند در %(path)s بنویسد؛ پس پنل نمی‌تواند به‌روزرسانی را در صف بگذارد؛ install.sh را دوباره اجرا کنید"
+
+msgid "The Python environment is a plain folder; run “sudo ./install.sh” once so that updates can switch it safely"
+msgstr "محیط پایتون یک پوشهٔ ساده است؛ یک بار «sudo ./install.sh» را اجرا کنید تا به‌روزرسانی بتواند آن را امن عوض کند"
+
+msgid "The Python environment is versioned (an update switches it atomically)"
+msgstr "محیط پایتون نسخه‌دار است (به‌روزرسانی آن را اتمیک عوض می‌کند)"

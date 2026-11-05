@@ -1,0 +1,11 @@
+[Unit]
+Description=Ravix - look for an update that died half-way (and recover it)
+
+[Timer]
+# Cheap when nothing is wrong. If an update's process was killed, the next run finds its heartbeat gone and puts the site back from the verified backup.
+OnBootSec=3min
+OnUnitInactiveSec=2min
+AccuracySec=10s
+
+[Install]
+WantedBy=timers.target

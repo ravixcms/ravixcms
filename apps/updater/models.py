@@ -62,3 +62,42 @@ class UpdateLock(models.Model):
     operation = models.CharField(max_length=60)
     run = models.ForeignKey(UpdateRun, null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
     acquired_at = models.DateTimeField(auto_now_add=True)
+    heartbeat = models.DateTimeField(null=True, blank=True)  # an executor refreshes it while it works; a lock whose heartbeat stopped belongs to a dead process
+
+
+class UpdateJob(models.Model):
+    """A request to upgrade the core, handed to the *executor* (a separate process with its own rights). The web only creates and reads jobs;
+    the executor claims one, runs the update pipeline and records the outcome here. Nothing secret is stored."""
+
+    class Status(models.TextChoices):
+        QUEUED = "queued", gettext_lazy("Waiting to start")
+        RUNNING = "running", gettext_lazy("Running")
+        SUCCEEDED = "succeeded", gettext_lazy("Succeeded")
+        FAILED = "failed", gettext_lazy("Failed (no changes)")
+        ROLLED_BACK = "rolled_back", gettext_lazy("Failed and rolled back")
+        NEEDS_RECOVERY = "needs_recovery", gettext_lazy("Failed; manual recovery required")
+        CANCELLED = "cancelled", gettext_lazy("Cancelled")
+
+    ACTIVE = (Status.QUEUED, Status.RUNNING)
+
+    component = models.CharField(max_length=10, default="core")
+    target_version = models.CharField(max_length=40, blank=True)  # empty = the newest compatible version
+    status = models.CharField(max_length=15, choices=Status.choices, default=Status.QUEUED, db_index=True)
+    run = models.ForeignKey(UpdateRun, null=True, blank=True, on_delete=models.SET_NULL, related_name="jobs")
+    message = models.TextField(blank=True)
+    pid = models.IntegerField(null=True, blank=True)
+    requested_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+    requested_at = models.DateTimeField(auto_now_add=True)
+    started_at = models.DateTimeField(null=True, blank=True)
+    heartbeat = models.DateTimeField(null=True, blank=True)
+    finished_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["-requested_at", "-id"]
+
+    def __str__(self):
+        return f"job#{self.pk} {self.component} {self.target_version or 'latest'} ({self.status})"
+
+    @property
+    def is_active(self) -> bool:
+        return self.status in self.ACTIVE

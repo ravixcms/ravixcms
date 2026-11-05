@@ -14230,3 +14230,104 @@ msgstr "یادداشت‌های انتشار زبان ناشناخته یا مق
 #, python-format
 msgid "The update index is for the “%(got)s” channel but this site follows “%(want)s”."
 msgstr "این فهرست به‌روزرسانی برای کانال «%(got)s» است ولی این سایت کانال «%(want)s» را دنبال می‌کند."
+
+msgid "The update was interrupted; the site was put back to the previous version automatically."
+msgstr "به‌روزرسانی نیمه‌کاره ماند؛ سایت به‌طور خودکار به نسخهٔ قبلی برگردانده شد."
+
+msgid "The update process stopped unexpectedly (killed or the server lost power)."
+msgstr "فرایند به‌روزرسانی ناگهان متوقف شد (کشته شد یا برق سرور قطع شد)."
+
+msgid "Another update executor is already running."
+msgstr "اجراکنندهٔ دیگری از به‌روزرسانی هم‌اکنون در حال کار است."
+
+msgid "The update process stopped unexpectedly; recovery follows."
+msgstr "فرایند به‌روزرسانی ناگهان متوقف شد؛ بازیابی انجام می‌شود."
+
+msgid "This site has no update executor configured (RAVIX_UPDATE_EXECUTOR); apply the update with the command line instead."
+msgstr "برای این سایت اجراکنندهٔ به‌روزرسانی تنظیم نشده (RAVIX_UPDATE_EXECUTOR)؛ به‌روزرسانی را با خط فرمان انجام دهید."
+
+msgid "Another upgrade is in progress; try again after it finishes."
+msgstr "ارتقای دیگری در جریان است؛ پس از پایان آن دوباره تلاش کنید."
+
+msgid "Cancelled before it started."
+msgstr "پیش از شروع لغو شد."
+
+msgid "No health-check address is configured (RAVIX_HEALTHZ_URL)."
+msgstr "نشانی بررسی سلامت تنظیم نشده است (RAVIX_HEALTHZ_URL)."
+
+msgid "no answer"
+msgstr "پاسخی نیامد"
+
+msgid "The health-check address must be http(s)."
+msgstr "نشانی بررسی سلامت باید http یا https باشد."
+
+msgid "Waiting to start"
+msgstr "در انتظار شروع"
+
+msgid "The application did not restart in time."
+msgstr "برنامه به‌موقع دوباره راه‌اندازی نشد."
+
+msgid "Only an upgrade that stopped half-way (needing recovery) can be recovered."
+msgstr "فقط ارتقایی که نیمه‌کاره مانده (و نیازمند بازیابی است) را می‌توان بازیابی کرد."
+
+#, python-format
+msgid "Restoring the Python environment: %(sanitize)s"
+msgstr "بازگرداندن محیط پایتون: %(sanitize)s"
+
+msgid "After the recovery, the version on disk could not be verified."
+msgstr "پس از بازیابی، نسخهٔ روی دیسک تأیید نشد."
+
+#, python-format
+msgid "The new version did not answer /healthz after the restart (%(detail)s)."
+msgstr "نسخهٔ تازه پس از راه‌اندازی مجدد به /healthz پاسخ نداد (%(detail)s)."
+
+#, python-format
+msgid "After the rollback the application does not answer /healthz (%(detail)s)."
+msgstr "پس از بازگشت، برنامه به /healthz پاسخ نمی‌دهد (%(detail)s)."
+
+#, python-format
+msgid "After the recovery the application does not answer /healthz (%(detail)s)."
+msgstr "پس از بازیابی، برنامه به /healthz پاسخ نمی‌دهد (%(detail)s)."
+
+msgid "The upgrade was interrupted and the site was put back to the previous version automatically (files, database and Python environment)."
+msgstr "ارتقا نیمه‌کاره ماند و سایت به‌طور خودکار به نسخهٔ قبلی برگردانده شد (فایل‌ها، دیتابیس و محیط پایتون)."
+
+msgid "The previous Python environment could not be restored."
+msgstr "محیط پایتونِ قبلی بازگردانده نشد."
+
+msgid "The wheelhouse folder was not found."
+msgstr "پوشهٔ wheelhouse پیدا نشد."
+
+msgid "The wheelhouse folder has no .whl files."
+msgstr "پوشهٔ wheelhouse فایل .whl ندارد."
+
+msgid "The environment for this version is already the active one."
+msgstr "محیط این نسخه هم‌اکنون فعال است."
+
+msgid "Not enough disk space to build the new Python environment (about 600 MB are needed)."
+msgstr "فضای دیسک برای ساخت محیط پایتونِ تازه کافی نیست (حدود ۶۰۰ مگابایت لازم است)."
+
+msgid "pip did not finish in time."
+msgstr "pip به‌موقع تمام نشد."
+
+#, python-format
+msgid "The new Python environment could not be created: %(out)s"
+msgstr "محیط پایتونِ تازه ساخته نشد: %(out)s"
+
+#, python-format
+msgid "The new packages could not be installed (nothing was changed on your site): %(out)s"
+msgstr "بسته‌های تازه نصب نشدند (هیچ چیزی در سایت شما تغییر نکرد): %(out)s"
+
+#, python-format
+msgid "The new packages could not be installed: %(out)s"
+msgstr "بسته‌های تازه نصب نشدند: %(out)s"
+
+msgid "This release needs other Python packages, and this server is not yet in the layout that can switch them safely. Run “sudo ./install.sh” from the new release once (it keeps your data) and try again."
+msgstr "این نسخه به بسته‌های پایتون دیگری نیاز دارد و این سرور هنوز در چیدمانی نیست که بتواند آن‌ها را امن عوض کند. یک بار «sudo ./install.sh» را از نسخهٔ تازه اجرا کنید (داده‌هایتان می‌ماند) و دوباره تلاش کنید."
+
+msgid "This release needs newer Python packages that this hosting update does not carry. Nothing was changed. Install the full cPanel ZIP of the new version instead; your data stay as they are."
+msgstr "این نسخه به بسته‌های پایتونِ تازه‌تری نیاز دارد که این به‌روزرسانی هاست همراه ندارد. هیچ چیز تغییر نکرد. به‌جای آن، ZIP کامل cPanel نسخهٔ تازه را نصب کنید؛ داده‌هایتان می‌ماند."
+
+#, python-format
+msgid "The version %(version)s cannot be used as a folder name."
+msgstr "نسخهٔ %(version)s را نمی‌توان به‌عنوان نام پوشه به کار برد."

@@ -73,7 +73,18 @@ def _entry(data: bytes, version: str, filename: str, seed: str | None, kind: str
     return e
 
 
-def build_core(source_root: Path, out_dir: Path, *, seed: str | None, requires: dict | None = None, notes: str = "", migrations: bool = True, notes_i18n=None) -> dict:
+def _wheel_files(folder: Path) -> list[Path]:
+    """The wheels a shared-hosting package carries for changed dependencies (only ``*.whl`` files, no sub-folders)."""
+    folder = Path(folder)
+    if not folder.is_dir():
+        raise UpdateError(gettext("The wheelhouse folder was not found."))
+    wheels = sorted(p for p in folder.iterdir() if p.is_file() and p.suffix == ".whl")
+    if not wheels:
+        raise UpdateError(gettext("The wheelhouse folder has no .whl files."))
+    return wheels
+
+
+def build_core(source_root: Path, out_dir: Path, *, seed: str | None, requires: dict | None = None, notes: str = "", migrations: bool = True, notes_i18n=None, wheelhouse: Path | None = None) -> dict:
     source_root, out_dir = Path(source_root), Path(out_dir)
     version = versions.disk_version(source_root)
     if not version:
@@ -89,13 +100,20 @@ def build_core(source_root: Path, out_dir: Path, *, seed: str | None, requires: 
     release = {"schema": UPDATE_SCHEMA_VERSION, "component": "core", "version": version, "requires": req, "migrations": migrations,
                "manifest": manifest.MANIFEST_FILE, "deps_hashes": True}
     wanted = [e for e in package.CORE_ENTRIES if e != manifest.MANIFEST_FILE and (source_root / e).exists()]
-    listing = manifest.dumps(manifest.scan(source_root, wanted))
+    wheels = _wheel_files(wheelhouse) if wheelhouse else []
+    if wheels:
+        release["wheelhouse"] = True
+    listing_files = manifest.scan(source_root, wanted)
+    listing_files.update({f"{package.WHEELHOUSE}/{w.name}": manifest._sha256(w) for w in wheels})
+    listing = manifest.dumps(dict(sorted(listing_files.items())))
     out_dir.mkdir(parents=True, exist_ok=True)
     fname = f"ravix-core-{version}.zip"
     root_name = f"ravix-{version}"
     with zipfile.ZipFile(out_dir / fname, "w") as zf:
         for e in wanted:
             _add(zf, source_root / e, f"{root_name}/{e}")
+        for w in wheels:
+            _write(zf, w, f"{root_name}/{package.WHEELHOUSE}/{w.name}")
         minfo = zipfile.ZipInfo(f"{root_name}/{manifest.MANIFEST_FILE}", date_time=(2020, 1, 1, 0, 0, 0))
         minfo.external_attr = 0o644 << 16
         zf.writestr(minfo, listing)

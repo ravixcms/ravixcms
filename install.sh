@@ -14,9 +14,11 @@ IFS=$'\n\t'
 
 # ----------------------------------------------------------------- defaults and options
 APP_USER=ravix
+DEPLOY_USER=ravix-deploy   # the separate user that applies updates: it owns the code, the web user only reads it
 BASE=/srv/ravix
 APP_DIR=$BASE/app
-VENV=$BASE/venv
+VENV=$BASE/venv   # a symlink to venv-<version> (the layout that lets an update switch the Python environment atomically)
+JOBS_DIR=$BASE/jobs   # queue/ wakes the update executor; restart-request asks root's restart unit
 ENV_DIR=/etc/ravix
 ENV_FILE=$ENV_DIR/ravix.env
 BACKUP_DIR=/var/backups/ravix
@@ -126,8 +128,12 @@ ask() {  # ask VAR "question" [default]
 
 rand_hex() { openssl rand -hex "$1"; }
 as_app() { runuser -u "$APP_USER" -- "$@"; }
+as_deploy() { runuser -u "$DEPLOY_USER" -- "$@"; }
 envsh() {  # run a command as the service user with the variables of ravix.env
   runuser -u "$APP_USER" -- bash -c 'set -a; . "$1"; set +a; shift; cd '"$APP_DIR"'; exec "$@"' _ "$ENV_FILE" "$@"
+}
+envsh_deploy() {  # like envsh, but as the deploy user (the code, the virtualenvs and staticfiles are its)
+  runuser -u "$DEPLOY_USER" -- bash -c 'set -a; . "$1"; set +a; shift; cd '"$APP_DIR"'; exec "$@"' _ "$ENV_FILE" "$@"
 }
 env_get() { if [ -r "$ENV_FILE" ]; then grep -E "^$1=" "$ENV_FILE" | head -1 | cut -d= -f2- || true; fi; return 0; }
 env_set() {  # env_set KEY VALUE — adds the key only if missing; never changes an existing value
@@ -141,6 +147,17 @@ have_systemd() {
 }
 pkg_missing() { local p; for p in "$@"; do dpkg -s "$p" >/dev/null 2>&1 || echo "$p"; done; }
 
+# ----------------------------------------------------------------- helpers: the versioned virtualenv layout (tested by apps/core/tests/test_install_script_logic.py)
+venv_layout() { if [ -L "$1" ]; then echo link; elif [ -d "$1" ]; then echo dir; else echo none; fi; }   # venv_layout PATH → link | dir | none
+venv_version_ok() { [[ "$1" =~ ^[0-9A-Za-z][0-9A-Za-z._+-]*$ ]]; }   # a version that is safe to use in a folder name
+venv_activate() {  # venv_activate LINK NAME [STAMP]: LINK becomes a symlink to its sibling folder NAME. A plain folder at LINK is kept as LINK.legacy-STAMP
+  local link="$1" name="$2" stamp="${3:-}" dir
+  [ -n "$stamp" ] || stamp="$(date +%Y%m%d-%H%M%S)"
+  dir="$(dirname "$link")"
+  [ -x "$dir/$name/bin/python" ] || return 1
+  if [ -e "$link" ] && [ ! -L "$link" ]; then mv "$link" "$link.legacy-$stamp"; fi
+  ln -sfn "$name" "$link.new" && mv -T "$link.new" "$link"
+}
 # ----------------------------------------------------------------- helpers: HTTP/2 and the install token (tested by apps/core/tests/test_install_script_logic.py)
 nginx_version() { nginx -v 2>&1 | sed -n 's|.*nginx/\([0-9][0-9.]*\).*|\1|p'; }
 version_ge() { [ "$(printf '%s\n%s\n' "$2" "$1" | sort -V | head -1)" = "$2" ]; }   # version_ge A B → A >= B
@@ -294,7 +311,10 @@ ok "Python: %s (%s)" "$PYBIN" "$("$PYBIN" -V 2>&1 || echo '?')"
 
 # ----------------------------------------------------------------- 2. user and folders
 # Ownership model (deploy/*.service must match it; apps/core/tests/test_deploy_permissions.py checks both):
-#   code and plugins/  root:ravix 750   read-only for the service; the units therefore need SupplementaryGroups=ravix
+#   code               ravix-deploy:ravix 750   the update executor writes it; the web service only reads it (group ravix)
+#   plugins/           root:ravix 750   read-only for the service; the units therefore need SupplementaryGroups=ravix
+#   /srv/ravix, venv-* ravix-deploy:ravix   the executor builds virtualenvs there; the web user cannot repoint the symlink
+#   jobs/queue         ravix-deploy:ravix 2770   the web user drops a wake-up file; jobs/ itself is 2750
 #   media              ravix:www-data 2750   nginx (www-data) reads it
 #   cache folder       ravix:www-data 750
 #   /etc/ravix         root:ravix 750, ravix.env 640
@@ -304,12 +324,17 @@ else
   confirm "Create the system user “%s” (no login, home=%s)?" "$APP_USER" "$BASE" || die "The user is required."
   run adduser --system --group --home "$BASE" --shell /usr/sbin/nologin "$APP_USER"
 fi
+if id "$DEPLOY_USER" >/dev/null 2>&1; then ok "The user %s exists" "$DEPLOY_USER"
+else
+  confirm "Create the system user “%s” (applies updates; no login)?" "$DEPLOY_USER" || die "The user is required."
+  run adduser --system --ingroup "$APP_USER" --no-create-home --home /nonexistent --shell /usr/sbin/nologin "$DEPLOY_USER"
+fi
 if getent group "$APP_USER" | grep -qw www-data; then ok "www-data is a member of the group %s" "$APP_USER"
 else
   [ "$NGINX" = 1 ] && { confirm "Add www-data to the group %s (to read the socket/media)?" "$APP_USER" && run usermod -aG "$APP_USER" www-data; }
 fi
 CACHE_DIR=/var/cache/ravix   # file cache shared by the workers (systemd also creates it with CacheDirectory=)
-DIRS=(app media shop_private plugin_data plugins_installed plugin_backups themes_installed registry_packages update_work update_backups)
+DIRS=(app media shop_private plugin_data plugins_installed plugin_backups themes_installed registry_packages update_work update_backups jobs jobs/queue)
 need_dirs=0; for d in "${DIRS[@]}"; do [ -d "$BASE/$d" ] || need_dirs=1; done
 [ -d "$ENV_DIR" ] && [ -d "$BACKUP_DIR" ] && [ -d "$CACHE_DIR" ] || need_dirs=1
 if [ "$need_dirs" = 1 ]; then
@@ -319,9 +344,12 @@ if [ "$need_dirs" = 1 ]; then
 else ok "The folders exist"
 fi
 if [ "$DRY_RUN" = 0 ]; then
-  chown "$APP_USER:$APP_USER" "$BASE"; chmod 750 "$BASE"
+  chown "$DEPLOY_USER:$APP_USER" "$BASE"; chmod 750 "$BASE"
   chown "$APP_USER:www-data" "$BASE/media"; chmod 2750 "$BASE/media"
-  for d in shop_private plugin_data plugins_installed themes_installed registry_packages update_work update_backups; do chown "$APP_USER:$APP_USER" "$BASE/$d"; chmod 750 "$BASE/$d"; done
+  for d in shop_private plugin_data plugins_installed themes_installed registry_packages; do chown "$APP_USER:$APP_USER" "$BASE/$d"; chmod 750 "$BASE/$d"; done
+  for d in update_work update_backups; do chown "$DEPLOY_USER:$APP_USER" "$BASE/$d"; chmod 2750 "$BASE/$d"; done   # the executor writes; the web user may read
+  chown "$DEPLOY_USER:$APP_USER" "$JOBS_DIR"; chmod 2750 "$JOBS_DIR"
+  chown "$DEPLOY_USER:$APP_USER" "$JOBS_DIR/queue"; chmod 2770 "$JOBS_DIR/queue"
   chown "$APP_USER:$APP_USER" "$BASE/plugin_backups"; chmod 700 "$BASE/plugin_backups"
   chown "$APP_USER:$APP_USER" "$BACKUP_DIR"; chmod 700 "$BACKUP_DIR"
   if [ -n "$UPDATES_DIR" ]; then mkdir -p "$UPDATES_DIR"; chown "$APP_USER:www-data" "$UPDATES_DIR"; chmod 2750 "$UPDATES_DIR"; fi   # the release plugin writes here; nginx (www-data) reads
@@ -350,7 +378,8 @@ else
   else warn "The code was not updated"; fi
 fi
 if [ "$DRY_RUN" = 0 ] && [ -d "$APP_DIR" ]; then
-  chown -R "$APP_USER:$APP_USER" "$APP_DIR"
+  chown -R "$DEPLOY_USER:$APP_USER" "$APP_DIR"
+  chmod -R u+rwX,g+rX,g-w,o-rwx "$APP_DIR"
   # bundled plugins: read-only for the service user (as in docs/deployment.md). Because the folder is root:ravix 750, the units
   # MUST give the process the group ravix (SupplementaryGroups=ravix), or listing it fails with PermissionError.
   [ -d "$APP_DIR/plugins" ] && { chown -R root:"$APP_USER" "$APP_DIR/plugins"; chmod -R g-w,o-rwx "$APP_DIR/plugins"; }
@@ -362,17 +391,28 @@ CODE="$APP_DIR"; [ -d "$APP_DIR/deploy" ] || CODE="$SRC"   # in dry-run the code
 
 # ----------------------------------------------------------------- 4. virtualenv and dependencies
 step "virtualenv and dependencies"
-LOCK_SUM="$(sha256sum "$SRC/requirements.lock" | cut -c1-64)"
-if [ -x "$VENV/bin/python" ]; then ok "The virtualenv exists"
+RAVIX_VER="$(sed -n 's/^RAVIX_VERSION *= *"\([^"]*\)".*/\1/p' "$SRC/apps/core/version.py" | head -1)"
+venv_version_ok "$RAVIX_VER" || die "The version of the code could not be read from apps/core/version.py."
+LOCK_NAME=requirements.hashes.lock; [ -f "$SRC/$LOCK_NAME" ] || LOCK_NAME=requirements.lock
+LOCK_SUM="$(sha256sum "$SRC/$LOCK_NAME" | cut -c1-64)"
+PIP_ARGS=(--disable-pip-version-check --no-cache-dir -r "$APP_DIR/$LOCK_NAME")
+[ "$LOCK_NAME" = requirements.hashes.lock ] && PIP_ARGS=(--require-hashes "${PIP_ARGS[@]}")   # every wheel is checked against its SHA-256
+LAYOUT="$(venv_layout "$VENV")"
+CUR_SUM=""; [ -f "$VENV/.requirements.sha256" ] && CUR_SUM="$(cat "$VENV/.requirements.sha256")"
+NEW_VENV="$BASE/venv-$RAVIX_VER"
+if [ "$LAYOUT" = link ] && [ "$CUR_SUM" = "$LOCK_SUM" ]; then ok "The dependencies match the lock file (%s)" "$(readlink "$VENV")"
 else
-  confirm "Create the virtualenv in %s?" "$VENV" || die "The virtualenv is required."
-  run as_app "$PYBIN" -m venv "$VENV"
-fi
-if [ -f "$VENV/.requirements.sha256" ] && [ "$(cat "$VENV/.requirements.sha256")" = "$LOCK_SUM" ]; then ok "The dependencies match requirements.lock"
-else
-  confirm "Install the dependencies from requirements.lock with pip?" || die "The dependencies are required."
-  run as_app "$VENV/bin/pip" install --disable-pip-version-check -r "$APP_DIR/requirements.lock"
-  [ "$DRY_RUN" = 1 ] || echo "$LOCK_SUM" | as_app tee "$VENV/.requirements.sha256" >/dev/null
+  if [ "$LAYOUT" = dir ]; then t "  The virtualenv is a plain folder. It is moved to the versioned layout (venv-%s and a symlink); the old folder is kept as %s.legacy-… until you delete it." "$RAVIX_VER" "$VENV"; echo; fi
+  confirm "Build the virtualenv %s and install the pinned, hash-checked dependencies?" "$NEW_VENV" || die "The dependencies are required."
+  if [ -d "$NEW_VENV" ] && [ "$(readlink -f "$VENV" 2>/dev/null || true)" != "$(readlink -f "$NEW_VENV")" ]; then run rm -rf "$NEW_VENV"; fi   # a leftover of an interrupted run
+  [ -x "$NEW_VENV/bin/python" ] || run as_deploy "$PYBIN" -m venv "$NEW_VENV"
+  run as_deploy "$NEW_VENV/bin/pip" install "${PIP_ARGS[@]}"
+  [ "$DRY_RUN" = 1 ] || echo "$LOCK_SUM" | as_deploy tee "$NEW_VENV/.requirements.sha256" >/dev/null
+  if [ "$(readlink -f "$VENV" 2>/dev/null || true)" != "$(readlink -f "$NEW_VENV")" ]; then
+    # the new environment has to run the code that is on disk before the service is pointed at it (only when there is a settings file to check with)
+    if [ "$DRY_RUN" = 0 ] && [ "$LAYOUT" != none ] && [ -r "$ENV_FILE" ]; then envsh_deploy "$NEW_VENV/bin/python" manage.py check >/dev/null || die "The new virtualenv cannot run the code; the old one was left in place."; fi
+    run venv_activate "$VENV" "venv-$RAVIX_VER"
+  fi
 fi
 
 # ----------------------------------------------------------------- 5. PostgreSQL
@@ -432,6 +472,10 @@ env_set RAVIX_PLUGIN_BACKUP_DIR "$BASE/plugin_backups"
 env_set RAVIX_THEME_INSTALL_DIR "$BASE/themes_installed"
 env_set RAVIX_REGISTRY_STORAGE "$BASE/registry_packages"
 env_set RAVIX_UPDATE_WORK_DIR "$BASE/update_work"
+env_set RAVIX_VENV_LINK "$VENV"
+env_set RAVIX_UPDATE_JOBS_DIR "$JOBS_DIR"
+[ -d "$APP_DIR/update_backups" ] || env_set RAVIX_UPDATE_BACKUP_DIR "$BASE/update_backups"   # an older install keeps its backups where they are: their runs point there
+if have_systemd; then env_set RAVIX_UPDATE_EXECUTOR systemd; env_set RAVIX_UPDATE_RESTART systemd; fi
 # client IP: Gunicorn is on a unix socket and is trusted automatically; nothing is needed (RAVIX_TRUSTED_PROXIES is only for a proxy on TCP)
 [ "$SSL" = 0 ] && env_set DJANGO_SECURE_SSL_REDIRECT false
 [ "$DRY_RUN" = 1 ] || { chown root:"$APP_USER" "$ENV_FILE"; chmod 640 "$ENV_FILE"; }
@@ -443,8 +487,9 @@ if [ "$DRY_RUN" = 1 ]; then
   echo "  [dry-run] manage.py migrate --noinput && collectstatic --noinput"
 else
   if confirm "Run migrate and collectstatic?"; then
-    envsh "$VENV/bin/python" manage.py migrate --noinput
-    envsh "$VENV/bin/python" manage.py collectstatic --noinput >/dev/null
+    envsh_deploy "$VENV/bin/python" manage.py migrate --noinput
+    envsh_deploy "$VENV/bin/python" manage.py collectstatic --noinput >/dev/null
+    envsh_deploy "$VENV/bin/python" -m compileall -q "$APP_DIR/apps" "$APP_DIR/config" >/dev/null 2>&1 || true   # the service user cannot write byte-code into the code folder
     ok "migrate and collectstatic are done"
   fi
 fi
@@ -452,7 +497,7 @@ fi
 # ----------------------------------------------------------------- 8. systemd
 step "Services (systemd)"
 if have_systemd; then
-  UNITS=(ravix.service ravix-publish-scheduled.service ravix-publish-scheduled.timer ravix-backup.service ravix-backup.timer ravix-expire-orders.service ravix-expire-orders.timer)
+  UNITS=(ravix.service ravix-publish-scheduled.service ravix-publish-scheduled.timer ravix-backup.service ravix-backup.timer ravix-expire-orders.service ravix-expire-orders.timer ravix-update.service ravix-update.path ravix-update.timer ravix-restart.service ravix-restart.path)
   changed=0
   for u in "${UNITS[@]}"; do cmp -s "$CODE/deploy/$u" "/etc/systemd/system/$u" 2>/dev/null || changed=1; done
   if [ "$changed" = 1 ]; then
@@ -461,7 +506,7 @@ if have_systemd; then
     run systemctl daemon-reload
   else ok "The units are up to date"; fi
   confirm "Enable and start ravix.service and the timers?" && {
-    run systemctl enable --now ravix.service ravix-publish-scheduled.timer ravix-backup.timer
+    run systemctl enable --now ravix.service ravix-publish-scheduled.timer ravix-backup.timer ravix-update.path ravix-update.timer ravix-restart.path
     grep -qi '^RAVIX_SHOP_ENABLED=false' "$ENV_FILE" || run systemctl enable --now ravix-expire-orders.timer
     run systemctl restart ravix.service
   }

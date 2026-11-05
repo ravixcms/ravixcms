@@ -492,4 +492,12 @@ RAVIX_UPDATE_MAX_PACKAGE_BYTES = int(env("RAVIX_UPDATE_MAX_PACKAGE_BYTES", str(8
 RAVIX_UPDATE_LOCK_STALE_MINUTES = int(env("RAVIX_UPDATE_LOCK_STALE_MINUTES", "60"))
 RAVIX_UPDATES_PUBLISH_DIR = env("RAVIX_UPDATES_PUBLISH_DIR", "").strip()  # only on the publisher's site: the folder nginx serves at /updates/v1/ (install.sh --serve-updates); the release plugin writes signed files here
 RAVIX_UPDATE_CHANNEL = env("RAVIX_UPDATE_CHANNEL", "stable").strip().lower()  # stable (default) or another channel the publisher runs, e.g. beta (updates/v1/beta/)
+# --- who applies an update, how the app restarts and how success is confirmed (safe update, stage 2) ---
+RAVIX_VENV_LINK = env("RAVIX_VENV_LINK", "").strip()  # VPS: the symlink (e.g. /srv/ravix/venv) the service starts Gunicorn from; each update that changes dependencies builds venv-<version> next to it and switches the link
+RAVIX_UPDATE_EXECUTOR = env("RAVIX_UPDATE_EXECUTOR", "").strip().lower()  # systemd (a path unit starts the separate deploy user) | cron (ravix_cron starts it; shared hosting) | "" (no queue: only the command line applies)
+RAVIX_UPDATE_JOBS_DIR = Path(env("RAVIX_UPDATE_JOBS_DIR", str(BASE_DIR / "jobs")))  # queue/ (one empty file per queued job wakes the systemd path unit) and restart-request
+RAVIX_UPDATE_RESTART = env("RAVIX_UPDATE_RESTART", "").strip().lower()  # systemd (asks the root restart unit) | touch (tmp/restart.txt) | "" (the owner restarts)
+RAVIX_HEALTHZ_URL = env("RAVIX_HEALTHZ_URL", "").strip()  # where the executor checks /healthz after a restart; empty = the Gunicorn socket (systemd) or SITE_URL (hosting)
+RAVIX_HEALTH_TIMEOUT = int(env("RAVIX_HEALTH_TIMEOUT", "60"))  # seconds the new version has to answer /healthz before the update is rolled back
+RAVIX_UPDATE_HEARTBEAT_SECONDS = int(env("RAVIX_UPDATE_HEARTBEAT_SECONDS", "10"))  # a running job proves it is alive this often; 0 = no background thread (tests)
 RAVIX_UPDATE_REQUIRE_SIGNED_INDEX = env_bool("RAVIX_UPDATE_REQUIRE_SIGNED_INDEX", False)  # فهرست هم باید امضا (index.json.sig) داشته باشد

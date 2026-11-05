@@ -29,6 +29,8 @@ RELEASE_FILE = "release.json"
 CORE_ENTRIES = ("apps", "config", "static", "templates", "locale", "themes/default", "deploy", "docs", "scripts", "manage.py", "requirements.txt",
                 "requirements-optional.txt", "requirements-cpanel.txt", "requirements.lock", "requirements.hashes.lock", "passenger_wsgi.py", "README.md", ".env.example",
                 "manifest.json")
+WHEELHOUSE = "wheelhouse"  # shared-hosting packages only: the wheels of the changed dependencies; installed before the swap, never copied into the site
+PACKAGE_ENTRIES = (*CORE_ENTRIES, WHEELHOUSE)
 REQUIRED_CORE = ("manage.py", "apps/core/version.py", "config", "requirements.txt")
 THEME_EXTENSIONS = {"html", "css", "js", "json", "png", "jpg", "jpeg", "gif", "webp", "svg", "woff", "woff2", "ttf", "ico", "txt", "md", "map"}
 FORBIDDEN_NAME = re.compile(r"(^|/)(\.env(\..+)?|.*\.sqlite3?|.*\.pem|.*\.key|id_rsa.*|\.git|\.venv|__pycache__|.*\.pyc|.*\.pyo)$")
@@ -153,7 +155,7 @@ def validate_core(root: Path, expected_version: str) -> Extracted:
     if rel.get("version") != expected_version:
         raise UpdateError((gettext("The version inside the package (%(rel)s) does not match the requested version (%(expected_version)s).") % {"rel": rel.get('version'), "expected_version": expected_version}))
     entries = sorted(p.name for p in root.iterdir() if p.name != RELEASE_FILE)
-    allowed_top = {e.split("/")[0] for e in CORE_ENTRIES}
+    allowed_top = {e.split("/")[0] for e in PACKAGE_ENTRIES}
     for name in entries:
         if name not in allowed_top:
             raise UpdateError((gettext("Path not allowed in core package: %(name)s") % {"name": name}))
@@ -169,7 +171,7 @@ def validate_core(root: Path, expected_version: str) -> Extracted:
         raise UpdateError((gettext("RAVIX_VERSION inside the package (%(inner)s) does not match the declared version (%(expected_version)s).") % {"inner": inner, "expected_version": expected_version}))
     files = _scan_secrets_and_syntax(root, python_ok=True)
     if rel.get("manifest"):  # releases from 0.10.0 on: every file must match the manifest, and the dependency locks must agree with each other
-        manifest.verify_extracted(root, CORE_ENTRIES)
+        manifest.verify_extracted(root, PACKAGE_ENTRIES)
     if rel.get("deps_hashes"):
         try:
             found = deps.problems((root / "requirements.lock").read_text(encoding="utf-8"), (root / "requirements.hashes.lock").read_text(encoding="utf-8"))

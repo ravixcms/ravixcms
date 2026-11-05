@@ -14394,3 +14394,104 @@ msgstr "Sürüm notlarında bilinmeyen bir dil ya da metin olmayan bir değer va
 #, python-format
 msgid "The update index is for the “%(got)s” channel but this site follows “%(want)s”."
 msgstr "Güncelleme dizini “%(got)s” kanalına ait ama bu site “%(want)s” kanalını izliyor."
+
+msgid "The update was interrupted; the site was put back to the previous version automatically."
+msgstr "Güncelleme yarıda kaldı; site otomatik olarak önceki sürüme döndürüldü."
+
+msgid "The update process stopped unexpectedly (killed or the server lost power)."
+msgstr "Güncelleme işlemi beklenmedik şekilde durdu (sonlandırıldı veya sunucunun gücü kesildi)."
+
+msgid "Another update executor is already running."
+msgstr "Başka bir güncelleme yürütücüsü zaten çalışıyor."
+
+msgid "The update process stopped unexpectedly; recovery follows."
+msgstr "Güncelleme işlemi beklenmedik şekilde durdu; kurtarma yapılacak."
+
+msgid "This site has no update executor configured (RAVIX_UPDATE_EXECUTOR); apply the update with the command line instead."
+msgstr "Bu site için güncelleme yürütücüsü ayarlanmamış (RAVIX_UPDATE_EXECUTOR); güncellemeyi komut satırından uygulayın."
+
+msgid "Another upgrade is in progress; try again after it finishes."
+msgstr "Başka bir yükseltme sürüyor; bitince tekrar deneyin."
+
+msgid "Cancelled before it started."
+msgstr "Başlamadan iptal edildi."
+
+msgid "No health-check address is configured (RAVIX_HEALTHZ_URL)."
+msgstr "Sağlık denetimi adresi ayarlanmamış (RAVIX_HEALTHZ_URL)."
+
+msgid "no answer"
+msgstr "yanıt yok"
+
+msgid "The health-check address must be http(s)."
+msgstr "Sağlık denetimi adresi http(s) olmalıdır."
+
+msgid "Waiting to start"
+msgstr "Başlamayı bekliyor"
+
+msgid "The application did not restart in time."
+msgstr "Uygulama zamanında yeniden başlamadı."
+
+msgid "Only an upgrade that stopped half-way (needing recovery) can be recovered."
+msgstr "Yalnızca yarıda kalan (kurtarma gerektiren) bir yükseltme kurtarılabilir."
+
+#, python-format
+msgid "Restoring the Python environment: %(sanitize)s"
+msgstr "Python ortamının geri yüklenmesi: %(sanitize)s"
+
+msgid "After the recovery, the version on disk could not be verified."
+msgstr "Kurtarmadan sonra diskteki sürüm doğrulanamadı."
+
+#, python-format
+msgid "The new version did not answer /healthz after the restart (%(detail)s)."
+msgstr "Yeni sürüm yeniden başlatmadan sonra /healthz isteğine yanıt vermedi (%(detail)s)."
+
+#, python-format
+msgid "After the rollback the application does not answer /healthz (%(detail)s)."
+msgstr "Geri almadan sonra uygulama /healthz isteğine yanıt vermiyor (%(detail)s)."
+
+#, python-format
+msgid "After the recovery the application does not answer /healthz (%(detail)s)."
+msgstr "Kurtarmadan sonra uygulama /healthz isteğine yanıt vermiyor (%(detail)s)."
+
+msgid "The upgrade was interrupted and the site was put back to the previous version automatically (files, database and Python environment)."
+msgstr "Yükseltme yarıda kaldı ve site otomatik olarak önceki sürüme döndürüldü (dosyalar, veritabanı ve Python ortamı)."
+
+msgid "The previous Python environment could not be restored."
+msgstr "Önceki Python ortamı geri yüklenemedi."
+
+msgid "The wheelhouse folder was not found."
+msgstr "wheelhouse klasörü bulunamadı."
+
+msgid "The wheelhouse folder has no .whl files."
+msgstr "wheelhouse klasöründe .whl dosyası yok."
+
+msgid "The environment for this version is already the active one."
+msgstr "Bu sürümün ortamı zaten etkin olan."
+
+msgid "Not enough disk space to build the new Python environment (about 600 MB are needed)."
+msgstr "Yeni Python ortamını oluşturmak için yeterli disk alanı yok (yaklaşık 600 MB gerekir)."
+
+msgid "pip did not finish in time."
+msgstr "pip zamanında bitmedi."
+
+#, python-format
+msgid "The new Python environment could not be created: %(out)s"
+msgstr "Yeni Python ortamı oluşturulamadı: %(out)s"
+
+#, python-format
+msgid "The new packages could not be installed (nothing was changed on your site): %(out)s"
+msgstr "Yeni paketler yüklenemedi (sitenizde hiçbir şey değişmedi): %(out)s"
+
+#, python-format
+msgid "The new packages could not be installed: %(out)s"
+msgstr "Yeni paketler yüklenemedi: %(out)s"
+
+msgid "This release needs other Python packages, and this server is not yet in the layout that can switch them safely. Run “sudo ./install.sh” from the new release once (it keeps your data) and try again."
+msgstr "Bu sürüm başka Python paketlerine ihtiyaç duyuyor ve bu sunucu onları güvenle değiştirebilecek düzende değil. Yeni sürümden bir kez “sudo ./install.sh” çalıştırın (verileriniz korunur) ve tekrar deneyin."
+
+msgid "This release needs newer Python packages that this hosting update does not carry. Nothing was changed. Install the full cPanel ZIP of the new version instead; your data stay as they are."
+msgstr "Bu sürüm, bu barındırma güncellemesinin taşımadığı daha yeni Python paketlerine ihtiyaç duyuyor. Hiçbir şey değiştirilmedi. Bunun yerine yeni sürümün tam cPanel ZIP dosyasını yükleyin; verileriniz olduğu gibi kalır."
+
+#, python-format
+msgid "The version %(version)s cannot be used as a folder name."
+msgstr "%(version)s sürümü klasör adı olarak kullanılamaz."

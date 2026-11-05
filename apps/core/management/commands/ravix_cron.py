@@ -79,7 +79,7 @@ class Command(BaseCommand):
         started = time.monotonic()
         run = CronRun.objects.create(started_at=timezone.now(), ok=True, summary={})
         try:
-            jobs = [("publish", self.publish), ("orders", self.orders), ("mail", self.mail), ("cleanup", self.cleanup)]
+            jobs = [("updates", self.updates), ("publish", self.publish), ("orders", self.orders), ("mail", self.mail), ("cleanup", self.cleanup)]
             if not options["no_backup"]:
                 jobs.append(("backup", self.backup))
             if not options["no_keep_alive"]:
@@ -100,6 +100,11 @@ class Command(BaseCommand):
         self.stdout.write(cli_gettext("Scheduled jobs finished: %(summary)s") % {"summary": ", ".join(f"{k}={v}" for k, v in run.summary.items())})
 
     # ---------------------------------------------------------------- jobs
+    def updates(self):
+        from apps.updater import jobs
+
+        return jobs.cron_tick()
+
     def publish(self):
         call_command("publish_scheduled", verbosity=0)
 

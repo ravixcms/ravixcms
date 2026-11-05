@@ -1,0 +1,9 @@
+[Unit]
+Description=Ravix - the update executor asks for a restart of the web service
+
+[Path]
+PathExists=/srv/ravix/jobs/restart-request
+Unit=ravix-restart.service
+
+[Install]
+WantedBy=multi-user.target

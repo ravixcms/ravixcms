@@ -13818,3 +13818,104 @@ msgstr "发布说明中有未知语言或非文本的值：%(code)s"
 #, python-format
 msgid "The update index is for the “%(got)s” channel but this site follows “%(want)s”."
 msgstr "该更新索引属于“%(got)s”渠道，但本站点使用的是“%(want)s”渠道。"
+
+msgid "The update was interrupted; the site was put back to the previous version automatically."
+msgstr "更新被中断；站点已自动恢复到之前的版本。"
+
+msgid "The update process stopped unexpectedly (killed or the server lost power)."
+msgstr "更新进程意外停止（被终止或服务器断电）。"
+
+msgid "Another update executor is already running."
+msgstr "另一个更新执行器已在运行。"
+
+msgid "The update process stopped unexpectedly; recovery follows."
+msgstr "更新进程意外停止；接下来将进行恢复。"
+
+msgid "This site has no update executor configured (RAVIX_UPDATE_EXECUTOR); apply the update with the command line instead."
+msgstr "此站点未配置更新执行器（RAVIX_UPDATE_EXECUTOR）；请改用命令行应用更新。"
+
+msgid "Another upgrade is in progress; try again after it finishes."
+msgstr "另一个升级正在进行；请在其完成后重试。"
+
+msgid "Cancelled before it started."
+msgstr "在开始前已取消。"
+
+msgid "No health-check address is configured (RAVIX_HEALTHZ_URL)."
+msgstr "未配置健康检查地址（RAVIX_HEALTHZ_URL）。"
+
+msgid "no answer"
+msgstr "无响应"
+
+msgid "The health-check address must be http(s)."
+msgstr "健康检查地址必须是 http(s)。"
+
+msgid "Waiting to start"
+msgstr "等待开始"
+
+msgid "The application did not restart in time."
+msgstr "应用未能及时重启。"
+
+msgid "Only an upgrade that stopped half-way (needing recovery) can be recovered."
+msgstr "只有中途停止（需要恢复）的升级才能被恢复。"
+
+#, python-format
+msgid "Restoring the Python environment: %(sanitize)s"
+msgstr "恢复 Python 环境：%(sanitize)s"
+
+msgid "After the recovery, the version on disk could not be verified."
+msgstr "恢复后无法验证磁盘上的版本。"
+
+#, python-format
+msgid "The new version did not answer /healthz after the restart (%(detail)s)."
+msgstr "重启后新版本未响应 /healthz（%(detail)s）。"
+
+#, python-format
+msgid "After the rollback the application does not answer /healthz (%(detail)s)."
+msgstr "回滚后应用未响应 /healthz（%(detail)s）。"
+
+#, python-format
+msgid "After the recovery the application does not answer /healthz (%(detail)s)."
+msgstr "恢复后应用未响应 /healthz（%(detail)s）。"
+
+msgid "The upgrade was interrupted and the site was put back to the previous version automatically (files, database and Python environment)."
+msgstr "升级被中断，站点已自动恢复到之前的版本（文件、数据库和 Python 环境）。"
+
+msgid "The previous Python environment could not be restored."
+msgstr "无法恢复之前的 Python 环境。"
+
+msgid "The wheelhouse folder was not found."
+msgstr "未找到 wheelhouse 文件夹。"
+
+msgid "The wheelhouse folder has no .whl files."
+msgstr "wheelhouse 文件夹中没有 .whl 文件。"
+
+msgid "The environment for this version is already the active one."
+msgstr "此版本的环境已是当前活动环境。"
+
+msgid "Not enough disk space to build the new Python environment (about 600 MB are needed)."
+msgstr "磁盘空间不足，无法创建新的 Python 环境（约需 600 MB）。"
+
+msgid "pip did not finish in time."
+msgstr "pip 未能及时完成。"
+
+#, python-format
+msgid "The new Python environment could not be created: %(out)s"
+msgstr "无法创建新的 Python 环境：%(out)s"
+
+#, python-format
+msgid "The new packages could not be installed (nothing was changed on your site): %(out)s"
+msgstr "无法安装新软件包（您的站点未做任何更改）：%(out)s"
+
+#, python-format
+msgid "The new packages could not be installed: %(out)s"
+msgstr "无法安装新软件包：%(out)s"
+
+msgid "This release needs other Python packages, and this server is not yet in the layout that can switch them safely. Run “sudo ./install.sh” from the new release once (it keeps your data) and try again."
+msgstr "此版本需要其他 Python 软件包，而此服务器尚未采用可安全切换它们的布局。请从新版本运行一次“sudo ./install.sh”（会保留您的数据）后重试。"
+
+msgid "This release needs newer Python packages that this hosting update does not carry. Nothing was changed. Install the full cPanel ZIP of the new version instead; your data stay as they are."
+msgstr "此版本需要更新的 Python 软件包，而这个主机更新包并未携带。未做任何更改。请改为安装新版本的完整 cPanel ZIP；您的数据保持不变。"
+
+#, python-format
+msgid "The version %(version)s cannot be used as a folder name."
+msgstr "版本 %(version)s 不能用作文件夹名称。"
