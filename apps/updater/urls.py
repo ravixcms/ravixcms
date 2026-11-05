@@ -11,4 +11,8 @@ urlpatterns = [
     path("updates/run/<int:pk>/rollback/", views.RollbackView.as_view(), name="rollback"),
     path("updates/upload/", views.UploadView.as_view(), name="upload"),
     path("updates/apply/<slug:component>/", views.ApplyView.as_view(), name="apply"),
+    path("updates/queue/", views.QueueView.as_view(), name="queue"),
+    path("updates/job/<int:pk>/", views.JobView.as_view(), name="job"),
+    path("updates/job/<int:pk>/status/", views.JobStatusView.as_view(), name="job_status"),
+    path("updates/job/<int:pk>/cancel/", views.JobCancelView.as_view(), name="job_cancel"),
 ]

@@ -14515,3 +14515,97 @@ msgstr "Этой версии нужны более новые пакеты Pyth
 #, python-format
 msgid "The version %(version)s cannot be used as a folder name."
 msgstr "Версию %(version)s нельзя использовать как имя папки."
+
+msgid "Downloading and verifying the package"
+msgstr "Загрузка и проверка пакета"
+
+msgid "Backing up files and database"
+msgstr "Резервное копирование файлов и базы данных"
+
+msgid "Replacing the files"
+msgstr "Замена файлов"
+
+msgid "Checking the new code and updating the database"
+msgstr "Проверка нового кода и обновление базы данных"
+
+msgid "Switching to the new version"
+msgstr "Переключение на новую версию"
+
+msgid "Restarting and checking that the site answers"
+msgstr "Перезапуск и проверка ответа сайта"
+
+msgid "Some files you changed or added inside the program folders would be replaced or removed. Tick the confirmation box to continue (a backup is made first)."
+msgstr "Некоторые файлы, которые вы изменили или добавили в папках программы, будут заменены или удалены. Отметьте флажок подтверждения, чтобы продолжить (сначала создаётся резервная копия)."
+
+#, python-format
+msgid "Queued an update to %(version)s"
+msgstr "Обновление до %(version)s поставлено в очередь"
+
+msgid "the latest version"
+msgstr "последняя версия"
+
+msgid "Waiting for the update service to start…"
+msgstr "Ожидание запуска службы обновления…"
+
+msgid "The site is restarting. This page keeps trying…"
+msgstr "Сайт перезапускается. Эта страница продолжает попытки…"
+
+msgid "Cancelled a queued update"
+msgstr "Отменено обновление из очереди"
+
+msgid "The queued update was cancelled."
+msgstr "Обновление из очереди отменено."
+
+msgid "Only an update that has not started yet can be cancelled."
+msgstr "Отменить можно только обновление, которое ещё не началось."
+
+msgid "Update progress"
+msgstr "Ход обновления"
+
+#, python-format
+msgid "Updating to <span class=\"ltr\">%(target)s</span>. You can leave this page; the update continues by itself."
+msgstr "Обновление до <span class=\"ltr\">%(target)s</span>. Можно закрыть эту страницу — обновление продолжится само."
+
+msgid "Back to updates"
+msgstr "Назад к обновлениям"
+
+msgid "Something went wrong; the previous version is being restored…"
+msgstr "Что-то пошло не так; восстанавливается предыдущая версия…"
+
+msgid "The update finished and the site is running the new version."
+msgstr "Обновление завершено, сайт работает на новой версии."
+
+msgid "The update did not succeed, so the previous version was restored. Your content is untouched."
+msgstr "Обновление не удалось, поэтому восстановлена предыдущая версия. Ваш контент не затронут."
+
+msgid "The update stopped before changing the site. Nothing was changed."
+msgstr "Обновление остановлено до изменения сайта. Ничего не изменено."
+
+msgid "The update needs manual recovery."
+msgstr "Обновление требует ручного восстановления."
+
+msgid "The update was cancelled."
+msgstr "Обновление отменено."
+
+msgid "An update is in progress."
+msgstr "Идёт обновление."
+
+msgid "Show progress"
+msgstr "Показать ход"
+
+msgid "Files you changed or added inside the program folders would be replaced or removed by this update (a backup is made first):"
+msgstr "Файлы, которые вы изменили или добавили в папках программы, будут заменены или удалены этим обновлением (сначала создаётся резервная копия):"
+
+msgid "I understand these files will be replaced or removed"
+msgstr "Я понимаю, что эти файлы будут заменены или удалены"
+
+#, python-format
+msgid "Update now to %(version)s"
+msgstr "Обновить сейчас до %(version)s"
+
+#, python-format
+msgid "A new version is available: <span class=\"ltr\">%(version)s</span>"
+msgstr "Доступна новая версия: <span class=\"ltr\">%(version)s</span>"
+
+msgid "See what changes and update"
+msgstr "Посмотреть изменения и обновить"

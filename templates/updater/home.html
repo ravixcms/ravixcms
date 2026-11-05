@@ -18,7 +18,15 @@
   <p>{% trans "Current version:" %} <strong class="ltr">{% blocktrans trimmed with running=v.core.running %}{{ running }}</strong> — plugin contract{% endblocktrans %} <span class="ltr">{{ v.contracts.plugin_api }}</span>{% trans ", theme contract" %} <span class="ltr">{{ v.contracts.theme_api }}</span>{% trans ", Python" %} <span class="ltr">{{ v.python }}</span></p>
   {% if plan and plan.latest %}
     <p>{% trans "New version:" %} <strong class="ltr">{{ plan.latest.version }}</strong> {% if plan.latest.released %}({{ plan.latest.released }}){% endif %}{% if plan.latest.migrations %} {% trans "— includes a database migration" %}{% endif %}</p>
-    {% if plan.latest.notes %}<p class="muted">{{ plan.latest.notes }}</p>{% endif %}
+    {% if notes %}<p class="muted">{{ notes }}</p>{% elif plan.latest.notes %}<p class="muted">{{ plan.latest.notes }}</p>{% endif %}
+    {% if job %}<div class="form-errors warn" role="status"><p>{% trans "An update is in progress." %} <a href="{% url 'updater:job' job.pk %}">{% trans "Show progress" %}</a></p></div>{% endif %}
+    {% if manual %}<div class="form-errors warn" role="alert"><p>{% trans "Files you changed or added inside the program folders would be replaced or removed by this update (a backup is made first):" %}</p><ul>{% for f in manual.modified %}<li class="ltr">{{ f }}</li>{% endfor %}{% for f in manual.added %}<li class="ltr">{{ f }}</li>{% endfor %}</ul></div>{% endif %}
+    {% if can_queue and plan.can_apply and not job %}
+      <form method="post" action="{% url 'updater:queue' %}">{% csrf_token %}
+        <input type="hidden" name="version" value="{{ plan.latest.version }}">
+        {% if manual %}<label class="check"><input type="checkbox" name="acknowledge" required> {% trans "I understand these files will be replaced or removed" %}</label>{% endif %}
+        <button class="btn" type="submit">{% blocktrans trimmed with version=plan.latest.version %}Update now to {{ version }}{% endblocktrans %}</button></form>
+    {% endif %}
     {% if plan.problems %}<div class="form-errors" role="alert"><p>{% trans "Compatibility blockers:" %}</p><ul>{% for p in plan.problems %}<li>{{ p }}</li>{% endfor %}</ul></div>{% endif %}
     {% if plan.warnings %}<div class="form-errors warn"><ul>{% for p in plan.warnings %}<li>{{ p }}</li>{% endfor %}</ul></div>{% endif %}
     {% if can_manage and web_apply and plan.can_apply %}

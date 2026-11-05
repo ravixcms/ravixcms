@@ -14682,3 +14682,97 @@ msgstr "Esta versión necesita paquetes de Python más recientes que esta actual
 #, python-format
 msgid "The version %(version)s cannot be used as a folder name."
 msgstr "La versión %(version)s no se puede usar como nombre de carpeta."
+
+msgid "Downloading and verifying the package"
+msgstr "Descargando y verificando el paquete"
+
+msgid "Backing up files and database"
+msgstr "Copia de seguridad de archivos y base de datos"
+
+msgid "Replacing the files"
+msgstr "Reemplazando los archivos"
+
+msgid "Checking the new code and updating the database"
+msgstr "Comprobando el código nuevo y actualizando la base de datos"
+
+msgid "Switching to the new version"
+msgstr "Cambiando a la nueva versión"
+
+msgid "Restarting and checking that the site answers"
+msgstr "Reiniciando y comprobando que el sitio responde"
+
+msgid "Some files you changed or added inside the program folders would be replaced or removed. Tick the confirmation box to continue (a backup is made first)."
+msgstr "Algunos archivos que modificó o añadió dentro de las carpetas del programa serían reemplazados o eliminados. Marque la casilla de confirmación para continuar (antes se hace una copia de seguridad)."
+
+#, python-format
+msgid "Queued an update to %(version)s"
+msgstr "Actualización a %(version)s puesta en cola"
+
+msgid "the latest version"
+msgstr "la última versión"
+
+msgid "Waiting for the update service to start…"
+msgstr "Esperando a que se inicie el servicio de actualización…"
+
+msgid "The site is restarting. This page keeps trying…"
+msgstr "El sitio se está reiniciando. Esta página sigue intentándolo…"
+
+msgid "Cancelled a queued update"
+msgstr "Se canceló una actualización en cola"
+
+msgid "The queued update was cancelled."
+msgstr "Se canceló la actualización en cola."
+
+msgid "Only an update that has not started yet can be cancelled."
+msgstr "Solo se puede cancelar una actualización que aún no ha empezado."
+
+msgid "Update progress"
+msgstr "Progreso de la actualización"
+
+#, python-format
+msgid "Updating to <span class=\"ltr\">%(target)s</span>. You can leave this page; the update continues by itself."
+msgstr "Actualizando a <span class=\"ltr\">%(target)s</span>. Puede salir de esta página; la actualización continúa sola."
+
+msgid "Back to updates"
+msgstr "Volver a las actualizaciones"
+
+msgid "Something went wrong; the previous version is being restored…"
+msgstr "Algo salió mal; se está restaurando la versión anterior…"
+
+msgid "The update finished and the site is running the new version."
+msgstr "La actualización terminó y el sitio funciona con la nueva versión."
+
+msgid "The update did not succeed, so the previous version was restored. Your content is untouched."
+msgstr "La actualización no tuvo éxito, así que se restauró la versión anterior. Su contenido está intacto."
+
+msgid "The update stopped before changing the site. Nothing was changed."
+msgstr "La actualización se detuvo antes de cambiar el sitio. No se cambió nada."
+
+msgid "The update needs manual recovery."
+msgstr "La actualización necesita una recuperación manual."
+
+msgid "The update was cancelled."
+msgstr "La actualización fue cancelada."
+
+msgid "An update is in progress."
+msgstr "Hay una actualización en curso."
+
+msgid "Show progress"
+msgstr "Ver el progreso"
+
+msgid "Files you changed or added inside the program folders would be replaced or removed by this update (a backup is made first):"
+msgstr "Los archivos que modificó o añadió dentro de las carpetas del programa serían reemplazados o eliminados por esta actualización (antes se hace una copia de seguridad):"
+
+msgid "I understand these files will be replaced or removed"
+msgstr "Entiendo que estos archivos serán reemplazados o eliminados"
+
+#, python-format
+msgid "Update now to %(version)s"
+msgstr "Actualizar ahora a %(version)s"
+
+#, python-format
+msgid "A new version is available: <span class=\"ltr\">%(version)s</span>"
+msgstr "Hay una nueva versión disponible: <span class=\"ltr\">%(version)s</span>"
+
+msgid "See what changes and update"
+msgstr "Ver los cambios y actualizar"

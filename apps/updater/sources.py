@@ -231,7 +231,69 @@ def cached_index(force: bool = False) -> dict:
         raise
     cache.delete(fail_key)
     cache.set(key, idx, 600)
+    remember(idx)
     return idx
+
+
+# ---- what the dashboard shows without ever touching the network: the last index any process fetched, kept in the shared (database) cache
+KNOWN_KEY, KNOWN_TTL, AUTO_EVERY = "updater:known-index", 7 * 24 * 3600, 6 * 3600
+
+
+def _shared_cache():
+    from django.core.cache import caches
+
+    try:
+        return caches["throttle_fallback"]
+    except Exception:  # noqa: BLE001 - a missing cache table must never break a page
+        return cache
+
+
+def remember(idx: dict) -> None:
+    try:
+        store = _shared_cache()
+        store.set(KNOWN_KEY, {"index": idx, "at": __import__("time").time()}, KNOWN_TTL)
+    except Exception:  # noqa: BLE001
+        logger.debug("remembering the update index failed", exc_info=True)
+
+
+def known() -> dict | None:
+    """``{"index", "at"}`` of the last successful check, or None. Never does network I/O."""
+    try:
+        return _shared_cache().get(KNOWN_KEY)
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def newer_known(current: str, language: str = "") -> dict | None:
+    """The newest core release in the last known index that is newer than ``current`` (version, released, notes in ``language``) — for the dashboard card."""
+    from . import versions
+
+    hit = known()
+    if not hit:
+        return None
+    newer = [e for e in hit["index"].get("core", []) if versions.newer(e["version"], current)]
+    if not newer:
+        return None
+    best = max(newer, key=lambda e: versions.parse(e["version"]) or (0, 0, 0))
+    return {"version": best["version"], "released": best.get("released", ""), "notes": notes_for(best, language), "migrations": bool(best.get("migrations"))}
+
+
+def auto_check() -> str:
+    """Called by the scheduled jobs: refresh the index at most every ``AUTO_EVERY`` seconds. Never raises."""
+    import time
+
+    if not getattr(settings, "RAVIX_UPDATE_AUTO_CHECK", True) or not has_source():
+        return "skipped"
+    hit = known()
+    if hit and time.time() - hit["at"] < AUTO_EVERY:
+        return "fresh"
+    try:
+        cached_index(force=True)
+    except UpdateError:
+        return "unavailable"
+    except Exception as exc:  # noqa: BLE001
+        return f"failed: {type(exc).__name__}"
+    return "checked"
 
 
 def sha256_hex(data: bytes) -> str:

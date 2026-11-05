@@ -14331,3 +14331,97 @@ msgstr "این نسخه به بسته‌های پایتونِ تازه‌تری 
 #, python-format
 msgid "The version %(version)s cannot be used as a folder name."
 msgstr "نسخهٔ %(version)s را نمی‌توان به‌عنوان نام پوشه به کار برد."
+
+msgid "Downloading and verifying the package"
+msgstr "دریافت و بررسی بسته"
+
+msgid "Backing up files and database"
+msgstr "پشتیبان‌گیری از فایل‌ها و پایگاه داده"
+
+msgid "Replacing the files"
+msgstr "جایگزینی فایل‌ها"
+
+msgid "Checking the new code and updating the database"
+msgstr "بررسی کد جدید و به‌روزرسانی پایگاه داده"
+
+msgid "Switching to the new version"
+msgstr "سوئیچ به نسخهٔ جدید"
+
+msgid "Restarting and checking that the site answers"
+msgstr "راه‌اندازی دوباره و بررسی پاسخ‌گویی سایت"
+
+msgid "Some files you changed or added inside the program folders would be replaced or removed. Tick the confirmation box to continue (a backup is made first)."
+msgstr "برخی فایل‌هایی که خودتان داخل پوشه‌های برنامه تغییر داده یا اضافه کرده‌اید جایگزین یا حذف می‌شوند. برای ادامه، کادر تأیید را علامت بزنید (پیش از آن پشتیبان گرفته می‌شود)."
+
+#, python-format
+msgid "Queued an update to %(version)s"
+msgstr "به‌روزرسانی به %(version)s در صف گذاشته شد"
+
+msgid "the latest version"
+msgstr "آخرین نسخه"
+
+msgid "Waiting for the update service to start…"
+msgstr "در انتظار شروع سرویس به‌روزرسانی…"
+
+msgid "The site is restarting. This page keeps trying…"
+msgstr "سایت در حال راه‌اندازی دوباره است. این صفحه به تلاش ادامه می‌دهد…"
+
+msgid "Cancelled a queued update"
+msgstr "یک به‌روزرسانی در صف لغو شد"
+
+msgid "The queued update was cancelled."
+msgstr "به‌روزرسانیِ صف‌شده لغو شد."
+
+msgid "Only an update that has not started yet can be cancelled."
+msgstr "فقط به‌روزرسانی‌ای که هنوز شروع نشده را می‌توان لغو کرد."
+
+msgid "Update progress"
+msgstr "پیشرفت به‌روزرسانی"
+
+#, python-format
+msgid "Updating to <span class=\"ltr\">%(target)s</span>. You can leave this page; the update continues by itself."
+msgstr "در حال به‌روزرسانی به <span class=\"ltr\">%(target)s</span>. می‌توانید این صفحه را ترک کنید؛ به‌روزرسانی خودش ادامه می‌یابد."
+
+msgid "Back to updates"
+msgstr "بازگشت به به‌روزرسانی‌ها"
+
+msgid "Something went wrong; the previous version is being restored…"
+msgstr "مشکلی پیش آمد؛ نسخهٔ قبلی در حال بازگردانی است…"
+
+msgid "The update finished and the site is running the new version."
+msgstr "به‌روزرسانی انجام شد و سایت با نسخهٔ جدید کار می‌کند."
+
+msgid "The update did not succeed, so the previous version was restored. Your content is untouched."
+msgstr "به‌روزرسانی موفق نشد و نسخهٔ قبلی بازگردانده شد. محتوای شما دست‌نخورده است."
+
+msgid "The update stopped before changing the site. Nothing was changed."
+msgstr "به‌روزرسانی پیش از تغییر سایت متوقف شد. هیچ چیز تغییر نکرد."
+
+msgid "The update needs manual recovery."
+msgstr "این به‌روزرسانی نیاز به بازیابی دستی دارد."
+
+msgid "The update was cancelled."
+msgstr "به‌روزرسانی لغو شد."
+
+msgid "An update is in progress."
+msgstr "یک به‌روزرسانی در جریان است."
+
+msgid "Show progress"
+msgstr "نمایش پیشرفت"
+
+msgid "Files you changed or added inside the program folders would be replaced or removed by this update (a backup is made first):"
+msgstr "فایل‌هایی که خودتان داخل پوشه‌های برنامه تغییر داده یا اضافه کرده‌اید با این به‌روزرسانی جایگزین یا حذف می‌شوند (پیش از آن پشتیبان گرفته می‌شود):"
+
+msgid "I understand these files will be replaced or removed"
+msgstr "می‌دانم این فایل‌ها جایگزین یا حذف می‌شوند"
+
+#, python-format
+msgid "Update now to %(version)s"
+msgstr "هم‌اکنون به %(version)s به‌روزرسانی کن"
+
+#, python-format
+msgid "A new version is available: <span class=\"ltr\">%(version)s</span>"
+msgstr "نسخهٔ جدیدی در دسترس است: <span class=\"ltr\">%(version)s</span>"
+
+msgid "See what changes and update"
+msgstr "ببینید چه چیزی تغییر می‌کند و به‌روزرسانی کنید"

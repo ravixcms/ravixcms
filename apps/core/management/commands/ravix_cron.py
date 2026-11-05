@@ -103,7 +103,9 @@ class Command(BaseCommand):
     def updates(self):
         from apps.updater import jobs
 
-        return jobs.cron_tick()
+        from apps.updater import sources
+
+        return f"{jobs.cron_tick()}, check={sources.auto_check()}"
 
     def publish(self):
         call_command("publish_scheduled", verbosity=0)

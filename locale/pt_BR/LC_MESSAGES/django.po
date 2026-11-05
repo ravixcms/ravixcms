@@ -14610,3 +14610,97 @@ msgstr "Esta versão precisa de pacotes Python mais novos que esta atualização
 #, python-format
 msgid "The version %(version)s cannot be used as a folder name."
 msgstr "A versão %(version)s não pode ser usada como nome de pasta."
+
+msgid "Downloading and verifying the package"
+msgstr "Baixando e verificando o pacote"
+
+msgid "Backing up files and database"
+msgstr "Backup dos arquivos e do banco de dados"
+
+msgid "Replacing the files"
+msgstr "Substituindo os arquivos"
+
+msgid "Checking the new code and updating the database"
+msgstr "Verificando o código novo e atualizando o banco de dados"
+
+msgid "Switching to the new version"
+msgstr "Mudando para a nova versão"
+
+msgid "Restarting and checking that the site answers"
+msgstr "Reiniciando e verificando se o site responde"
+
+msgid "Some files you changed or added inside the program folders would be replaced or removed. Tick the confirmation box to continue (a backup is made first)."
+msgstr "Alguns arquivos que você alterou ou adicionou nas pastas do programa seriam substituídos ou removidos. Marque a caixa de confirmação para continuar (um backup é feito antes)."
+
+#, python-format
+msgid "Queued an update to %(version)s"
+msgstr "Atualização para %(version)s colocada na fila"
+
+msgid "the latest version"
+msgstr "a versão mais recente"
+
+msgid "Waiting for the update service to start…"
+msgstr "Aguardando o início do serviço de atualização…"
+
+msgid "The site is restarting. This page keeps trying…"
+msgstr "O site está reiniciando. Esta página continua tentando…"
+
+msgid "Cancelled a queued update"
+msgstr "Uma atualização na fila foi cancelada"
+
+msgid "The queued update was cancelled."
+msgstr "A atualização na fila foi cancelada."
+
+msgid "Only an update that has not started yet can be cancelled."
+msgstr "Só é possível cancelar uma atualização que ainda não começou."
+
+msgid "Update progress"
+msgstr "Progresso da atualização"
+
+#, python-format
+msgid "Updating to <span class=\"ltr\">%(target)s</span>. You can leave this page; the update continues by itself."
+msgstr "Atualizando para <span class=\"ltr\">%(target)s</span>. Você pode sair desta página; a atualização continua sozinha."
+
+msgid "Back to updates"
+msgstr "Voltar às atualizações"
+
+msgid "Something went wrong; the previous version is being restored…"
+msgstr "Algo deu errado; a versão anterior está sendo restaurada…"
+
+msgid "The update finished and the site is running the new version."
+msgstr "A atualização terminou e o site está rodando a nova versão."
+
+msgid "The update did not succeed, so the previous version was restored. Your content is untouched."
+msgstr "A atualização não teve sucesso, então a versão anterior foi restaurada. Seu conteúdo está intacto."
+
+msgid "The update stopped before changing the site. Nothing was changed."
+msgstr "A atualização parou antes de alterar o site. Nada foi alterado."
+
+msgid "The update needs manual recovery."
+msgstr "A atualização precisa de recuperação manual."
+
+msgid "The update was cancelled."
+msgstr "A atualização foi cancelada."
+
+msgid "An update is in progress."
+msgstr "Uma atualização está em andamento."
+
+msgid "Show progress"
+msgstr "Ver o progresso"
+
+msgid "Files you changed or added inside the program folders would be replaced or removed by this update (a backup is made first):"
+msgstr "Os arquivos que você alterou ou adicionou nas pastas do programa seriam substituídos ou removidos por esta atualização (um backup é feito antes):"
+
+msgid "I understand these files will be replaced or removed"
+msgstr "Entendo que esses arquivos serão substituídos ou removidos"
+
+#, python-format
+msgid "Update now to %(version)s"
+msgstr "Atualizar agora para %(version)s"
+
+#, python-format
+msgid "A new version is available: <span class=\"ltr\">%(version)s</span>"
+msgstr "Há uma nova versão disponível: <span class=\"ltr\">%(version)s</span>"
+
+msgid "See what changes and update"
+msgstr "Ver o que muda e atualizar"

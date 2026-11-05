@@ -2,6 +2,11 @@
 قالب: [Keep a Changelog](https://keepachangelog.com/)، نسخه‌بندی [SemVer](https://semver.org/).
 
 ## [Unreleased]
+
+### Safe update — stage 3 (live progress and dashboard)
+- A live progress page for an update (`/panel/updates/job/<id>/`): six phases (download and verify, backup, replace files, database, switch, restart and health check), a percentage, and the outcome (done / rolled back / needs recovery). It polls `/panel/updates/job/<id>/status/`, which is exempt from maintenance mode, and shows "restarting" instead of an error while the site restarts. No inline script (CSP): `static/js/update-progress.js`.
+- "Update now" button on the Updates page (needs `updates.manage` and a configured executor): notes in the admin's language, the compatibility pre-check, and a warning that lists files you changed or added in the program folders, which must be acknowledged with a checkbox before the update is queued. A queued update can be cancelled before it starts.
+- Dashboard card "a new version is available" for users with `updates.view`, from the last known index (shared cache, no network on page load). The scheduled jobs refresh the index every ~6 hours (`RAVIX_UPDATE_AUTO_CHECK`, default on, off in tests).
 ### Added (به‌روزرسانی امن — مرحلهٔ ۲: اجراکنندهٔ جدا و محیط نسخه‌دار)
 - **`UpdateJob` و اجراکننده:** وب فقط درخواست می‌دهد؛ `manage.py ravix_update_exec` (کاربر جدا `ravix-deploy` با systemd path unit، یا `ravix_cron` روی هاست) آن را اجرا می‌کند. `ravix_update queue|jobs|recover`.
 - **محیط پایتون نسخه‌دار:** هنگام تغییر وابستگی‌ها `venv-<نسخه>` کنار قدیمی با `pip --require-hashes --only-binary=:all:` ساخته می‌شود؛ پس از `check` و `migrate` با کد تازه، symlink `venv` اتمیک جابه‌جا می‌شود؛ بازگشت همان جابه‌جایی است.

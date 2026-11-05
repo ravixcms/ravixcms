@@ -849,9 +849,11 @@ class CronStartsTheUpdateExecutorTests(TestCase):
 
         with override_settings(RAVIX_UPDATE_EXECUTOR="cron"):
             UpdateJob.objects.create()
-            with mock.patch.object(jobs, "start_detached") as start:
+            from apps.updater import sources
+
+            with mock.patch.object(jobs, "start_detached") as start, mock.patch.object(sources, "auto_check", return_value="skipped"):
                 call_command("ravix_cron", "--no-backup", "--no-keep-alive", stdout=io.StringIO())
             start.assert_called_once()
             from apps.core.models import CronRun
 
-            self.assertEqual(CronRun.objects.latest("pk").summary["updates"], "started")
+            self.assertEqual(CronRun.objects.latest("pk").summary["updates"], "started, check=skipped")  # the new-version check is the second half of this step; it is skipped without an official source

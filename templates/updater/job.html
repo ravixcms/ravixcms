@@ -1,0 +1,27 @@
+{% extends "layouts/panel.html" %}
+{% load i18n static %}
+{% block title %}{% trans "Update progress" %}{% endblock %}
+{% block page_title %}{% trans "Update progress" %}{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>{% trans "Update progress" %}</h1>
+  <p>{% blocktrans trimmed with target=job.target_version|default:"—" %}Updating to <span class="ltr">{{ target }}</span>. You can leave this page; the update continues by itself.{% endblocktrans %}</p></div>
+  <a class="btn btn-light" href="{% url 'updater:home' %}">{% trans "Back to updates" %}</a></div>
+<div class="card"><div class="card-body" id="update-progress" data-url="{% url 'updater:job_status' job.pk %}" data-state="{{ state.status }}"
+     data-restarting="{% trans 'The site is restarting. This page keeps trying…' %}" data-queued="{% trans 'Waiting for the update service to start…' %}" data-rolling-back="{% trans 'Something went wrong; the previous version is being restored…' %}">
+  <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ state.percent }}" style="background:var(--border,#ddd);border-radius:6px;height:10px;overflow:hidden">
+    <div data-bar style="height:100%;width:{{ state.percent }}%;background:var(--primary,#2563eb);transition:width .4s"></div></div>
+  <p class="muted"><span data-percent class="ltr">{{ state.percent }}%</span> <span data-note></span></p>
+  <ol class="update-phases" style="list-style:none;padding:0;margin:1rem 0">
+    {% for p in state.phases %}<li data-phase="{{ p.key }}" data-state="{{ p.state }}" style="padding:.35rem 0">
+      <span aria-hidden="true">{% if p.state == "done" %}✓{% elif p.state == "failed" %}✗{% elif p.state == "active" %}…{% else %}○{% endif %}</span> {{ p.label }}</li>{% endfor %}
+  </ol>
+  <p data-message class="muted" {% if not state.message %}hidden{% endif %}>{{ state.message }}</p>
+  <div data-outcome-succeeded {% if state.status != "succeeded" %}hidden{% endif %} class="form-errors" role="status"><p>{% trans "The update finished and the site is running the new version." %}</p></div>
+  <div data-outcome-rolled-back {% if state.status != "rolled_back" %}hidden{% endif %} class="form-errors warn" role="alert"><p>{% trans "The update did not succeed, so the previous version was restored. Your content is untouched." %}</p></div>
+  <div data-outcome-failed {% if state.status != "failed" %}hidden{% endif %} class="form-errors warn" role="alert"><p>{% trans "The update stopped before changing the site. Nothing was changed." %}</p></div>
+  <div data-outcome-needs-recovery {% if state.status != "needs_recovery" %}hidden{% endif %} class="form-errors" role="alert"><p>{% trans "The update needs manual recovery." %} {% if state.run_id %}<a href="{% url 'updater:run' state.run_id %}">{% trans "Recovery command" %}</a>{% endif %}</p></div>
+  <div data-outcome-cancelled {% if state.status != "cancelled" %}hidden{% endif %} class="form-errors warn" role="status"><p>{% trans "The update was cancelled." %}</p></div>
+  {% if job.status == "queued" and can_manage %}<form method="post" action="{% url 'updater:job_cancel' job.pk %}">{% csrf_token %}<button class="btn btn-light" type="submit">{% trans "Cancel" %}</button></form>{% endif %}
+</div></div>
+<script src="{% static 'js/update-progress.js' %}" defer></script>
+{% endblock %}

@@ -14495,3 +14495,97 @@ msgstr "Bu sürüm, bu barındırma güncellemesinin taşımadığı daha yeni P
 #, python-format
 msgid "The version %(version)s cannot be used as a folder name."
 msgstr "%(version)s sürümü klasör adı olarak kullanılamaz."
+
+msgid "Downloading and verifying the package"
+msgstr "Paket indiriliyor ve doğrulanıyor"
+
+msgid "Backing up files and database"
+msgstr "Dosyalar ve veritabanı yedekleniyor"
+
+msgid "Replacing the files"
+msgstr "Dosyalar değiştiriliyor"
+
+msgid "Checking the new code and updating the database"
+msgstr "Yeni kod denetleniyor ve veritabanı güncelleniyor"
+
+msgid "Switching to the new version"
+msgstr "Yeni sürüme geçiliyor"
+
+msgid "Restarting and checking that the site answers"
+msgstr "Yeniden başlatılıyor ve sitenin yanıt verdiği denetleniyor"
+
+msgid "Some files you changed or added inside the program folders would be replaced or removed. Tick the confirmation box to continue (a backup is made first)."
+msgstr "Program klasörlerinde değiştirdiğiniz veya eklediğiniz bazı dosyalar değiştirilecek veya silinecek. Devam etmek için onay kutusunu işaretleyin (önce yedek alınır)."
+
+#, python-format
+msgid "Queued an update to %(version)s"
+msgstr "%(version)s sürümüne güncelleme sıraya alındı"
+
+msgid "the latest version"
+msgstr "en son sürüm"
+
+msgid "Waiting for the update service to start…"
+msgstr "Güncelleme hizmetinin başlaması bekleniyor…"
+
+msgid "The site is restarting. This page keeps trying…"
+msgstr "Site yeniden başlatılıyor. Bu sayfa denemeye devam ediyor…"
+
+msgid "Cancelled a queued update"
+msgstr "Sıradaki bir güncelleme iptal edildi"
+
+msgid "The queued update was cancelled."
+msgstr "Sıradaki güncelleme iptal edildi."
+
+msgid "Only an update that has not started yet can be cancelled."
+msgstr "Yalnızca henüz başlamamış bir güncelleme iptal edilebilir."
+
+msgid "Update progress"
+msgstr "Güncelleme ilerlemesi"
+
+#, python-format
+msgid "Updating to <span class=\"ltr\">%(target)s</span>. You can leave this page; the update continues by itself."
+msgstr "<span class=\"ltr\">%(target)s</span> sürümüne güncelleniyor. Bu sayfadan ayrılabilirsiniz; güncelleme kendiliğinden sürer."
+
+msgid "Back to updates"
+msgstr "Güncellemelere dön"
+
+msgid "Something went wrong; the previous version is being restored…"
+msgstr "Bir sorun oluştu; önceki sürüm geri yükleniyor…"
+
+msgid "The update finished and the site is running the new version."
+msgstr "Güncelleme tamamlandı ve site yeni sürümle çalışıyor."
+
+msgid "The update did not succeed, so the previous version was restored. Your content is untouched."
+msgstr "Güncelleme başarısız oldu, bu yüzden önceki sürüm geri yüklendi. İçeriğiniz değişmedi."
+
+msgid "The update stopped before changing the site. Nothing was changed."
+msgstr "Güncelleme siteyi değiştirmeden durdu. Hiçbir şey değişmedi."
+
+msgid "The update needs manual recovery."
+msgstr "Güncelleme elle kurtarma gerektiriyor."
+
+msgid "The update was cancelled."
+msgstr "Güncelleme iptal edildi."
+
+msgid "An update is in progress."
+msgstr "Bir güncelleme sürüyor."
+
+msgid "Show progress"
+msgstr "İlerlemeyi göster"
+
+msgid "Files you changed or added inside the program folders would be replaced or removed by this update (a backup is made first):"
+msgstr "Program klasörlerinde değiştirdiğiniz veya eklediğiniz dosyalar bu güncellemeyle değiştirilecek veya silinecek (önce yedek alınır):"
+
+msgid "I understand these files will be replaced or removed"
+msgstr "Bu dosyaların değiştirileceğini veya silineceğini anlıyorum"
+
+#, python-format
+msgid "Update now to %(version)s"
+msgstr "Şimdi %(version)s sürümüne güncelle"
+
+#, python-format
+msgid "A new version is available: <span class=\"ltr\">%(version)s</span>"
+msgstr "Yeni bir sürüm var: <span class=\"ltr\">%(version)s</span>"
+
+msgid "See what changes and update"
+msgstr "Neler değişiyor, gör ve güncelle"

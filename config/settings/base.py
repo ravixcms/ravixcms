@@ -483,6 +483,7 @@ RAVIX_DOCS_URL = env("RAVIX_DOCS_URL", official.OFFICIAL_DOCS_URL).strip().rstri
 RAVIX_REPO_URL = env("RAVIX_REPO_URL", official.OFFICIAL_REPO_URL).strip().rstrip("/")
 RAVIX_UPDATE_URL = env("RAVIX_UPDATE_URL", official.OFFICIAL_UPDATE_URL).strip().rstrip("/")  # منبع رسمی (فقط HTTPS): <URL>/updates/v1/index.json
 RAVIX_UPDATE_DIR = env("RAVIX_UPDATE_DIR", "")  # منبع پوشه‌ای (آفلاین/آزمایشی): index.json + بسته‌ها؛ فقط تنظیم سرور
+RAVIX_UPDATE_AUTO_CHECK = env_bool("RAVIX_UPDATE_AUTO_CHECK", True) and "test" not in sys.argv  # off while running tests (no network); look for a new version every few hours (a small request to the official source); the dashboard shows what was found
 RAVIX_UPDATE_WEB_APPLY = env_bool("RAVIX_UPDATE_WEB_APPLY", False)  # false: اعمال ارتقا فقط با دستور مدیریتی (check/نمایش همیشه آزاد است)
 RAVIX_UPDATE_APP_ROOT = Path(env("RAVIX_UPDATE_APP_ROOT", str(BASE_DIR)))  # ریشهٔ کدی که ارتقا می‌یابد
 RAVIX_UPDATE_WORK_DIR = Path(env("RAVIX_UPDATE_WORK_DIR", str(BASE_DIR / "update_work")))  # دانلود/استخراج موقت (باید روی همان فایل‌سیستم کد باشد)

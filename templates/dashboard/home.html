@@ -30,6 +30,13 @@
 </section>
 {% endif %}
 
+{% if new_version %}
+<section class="card" aria-labelledby="newver-title"><div class="card-body">
+  <h2 id="newver-title">{% blocktrans trimmed with version=new_version.version %}A new version is available: <span class="ltr">{{ version }}</span>{% endblocktrans %}</h2>
+  {% if new_version.notes %}<p class="muted">{{ new_version.notes }}</p>{% endif %}
+  <a class="btn" href="{% url 'updater:home' %}">{% trans "See what changes and update" %}</a>
+</div></section>
+{% endif %}
 {% if onboarding %}
 <section class="card onboarding" aria-labelledby="onb-title">
   <div class="card-header">

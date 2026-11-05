@@ -33,6 +33,12 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         if user.has_cap("dashboard.stats"):
             ctx["stats"] = services.site_stats()
             ctx["latest_users"] = services.latest_users()
+        if user.has_cap("updates.view"):
+            from django.utils.translation import get_language
+
+            from apps.updater import sources, versions
+
+            ctx["new_version"] = sources.newer_known(versions.running_version(), get_language() or "")
         if user.has_cap("settings.manage"):
             site = getattr(self.request, "site_settings", None) or SiteSettings.load()  # همان خواندنِ middleware
             ctx["onboarding"] = onboarding.context(site)

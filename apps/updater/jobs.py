@@ -94,11 +94,10 @@ def cancel(job_id: int) -> bool:
 
 
 def progress(job: UpdateJob) -> dict:
-    """What the progress page shows: the job, its run's steps and the phase — read-only and cheap (no secrets are stored in them)."""
-    run = job.run
-    return {"id": job.pk, "status": job.status, "message": job.message, "target": job.target_version, "run_id": run.pk if run else None,
-            "phase": run.phase if run else "", "steps": list(run.steps) if run else [], "from": run.from_version if run else "", "to": run.to_version if run else "",
-            "finished": not job.is_active}
+    """What the progress page shows: the phases of the update and where it is — read-only and cheap (no secrets are stored in them)."""
+    from . import progress as progress_mod
+
+    return progress_mod.view(job)
 
 
 # ------------------------------------------------------------------ the executor

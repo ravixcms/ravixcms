@@ -632,7 +632,7 @@ class JobTests(UpdaterCase):
         self.assertIsNotNone(job.run)
         self.assertEqual(job.run.requested_by if hasattr(job.run, "requested_by") else self.admin, self.admin)
         self.assertEqual(self.disk(), "0.7.0")
-        self.assertEqual(jobs.progress(job)["steps"][-1]["name"], "health")
+        self.assertEqual(jobs.progress(job)["detail"], "health")
         self.assertFalse(list((self.jobs / "queue").iterdir()))  # an empty queue must not wake the path unit again
 
     def test_a_failed_update_is_recorded_as_rolled_back_not_lost(self):
@@ -707,7 +707,7 @@ class JobTests(UpdaterCase):
 
     def test_the_progress_view_of_a_job_has_no_secret_fields(self):
         job = jobs.enqueue(None, self.admin)
-        self.assertEqual(sorted(jobs.progress(job)), ["finished", "from", "id", "message", "phase", "run_id", "status", "steps", "target", "to"])
+        self.assertEqual(sorted(jobs.progress(job)), ["detail", "finished", "from", "id", "message", "ok", "percent", "phases", "rolling_back", "run_id", "status", "target", "to"])
 
     def test_the_command_runs_the_waiting_job(self):
         self.publish("0.7.0")

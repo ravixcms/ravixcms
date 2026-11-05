@@ -13919,3 +13919,97 @@ msgstr "此版本需要更新的 Python 软件包，而这个主机更新包并�
 #, python-format
 msgid "The version %(version)s cannot be used as a folder name."
 msgstr "版本 %(version)s 不能用作文件夹名称。"
+
+msgid "Downloading and verifying the package"
+msgstr "下载并验证更新包"
+
+msgid "Backing up files and database"
+msgstr "备份文件和数据库"
+
+msgid "Replacing the files"
+msgstr "替换文件"
+
+msgid "Checking the new code and updating the database"
+msgstr "检查新代码并更新数据库"
+
+msgid "Switching to the new version"
+msgstr "切换到新版本"
+
+msgid "Restarting and checking that the site answers"
+msgstr "重启并检查网站是否响应"
+
+msgid "Some files you changed or added inside the program folders would be replaced or removed. Tick the confirmation box to continue (a backup is made first)."
+msgstr "您在程序文件夹中修改或添加的部分文件将被替换或删除。请勾选确认框以继续（会先进行备份）。"
+
+#, python-format
+msgid "Queued an update to %(version)s"
+msgstr "已将更新到 %(version)s 加入队列"
+
+msgid "the latest version"
+msgstr "最新版本"
+
+msgid "Waiting for the update service to start…"
+msgstr "正在等待更新服务启动…"
+
+msgid "The site is restarting. This page keeps trying…"
+msgstr "网站正在重启。此页面会继续尝试…"
+
+msgid "Cancelled a queued update"
+msgstr "已取消一个排队中的更新"
+
+msgid "The queued update was cancelled."
+msgstr "排队中的更新已取消。"
+
+msgid "Only an update that has not started yet can be cancelled."
+msgstr "只有尚未开始的更新才能取消。"
+
+msgid "Update progress"
+msgstr "更新进度"
+
+#, python-format
+msgid "Updating to <span class=\"ltr\">%(target)s</span>. You can leave this page; the update continues by itself."
+msgstr "正在更新到 <span class=\"ltr\">%(target)s</span>。您可以离开此页面，更新会自动继续。"
+
+msgid "Back to updates"
+msgstr "返回更新页面"
+
+msgid "Something went wrong; the previous version is being restored…"
+msgstr "出现问题，正在恢复到之前的版本…"
+
+msgid "The update finished and the site is running the new version."
+msgstr "更新已完成，网站正在运行新版本。"
+
+msgid "The update did not succeed, so the previous version was restored. Your content is untouched."
+msgstr "更新未成功，已恢复到之前的版本。您的内容未受影响。"
+
+msgid "The update stopped before changing the site. Nothing was changed."
+msgstr "更新在修改网站之前就停止了，没有任何更改。"
+
+msgid "The update needs manual recovery."
+msgstr "此更新需要手动恢复。"
+
+msgid "The update was cancelled."
+msgstr "更新已取消。"
+
+msgid "An update is in progress."
+msgstr "有一个更新正在进行。"
+
+msgid "Show progress"
+msgstr "查看进度"
+
+msgid "Files you changed or added inside the program folders would be replaced or removed by this update (a backup is made first):"
+msgstr "您在程序文件夹中修改或添加的文件将被此更新替换或删除（会先进行备份）："
+
+msgid "I understand these files will be replaced or removed"
+msgstr "我了解这些文件将被替换或删除"
+
+#, python-format
+msgid "Update now to %(version)s"
+msgstr "立即更新到 %(version)s"
+
+#, python-format
+msgid "A new version is available: <span class=\"ltr\">%(version)s</span>"
+msgstr "有新版本可用：<span class=\"ltr\">%(version)s</span>"
+
+msgid "See what changes and update"
+msgstr "查看更改并更新"

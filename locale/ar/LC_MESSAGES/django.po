@@ -14280,3 +14280,97 @@ msgstr "يحتاج هذا الإصدار إلى حزم بايثون أحدث ل�
 #, python-format
 msgid "The version %(version)s cannot be used as a folder name."
 msgstr "لا يمكن استخدام الإصدار %(version)s كاسم مجلد."
+
+msgid "Downloading and verifying the package"
+msgstr "تنزيل الحزمة والتحقق منها"
+
+msgid "Backing up files and database"
+msgstr "نسخ احتياطي للملفات وقاعدة البيانات"
+
+msgid "Replacing the files"
+msgstr "استبدال الملفات"
+
+msgid "Checking the new code and updating the database"
+msgstr "فحص الشيفرة الجديدة وتحديث قاعدة البيانات"
+
+msgid "Switching to the new version"
+msgstr "التحويل إلى الإصدار الجديد"
+
+msgid "Restarting and checking that the site answers"
+msgstr "إعادة التشغيل والتأكد من استجابة الموقع"
+
+msgid "Some files you changed or added inside the program folders would be replaced or removed. Tick the confirmation box to continue (a backup is made first)."
+msgstr "ستُستبدل أو تُحذف بعض الملفات التي غيّرتها أو أضفتها داخل مجلدات البرنامج. ضع علامة في خانة التأكيد للمتابعة (يُؤخذ نسخ احتياطي أولاً)."
+
+#, python-format
+msgid "Queued an update to %(version)s"
+msgstr "وُضع التحديث إلى %(version)s في قائمة الانتظار"
+
+msgid "the latest version"
+msgstr "أحدث إصدار"
+
+msgid "Waiting for the update service to start…"
+msgstr "في انتظار بدء خدمة التحديث…"
+
+msgid "The site is restarting. This page keeps trying…"
+msgstr "الموقع قيد إعادة التشغيل. تواصل هذه الصفحة المحاولة…"
+
+msgid "Cancelled a queued update"
+msgstr "أُلغي تحديث في قائمة الانتظار"
+
+msgid "The queued update was cancelled."
+msgstr "أُلغي التحديث الموجود في قائمة الانتظار."
+
+msgid "Only an update that has not started yet can be cancelled."
+msgstr "لا يمكن إلغاء إلا التحديث الذي لم يبدأ بعد."
+
+msgid "Update progress"
+msgstr "تقدّم التحديث"
+
+#, python-format
+msgid "Updating to <span class=\"ltr\">%(target)s</span>. You can leave this page; the update continues by itself."
+msgstr "جارٍ التحديث إلى <span class=\"ltr\">%(target)s</span>. يمكنك مغادرة هذه الصفحة؛ يتابع التحديث تلقائيًا."
+
+msgid "Back to updates"
+msgstr "العودة إلى التحديثات"
+
+msgid "Something went wrong; the previous version is being restored…"
+msgstr "حدث خطأ؛ تتم استعادة الإصدار السابق…"
+
+msgid "The update finished and the site is running the new version."
+msgstr "اكتمل التحديث والموقع يعمل الآن بالإصدار الجديد."
+
+msgid "The update did not succeed, so the previous version was restored. Your content is untouched."
+msgstr "لم ينجح التحديث فاستُعيد الإصدار السابق. محتواك لم يُمسّ."
+
+msgid "The update stopped before changing the site. Nothing was changed."
+msgstr "توقف التحديث قبل أن يغيّر الموقع. لم يتغير شيء."
+
+msgid "The update needs manual recovery."
+msgstr "يحتاج هذا التحديث إلى استعادة يدوية."
+
+msgid "The update was cancelled."
+msgstr "أُلغي التحديث."
+
+msgid "An update is in progress."
+msgstr "هناك تحديث قيد التنفيذ."
+
+msgid "Show progress"
+msgstr "عرض التقدّم"
+
+msgid "Files you changed or added inside the program folders would be replaced or removed by this update (a backup is made first):"
+msgstr "ستُستبدل أو تُحذف بهذا التحديث الملفات التي غيّرتها أو أضفتها داخل مجلدات البرنامج (يُؤخذ نسخ احتياطي أولاً):"
+
+msgid "I understand these files will be replaced or removed"
+msgstr "أفهم أن هذه الملفات ستُستبدل أو تُحذف"
+
+#, python-format
+msgid "Update now to %(version)s"
+msgstr "حدّث الآن إلى %(version)s"
+
+#, python-format
+msgid "A new version is available: <span class=\"ltr\">%(version)s</span>"
+msgstr "يتوفر إصدار جديد: <span class=\"ltr\">%(version)s</span>"
+
+msgid "See what changes and update"
+msgstr "اطّلع على التغييرات ثم حدّث"

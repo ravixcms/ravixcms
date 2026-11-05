@@ -14802,3 +14802,97 @@ msgstr "Cette version a besoin de paquets Python plus récents que cette mise à
 #, python-format
 msgid "The version %(version)s cannot be used as a folder name."
 msgstr "La version %(version)s ne peut pas servir de nom de dossier."
+
+msgid "Downloading and verifying the package"
+msgstr "Téléchargement et vérification du paquet"
+
+msgid "Backing up files and database"
+msgstr "Sauvegarde des fichiers et de la base de données"
+
+msgid "Replacing the files"
+msgstr "Remplacement des fichiers"
+
+msgid "Checking the new code and updating the database"
+msgstr "Vérification du nouveau code et mise à jour de la base de données"
+
+msgid "Switching to the new version"
+msgstr "Passage à la nouvelle version"
+
+msgid "Restarting and checking that the site answers"
+msgstr "Redémarrage et vérification que le site répond"
+
+msgid "Some files you changed or added inside the program folders would be replaced or removed. Tick the confirmation box to continue (a backup is made first)."
+msgstr "Certains fichiers que vous avez modifiés ou ajoutés dans les dossiers du programme seraient remplacés ou supprimés. Cochez la case de confirmation pour continuer (une sauvegarde est faite avant)."
+
+#, python-format
+msgid "Queued an update to %(version)s"
+msgstr "Mise à jour vers %(version)s mise en file d’attente"
+
+msgid "the latest version"
+msgstr "la dernière version"
+
+msgid "Waiting for the update service to start…"
+msgstr "En attente du démarrage du service de mise à jour…"
+
+msgid "The site is restarting. This page keeps trying…"
+msgstr "Le site redémarre. Cette page continue d’essayer…"
+
+msgid "Cancelled a queued update"
+msgstr "Une mise à jour en file d’attente a été annulée"
+
+msgid "The queued update was cancelled."
+msgstr "La mise à jour en file d’attente a été annulée."
+
+msgid "Only an update that has not started yet can be cancelled."
+msgstr "Seule une mise à jour qui n’a pas encore commencé peut être annulée."
+
+msgid "Update progress"
+msgstr "Progression de la mise à jour"
+
+#, python-format
+msgid "Updating to <span class=\"ltr\">%(target)s</span>. You can leave this page; the update continues by itself."
+msgstr "Mise à jour vers <span class=\"ltr\">%(target)s</span>. Vous pouvez quitter cette page ; la mise à jour se poursuit seule."
+
+msgid "Back to updates"
+msgstr "Retour aux mises à jour"
+
+msgid "Something went wrong; the previous version is being restored…"
+msgstr "Un problème est survenu ; la version précédente est restaurée…"
+
+msgid "The update finished and the site is running the new version."
+msgstr "La mise à jour est terminée et le site fonctionne avec la nouvelle version."
+
+msgid "The update did not succeed, so the previous version was restored. Your content is untouched."
+msgstr "La mise à jour a échoué ; la version précédente a été restaurée. Votre contenu est intact."
+
+msgid "The update stopped before changing the site. Nothing was changed."
+msgstr "La mise à jour s’est arrêtée avant de modifier le site. Rien n’a été changé."
+
+msgid "The update needs manual recovery."
+msgstr "La mise à jour nécessite une récupération manuelle."
+
+msgid "The update was cancelled."
+msgstr "La mise à jour a été annulée."
+
+msgid "An update is in progress."
+msgstr "Une mise à jour est en cours."
+
+msgid "Show progress"
+msgstr "Voir la progression"
+
+msgid "Files you changed or added inside the program folders would be replaced or removed by this update (a backup is made first):"
+msgstr "Les fichiers que vous avez modifiés ou ajoutés dans les dossiers du programme seraient remplacés ou supprimés par cette mise à jour (une sauvegarde est faite avant) :"
+
+msgid "I understand these files will be replaced or removed"
+msgstr "Je comprends que ces fichiers seront remplacés ou supprimés"
+
+#, python-format
+msgid "Update now to %(version)s"
+msgstr "Mettre à jour maintenant vers %(version)s"
+
+#, python-format
+msgid "A new version is available: <span class=\"ltr\">%(version)s</span>"
+msgstr "Une nouvelle version est disponible : <span class=\"ltr\">%(version)s</span>"
+
+msgid "See what changes and update"
+msgstr "Voir les changements et mettre à jour"
