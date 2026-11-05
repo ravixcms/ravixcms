@@ -3,6 +3,11 @@
 
 ## [Unreleased]
 
+### Safe update — stage 4 (real-server migration test)
+- New CI job "مهاجرت سرور واقعی" (`scripts/e2e_server_migration.py`, ubuntu-24.04, real systemd): installs the release the production server runs with its own `install.sh`, seeds an owner-like site (content in four languages with translation groups, Studio, redirects, an MCP connection, SMTP settings, an external theme and plugin, the manual `/_plugin_files/` nginx block), runs the new `install.sh` over it and checks that nothing of the owner's changed (per-table snapshot, byte hashes, old `ravix.env` keys), then runs real updates through the real executor and the failure cases: broken migration, unhealthy `/healthz` after restart, full backup disk, tampered package, and `kill -9` of the executor (recovered by the timer).
+- `scripts/e2e_updater.py`: the test migration is always built after the newest real one (no fixed number).
+- `apps/updater/jobs.py`: no `chmod` on the wake-up file (bandit B103); the executor only needs the name.
+
 ### Safe update — stage 3 (live progress and dashboard)
 - A live progress page for an update (`/panel/updates/job/<id>/`): six phases (download and verify, backup, replace files, database, switch, restart and health check), a percentage, and the outcome (done / rolled back / needs recovery). It polls `/panel/updates/job/<id>/status/`, which is exempt from maintenance mode, and shows "restarting" instead of an error while the site restarts. No inline script (CSP): `static/js/update-progress.js`.
 - "Update now" button on the Updates page (needs `updates.manage` and a configured executor): notes in the admin's language, the compatibility pre-check, and a warning that lists files you changed or added in the program folders, which must be acknowledged with a checkbox before the update is queued. A queued update can be cancelled before it starts.

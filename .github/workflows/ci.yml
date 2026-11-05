@@ -211,6 +211,24 @@ jobs:
       - run: python scripts/e2e_backup_restore.py
       - run: python scripts/e2e_updater.py
 
+  server-migration:
+    name: "مهاجرت سرور واقعی (systemd، PostgreSQL، nginx؛ install.sh قدیمی ← جدید)"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      E2E_OLD_REF: 2c9c074   # the release the production server runs; its own install.sh installs it first
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }   # the old release is taken from the git history
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.13", cache: pip, cache-dependency-path: requirements.lock }
+      - run: pip install -r requirements.lock   # builds and signs the test releases
+      # The runner image ships PostgreSQL/Apache stopped or half-configured: start from what install.sh itself sets up.
+      - name: free port 80 and the default PostgreSQL cluster
+        run: sudo systemctl disable --now apache2 postgresql nginx || true
+      - name: old install.sh -> real data -> new install.sh -> real updates and failures (real systemd)
+        run: sudo -E env "PATH=$PATH" python scripts/e2e_server_migration.py --old-ref "$E2E_OLD_REF"
+
   e2e-studio:
     name: "E2E مرورگر (Ravix Studio، Chromium)"
     runs-on: ubuntu-24.04
