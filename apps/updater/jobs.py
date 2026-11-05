@@ -82,11 +82,7 @@ def _signal(job: UpdateJob) -> None:
     queue = queue_dir()
     queue.mkdir(parents=True, exist_ok=True)
     path = queue / str(job.pk)
-    path.write_text("", encoding="utf-8")
-    try:
-        os.chmod(path, 0o660)
-    except OSError:
-        pass
+    path.write_text("", encoding="utf-8")  # no chmod: the executor never reads it, it only needs the name, and deleting a file needs rights on the folder (2770, group ravix), not on the file
 
 
 def cancel(job_id: int) -> bool:
