@@ -14342,3 +14342,55 @@ msgstr "“%(value)s” tam bir https:// adresi değil."
 
 msgid "Enter at most %(n)d addresses."
 msgstr "En fazla %(n)d adres girin."
+
+#, python-format
+msgid "The hash lock has no entry for %(name)s."
+msgstr "Karma kilidinde %(name)s için kayıt yok."
+
+#, python-format
+msgid "The hash lock pins %(name)s to %(got)s but requirements.lock says %(want)s."
+msgstr "Karma kilidi %(name)s paketini %(got)s sürümüne sabitliyor ama requirements.lock %(want)s diyor."
+
+#, python-format
+msgid "The hash lock has no hashes for %(name)s."
+msgstr "Karma kilidinde %(name)s için hiç karma yok."
+
+#, python-format
+msgid "The hash lock has %(name)s but requirements.lock does not."
+msgstr "Karma kilidinde %(name)s var ama requirements.lock içinde yok."
+
+#, python-format
+msgid "A line in the dependency lock files is not valid: %(line)s"
+msgstr "Bağımlılık kilit dosyalarındaki bir satır geçersiz: %(line)s"
+
+msgid "manifest.json is missing from the package or invalid."
+msgstr "manifest.json pakette yok veya geçersiz."
+
+#, python-format
+msgid "The manifest lists a file that is not in the package: %(rel)s"
+msgstr "Manifest, pakette olmayan bir dosyayı listeliyor: %(rel)s"
+
+#, python-format
+msgid "The package has a file the manifest does not list: %(rel)s"
+msgstr "Pakette manifestin listelemediği bir dosya var: %(rel)s"
+
+#, python-format
+msgid "The file %(rel)s does not match the manifest."
+msgstr "%(rel)s dosyası manifestle uyuşmuyor."
+
+msgid "requirements.lock or requirements.hashes.lock is missing from the package."
+msgstr "requirements.lock veya requirements.hashes.lock pakette yok."
+
+msgid "requirements.lock and requirements.hashes.lock are both needed in the source (run scripts/make_hash_lock.py)."
+msgstr "Kaynakta hem requirements.lock hem requirements.hashes.lock gerekli (scripts/make_hash_lock.py çalıştırın)."
+
+msgid "The release notes per language must be an object such as {\"fa\": \"…\"}."
+msgstr "Dil başına sürüm notları {\"fa\": \"…\"} gibi bir nesne olmalı."
+
+#, python-format
+msgid "The release notes have an unknown language or a value that is not text: %(code)s"
+msgstr "Sürüm notlarında bilinmeyen bir dil ya da metin olmayan bir değer var: %(code)s"
+
+#, python-format
+msgid "The update index is for the “%(got)s” channel but this site follows “%(want)s”."
+msgstr "Güncelleme dizini “%(got)s” kanalına ait ama bu site “%(want)s” kanalını izliyor."

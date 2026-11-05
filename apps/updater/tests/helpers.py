@@ -26,6 +26,7 @@ def make_tree(base: Path, version: str, *, extra: dict | None = None, requiremen
         "apps/__init__.py": "", "apps/core/__init__.py": "",
         "apps/core/version.py": f'RAVIX_VERSION = "{version}"\nPLUGIN_API_VERSION = 1\n',
         "config/__init__.py": "", "config/settings.py": "X = 1\n", "requirements.txt": requirements,
+        "requirements.lock": "asgiref==3.12.1\n", "requirements.hashes.lock": "asgiref==3.12.1 \\\n    --hash=sha256:" + "ab" * 32 + "\n",
         "static/app.css": f"/* {version} */", "templates/base.html": f"<p>{version}</p>", "docs/readme.md": f"v{version}",
     }
     files.update(extra or {})

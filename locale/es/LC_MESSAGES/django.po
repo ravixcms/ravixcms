@@ -14529,3 +14529,55 @@ msgstr "«%(value)s» no es una dirección https:// completa."
 
 msgid "Enter at most %(n)d addresses."
 msgstr "Introduzca como máximo %(n)d direcciones."
+
+#, python-format
+msgid "The hash lock has no entry for %(name)s."
+msgstr "El archivo de hashes no tiene entrada para %(name)s."
+
+#, python-format
+msgid "The hash lock pins %(name)s to %(got)s but requirements.lock says %(want)s."
+msgstr "El archivo de hashes fija %(name)s en %(got)s pero requirements.lock indica %(want)s."
+
+#, python-format
+msgid "The hash lock has no hashes for %(name)s."
+msgstr "El archivo de hashes no tiene hashes para %(name)s."
+
+#, python-format
+msgid "The hash lock has %(name)s but requirements.lock does not."
+msgstr "El archivo de hashes tiene %(name)s pero requirements.lock no."
+
+#, python-format
+msgid "A line in the dependency lock files is not valid: %(line)s"
+msgstr "Una línea de los archivos de bloqueo de dependencias no es válida: %(line)s"
+
+msgid "manifest.json is missing from the package or invalid."
+msgstr "manifest.json falta en el paquete o no es válido."
+
+#, python-format
+msgid "The manifest lists a file that is not in the package: %(rel)s"
+msgstr "El manifiesto lista un archivo que no está en el paquete: %(rel)s"
+
+#, python-format
+msgid "The package has a file the manifest does not list: %(rel)s"
+msgstr "El paquete tiene un archivo que el manifiesto no lista: %(rel)s"
+
+#, python-format
+msgid "The file %(rel)s does not match the manifest."
+msgstr "El archivo %(rel)s no coincide con el manifiesto."
+
+msgid "requirements.lock or requirements.hashes.lock is missing from the package."
+msgstr "Falta requirements.lock o requirements.hashes.lock en el paquete."
+
+msgid "requirements.lock and requirements.hashes.lock are both needed in the source (run scripts/make_hash_lock.py)."
+msgstr "Se necesitan requirements.lock y requirements.hashes.lock en el código fuente (ejecute scripts/make_hash_lock.py)."
+
+msgid "The release notes per language must be an object such as {\"fa\": \"…\"}."
+msgstr "Las notas de la versión por idioma deben ser un objeto como {\"fa\": \"…\"}."
+
+#, python-format
+msgid "The release notes have an unknown language or a value that is not text: %(code)s"
+msgstr "Las notas de la versión tienen un idioma desconocido o un valor que no es texto: %(code)s"
+
+#, python-format
+msgid "The update index is for the “%(got)s” channel but this site follows “%(want)s”."
+msgstr "El índice de actualizaciones es del canal «%(got)s», pero este sitio sigue «%(want)s»."

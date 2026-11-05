@@ -477,6 +477,102 @@ class PluginFilesLocationTests(SimpleTestCase):
             self.assertEqual(proc.returncode, 0, proc.stderr)
 
 
+# --------------------------------------------------------------------------------------------------------------------------- official update files
+UPDATES_FUNCS = "\n".join(bash_function(n) for n in ("nginx_safe_prefix", "nginx_safe_dir", "nginx_plugin_location_exists", "nginx_updates_location_exists", "nginx_add_updates"))
+
+
+def add_updates(text: str, folder="/srv/ravix/updates") -> tuple[int, str]:
+    with tempfile.TemporaryDirectory() as tmp:
+        path = Path(tmp, "site")
+        path.write_text(text)
+        proc = run_bash(f"{UPDATES_FUNCS}\nnginx_add_updates {path} '{folder}'; echo \"rc=$?\"")
+        return int(re.search(r"rc=(\d+)", proc.stdout).group(1)), path.read_text()
+
+
+class UpdatesLocationTests(SimpleTestCase):
+    def test_a_site_file_gets_a_public_read_only_location_before_location_slash(self):
+        rc, text = add_updates(PF_CERTBOT_SITE)
+        self.assertEqual(rc, 0)
+        block = re.search(r"location /updates/v1/ \{([^}]*(?:\{[^}]*\}[^}]*)*)\}", text).group(1)
+        self.assertIn("alias /srv/ravix/updates/;", block)
+        self.assertIn("autoindex off;", block)
+        self.assertNotIn("internal;", block)  # sites outside fetch these files
+        self.assertNotIn("try_files", block)  # try_files together with alias is a known nginx trap
+        self.assertLess(text.index("location /updates/v1/"), text.index("    location / {"))
+        self.assertEqual(text.count("location /updates/v1/"), 1)
+
+    def test_running_it_again_or_with_a_hand_made_block_changes_nothing(self):
+        _rc, once = add_updates(PF_CERTBOT_SITE)
+        rc, twice = add_updates(once)
+        self.assertEqual((rc, once), (1, twice))
+        hand = PF_CERTBOT_SITE.replace("    location / {", "    location /updates/v1/ {\n        alias /var/www/updates/v1/;\n    }\n    location / {", 1)
+        rc, text = add_updates(hand)
+        self.assertEqual((rc, text), (1, hand))
+
+    def test_unsafe_folders_are_refused(self):
+        for folder in ("/srv/a; root /;", "relative/dir", "/srv/a b", "/srv/{x}", ""):
+            rc, text = add_updates(PF_CERTBOT_SITE, folder)
+            self.assertEqual((rc, text), (1, PF_CERTBOT_SITE), folder)
+
+    def test_install_sh_wires_the_option_to_the_folder_the_environment_and_the_checks(self):
+        for needle in ("--serve-updates)", 'env_set RAVIX_UPDATES_PUBLISH_DIR "$UPDATES_DIR"', "nginx_add_updates \"$TMP_SITE\"", "nginx_add_updates \"$UP_TMP\"",
+                       "must not be inside", 'chown "$APP_USER:www-data" "$UPDATES_DIR"'):
+            self.assertIn(needle, SCRIPT, needle)
+        self.assertNotIn("UPDATES_DIR=", NGINX)  # the template stays the same for every other site
+
+    @skipUnless(shutil.which("nginx"), "nginx is not installed")
+    def test_the_patched_file_passes_nginx_t(self):
+        _rc, text = add_updates(NGINX.replace("location /_plugin_files/", "location /gone/"), "/tmp/updates")
+        with tempfile.TemporaryDirectory() as tmp:
+            proc = nginx_test(text.replace("/srv/ravix/", f"{tmp}/").replace("include /etc/nginx/ravix-proxy.conf;", "return 204;"), tmp)
+            self.assertEqual(proc.returncode, 0, proc.stderr)
+
+    @skipUnless(shutil.which("nginx"), "nginx is not installed")
+    def test_a_real_nginx_serves_the_signed_files_and_nothing_else(self):
+        import urllib.error
+        import urllib.request
+
+        with tempfile.TemporaryDirectory() as tmp:
+            files = Path(tmp, "updates")
+            files.mkdir()
+            (files / "index.json").write_text('{"schema":1}')
+            (files / "index.json.sig").write_text("{}")
+            (files / "ravix-core-1.0.0.zip").write_bytes(b"PK")
+            Path(tmp, "secret.txt").write_text("not for the web")
+            for d in (tmp, files):
+                os.chmod(d, 0o755)  # nginx started by root runs its worker as "nobody", which must be able to read the folder
+            for f in (*files.iterdir(), Path(tmp, "secret.txt")):
+                os.chmod(f, 0o644)
+            port = free_port()
+            _rc, site = add_updates(f"server {{\n    listen 127.0.0.1:{port};\n    location / {{\n        return 404;\n    }}\n}}\n", str(files))
+            Path(tmp, "site.conf").write_text(site)
+            main = Path(tmp, "nginx.conf")
+            main.write_text(f"daemon on;\npid {tmp}/nginx.pid;\nerror_log {tmp}/error.log;\nevents {{}}\nhttp {{\n  access_log off;\n"
+                            + "".join(f"  {k}_temp_path {tmp}/{k};\n" for k in ("client_body", "proxy", "fastcgi", "uwsgi", "scgi")) + f"  include {tmp}/site.conf;\n}}\n")
+            started = subprocess.run(["nginx", "-c", str(main), "-p", tmp], capture_output=True, text=True)
+            self.assertEqual(started.returncode, 0, started.stderr)
+            try:
+                def get(path):
+                    try:
+                        with urllib.request.urlopen(f"http://127.0.0.1:{port}{path}", timeout=10) as r:  # noqa: S310
+                            return r.status, dict(r.headers), r.read()
+                    except urllib.error.HTTPError as exc:
+                        return exc.code, dict(exc.headers), b""
+
+                status, headers, body = get("/updates/v1/index.json")
+                self.assertEqual((status, headers["Content-Type"], body), (200, "application/json", b'{"schema":1}'))
+                self.assertIn("max-age=60", headers["Cache-Control"])
+                self.assertEqual(headers["X-Content-Type-Options"], "nosniff")
+                self.assertEqual(get("/updates/v1/ravix-core-1.0.0.zip")[1]["Content-Type"], "application/zip")
+                self.assertTrue(get("/updates/v1/index.json.sig")[1]["Content-Type"].startswith("text/plain"))
+                self.assertEqual(get("/updates/v1/missing.zip")[0], 404)
+                self.assertIn(get("/updates/v1/")[0], (403, 404))  # no directory listing
+                self.assertEqual(get("/updates/v1/../secret.txt")[0], 404)
+                self.assertEqual(get("/updates/v1/%2e%2e/secret.txt")[0], 404)
+            finally:
+                subprocess.run(["nginx", "-c", str(main), "-p", tmp, "-s", "stop"], capture_output=True)
+
+
 class ShellcheckTests(SimpleTestCase):
     @skipUnless(shutil.which("shellcheck"), "shellcheck is not installed")
     def test_the_deployment_scripts_have_no_shellcheck_findings(self):

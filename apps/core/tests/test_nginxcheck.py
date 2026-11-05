@@ -95,3 +95,17 @@ class DockerTests(SimpleTestCase):
         if sets_prefix:
             self.assertIn("internal;", templates)
             self.assertIn("_plugin_files", templates)
+
+
+class UpdatesLocationStatusTests(SimpleTestCase):
+    GOOD = "server {\n  location /updates/v1/ {\n    alias /srv/ravix/updates/;\n    autoindex off;\n  }\n  location / { }\n}\n"
+
+    def test_statuses(self):
+        self.assertEqual(nginxcheck.updates_status("/srv/ravix/updates", self.GOOD), nginxcheck.OK)
+        self.assertEqual(nginxcheck.updates_status("/srv/ravix/updates/", self.GOOD), nginxcheck.OK)
+        self.assertEqual(nginxcheck.updates_status("/srv/other", self.GOOD), nginxcheck.WRONG_ALIAS)
+        self.assertEqual(nginxcheck.updates_status("/srv/ravix/updates", "server { location / { } }"), nginxcheck.MISSING)
+        self.assertEqual(nginxcheck.updates_status("/srv/ravix/updates", self.GOOD.replace("autoindex off;", "internal;")), nginxcheck.WRONG_ALIAS)  # an internal location serves nobody
+        self.assertEqual(nginxcheck.updates_status("", self.GOOD), nginxcheck.UNKNOWN)
+        self.assertEqual(nginxcheck.updates_status("/srv/ravix/updates", None), nginxcheck.UNKNOWN)
+        self.assertEqual(nginxcheck.updates_status("/srv/ravix/updates", "# location /updates/v1/ { alias /srv/ravix/updates/; }"), nginxcheck.MISSING)  # a comment is not a location

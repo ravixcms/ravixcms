@@ -31,6 +31,17 @@ class Command(BaseCommand):
             raise CommandError(cli_gettext("User not found."))
         return u
 
+    def _manual_files(self):
+        from apps.updater import manifest, package
+
+        report = manifest.local_report(versions.app_root(), package.CORE_ENTRIES)
+        if not report:
+            return
+        for rel in report["modified"][:20]:
+            self.stdout.write(self.style.WARNING(cli_gettext("Edited by hand (an update will overwrite it): %(a1)s") % {"a1": rel}))
+        for rel in report["added"][:20]:
+            self.stdout.write(self.style.WARNING(cli_gettext("Your own file in a managed folder (an update will remove it): %(a1)s") % {"a1": rel}))
+
     def handle(self, *a, **o):
         act = o["action"]
         try:
@@ -52,6 +63,7 @@ class Command(BaseCommand):
                 if not sources.has_source():
                     raise CommandError(cli_gettext("No update source is configured (RAVIX_UPDATE_URL or RAVIX_UPDATE_DIR)."))
                 plan = pipeline.plan_core(sources.cached_index(force=True))
+                self._manual_files()
                 if not plan["latest"]:
                     self.stdout.write(cli_gettext("Up to date (%(a1)s).") % {"a1": plan['current']})
                 else:

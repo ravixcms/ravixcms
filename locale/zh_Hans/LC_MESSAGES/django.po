@@ -13766,3 +13766,55 @@ msgstr "“%(value)s”不是完整的 https:// 地址。"
 
 msgid "Enter at most %(n)d addresses."
 msgstr "最多输入 %(n)d 个地址。"
+
+#, python-format
+msgid "The hash lock has no entry for %(name)s."
+msgstr "哈希锁文件中没有 %(name)s 的条目。"
+
+#, python-format
+msgid "The hash lock pins %(name)s to %(got)s but requirements.lock says %(want)s."
+msgstr "哈希锁文件将 %(name)s 固定为 %(got)s，但 requirements.lock 写的是 %(want)s。"
+
+#, python-format
+msgid "The hash lock has no hashes for %(name)s."
+msgstr "哈希锁文件中没有 %(name)s 的哈希值。"
+
+#, python-format
+msgid "The hash lock has %(name)s but requirements.lock does not."
+msgstr "哈希锁文件中有 %(name)s，但 requirements.lock 中没有。"
+
+#, python-format
+msgid "A line in the dependency lock files is not valid: %(line)s"
+msgstr "依赖锁文件中有一行无效：%(line)s"
+
+msgid "manifest.json is missing from the package or invalid."
+msgstr "软件包中缺少 manifest.json 或其无效。"
+
+#, python-format
+msgid "The manifest lists a file that is not in the package: %(rel)s"
+msgstr "清单列出了软件包中不存在的文件：%(rel)s"
+
+#, python-format
+msgid "The package has a file the manifest does not list: %(rel)s"
+msgstr "软件包中有清单未列出的文件：%(rel)s"
+
+#, python-format
+msgid "The file %(rel)s does not match the manifest."
+msgstr "文件 %(rel)s 与清单不符。"
+
+msgid "requirements.lock or requirements.hashes.lock is missing from the package."
+msgstr "软件包中缺少 requirements.lock 或 requirements.hashes.lock。"
+
+msgid "requirements.lock and requirements.hashes.lock are both needed in the source (run scripts/make_hash_lock.py)."
+msgstr "源码中需要同时有 requirements.lock 和 requirements.hashes.lock（请运行 scripts/make_hash_lock.py）。"
+
+msgid "The release notes per language must be an object such as {\"fa\": \"…\"}."
+msgstr "各语言的发布说明必须是类似 {\"fa\": \"…\"} 的对象。"
+
+#, python-format
+msgid "The release notes have an unknown language or a value that is not text: %(code)s"
+msgstr "发布说明中有未知语言或非文本的值：%(code)s"
+
+#, python-format
+msgid "The update index is for the “%(got)s” channel but this site follows “%(want)s”."
+msgstr "该更新索引属于“%(got)s”渠道，但本站点使用的是“%(want)s”渠道。"

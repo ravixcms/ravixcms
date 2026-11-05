@@ -61,3 +61,29 @@ def current_status() -> str:
     if not prefix:
         return UNKNOWN
     return plugin_files_status(prefix, settings.RAVIX_PLUGIN_DATA_DIR, config_text())
+
+
+UPDATES_PREFIX = "/updates/v1/"
+
+
+def updates_status(directory, text: str | None) -> str:
+    """The official update files (``RAVIX_UPDATES_PUBLISH_DIR``) are served by a plain ``location /updates/v1/ { alias <dir>/; }`` (public, not internal).
+    OK / MISSING / WRONG_ALIAS, or UNKNOWN when the folder is not set or the configuration cannot be read."""
+    if not str(directory or "").strip() or text is None:
+        return UNKNOWN
+    code = re.sub(r"(?m)#.*$", "", text)
+    blocks = re.findall(r"location\s+(?:\^~\s+)?" + re.escape(UPDATES_PREFIX) + r"\s*\{([^}]*)\}", code)
+    if not blocks:
+        return MISSING
+    wanted = str(directory).rstrip("/") + "/"
+    for block in blocks:
+        alias = re.search(r"(?m)^\s*alias\s+([^;\s]+)\s*;", block)
+        if alias and alias.group(1).rstrip("/") + "/" == wanted and not re.search(r"(?m)^\s*internal\s*;", block):
+            return OK
+    return WRONG_ALIAS
+
+
+def current_updates_status() -> str:
+    from django.conf import settings
+
+    return updates_status(getattr(settings, "RAVIX_UPDATES_PUBLISH_DIR", ""), config_text())

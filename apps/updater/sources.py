@@ -57,14 +57,37 @@ def normalize_entry(raw, kind: str) -> dict | None:
     if not 0 <= size <= settings.RAVIX_UPDATE_MAX_PACKAGE_BYTES:
         return None
     req = raw.get("requires") if isinstance(raw.get("requires"), dict) else {}
+    i18n = raw.get("notes_i18n") if isinstance(raw.get("notes_i18n"), dict) else {}
+    known = {code for code, _name in settings.LANGUAGES}
+    notes_i18n = {c: t.strip()[:2000] for c, t in list(i18n.items())[:20] if c in known and isinstance(t, str) and t.strip()}
     pk = req.get("packages", [])
     return {"version": version, "sha256": sha, "size": size, "download_url": str(raw.get("download_url", ""))[:500],
             "signature": str(raw.get("signature") or "")[:200], "signature_key_id": str(raw.get("signature_key_id") or "")[:32],
-            "released": str(raw.get("released", ""))[:40], "notes": str(raw.get("notes", ""))[:2000], "migrations": bool(raw.get("migrations")),
+            "released": str(raw.get("released", ""))[:40], "notes": str(raw.get("notes", ""))[:2000], "notes_i18n": notes_i18n, "migrations": bool(raw.get("migrations")),
             "requires": {"python": str(req.get("python", ""))[:60], "min_from": str(req.get("min_from", ""))[:20], "ravix": str(read_legacy_key(req))[:60],
                          "plugin_api": req.get("plugin_api") if isinstance(req.get("plugin_api"), int) else None,
                          "theme_api": req.get("theme_api") if isinstance(req.get("theme_api"), int) else None,
                          "packages": [str(p)[:120] for p in pk[:100]] if isinstance(pk, list) else []}}
+
+
+CHANNEL_RE = re.compile(r"^[a-z][a-z0-9-]{0,11}$")
+
+
+def channel() -> str:
+    """The release channel this site follows (RAVIX_UPDATE_CHANNEL; "stable" unless set to something valid)."""
+    value = str(getattr(settings, "RAVIX_UPDATE_CHANNEL", "stable") or "stable").strip().lower()
+    return value if CHANNEL_RE.match(value) else "stable"
+
+
+def notes_for(entry: dict, language: str) -> str:
+    """The release notes of ``entry`` in ``language`` (then its base language, then English, then the plain ``notes``)."""
+    per = entry.get("notes_i18n") or {}
+    code = (language or "").replace("_", "-").lower()
+    for key in (code, code.split("-")[0], "en"):
+        for have in per:
+            if have.replace("_", "-").lower() == key and per[have]:
+                return per[have]
+    return entry.get("notes", "")
 
 
 def parse_index(data: bytes, signature: str = "", key_id: str = "") -> dict:
@@ -80,6 +103,8 @@ def parse_index(data: bytes, signature: str = "", key_id: str = "") -> dict:
         raise UpdateError(gettext("The update index is not valid JSON."))
     if not isinstance(doc, dict) or doc.get("schema") != UPDATE_SCHEMA_VERSION:
         raise UpdateError(gettext("The update index format is not supported."))
+    if str(doc.get("channel") or "stable") != channel():
+        raise UpdateError((gettext("The update index is for the “%(got)s” channel but this site follows “%(want)s”.") % {"got": str(doc.get("channel"))[:20], "want": channel()}))
     core = [e for e in (normalize_entry(x, "core") for x in doc.get("core", [])[:200]) if e]
     themes = {}
     raw_themes = doc.get("themes") if isinstance(doc.get("themes"), dict) else {}
@@ -95,12 +120,13 @@ class HttpSource:
     def __init__(self, base):
         self.base = base.rstrip("/")
         self.ref = self.base
+        self.path = "/updates/v1/" + ("" if channel() == "stable" else channel() + "/")  # the stable channel is the folder itself
 
     def index(self) -> dict:
-        data, _ = _http_get(f"{self.base}/updates/v1/index.json", MAX_INDEX, INDEX_TIMEOUT)
+        data, _ = _http_get(f"{self.base}{self.path}index.json", MAX_INDEX, INDEX_TIMEOUT)
         sig, kid = "", ""
         try:
-            raw, _ = _http_get(f"{self.base}/updates/v1/index.json.sig", 4096, INDEX_TIMEOUT)
+            raw, _ = _http_get(f"{self.base}{self.path}index.json.sig", 4096, INDEX_TIMEOUT)
             sig_doc = json.loads(raw)
             sig, kid = str(sig_doc.get("signature", "")), str(sig_doc.get("key_id", ""))
         except (UpdateError, ValueError, AttributeError):
@@ -110,7 +136,7 @@ class HttpSource:
     def download(self, entry: dict) -> bytes:
         raw_url = entry.get("download_url") or ""
         # ravix_release فقط «نام فایل» می‌نویسد؛ نسبی نسبت به <base>/updates/v1/ حل می‌شود. نشانی مطلق باید همان دامنه (و https) باشد.
-        url = urllib.parse.urljoin(f"{self.base}/updates/v1/", raw_url) if raw_url else ""
+        url = urllib.parse.urljoin(f"{self.base}{self.path}", raw_url) if raw_url else ""
         parsed, base = urllib.parse.urlparse(url), urllib.parse.urlparse(self.base)
         if not url or parsed.scheme != "https" or parsed.netloc != base.netloc:
             raise UpdateError(gettext("The download URL is on a different domain; rejected for security."))

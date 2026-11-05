@@ -134,6 +134,43 @@ server {
 ```
 اگر `.well-known/acme-challenge` برای certbot لازم است، آن را در یک `server` پورت ۸۰ جدا بدهید. پیشنهاد: `RAVIX_UPDATE_REQUIRE_SIGNED_INDEX=true` را در `official`/محیط سایت‌ها فعال کنید و همیشه `index.json.sig` را همراه فهرست بفرستید.
 
+### ۴ب. امضای آفلاین (کلید روی سرور یا روی فلش در ویندوز)
+پروسهٔ وب، اجراگر به‌روزرسانی و افزونهٔ ناشر **هرگز** کلید خصوصی را نمی‌خوانند؛ فقط بستهٔ امضاشده را می‌پذیرند (آزمون خودکار این را نگه می‌دارد و `ravix_preflight` اگر `RAVIX_RELEASE_SIGNING_KEY` در محیط سایت باشد هشدار می‌دهد). ساخت و امضا دو گام جدا است:
+
+**گام ۱ — ساخت بدون امضا** (روی هر ماشینی که کد را دارد؛ کلید لازم نیست):
+```bash
+python manage.py ravix_release core --out dist/ --no-sign --python '>=3.11' --min-from 0.9.0 \
+       --notes "خلاصه" --notes-i18n notes.json --channel stable
+```
+`notes.json` یادداشت هر زبان است، مثل `{"fa": "…", "en": "…", "de": "…"}` (فقط زبان‌های Ravix؛ هر کدام حداکثر ۲۰۰۰ نویسه؛ مدیر به زبان خودش می‌بیند و اگر نبود انگلیسی). ساخت بسته وقتی `requirements.hashes.lock` با `requirements.lock` نخواند متوقف می‌شود: `python scripts/make_hash_lock.py` (به اینترنت نیاز دارد) را بزنید و فایل را در مخزن کامیت کنید.
+
+**گام ۲ — امضای آفلاین** با `scripts/ravix_sign.py`؛ فقط Python ۳٫۹+ و بستهٔ `cryptography` می‌خواهد (نه Django، نه کد Ravix):
+
+* روی سرور، با کلید در `/root/ravix-keys/` (مجوز ۶۰۰):
+  ```bash
+  pip install cryptography
+  python3 scripts/ravix_sign.py dist/ --key-file /root/ravix-keys/release-2026.key
+  ```
+* روی ویندوز، با کلید روی فلش (مثلاً `E:\keys\release-2026.key`)؛ پوشهٔ `dist` را با بستهٔ بدون امضا و `scripts\ravix_sign.py` را روی ویندوز بگذارید:
+  ```bat
+  py -m pip install cryptography
+  py scripts\ravix_sign.py dist --key-file E:\keys\release-2026.key
+  ```
+  سپس `dist` امضاشده را به سرور بفرستید (فلش را از ویندوز جدا کنید).
+
+ابزار پیش از امضا SHA-256 هر بسته را با `index.json` مقایسه می‌کند (فایلِ عوض‌شده امضا نمی‌شود)، هر بستهٔ بدون امضا و خودِ `index.json` را امضا می‌کند و کلید خصوصی را چاپ یا کپی نمی‌کند. بررسی بدون کلید خصوصی: `python3 scripts/ravix_sign.py dist/ --check <کلید_عمومی>`. در ویندوز بررسی مجوز ۶۰۰ انجام نمی‌شود؛ فلش را رمزگذاری‌شده و فقط هنگام امضا وصل نگه دارید.
+
+### ۴پ. میزبانی فایل‌ها: `https://ravixcms.com/updates/v1/` با nginx استاتیک
+اول از همان دامنهٔ اصلی سرو می‌شود (زیردامنهٔ `updates.` بعداً اختیاری است و فقط با `RAVIX_UPDATE_URL` عوض می‌شود). روی سرور سایت ناشر:
+```bash
+sudo ./install.sh --serve-updates /srv/ravix/updates
+```
+`install.sh` پوشه را می‌سازد (مالک `ravix:www-data`، مجوز ۲۷۵۰)، `RAVIX_UPDATES_PUBLISH_DIR` را در `ravix.env` می‌گذارد و بلاک `location /updates/v1/` (فقط‌خواندنی، بدون فهرست پوشه) را **قبل از `location /`** اضافه می‌کند؛ روی فایلی که certbot تغییر داده هم با پشتیبان `.bak`، `nginx -t` و بازگشت خودکار. اجرای دوباره چیزی را تکرار نمی‌کند. پوشه نباید داخل `/srv/ravix/app` باشد. `ravix_preflight` وجود بلاک و قابل‌نوشتن بودن پوشه را می‌سنجد. سپس `dist/` امضاشده را در آن پوشه بگذارید (دستی با `rsync` یا افزونهٔ ناشر):
+```bash
+rsync -av --delete-after dist/ ravix-host:/srv/ravix/updates/
+```
+کانال غیر پایدار (مثلاً `beta`) در `/updates/v1/beta/` است و سایت با `RAVIX_UPDATE_CHANNEL=beta` آن را می‌خواند؛ `index.json` یک کانال دیگر رد می‌شود.
+
 ### ۵. چرخش کلید (برنامه‌ریزی‌شده، بدون ابطال اضطراری)
 مثلاً سالانه یا هنگام تعویض نگه‌دارنده؛ کلید قدیمی هنوز **سالم** است:
 1. کلید جدید را آفلاین بسازید (`release-2027.key`) و پشتیبان بگیرید.

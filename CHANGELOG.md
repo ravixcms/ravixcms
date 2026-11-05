@@ -2,6 +2,11 @@
 قالب: [Keep a Changelog](https://keepachangelog.com/)، نسخه‌بندی [SemVer](https://semver.org/).
 
 ## [Unreleased]
+### Added (به‌روزرسانی امن — مرحلهٔ ۱: بستهٔ قابل‌راستی‌آزمایی)
+- نسخهٔ هسته **۰٫۱۰٫۰**. بستهٔ هسته `manifest.json` (SHA-256 هر فایل) و `requirements.hashes.lock` دارد؛ اعتبارسنجی بسته فایل کم/اضافه/عوض‌شده و قفل ناسازگار را رد می‌کند. `scripts/make_hash_lock.py` قفل هش را از PyPI می‌سازد.
+- یادداشت انتشار ده‌زبانه (`notes_i18n`) و کانال انتشار (`RAVIX_UPDATE_CHANNEL`) در `index.json`؛ `ravix_release --notes-i18n --channel`.
+- **امضای آفلاین:** `ravix_release … --no-sign` و ابزار مستقل `scripts/ravix_sign.py` (فقط `cryptography`؛ روی سرور یا ویندوز با کلید روی فلش) و `--check` با کلید عمومی. آزمون خودکار تضمین می‌کند وب، اجراگر و افزونهٔ ناشر کلید خصوصی را نمی‌خوانند؛ `ravix_preflight` اگر کلید در محیط سایت باشد هشدار می‌دهد.
+- `install.sh --serve-updates DIR`: nginx فایل‌های امضاشده را در `/updates/v1/` سرو می‌کند (بلاک امن، idempotent، با پشتیبان و بازگشت)؛ `RAVIX_UPDATES_PUBLISH_DIR` و چک `ravix_preflight`.
 ### Added (هویت سایت برای موتورهای جستجو — schema.org JSON-LD)
 - کارت «هویت سایت برای موتورهای جستجو» در تنظیمات سایت: نوع (سازمان/شخص)، نام، نام‌های دیگر، لوگو از کتابخانهٔ رسانه، `sameAs` (فقط نشانی کامل `https://`؛ بقیه رد می‌شود) و توضیح کوتاه؛ برچسب‌ها ده‌زبانه (migration `core.0017`).
 - JSON-LD در `<head>` (یک `@graph`): صفحهٔ اصلی هر زبان ← `WebSite` + `Organization`/`Person` (+ `SearchAction`)؛ نوشته ← `BlogPosting` (+ `workTranslation` از گروه ترجمه) + `BreadcrumbList`؛ برگه ← `WebPage` + `BreadcrumbList`. `@id`های ثابت: `<سایت>/#organization`، `<سایت>/#website`، `<نشانی>#article`. نوشتهٔ پیش‌نویس و `noindex` JSON-LD ندارد. خروجی با `json.dumps` و escape کردن `<`، `>`، `&`.

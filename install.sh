@@ -27,6 +27,7 @@ SRC="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 HERE="$SRC"   # where deploy/ (units and message catalogs) lives; --source only changes where the code is copied from
 
 DOMAIN=""
+UPDATES_DIR=""   # --serve-updates DIR: this site publishes the official update files (nginx serves them at /updates/v1/)
 LE_EMAIL=""
 WWW=1
 ASSUME_YES=0
@@ -68,6 +69,7 @@ usage() {
   t "  --no-nginx       do not touch nginx (you build the proxy yourself)"; echo
   t "  --no-systemd     do not create systemd services/timers (e.g. in a container)"; echo
   t "  --source DIR     path of the code (default: the folder of this script)"; echo
+  t "  --serve-updates DIR  publisher's site only: nginx serves the signed update files in DIR at /updates/v1/"; echo
   t "  --lang CODE      language of these messages (same as RAVIX_CLI_LANG; 'fa' ships with Ravix)"; echo
   t "  -y, --yes        answer “yes” to every question (non-interactive)"; echo
   t "  -n, --dry-run    change nothing; only print"; echo
@@ -85,6 +87,7 @@ while [ $# -gt 0 ]; do
     --no-nginx) NGINX=0; SSL=0; shift;;
     --no-systemd) SYSTEMD=no; shift;;
     --source) SRC="$(cd "${2:?}" && pwd)"; shift 2;;
+    --serve-updates) UPDATES_DIR="${2:?}"; UPDATES_DIR="${UPDATES_DIR%/}"; shift 2;;
     --lang) shift 2;;
     -y|--yes) ASSUME_YES=1; shift;;
     -n|--dry-run) DRY_RUN=1; shift;;
@@ -163,6 +166,26 @@ nginx_plugin_location_exists() {  # nginx_plugin_location_exists FILE PREFIX: 0 
   esc="$(printf '%s' "$2" | sed 's/[][\.*^$/]/\\&/g')"
   grep -qE "^[[:space:]]*location[[:space:]]+(\^~[[:space:]]+)?${esc}[[:space:]]*\{" "$1"
 }
+nginx_updates_location_exists() { nginx_plugin_location_exists "$1" /updates/v1/; }   # 0 = FILE already has "location /updates/v1/ {"
+nginx_add_updates() {  # nginx_add_updates FILE DIR: adds the public, read-only /updates/v1/ location (the signed update files in DIR) before "location / {". 0 = added, 1 = nothing to do
+  local f="$1" dir="${2%/}" tmp
+  nginx_safe_dir "$dir" || return 1
+  nginx_updates_location_exists "$f" && return 1
+  grep -qE '^[[:space:]]*location[[:space:]]+/[[:space:]]*\{' "$f" || return 1
+  tmp="$(mktemp)"
+  awk -v dir="$dir" '/^[[:space:]]*location[[:space:]]+\/[[:space:]]*\{/ { match($0, /^[[:space:]]*/); ind = substr($0, 1, RLENGTH)
+      print ind "# Official update files (signed packages, index.json and its signature): public, read-only, plain files."
+      print ind "location /updates/v1/ {"
+      print ind "    alias " dir "/;"
+      print ind "    autoindex off;"
+      print ind "    default_type application/octet-stream;"
+      print ind "    types { application/json json; application/zip zip; text/plain sig; }"
+      print ind "    add_header Cache-Control \"public, max-age=60\";"
+      print ind "    add_header X-Content-Type-Options nosniff;"
+      print ind "}" }
+    { print }' "$f" > "$tmp"
+  cat "$tmp" > "$f"; rm -f "$tmp"
+}
 nginx_render_plugin_files() {  # nginx_render_plugin_files FILE PREFIX DIR: makes the template's /_plugin_files/ block use the real prefix and folder
   local f="$1" prefix="$2" dir="${3%/}"
   nginx_safe_prefix "$prefix" && nginx_safe_dir "$dir" || return 1
@@ -218,6 +241,11 @@ if [ "$NGINX" = 1 ] || [ "$SSL" = 1 ]; then
   [[ "$DOMAIN" =~ ^[A-Za-z0-9]([A-Za-z0-9.-]*[A-Za-z0-9])?$ ]] || die "The domain is invalid or empty (--domain)."
 else
   ask DOMAIN "Host name / domain for ALLOWED_HOSTS:" "localhost"
+fi
+if [ -n "$UPDATES_DIR" ]; then
+  [ "$NGINX" = 1 ] || die "--serve-updates needs nginx (do not combine it with --no-nginx)."
+  nginx_safe_dir "$UPDATES_DIR" || die "--serve-updates needs a plain absolute folder such as /srv/ravix/updates."
+  case "$UPDATES_DIR/" in "$APP_DIR"/*) die "--serve-updates must not be inside %s: the code folder is replaced on every update." "$APP_DIR";; esac
 fi
 if [ "$SSL" = 1 ]; then ask LE_EMAIL "Email for Let's Encrypt (empty = no email):"; fi
 [ "$SSL" = 0 ] && [ "$NGINX" = 1 ] && warn "Without TLS: session cookies are “Secure” in production; login works only behind HTTPS (another TLS terminator)."
@@ -296,6 +324,7 @@ if [ "$DRY_RUN" = 0 ]; then
   for d in shop_private plugin_data plugins_installed themes_installed registry_packages update_work update_backups; do chown "$APP_USER:$APP_USER" "$BASE/$d"; chmod 750 "$BASE/$d"; done
   chown "$APP_USER:$APP_USER" "$BASE/plugin_backups"; chmod 700 "$BASE/plugin_backups"
   chown "$APP_USER:$APP_USER" "$BACKUP_DIR"; chmod 700 "$BACKUP_DIR"
+  if [ -n "$UPDATES_DIR" ]; then mkdir -p "$UPDATES_DIR"; chown "$APP_USER:www-data" "$UPDATES_DIR"; chmod 2750 "$UPDATES_DIR"; fi   # the release plugin writes here; nginx (www-data) reads
   chown "$APP_USER:www-data" "$CACHE_DIR"; chmod 750 "$CACHE_DIR"
   chown root:"$APP_USER" "$ENV_DIR"; chmod 750 "$ENV_DIR"
 fi
@@ -396,6 +425,7 @@ env_set RAVIX_SITE_URL "https://$DOMAIN"
 if site_installed; then forget_install_token; else env_set RAVIX_INSTALL_TOKEN "$(rand_hex 16)"; fi
 env_set RAVIX_SHOP_PRIVATE_ROOT "$BASE/shop_private"
 env_set RAVIX_PLUGIN_DATA_DIR "$BASE/plugin_data"
+[ -n "$UPDATES_DIR" ] && env_set RAVIX_UPDATES_PUBLISH_DIR "$UPDATES_DIR"
 [ "$NGINX" = 1 ] && env_set RAVIX_ACCEL_REDIRECT_PREFIX "/_plugin_files/"   # nginx sends plugin downloads (the internal location in deploy/nginx-ravix.conf)
 env_set RAVIX_PLUGIN_INSTALL_DIR "$BASE/plugins_installed"
 env_set RAVIX_PLUGIN_BACKUP_DIR "$BASE/plugin_backups"
@@ -449,6 +479,7 @@ if [ "$NGINX" = 1 ]; then
   PROXY_SRC="$CODE/deploy/ravix-proxy.conf"
   ACCEL_PREFIX="$(env_get RAVIX_ACCEL_REDIRECT_PREFIX)"; PLUGIN_DIR="$(env_get RAVIX_PLUGIN_DATA_DIR)"
   [ -n "$ACCEL_PREFIX" ] && [ -n "$PLUGIN_DIR" ] && { nginx_render_plugin_files "$TMP_SITE" "$ACCEL_PREFIX" "$PLUGIN_DIR" || warn "RAVIX_ACCEL_REDIRECT_PREFIX or RAVIX_PLUGIN_DATA_DIR has unusual characters; the template's plugin-files location was left as it is."; }
+  if [ -n "$UPDATES_DIR" ]; then nginx_add_updates "$TMP_SITE" "$UPDATES_DIR" || true; fi
   # a kernel without IPv6 (seen in some containers/VPSs): `listen [::]` makes nginx -t fail
   [ -e /proc/net/if_inet6 ] || { sed -i '/listen \[::\]/d' "$TMP_SITE"; warn "IPv6 is not enabled on this system; the listen [::] lines were removed"; }
   if [ "$SSL" = 0 ]; then  # TLS ends elsewhere: accept the upstream X-Forwarded-Proto
@@ -540,6 +571,26 @@ if [ "$NGINX" = 1 ] && [ "$DRY_RUN" = 0 ] && [ -f "${SITE:-/nonexistent}" ]; the
     else ok "The plugin-files location is in place (or the site file has no location / yet)"; fi
     rm -f "$PF_TMP"
   fi
+fi
+
+# ----------------------------------------------------------------- 10d. the official update files (/updates/v1/) in a file nginx tooling has already changed
+if [ "$NGINX" = 1 ] && [ "$DRY_RUN" = 0 ] && [ -n "$UPDATES_DIR" ] && [ -f "${SITE:-/nonexistent}" ]; then
+  UP_TMP="$(mktemp)"; cp "$SITE" "$UP_TMP"
+  if nginx_add_updates "$UP_TMP" "$UPDATES_DIR"; then
+    if confirm "Add the update-files location (/updates/v1/) to %s (a backup copy is kept)?" "$SITE"; then
+      UP_BAK="$SITE.bak.$(date +%s)"
+      run cp -a "$SITE" "$UP_BAK"
+      run install -m 644 "$UP_TMP" "$SITE"
+      if nginx -t >/dev/null 2>&1; then
+        if have_systemd; then systemctl reload nginx; fi
+        ok "The update-files location was added"
+      else
+        run cp -a "$UP_BAK" "$SITE"
+        warn "nginx rejected the update-files location; the previous configuration was restored."
+      fi
+    fi
+  else ok "The update-files location is in place (or the site file has no location / yet)"; fi
+  rm -f "$UP_TMP"
 fi
 
 # ----------------------------------------------------------------- 11. final check

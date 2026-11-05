@@ -139,3 +139,11 @@ Add the private plugin-files location (%s) to %s (a backup copy is kept)?	بلا
 The plugin-files location was added	بلاک فایل‌های افزونه اضافه شد
 nginx rejected the plugin-files location; the previous configuration was restored.	nginx بلاک فایل‌های افزونه را نپذیرفت؛ پیکربندی قبلی برگردانده شد.
 The plugin-files location is in place (or the site file has no location / yet)	بلاک فایل‌های افزونه سرجایش است (یا فایل سایت هنوز location / ندارد)
+  --serve-updates DIR  publisher's site only: nginx serves the signed update files in DIR at /updates/v1/	  --serve-updates DIR  فقط سایت ناشر: nginx فایل‌های امضاشدهٔ به‌روزرسانی داخل DIR را در /updates/v1/ سرو می‌کند
+--serve-updates needs nginx (do not combine it with --no-nginx).	--serve-updates به nginx نیاز دارد (با --no-nginx ترکیب نکنید).
+--serve-updates needs a plain absolute folder such as /srv/ravix/updates.	--serve-updates یک پوشهٔ ساده با مسیر مطلق می‌خواهد، مثل /srv/ravix/updates.
+--serve-updates must not be inside %s: the code folder is replaced on every update.	--serve-updates نباید داخل %s باشد: پوشهٔ کد در هر به‌روزرسانی جایگزین می‌شود.
+Add the update-files location (/updates/v1/) to %s (a backup copy is kept)?	بلاک فایل‌های به‌روزرسانی (/updates/v1/) به %s اضافه شود؟ (یک نسخهٔ پشتیبان نگه داشته می‌شود)
+The update-files location was added	بلاک فایل‌های به‌روزرسانی اضافه شد
+nginx rejected the update-files location; the previous configuration was restored.	nginx بلاک فایل‌های به‌روزرسانی را نپذیرفت؛ پیکربندی قبلی برگردانده شد.
+The update-files location is in place (or the site file has no location / yet)	بلاک فایل‌های به‌روزرسانی سرجایش است (یا فایل سایت هنوز location / ندارد)

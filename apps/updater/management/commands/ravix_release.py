@@ -24,6 +24,8 @@ class Command(BaseCommand):
         p.add_argument("--python", default="", help=cli_gettext("Python range such as >=3.11"))
         p.add_argument("--min-from", default="", help=cli_gettext("Minimum source version"))
         p.add_argument("--notes", default="")
+        p.add_argument("--notes-i18n", default="", help=cli_gettext("JSON file with the release notes per language, such as {\"fa\": \"…\", \"en\": \"…\"}"))
+        p.add_argument("--channel", default="stable", help=cli_gettext("Release channel written into index.json (stable, beta, …)"))
         p.add_argument("--no-sign", action="store_true", help=cli_gettext("Unsigned (sites will refuse to install it)"))
 
     def _seed(self, o):
@@ -52,19 +54,29 @@ class Command(BaseCommand):
             self.stdout.write(cli_gettext("Private key written to %(kf)s (permissions 600; keep it and make a safe backup). Key id (key_id; for revocation): %(key_id)s\nPublic key (for apps/core/official.py or RAVIX_TRUSTED_PUBLIC_KEYS; the last line):\n%(pub)s") % {"kf": kf, "key_id": plugin_signing.key_id(pub), "pub": pub})
             return
         seed = self._seed(o)
+        import json, re
+
+        if not re.match(r"^[a-z][a-z0-9-]{0,11}$", o["channel"]):
+            raise CommandError(cli_gettext("--channel must be a short lowercase name such as stable or beta."))
+        notes_i18n = None
+        if o["notes_i18n"]:
+            try:
+                notes_i18n = json.loads(Path(o["notes_i18n"]).read_text(encoding="utf-8"))
+            except (OSError, ValueError) as exc:
+                raise CommandError(cli_gettext("The notes file could not be read: %(exc)s") % {"exc": exc})
         req = {k: v for k, v in {"python": o["python"], "min_from": o["min_from"]}.items() if v}
         try:
             if o["what"] == "core":
                 from apps.core.version import PLUGIN_API_VERSION, THEME_API_VERSION
 
                 req.update(plugin_api=PLUGIN_API_VERSION, theme_api=THEME_API_VERSION)
-                entry = release.build_core(Path(o["source"]), out, seed=seed, requires=req, notes=o["notes"])
-                path = release.write_index(out, core=[entry], seed=seed)
+                entry = release.build_core(Path(o["source"]), out, seed=seed, requires=req, notes=o["notes"], notes_i18n=notes_i18n)
+                path = release.write_index(out, core=[entry], seed=seed, channel=o["channel"])
             else:
                 if not o["theme_dir"]:
                     raise CommandError(cli_gettext("--theme-dir is required."))
-                slug, entry = release.build_theme(Path(o["theme_dir"]), out, seed=seed, requires=req, notes=o["notes"])
-                path = release.write_index(out, themes={slug: [entry]}, seed=seed)
+                slug, entry = release.build_theme(Path(o["theme_dir"]), out, seed=seed, requires=req, notes=o["notes"], notes_i18n=notes_i18n)
+                path = release.write_index(out, themes={slug: [entry]}, seed=seed, channel=o["channel"])
         except UpdateError as exc:
             raise CommandError(str(exc))
         signed_label = cli_gettext("signed") if seed else cli_gettext("unsigned")

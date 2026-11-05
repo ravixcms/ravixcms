@@ -258,6 +258,19 @@ class Command(BaseCommand):
                 warns.append(cli_gettext("The nginx location %(prefix)s is not marked internal; private plugin files could be fetched directly. Add internal; to it") % {"prefix": settings.RAVIX_ACCEL_REDIRECT_PREFIX})
             elif plugin_files == nginxcheck.WRONG_ALIAS:
                 warns.append(cli_gettext("The nginx location %(prefix)s does not point at RAVIX_PLUGIN_DATA_DIR (%(dir)s); private plugin files will answer 404") % {"prefix": settings.RAVIX_ACCEL_REDIRECT_PREFIX, "dir": str(settings.RAVIX_PLUGIN_DATA_DIR).rstrip("/")})
+        if os.environ.get("RAVIX_RELEASE_SIGNING_KEY") or os.environ.get("RAVIN_RELEASE_SIGNING_KEY"):
+            warns.append(cli_gettext("A private release signing key (RAVIX_RELEASE_SIGNING_KEY) is in this site's environment. The site never needs it: sign releases offline (scripts/ravix_sign.py) and remove the variable"))
+        publish_dir = getattr(settings, "RAVIX_UPDATES_PUBLISH_DIR", "")
+        if publish_dir:
+            from apps.core import nginxcheck
+
+            advise(Path(publish_dir).is_dir() and os.access(publish_dir, os.W_OK), cli_gettext("The update-files folder is writable"),
+                   cli_gettext("The update-files folder (%(path)s) does not exist or is not writable by the service user") % {"path": publish_dir})
+            updates = nginxcheck.current_updates_status()
+            if updates == nginxcheck.OK:
+                oks.append(cli_gettext("nginx serves the update files at /updates/v1/"))
+            elif updates in (nginxcheck.MISSING, nginxcheck.WRONG_ALIAS):
+                warns.append(cli_gettext("nginx does not serve %(path)s at /updates/v1/; sites cannot fetch updates. Run install.sh again with --serve-updates %(path)s") % {"path": publish_dir})
         bad_keys, broad_keys = [], []
         for item in settings.RAVIX_TRUSTED_PUBLIC_KEYS:
             try:

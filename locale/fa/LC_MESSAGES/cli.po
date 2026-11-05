@@ -1093,3 +1093,41 @@ msgstr "اجرای آزمایشی: این %(count)s مورد قابل وصل‌�
 #, python-format
 msgid "%(count)s items are now translations of each other (group %(group)s)."
 msgstr "%(count)s مورد اکنون ترجمهٔ همدیگرند (گروه %(group)s)."
+
+msgid "A private release signing key (RAVIX_RELEASE_SIGNING_KEY) is in this site's environment. The site never needs it: sign releases offline (scripts/ravix_sign.py) and remove the variable"
+msgstr "کلید خصوصی امضای انتشار (RAVIX_RELEASE_SIGNING_KEY) در محیط این سایت است. سایت هرگز به آن نیاز ندارد: انتشار را آفلاین امضا کنید (scripts/ravix_sign.py) و این متغیر را بردارید"
+
+msgid "The update-files folder is writable"
+msgstr "پوشهٔ فایل‌های به‌روزرسانی قابل‌نوشتن است"
+
+#, python-format
+msgid "The update-files folder (%(path)s) does not exist or is not writable by the service user"
+msgstr "پوشهٔ فایل‌های به‌روزرسانی (%(path)s) وجود ندارد یا کاربر سرویس نمی‌تواند در آن بنویسد"
+
+msgid "nginx serves the update files at /updates/v1/"
+msgstr "nginx فایل‌های به‌روزرسانی را در /updates/v1/ سرو می‌کند"
+
+#, python-format
+msgid "nginx does not serve %(path)s at /updates/v1/; sites cannot fetch updates. Run install.sh again with --serve-updates %(path)s"
+msgstr "nginx پوشهٔ %(path)s را در /updates/v1/ سرو نمی‌کند؛ سایت‌ها نمی‌توانند به‌روزرسانی بگیرند. install.sh را دوباره با --serve-updates %(path)s اجرا کنید"
+
+msgid "JSON file with the release notes per language, such as {\"fa\": \"…\", \"en\": \"…\"}"
+msgstr "فایل JSON با یادداشت انتشار هر زبان، مثل {\"fa\": \"…\", \"en\": \"…\"}"
+
+msgid "Release channel written into index.json (stable, beta, …)"
+msgstr "کانال انتشار که در index.json نوشته می‌شود (stable، beta، …)"
+
+msgid "--channel must be a short lowercase name such as stable or beta."
+msgstr "--channel باید نامی کوتاه با حروف کوچک باشد، مثل stable یا beta."
+
+#, python-format
+msgid "The notes file could not be read: %(exc)s"
+msgstr "فایل یادداشت‌ها خوانده نشد: %(exc)s"
+
+#, python-format
+msgid "Edited by hand (an update will overwrite it): %(a1)s"
+msgstr "ویرایش‌شده با دست (به‌روزرسانی آن را بازنویسی می‌کند): %(a1)s"
+
+#, python-format
+msgid "Your own file in a managed folder (an update will remove it): %(a1)s"
+msgstr "فایل شخصی شما در پوشهٔ مدیریت‌شده (به‌روزرسانی آن را حذف می‌کند): %(a1)s"

@@ -490,4 +490,6 @@ RAVIX_UPDATE_BACKUP_DIR = Path(env("RAVIX_UPDATE_BACKUP_DIR", str(BASE_DIR / "up
 RAVIX_UPDATE_BACKUPS_KEEP = int(env("RAVIX_UPDATE_BACKUPS_KEEP", "3"))
 RAVIX_UPDATE_MAX_PACKAGE_BYTES = int(env("RAVIX_UPDATE_MAX_PACKAGE_BYTES", str(80 * 1024 * 1024)))
 RAVIX_UPDATE_LOCK_STALE_MINUTES = int(env("RAVIX_UPDATE_LOCK_STALE_MINUTES", "60"))
+RAVIX_UPDATES_PUBLISH_DIR = env("RAVIX_UPDATES_PUBLISH_DIR", "").strip()  # only on the publisher's site: the folder nginx serves at /updates/v1/ (install.sh --serve-updates); the release plugin writes signed files here
+RAVIX_UPDATE_CHANNEL = env("RAVIX_UPDATE_CHANNEL", "stable").strip().lower()  # stable (default) or another channel the publisher runs, e.g. beta (updates/v1/beta/)
 RAVIX_UPDATE_REQUIRE_SIGNED_INDEX = env_bool("RAVIX_UPDATE_REQUIRE_SIGNED_INDEX", False)  # فهرست هم باید امضا (index.json.sig) داشته باشد

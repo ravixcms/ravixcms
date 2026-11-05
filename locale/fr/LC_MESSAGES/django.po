@@ -14649,3 +14649,55 @@ msgstr "« %(value)s » n’est pas une adresse https:// complète."
 
 msgid "Enter at most %(n)d addresses."
 msgstr "Saisissez au plus %(n)d adresses."
+
+#, python-format
+msgid "The hash lock has no entry for %(name)s."
+msgstr "Le fichier de hachages n’a aucune entrée pour %(name)s."
+
+#, python-format
+msgid "The hash lock pins %(name)s to %(got)s but requirements.lock says %(want)s."
+msgstr "Le fichier de hachages fixe %(name)s à %(got)s alors que requirements.lock indique %(want)s."
+
+#, python-format
+msgid "The hash lock has no hashes for %(name)s."
+msgstr "Le fichier de hachages ne contient aucun hachage pour %(name)s."
+
+#, python-format
+msgid "The hash lock has %(name)s but requirements.lock does not."
+msgstr "Le fichier de hachages contient %(name)s mais pas requirements.lock."
+
+#, python-format
+msgid "A line in the dependency lock files is not valid: %(line)s"
+msgstr "Une ligne des fichiers de verrouillage des dépendances n’est pas valide : %(line)s"
+
+msgid "manifest.json is missing from the package or invalid."
+msgstr "manifest.json est absent du paquet ou invalide."
+
+#, python-format
+msgid "The manifest lists a file that is not in the package: %(rel)s"
+msgstr "Le manifeste liste un fichier absent du paquet : %(rel)s"
+
+#, python-format
+msgid "The package has a file the manifest does not list: %(rel)s"
+msgstr "Le paquet contient un fichier que le manifeste ne liste pas : %(rel)s"
+
+#, python-format
+msgid "The file %(rel)s does not match the manifest."
+msgstr "Le fichier %(rel)s ne correspond pas au manifeste."
+
+msgid "requirements.lock or requirements.hashes.lock is missing from the package."
+msgstr "requirements.lock ou requirements.hashes.lock est absent du paquet."
+
+msgid "requirements.lock and requirements.hashes.lock are both needed in the source (run scripts/make_hash_lock.py)."
+msgstr "requirements.lock et requirements.hashes.lock sont tous deux requis dans les sources (exécutez scripts/make_hash_lock.py)."
+
+msgid "The release notes per language must be an object such as {\"fa\": \"…\"}."
+msgstr "Les notes de version par langue doivent être un objet comme {\"fa\": \"…\"}."
+
+#, python-format
+msgid "The release notes have an unknown language or a value that is not text: %(code)s"
+msgstr "Les notes de version contiennent une langue inconnue ou une valeur qui n’est pas du texte : %(code)s"
+
+#, python-format
+msgid "The update index is for the “%(got)s” channel but this site follows “%(want)s”."
+msgstr "L’index des mises à jour est celui du canal « %(got)s », mais ce site suit « %(want)s »."

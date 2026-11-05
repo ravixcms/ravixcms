@@ -160,6 +160,7 @@ location /_plugin_files/ {
 | `--domain D` / `--email E` | دامنه؛ ایمیل Let's Encrypt |
 | `--no-www` | `www.D` را نیاور |
 | `--no-ssl` | بدون certbot — فقط وقتی TLS جای دیگری تمام می‌شود (Cloudflare، لودبالانسر). ورود فقط پشت HTTPS کار می‌کند |
+| `--serve-updates DIR` | فقط سایت ناشر: Nginx فایل‌های امضاشدهٔ به‌روزرسانی داخل `DIR` را در `/updates/v1/` سرو می‌کند (بلاک امن و idempotent؛ `docs/release.md` §۴پ) |
 | `--no-nginx` | Nginx را دست نزن (پراکسی را خودتان می‌سازید؛ سوکت: `/run/ravix/gunicorn.sock`) |
 | `--no-systemd` | سرویس نساز (کانتینر) — اگر systemd در حال اجرا نباشد خودکار فعال می‌شود |
 | `--source DIR` | مسیر کد (پیش‌فرض: کنار اسکریپت) |

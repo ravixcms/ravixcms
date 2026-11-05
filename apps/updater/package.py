@@ -16,7 +16,7 @@ from pathlib import Path, PurePosixPath
 
 from apps.core.version import UPDATE_SCHEMA_VERSION
 
-from . import versions
+from . import deps, manifest, versions
 from .errors import UpdateError
 
 MAX_FILES = 20000
@@ -27,7 +27,8 @@ RELEASE_FILE = "release.json"
 
 # فقط این مسیرها را بستهٔ هسته می‌تواند جایگزین کند. هرگز: .env، .venv، media، دیتابیس، plugins/، plugins_installed، قالب‌های سفارشی، پشتیبان‌ها.
 CORE_ENTRIES = ("apps", "config", "static", "templates", "locale", "themes/default", "deploy", "docs", "scripts", "manage.py", "requirements.txt",
-                "requirements-optional.txt", "requirements-cpanel.txt", "passenger_wsgi.py", "README.md", ".env.example")
+                "requirements-optional.txt", "requirements-cpanel.txt", "requirements.lock", "requirements.hashes.lock", "passenger_wsgi.py", "README.md", ".env.example",
+                "manifest.json")
 REQUIRED_CORE = ("manage.py", "apps/core/version.py", "config", "requirements.txt")
 THEME_EXTENSIONS = {"html", "css", "js", "json", "png", "jpg", "jpeg", "gif", "webp", "svg", "woff", "woff2", "ttf", "ico", "txt", "md", "map"}
 FORBIDDEN_NAME = re.compile(r"(^|/)(\.env(\..+)?|.*\.sqlite3?|.*\.pem|.*\.key|id_rsa.*|\.git|\.venv|__pycache__|.*\.pyc|.*\.pyo)$")
@@ -167,6 +168,15 @@ def validate_core(root: Path, expected_version: str) -> Extracted:
     if inner != expected_version:
         raise UpdateError((gettext("RAVIX_VERSION inside the package (%(inner)s) does not match the declared version (%(expected_version)s).") % {"inner": inner, "expected_version": expected_version}))
     files = _scan_secrets_and_syntax(root, python_ok=True)
+    if rel.get("manifest"):  # releases from 0.10.0 on: every file must match the manifest, and the dependency locks must agree with each other
+        manifest.verify_extracted(root, CORE_ENTRIES)
+    if rel.get("deps_hashes"):
+        try:
+            found = deps.problems((root / "requirements.lock").read_text(encoding="utf-8"), (root / "requirements.hashes.lock").read_text(encoding="utf-8"))
+        except OSError:
+            found = [gettext("requirements.lock or requirements.hashes.lock is missing from the package.")]
+        if found:
+            raise UpdateError(found[0])
     return Extracted(root, rel, files)
 
 

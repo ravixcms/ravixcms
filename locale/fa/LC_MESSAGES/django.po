@@ -14178,3 +14178,55 @@ msgstr "«%(value)s» نشانی کامل https:// نیست."
 
 msgid "Enter at most %(n)d addresses."
 msgstr "حداکثر %(n)d نشانی وارد کنید."
+
+#, python-format
+msgid "The hash lock has no entry for %(name)s."
+msgstr "قفل هش برای %(name)s ورودی ندارد."
+
+#, python-format
+msgid "The hash lock pins %(name)s to %(got)s but requirements.lock says %(want)s."
+msgstr "قفل هش %(name)s را روی %(got)s می‌گذارد ولی requirements.lock نسخهٔ %(want)s را می‌گوید."
+
+#, python-format
+msgid "The hash lock has no hashes for %(name)s."
+msgstr "قفل هش برای %(name)s هیچ هشی ندارد."
+
+#, python-format
+msgid "The hash lock has %(name)s but requirements.lock does not."
+msgstr "قفل هش %(name)s را دارد ولی requirements.lock ندارد."
+
+#, python-format
+msgid "A line in the dependency lock files is not valid: %(line)s"
+msgstr "یک خط در فایل‌های قفل وابستگی معتبر نیست: %(line)s"
+
+msgid "manifest.json is missing from the package or invalid."
+msgstr "manifest.json در بسته نیست یا معتبر نیست."
+
+#, python-format
+msgid "The manifest lists a file that is not in the package: %(rel)s"
+msgstr "manifest فایلی را فهرست کرده که در بسته نیست: %(rel)s"
+
+#, python-format
+msgid "The package has a file the manifest does not list: %(rel)s"
+msgstr "بسته فایلی دارد که manifest فهرست نکرده: %(rel)s"
+
+#, python-format
+msgid "The file %(rel)s does not match the manifest."
+msgstr "فایل %(rel)s با manifest نمی‌خواند."
+
+msgid "requirements.lock or requirements.hashes.lock is missing from the package."
+msgstr "requirements.lock یا requirements.hashes.lock در بسته نیست."
+
+msgid "requirements.lock and requirements.hashes.lock are both needed in the source (run scripts/make_hash_lock.py)."
+msgstr "هر دو فایل requirements.lock و requirements.hashes.lock در سورس لازم‌اند (scripts/make_hash_lock.py را اجرا کنید)."
+
+msgid "The release notes per language must be an object such as {\"fa\": \"…\"}."
+msgstr "یادداشت‌های انتشار هر زبان باید یک شیء مثل {\"fa\": \"…\"} باشد."
+
+#, python-format
+msgid "The release notes have an unknown language or a value that is not text: %(code)s"
+msgstr "یادداشت‌های انتشار زبان ناشناخته یا مقداری غیرمتنی دارند: %(code)s"
+
+#, python-format
+msgid "The update index is for the “%(got)s” channel but this site follows “%(want)s”."
+msgstr "این فهرست به‌روزرسانی برای کانال «%(got)s» است ولی این سایت کانال «%(want)s» را دنبال می‌کند."
