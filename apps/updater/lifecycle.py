@@ -85,6 +85,8 @@ def probe_unix(path: str) -> tuple[bool, str]:
         conn.request("GET", "/healthz", headers={"Host": _host_header(), "X-Forwarded-Proto": "https"})
         resp = conn.getresponse()
         return _is_ok(resp.status, resp.read(2000))
+    except PermissionError:
+        return False, gettext("PermissionError: this user may not connect to the web service's socket %(path)s (the executor needs the socket's group).") % {"path": path}
     except (OSError, http.client.HTTPException) as exc:
         return False, type(exc).__name__
     finally:

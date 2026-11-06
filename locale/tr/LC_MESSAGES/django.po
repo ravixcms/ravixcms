@@ -14589,3 +14589,7 @@ msgstr "Yeni bir sürüm var: <span class=\"ltr\">%(version)s</span>"
 
 msgid "See what changes and update"
 msgstr "Neler değişiyor, gör ve güncelle"
+
+#, python-format
+msgid "PermissionError: this user may not connect to the web service's socket %(path)s (the executor needs the socket's group)."
+msgstr "PermissionError: bu kullanıcı web hizmetinin %(path)s soketine bağlanamaz (yürütücünün soketin grubuna ihtiyacı var)."

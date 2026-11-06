@@ -14609,3 +14609,7 @@ msgstr "Доступна новая версия: <span class=\"ltr\">%(version)
 
 msgid "See what changes and update"
 msgstr "Посмотреть изменения и обновить"
+
+#, python-format
+msgid "PermissionError: this user may not connect to the web service's socket %(path)s (the executor needs the socket's group)."
+msgstr "PermissionError: этому пользователю нельзя подключаться к сокету веб-службы %(path)s (исполнителю нужна группа сокета)."

@@ -14013,3 +14013,7 @@ msgstr "有新版本可用：<span class=\"ltr\">%(version)s</span>"
 
 msgid "See what changes and update"
 msgstr "查看更改并更新"
+
+#, python-format
+msgid "PermissionError: this user may not connect to the web service's socket %(path)s (the executor needs the socket's group)."
+msgstr "PermissionError：此用户无权连接 Web 服务的套接字 %(path)s（执行器需要该套接字所属的组）。"

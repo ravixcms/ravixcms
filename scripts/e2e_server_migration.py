@@ -115,7 +115,8 @@ def psql(sql: str) -> str:
 
 
 # ------------------------------------------------------------------------------------------------ data snapshot
-VOLATILE = {"django_session", "django_migrations", "updater_updaterun", "updater_updatelock", "updater_updatejob", "audit_auditlog", "core_cronrun", "ravin_cache",
+ADDITIVE = ("auth_permission", "django_content_type")  # a new model of a new release adds rows here; every row that existed must stay identical
+VOLATILE = {"auth_permission", "django_content_type", "django_session", "django_migrations", "updater_updaterun", "updater_updatelock", "updater_updatejob", "audit_auditlog", "core_cronrun", "ravin_cache",
             "mcp_mcpconnection", "accounts_user"}  # last_login / last_used change when someone logs in or a token is used; checked separately below
 
 
@@ -145,6 +146,22 @@ def data_fingerprint(before: dict | None = None) -> dict:
             cols = [c for c in before[t]["cols"] if c in cols]  # only the columns that existed before (a new migration adds columns)
         out[t] = {"cols": cols, "count": info["count"], "hash": table_hash(t, cols)}
     return out
+
+
+def additive_rows(columns: dict | None = None) -> dict:
+    out = {}
+    for t in ADDITIVE:
+        cols = (columns or {}).get(t) or [c for c in psql(f"select string_agg(column_name, ',' order by column_name) from information_schema.columns where table_schema='public' and table_name='{t}'").split(",")]
+        sel = ", ".join(f'"{c}"' for c in cols)
+        out[t] = {"cols": cols, "rows": set(psql(f'select r::text from (select {sel} from "{t}") r').splitlines())}
+    return out
+
+
+def check_additive(before: dict, label: str):
+    now = additive_rows({t: v["cols"] for t, v in before.items()})
+    for t, v in before.items():
+        missing = v["rows"] - now[t]["rows"]
+        check(not missing, f"{label}: every old row of {t} is unchanged ({len(v['rows'])} rows; new rows added: {len(now[t]['rows'] - v['rows'])})" + (f" — changed or removed: {sorted(missing)[:3]}" if missing else ""))
 
 
 def compare_data(before: dict, after: dict, label: str):
@@ -188,6 +205,16 @@ TOKEN = "e2e-mcp-token-" + "x" * 30
 McpToken.objects.create(connection=conn, kind="access", token_hash=hashlib.sha256(TOKEN.encode()).hexdigest(), expires_at=timezone.now() + datetime.timedelta(days=30))
 print("seeded")
 '''
+
+
+def preflight(label: str):
+    """ravix_preflight on the real server. This test installs with --no-ssl, so exactly one error is expected: the HTTPS redirect is off. Any other
+    error fails. (The warning about a writable plugins_installed folder is the long-standing advisory for the folder the owner's plugins live in.)"""
+    r = site("manage.py ravix_preflight", check_rc=False)
+    errors = [ln.strip() for ln in r.stdout.splitlines() if ln.strip().startswith("✘")]
+    unexpected = [e for e in errors if "SECURE_SSL_REDIRECT" not in e]
+    check(not unexpected, f"preflight {label}: no error except the HTTPS redirect of this --no-ssl test" + (f" — {unexpected}" if unexpected else ""))
+    say("\n".join("    " + ln for ln in r.stdout.splitlines() if ln.strip().startswith(("✘", "!")) or "passed" in ln))
 
 
 def mcp_status() -> str:
@@ -295,8 +322,25 @@ def wait_job(done=("succeeded", "failed", "rolled_back", "needs_recovery", "canc
     return last
 
 
-def code_fingerprint() -> str:
-    return tree_hash(APP / "apps") + tree_hash(APP / "config") + tree_hash(APP / "templates")
+def code_manifest() -> dict:
+    out = {}
+    for top in ("apps", "config", "templates"):
+        base = APP / top
+        for f in sorted(base.rglob("*")):
+            if f.is_file() and "__pycache__" not in f.parts and f.suffix != ".pyc":
+                out[str(f.relative_to(APP))] = hashlib.sha1(f.read_bytes()).hexdigest()
+    return out
+
+
+def code_is(good: dict, msg: str) -> bool:
+    """True when the program files are exactly ``good``; on a mismatch the first differing paths are printed."""
+    now = code_manifest()
+    if now == good:
+        return check(True, msg)
+    changed = sorted(k for k in good if k in now and good[k] != now[k])
+    added = sorted(set(now) - set(good))
+    removed = sorted(set(good) - set(now))
+    return check(False, f"{msg} — changed {changed[:6]}, added {added[:6]}, removed {removed[:6]}")
 
 
 def diagnostics():
@@ -363,6 +407,7 @@ def run(tmp: Path, args):
         "env": env_pairs(),
     }
     data0 = data_fingerprint()
+    additive0 = additive_rows()
     say(f"   (snapshot: {len(data0)} tables, {sum(v['count'] for v in data0.values())} rows)")
 
     say("۳) the NEW install.sh over the old installation (the migration)")
@@ -380,6 +425,10 @@ def run(tmp: Path, args):
     check(tree_hash(BASE / "plugin_data") == before["plugin_data"], "plugin_data is byte-identical")
     check(tree_hash(BASE / "media") == before["media"], "media is byte-identical")
     after_env = env_pairs()
+    # install.sh deliberately removes RAVIX_INSTALL_TOKEN once the site is installed (the install page is closed for good). The owner's real server
+    # has no token any more, so it is not part of the "old keys stay as they are" comparison; its removal is checked on its own.
+    check("RAVIX_INSTALL_TOKEN" in before["env"] and "RAVIX_INSTALL_TOKEN" not in after_env, "the install token was removed from ravix.env because the site is installed (by design)")
+    before["env"].pop("RAVIX_INSTALL_TOKEN", None)
     changed = {k: (v, after_env.get(k)) for k, v in before["env"].items() if after_env.get(k) != v}
     check(not changed, "every old key of ravix.env kept its value" + (f" — changed: {sorted(changed)}" if changed else ""))
     check(all(after_env.get(k) for k in ("EMAIL_HOST", "EMAIL_HOST_PASSWORD")), "the SMTP settings are still in ravix.env")
@@ -391,12 +440,11 @@ def run(tmp: Path, args):
     check(len(re.findall(r"location\s+(\^~\s+)?/_plugin_files/\s*\{", text)) == 1, "exactly one /_plugin_files/ block in the nginx site (nothing was duplicated)")
     check(sh(["nginx", "-t"], check_rc=False).returncode == 0, "nginx -t passes")
     compare_data(data0, data_fingerprint(data0), "after the migration")
+    check_additive(additive0, "after the migration")
     check(sh(["runuser", "-u", "ravix", "--", "test", "-w", str(BASE / "jobs" / "queue")], check_rc=False).returncode == 0, "the web user can put a wake-up file in jobs/queue")
     check(sh(["runuser", "-u", "ravix", "--", "test", "-w", str(APP / "apps")], check_rc=False).returncode != 0, "the web user cannot write the program code")
     check(sh(["runuser", "-u", "ravix-deploy", "--", "test", "-w", str(APP / "apps")], check_rc=False).returncode == 0, "the deploy user can write the program code")
-    r = site("manage.py ravix_preflight", check_rc=False)
-    check("update executor" in r.stdout.lower() or r.returncode in (0, 1), "ravix_preflight runs on the migrated server")
-    say(r.stdout[-1500:])
+    preflight("after the migration")
 
     # ---------------------------------------------------------------- real updates
     say("۴) a real update through the real executor (systemd path unit)")
@@ -425,7 +473,9 @@ def run(tmp: Path, args):
     check(mcp_status() == "200", "the old MCP token still works after the update")
     data1 = data_fingerprint(data0)
     compare_data(data0, data1, "after the update")
-    good_code = code_fingerprint()
+    check_additive(additive0, "after the update")
+    preflight("after the update")
+    good_code = code_manifest()
     good_link = os.readlink(BASE / "venv")
 
     # B: a migration that fails in the middle
@@ -434,7 +484,7 @@ def run(tmp: Path, args):
     job = wait_job()
     check(job["status"] in ("rolled_back", "failed"), f"a failing migration ends as rolled back ({job})")
     check(healthy() and current_version() == "0.10.1", "the site is healthy and still on 0.10.1")
-    check(code_fingerprint() == good_code, "the program files are exactly as before the failed update")
+    code_is(good_code, "the program files are exactly as before the failed update")
     check("S3CR3TPASS" not in sh("journalctl -u ravix-update.service --no-pager", check_rc=False).stdout, "the secret inside the error text is not in the executor's log")
     compare_data(data0, data_fingerprint(data0), "after the failed migration")
 
@@ -444,7 +494,8 @@ def run(tmp: Path, args):
     job = wait_job(timeout=900)
     check(job["status"] in ("rolled_back", "failed"), f"an unhealthy site after the restart is rolled back automatically ({job})")
     check(healthy() and current_version() == "0.10.1", "the site is healthy again on 0.10.1")
-    check(code_fingerprint() == good_code and os.readlink(BASE / "venv") == good_link, "files and virtualenv link are back to the previous version")
+    code_is(good_code, "the program files are back to the previous version")
+    check(os.readlink(BASE / "venv") == good_link, "the virtualenv link is back to the previous version")
 
     # D: a full disk (the backup folder cannot take the backup)
     build_release(tmp, "0.10.4", key=key)
@@ -457,7 +508,8 @@ def run(tmp: Path, args):
     finally:
         sh(["umount", str(backups)], check_rc=False)
     check(job["status"] in ("failed", "rolled_back"), f"a full backup disk stops the update ({job})")
-    check(healthy() and current_version() == "0.10.1" and code_fingerprint() == good_code, "nothing was changed on the site")
+    check(healthy() and current_version() == "0.10.1", "the site is healthy on 0.10.1")
+    code_is(good_code, "nothing was changed on the site")
 
     # E: a tampered package
     pkg = next(DIST.glob("ravix-core-0.10.4*.zip"), None)
@@ -467,7 +519,8 @@ def run(tmp: Path, args):
         queue_update("0.10.4")
         job = wait_job(timeout=300)
         check(job["status"] in ("failed", "rolled_back"), f"a tampered package is refused ({job})")
-        check(healthy() and current_version() == "0.10.1" and code_fingerprint() == good_code, "nothing was changed on the site")
+        check(healthy() and current_version() == "0.10.1", "the site is healthy on 0.10.1")
+        code_is(good_code, "nothing was changed on the site")
     else:
         check(False, "the 0.10.4 package was not found to tamper with")
 
@@ -488,7 +541,8 @@ def run(tmp: Path, args):
         job = wait_job(done=("rolled_back", "failed", "succeeded", "cancelled"), timeout=540)
         check(job["status"] == "rolled_back", f"the killed update was recovered automatically ({job})")
         check(healthy(timeout=120), "the site answers again after the recovery")
-        check(current_version() == "0.10.1" and code_fingerprint() == good_code, "files are back to 0.10.1 exactly")
+        check(current_version() == "0.10.1", "the site runs 0.10.1 again")
+        code_is(good_code, "files are back to 0.10.1 exactly")
         compare_data(data0, data_fingerprint(data0), "after the kill -9 recovery")
         check(tree_hash(BASE / "themes_installed" / "e2e-theme") == before["theme"] and tree_hash(BASE / "plugins_installed" / "e2e_plugin") == before["plugin"], "the external theme and plugin are still byte-identical")
         check(mcp_status() == "200", "the MCP token still works after the recovery")
@@ -498,6 +552,7 @@ def run(tmp: Path, args):
     sh(["bash", str(ROOT / "install.sh"), "--domain", DOMAIN, "--no-ssl", "--no-www", "--source", str(ROOT), "-y"], timeout=2400)
     check(len(re.findall(r"location\s+(\^~\s+)?/_plugin_files/\s*\{", SITE_FILE.read_text())) == 1, "still exactly one /_plugin_files/ block after a second install.sh")
     check({k: env_pairs().get(k) for k in before["env"]} == before["env"], "ravix.env old keys unchanged after a second install.sh")
+    check("RAVIX_INSTALL_TOKEN" not in env_pairs(), "an installed site never gets a new install token from a second install.sh")
     check(healthy(), "the site is healthy after a second install.sh")
     check(tree_hash(BASE / "themes_installed" / "e2e-theme") == before["theme"] and tree_hash(BASE / "plugins_installed" / "e2e_plugin") == before["plugin"], "the external theme and plugin are still byte-identical")
     del pre_env, pre_nginx

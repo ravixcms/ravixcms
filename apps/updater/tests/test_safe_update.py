@@ -287,6 +287,13 @@ class HealthProbeTests(SimpleTestCase):
         self.assertFalse(lifecycle.probe_unix(self.serve_unix(b"<html>", 200))[0])
         self.assertFalse(lifecycle.probe_unix("/nonexistent/g.sock")[0])
 
+    def test_a_socket_the_user_may_not_open_is_named_as_a_permission_problem(self):
+        with mock.patch.object(lifecycle._UnixConnection, "connect", side_effect=PermissionError(13, "denied")):
+            ok, detail = lifecycle.probe_unix("/run/ravix/gunicorn.sock")
+        self.assertFalse(ok)
+        self.assertIn("PermissionError", detail)
+        self.assertIn("/run/ravix/gunicorn.sock", detail)
+
     def test_an_http_address_is_probed_and_other_schemes_refused(self):
         class H(http.server.BaseHTTPRequestHandler):
             def do_GET(self):  # noqa: N802

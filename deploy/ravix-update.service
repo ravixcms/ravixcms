@@ -7,6 +7,9 @@ Type=oneshot
 # The only process that writes the code. The web service (user ravix) runs from the same files but cannot change them.
 User=ravix-deploy
 Group=ravix
+# After a restart the executor asks /healthz through the Gunicorn socket. That socket belongs to the web service's group (www-data, mode 660), so the
+# executor needs this group - only for this service, the user ravix-deploy is not a member of it anywhere else.
+SupplementaryGroups=www-data
 EnvironmentFile=/etc/ravix/ravix.env
 WorkingDirectory=/srv/ravix/app
 # One run does everything that is waiting: recovers an update that died half-way, then applies the queued update (download, verify the

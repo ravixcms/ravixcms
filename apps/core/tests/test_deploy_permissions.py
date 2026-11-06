@@ -110,6 +110,14 @@ class UpdateExecutorUnits(SimpleTestCase):
         self.assertIn("/etc/ravix/ravix.env", s["EnvironmentFile"])
         self.assertEqual(s["NoNewPrivileges"], ["true"])
 
+    def test_the_executor_can_reach_the_web_socket_it_health_checks(self):
+        """Gunicorn's socket is group-owned by the web service's Group with umask 007 (mode 660): the executor, which health-checks through it after a
+        restart, must be in that group - otherwise every update ends with "PermissionError" on /healthz and a failed rollback."""
+        web = unit_settings(DEPLOY / "ravix.service")
+        socket_group = web["Group"][-1]
+        self.assertIn(socket_group, process_groups(unit_settings(DEPLOY / "ravix-update.service")))
+        self.assertIn("umask = 0o007", (DEPLOY / "gunicorn.conf.py").read_text())  # the premise: the socket is not world-accessible
+
     def test_the_web_service_starts_from_the_same_symlink(self):
         self.assertIn("/srv/ravix/venv/bin/gunicorn", unit_settings(DEPLOY / "ravix.service")["ExecStart"][0])
         self.assertEqual(unit_settings(DEPLOY / "ravix.service")["User"], ["ravix"])  # the web service is not the deploy user
