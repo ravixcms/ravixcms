@@ -38,17 +38,37 @@ SEEN_KEYS: set[str] = set()
 
 # install.sh picks python3.13/3.12/3.11 from PATH. On the owner's Ubuntu 24.04 that is /usr/bin/python3.12. The GitHub runner has its own
 # Python 3.13 first in PATH (setup-python), which hid a lock-file problem that only shows on 3.12. install.sh therefore runs with the system PATH only.
-SYSTEM_PATH = "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-SYSTEM_ENV = {"PATH": SYSTEM_PATH, "HOME": "/root", "LANG": "C.UTF-8"}
+SYSTEM_PATH = os.environ.get("E2E_PATH_PREFIX", "") + ":/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+SYSTEM_ENV = {"PATH": SYSTEM_PATH.lstrip(":"), "HOME": "/root", "LANG": "C.UTF-8"}
+# a network proxy (not set on a GitHub runner) is the only thing that is passed through
+SYSTEM_ENV.update({k: os.environ[k] for k in ("HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY", "http_proxy", "https_proxy", "no_proxy", "SSL_CERT_FILE", "REQUESTS_CA_BUNDLE", "PIP_CERT", "CURL_CA_BUNDLE") if k in os.environ})
 
 
 def install_sh(src: Path, *, check_rc=True):
     """The install.sh of a source folder, the way the owner runs it (system Python only, no -E leftovers)."""
-    return sh(["bash", str(src / "install.sh"), "--domain", DOMAIN, "--no-ssl", "--no-www", "--source", str(src), "-y"], timeout=2400, env=SYSTEM_ENV, check_rc=check_rc)
+    extra = ["--no-systemd", "--no-nginx"] if PARTIAL else []
+    return sh(["bash", str(src / "install.sh"), "--domain", DOMAIN, "--no-ssl", "--no-www", *extra, "--source", str(src), "-y"], timeout=2400, env=SYSTEM_ENV, check_rc=check_rc)
+
+
+ENV_LOADER = (ROOT / "deploy" / "_envfile.sh").read_text(encoding="utf-8")
 
 
 def say(msg):
     print(msg, flush=True)
+
+
+NEW_INSTALL: dict = {}   # the output of the new install.sh
+PARTIAL = False   # --partial: a machine without systemd (a container). Everything that needs a running service is listed as SKIPPED, never as passed.
+SKIPPED: list[str] = []
+
+
+def svc(fn, msg):
+    """A check that needs a running service (systemd, nginx, gunicorn)."""
+    if PARTIAL:
+        say("  - SKIPPED (no systemd): " + msg)
+        SKIPPED.append(msg)
+        return None
+    return check(fn(), msg)
 
 
 def check(cond, msg):
@@ -69,7 +89,8 @@ def sh(cmd, *, check_rc=True, timeout=1800, env=None, input_text=None):
 
 def site(args: str, *, user="ravix", input_text=None, check_rc=True, timeout=600):
     """Runs `manage.py ...` (or any python args) the way the service does: the service user, ravix.env loaded, the real virtualenv."""
-    script = f'. {APP}/deploy/_envfile.sh; rav_load_env {ENV_FILE}; cd {APP}; exec {BASE}/venv/bin/python {args}'
+    # the loader comes from this checkout, not from /srv/ravix/app: the old release that is installed first does not have deploy/_envfile.sh
+    script = f'{ENV_LOADER}\nrav_load_env {ENV_FILE}; cd {APP}; exec {BASE}/venv/bin/python {args}'
     return sh(["runuser", "-u", user, "--", "bash", "-c", script], input_text=input_text, check_rc=check_rc, timeout=timeout)
 
 
@@ -365,12 +386,16 @@ def diagnostics():
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--old-ref", default=os.environ.get("E2E_OLD_REF", "2c9c074"))
+    ap.add_argument("--partial", action="store_true", help="a machine without systemd (a container): run only what needs no running service; the rest is listed as SKIPPED")
     ap.add_argument("--skip-kill", action="store_true", help="skip the slow kill -9 scenario")
     args = ap.parse_args()
+    global PARTIAL
     if os.geteuid() != 0:
         raise SystemExit("run as root")
-    if not Path("/run/systemd/system").is_dir():
-        raise SystemExit("this test needs a real systemd")
+    if args.partial:
+        PARTIAL = True
+    elif not Path("/run/systemd/system").is_dir():
+        raise SystemExit("this test needs a real systemd (use --partial in a container to run only the part that does not need it)")
     tmp = Path(tempfile.mkdtemp(prefix="ravix-e2e-srv-"))
     try:
         run(tmp, args)
@@ -384,7 +409,17 @@ def main():
         for f in FAILED:
             say("   - " + f)
         sys.exit(1)
+    if SKIPPED:
+        say(f"\n{len(SKIPPED)} check(s) SKIPPED because there is no systemd here (they are NOT passed):")
+        for f in SKIPPED:
+            say("   - " + f)
+        say("\n✔ the PARTIAL migration test passed (everything that could run without systemd)")
+        return
     say("\n✔ the real-server migration test passed")
+
+
+def read_site_file() -> str:
+    return SITE_FILE.read_text() if SITE_FILE.exists() else ""
 
 
 def copy_source(tmp: Path, name: str) -> Path:
@@ -401,15 +436,15 @@ def nothing_changed(label: str, app_before: str, env_before: str, nginx_before: 
     check(venv.is_dir() and not venv.is_symlink(), f"{label}: the active virtualenv is still the old plain folder")
     check(not list(BASE.glob("venv.legacy-*")), f"{label}: the old virtualenv was not moved")
     check(ENV_FILE.read_text() == env_before, f"{label}: ravix.env is unchanged")
-    check(SITE_FILE.read_text() == nginx_before, f"{label}: the nginx site is unchanged")
-    check(unit_active("ravix.service") and healthy(), f"{label}: the site is still healthy")
-    check(mcp_status() == "200", f"{label}: the MCP token still works")
+    check(read_site_file() == nginx_before, f"{label}: the nginx site is unchanged")
+    svc(lambda: unit_active("ravix.service") and healthy(), f"{label}: the site is still healthy")
+    svc(lambda: mcp_status() == "200", f"{label}: the MCP token still works")
 
 
 def failed_installs(tmp: Path, before: dict, data0: dict):
     """The new install.sh must be transactional: the Python environment is built first, and only a good one lets the code change."""
     say("۲ب) install.sh that cannot finish must leave the server exactly as it was")
-    app_before, env_before, nginx_before = tree_hash(APP), ENV_FILE.read_text(), SITE_FILE.read_text()
+    app_before, env_before, nginx_before = tree_hash(APP), ENV_FILE.read_text(), read_site_file()
     sys_py = tuple(int(x) for x in sh(["/usr/bin/python3", "-c", "import sys; print(*sys.version_info[:2])"]).stdout.split())
     say(f"   (system Python: {sys_py[0]}.{sys_py[1]})")
 
@@ -460,8 +495,8 @@ def run(tmp: Path, args):
     sh(f"git -C {ROOT} cat-file -e {args.old_ref}^{{commit}}")
     sh(f"git -C {ROOT} archive {args.old_ref} | tar -x -C {old}")
     install_sh(old)
-    check(unit_active("ravix.service"), "the old install runs ravix.service")
-    check(not (BASE / "jobs").exists() or not unit_active("ravix-update.path"), "the old install has no update executor yet (this is the pre-migration state)")
+    svc(lambda: unit_active("ravix.service"), "the old install runs ravix.service")
+    svc(lambda: not (BASE / "jobs").exists() or not unit_active("ravix-update.path"), "the old install has no update executor yet (this is the pre-migration state)")
     check(sh(["id", "ravix-deploy"], check_rc=False).returncode != 0, "the user ravix-deploy does not exist yet")
     check((BASE / "venv").is_dir() and not (BASE / "venv").is_symlink(), "the old virtualenv is a plain folder (like the owner's server)")
     old_version = current_version()
@@ -470,11 +505,12 @@ def run(tmp: Path, args):
     r = site("manage.py shell", input_text=SEED)
     check("seeded" in r.stdout, "content, users, Studio, redirects and an MCP connection were created")
     seed_external(old_version)
-    add_manual_nginx_block()
+    if not PARTIAL:
+        add_manual_nginx_block()
     with ENV_FILE.open("a", encoding="utf-8") as f:
         f.write("\nEMAIL_HOST=smtp.example.org\nEMAIL_PORT=587\nEMAIL_HOST_USER=mailer\nEMAIL_HOST_PASSWORD=smtp-secret-123\nEMAIL_USE_TLS=true\nDEFAULT_FROM_EMAIL=Ravix <ravixcms@gmail.com>\n")
-    check(healthy(), "the old site answers /healthz")
-    check(mcp_status() == "200", f"the MCP token works before the migration (HTTP {mcp_status()})")
+    svc(healthy, "the old site answers /healthz")
+    svc(lambda: mcp_status() == "200", "the MCP token works before the migration")
 
     before = {
         "theme": tree_hash(BASE / "themes_installed" / "e2e-theme"),
@@ -491,15 +527,16 @@ def run(tmp: Path, args):
 
     say("۳) the NEW install.sh over the old installation (the migration)")
     r = install_sh(ROOT)
-    check("syntax error" not in (r.stdout + r.stderr), "install.sh reads a ravix.env whose value has spaces and < > without quotes (the owner's DEFAULT_FROM_EMAIL)")
+    NEW_INSTALL["out"] = r.stdout + r.stderr
+    check("unexpected token" not in NEW_INSTALL["out"], "install.sh reads a ravix.env whose value has spaces and < > without quotes (the owner's DEFAULT_FROM_EMAIL)")
     check(sh(["id", "ravix-deploy"], check_rc=False).returncode == 0, "the user ravix-deploy was created")
     link = BASE / "venv"
     check(link.is_symlink() and re.match(r"^venv-[0-9.]+", os.readlink(link) or ""), f"venv is now a symlink to a versioned folder ({os.readlink(link) if link.is_symlink() else 'not a link'})")
     check(any(p.name.startswith("venv.legacy-") for p in BASE.iterdir()), "the old plain virtualenv was kept as venv.legacy-*")
     for u in ("ravix.service", "ravix-update.path", "ravix-restart.path", "ravix-update.timer", "ravix-backup.timer", "nginx.service"):
-        check(unit_active(u), f"{u} is active")
-    check(healthy(), "the site answers /healthz after the migration")
-    check(mcp_status() == "200", f"the old MCP token still works (HTTP {mcp_status()})")
+        svc(lambda u=u: unit_active(u), f"{u} is active")
+    svc(healthy, "the site answers /healthz after the migration")
+    svc(lambda: mcp_status() == "200", "the old MCP token still works")
     check(tree_hash(BASE / "themes_installed" / "e2e-theme") == before["theme"], "the external theme is byte-identical")
     check(tree_hash(BASE / "plugins_installed" / "e2e_plugin") == before["plugin"], "the external plugin is byte-identical")
     check(tree_hash(BASE / "plugin_data") == before["plugin_data"], "plugin_data is byte-identical")
@@ -514,25 +551,30 @@ def run(tmp: Path, args):
     check(all(after_env.get(k) for k in ("EMAIL_HOST", "EMAIL_HOST_PASSWORD")), "the SMTP settings are still in ravix.env")
     new_keys = sorted(set(after_env) - set(before["env"]))
     say(f"   (new keys in ravix.env: {', '.join(new_keys)})")
-    check({"RAVIX_VENV_LINK", "RAVIX_UPDATE_JOBS_DIR", "RAVIX_UPDATE_EXECUTOR"} <= set(new_keys), "the update keys were added to ravix.env")
+    svc(lambda: {"RAVIX_VENV_LINK", "RAVIX_UPDATE_JOBS_DIR", "RAVIX_UPDATE_EXECUTOR"} <= set(new_keys), "the update keys were added to ravix.env")
     check(oct(ENV_FILE.stat().st_mode & 0o777) == "0o640", "ravix.env is still mode 640")
-    text = SITE_FILE.read_text(encoding="utf-8")
-    check(len(re.findall(r"location\s+(\^~\s+)?/_plugin_files/\s*\{", text)) == 1, "exactly one /_plugin_files/ block in the nginx site (nothing was duplicated)")
-    check(sh(["nginx", "-t"], check_rc=False).returncode == 0, "nginx -t passes")
+    text = read_site_file()
+    svc(lambda: len(re.findall(r"location\s+(\^~\s+)?/_plugin_files/\s*\{", text)) == 1, "exactly one /_plugin_files/ block in the nginx site (nothing was duplicated)")
+    svc(lambda: sh(["nginx", "-t"], check_rc=False).returncode == 0, "nginx -t passes")
     compare_data(data0, data_fingerprint(data0), "after the migration")
     check_additive(additive0, "after the migration")
     check(sh(["runuser", "-u", "ravix", "--", "test", "-w", str(BASE / "jobs" / "queue")], check_rc=False).returncode == 0, "the web user can put a wake-up file in jobs/queue")
     check(sh(["runuser", "-u", "ravix", "--", "test", "-w", str(APP / "apps")], check_rc=False).returncode != 0, "the web user cannot write the program code")
     check(sh(["runuser", "-u", "ravix-deploy", "--", "test", "-w", str(APP / "apps")], check_rc=False).returncode == 0, "the deploy user can write the program code")
     preflight("after the migration")
-    sys_ver = sh(["/usr/bin/python3", "-V"]).stdout.split()[1].rsplit(".", 1)[0]
+    picked = re.search(r"Python: (\S+) \(Python (\d+\.\d+)", NEW_INSTALL["out"])
     venv_ver = sh([str(BASE / "venv" / "bin" / "python"), "-V"]).stdout.split()[1].rsplit(".", 1)[0]
-    check(venv_ver == sys_ver, f"the new virtualenv was built with the system Python {sys_ver}, like on the owner's server (got {venv_ver})")
+    check(bool(picked) and picked.group(1).startswith("/usr/"), f"install.sh used a system Python ({picked.group(1) if picked else 'none found'}), not a toolcache one")
+    check(bool(picked) and venv_ver == picked.group(2), f"the new virtualenv has the Python that install.sh chose ({venv_ver}); the system python3 here is {sh(['/usr/bin/python3', '-V']).stdout.split()[1]}")
     pf = site("manage.py ravix_preflight", check_rc=False).stdout
     check("DEFAULT_FROM_EMAIL" in pf and "double quotes" in pf, "preflight names the unquoted ravix.env value (key and line, not the value) and says how to fix it")
     check("ravixcms@gmail.com" not in pf, "preflight does not print the value")
     bk = sh(["runuser", "-u", "ravix", "--", "bash", str(APP / "deploy" / "backup.sh")], check_rc=False)
     check(bk.returncode == 0, f"deploy/backup.sh works with the unquoted DEFAULT_FROM_EMAIL line in ravix.env (exit {bk.returncode}) {bk.stderr[-300:]}")
+
+    if PARTIAL:
+        say("   PARTIAL run: stopped here. The real updates, the failure cases with the executor and the second install.sh need a real systemd.")
+        return
 
     # ---------------------------------------------------------------- real updates
     say("۴) a real update through the real executor (systemd path unit)")
