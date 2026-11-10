@@ -14593,3 +14593,11 @@ msgstr "Neler değişiyor, gör ve güncelle"
 #, python-format
 msgid "PermissionError: this user may not connect to the web service's socket %(path)s (the executor needs the socket's group)."
 msgstr "PermissionError: bu kullanıcı web hizmetinin %(path)s soketine bağlanamaz (yürütücünün soketin grubuna ihtiyacı var)."
+
+#, python-format
+msgid "Not enough free disk space for the backup in %(dir)s: about %(need)s are needed and %(free)s are free. Free some space (for example delete old backups in that folder) and try again. Nothing was changed."
+msgstr "%(dir)s içinde yedek için yeterli boş disk alanı yok: yaklaşık %(need)s gerekiyor, %(free)s boş. Yer açın (örneğin o klasördeki eski yedekleri silin) ve yeniden deneyin. Hiçbir şey değiştirilmedi."
+
+#, python-format
+msgid "The disk became full while the backup was being written (%(free)s free in %(dir)s). Nothing was changed; free some space and try again."
+msgstr "Yedek yazılırken disk doldu (%(dir)s içinde %(free)s boş). Hiçbir şey değiştirilmedi; yer açıp yeniden deneyin."

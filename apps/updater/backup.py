@@ -4,6 +4,7 @@ SQLite با API رسمی backup (سازگار با WAL)؛ PostgreSQL با pg_dum
 فایل‌های ``.env``، media و دیتابیس هرگز داخل آرشیو فایل‌ها نیستند.
 """
 from django.utils.translation import gettext
+import errno
 import hashlib
 import os
 import shutil
@@ -16,7 +17,7 @@ from pathlib import Path
 from django.conf import settings
 from django.db import connection
 
-from .errors import UpdateError
+from .errors import UpdateBlocked, UpdateError
 from .logs import sanitize
 from .package import CORE_ENTRIES
 
@@ -227,8 +228,39 @@ def create_dir_backup(label: str, src: Path) -> dict:
     return {"dir": d.name, "files_archive": arch.name, "files_sha256": sha256_file(arch), "backend": "none"}
 
 
+def _db_size(backend) -> int:
+    """Rough size of the database (0 when it cannot be told): for the free-space check before a backup."""
+    try:
+        if backend.name == "sqlite":
+            return Path(connection.settings_dict["NAME"]).stat().st_size
+        with connection.cursor() as cur:
+            if connection.vendor == "postgresql":
+                cur.execute("select pg_database_size(current_database())")
+            elif connection.vendor == "mysql":
+                cur.execute("select coalesce(sum(data_length + index_length), 0) from information_schema.tables where table_schema = database()")
+            else:
+                return 0
+            return int(cur.fetchone()[0])
+    except Exception:  # noqa: BLE001 - an estimate must never stop an update
+        return 0
+
+
+def ensure_space(root: Path, backend, extra: tuple = ()) -> None:
+    """Stops before anything is written when the backup folder cannot hold the backup (files + database, uncompressed as an upper bound)."""
+    from django.template.defaultfilters import filesizeformat
+
+    base = backup_dir()
+    need = _db_size(backend) + sum(f.stat().st_size for _entry, p in _managed_paths(root, extra) for f in ([p] if p.is_file() else p.rglob("*")) if f.is_file()) + 16 * 1024 * 1024
+    free = shutil.disk_usage(base).free
+    if free < need:
+        raise UpdateBlocked(gettext("Not enough free disk space for the backup in %(dir)s: about %(need)s are needed and %(free)s are free. Free some space (for example delete old backups in that folder) and try again. Nothing was changed.")
+                            % {"dir": str(base), "need": filesizeformat(need), "free": filesizeformat(free)})
+
+
 def create_backup(label: str, root: Path, db_backend=None, extra: tuple = ()) -> dict:
     """پشتیبان کامل می‌سازد و ``{dir, db_file, db_sha256, files_archive, files_sha256, backend}`` برمی‌گرداند."""
+    backend = db_backend or default_db_backend()
+    ensure_space(root, backend, extra)
     base = backup_dir()
     stamp = time.strftime("%Y%m%d-%H%M%S")
     d = base / f"{stamp}-{label}"
@@ -237,13 +269,24 @@ def create_backup(label: str, root: Path, db_backend=None, extra: tuple = ()) ->
         n += 1
         d = base / f"{stamp}-{label}-{n}"
     d.mkdir(mode=0o700)
-    backend = db_backend or default_db_backend()
     db_file = d / ("db.sqlite3" if backend.name == "sqlite" else "db.dump")
-    backend.backup(db_file)
-    if not db_file.is_file() or db_file.stat().st_size == 0:
-        raise UpdateError(gettext("The database backup file was not created."))
     arch = d / "files.tar.gz"
-    make_files_archive(root, arch, extra)
+    try:
+        backend.backup(db_file)
+        if not db_file.is_file() or db_file.stat().st_size == 0:
+            raise UpdateError(gettext("The database backup file was not created."))
+        make_files_archive(root, arch, extra)
+    except OSError as exc:
+        shutil.rmtree(d, ignore_errors=True)  # never leave a half-written backup that fills the disk
+        if exc.errno in (errno.ENOSPC, errno.EDQUOT):
+            from django.template.defaultfilters import filesizeformat
+
+            raise UpdateError(gettext("The disk became full while the backup was being written (%(free)s free in %(dir)s). Nothing was changed; free some space and try again.")
+                              % {"free": filesizeformat(shutil.disk_usage(base).free), "dir": str(base)}) from exc
+        raise
+    except UpdateError:
+        shutil.rmtree(d, ignore_errors=True)
+        raise
     for f in (db_file,):
         if os.name == "posix":
             os.chmod(f, 0o600)

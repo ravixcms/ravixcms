@@ -14017,3 +14017,11 @@ msgstr "查看更改并更新"
 #, python-format
 msgid "PermissionError: this user may not connect to the web service's socket %(path)s (the executor needs the socket's group)."
 msgstr "PermissionError：此用户无权连接 Web 服务的套接字 %(path)s（执行器需要该套接字所属的组）。"
+
+#, python-format
+msgid "Not enough free disk space for the backup in %(dir)s: about %(need)s are needed and %(free)s are free. Free some space (for example delete old backups in that folder) and try again. Nothing was changed."
+msgstr "%(dir)s 中没有足够的可用磁盘空间来备份：大约需要 %(need)s，目前可用 %(free)s。请释放一些空间（例如删除该文件夹中的旧备份）后重试。未做任何更改。"
+
+#, python-format
+msgid "The disk became full while the backup was being written (%(free)s free in %(dir)s). Nothing was changed; free some space and try again."
+msgstr "写入备份时磁盘已满（%(dir)s 中剩余 %(free)s）。未做任何更改；请释放空间后重试。"

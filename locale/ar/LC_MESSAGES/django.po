@@ -14378,3 +14378,11 @@ msgstr "اطّلع على التغييرات ثم حدّث"
 #, python-format
 msgid "PermissionError: this user may not connect to the web service's socket %(path)s (the executor needs the socket's group)."
 msgstr "PermissionError: لا يملك هذا المستخدم إذن الاتصال بمقبس خدمة الويب %(path)s (يحتاج المنفّذ إلى مجموعة المقبس)."
+
+#, python-format
+msgid "Not enough free disk space for the backup in %(dir)s: about %(need)s are needed and %(free)s are free. Free some space (for example delete old backups in that folder) and try again. Nothing was changed."
+msgstr "لا توجد مساحة قرص كافية للنسخة الاحتياطية في %(dir)s: يلزم نحو %(need)s والمتاح %(free)s. حرّر بعض المساحة (مثلًا احذف النسخ الاحتياطية القديمة في هذا المجلد) وحاول مجددًا. لم يتغير شيء."
+
+#, python-format
+msgid "The disk became full while the backup was being written (%(free)s free in %(dir)s). Nothing was changed; free some space and try again."
+msgstr "امتلأ القرص أثناء كتابة النسخة الاحتياطية (%(free)s متاحة في %(dir)s). لم يتغير شيء؛ حرّر بعض المساحة وحاول مجددًا."

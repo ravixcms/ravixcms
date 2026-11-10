@@ -14708,3 +14708,11 @@ msgstr "Ver o que muda e atualizar"
 #, python-format
 msgid "PermissionError: this user may not connect to the web service's socket %(path)s (the executor needs the socket's group)."
 msgstr "PermissionError: este usuário não pode se conectar ao socket do serviço web %(path)s (o executor precisa do grupo do socket)."
+
+#, python-format
+msgid "Not enough free disk space for the backup in %(dir)s: about %(need)s are needed and %(free)s are free. Free some space (for example delete old backups in that folder) and try again. Nothing was changed."
+msgstr "Não há espaço livre em disco suficiente para o backup em %(dir)s: são necessários cerca de %(need)s e há %(free)s livres. Libere espaço (por exemplo, apague backups antigos dessa pasta) e tente novamente. Nada foi alterado."
+
+#, python-format
+msgid "The disk became full while the backup was being written (%(free)s free in %(dir)s). Nothing was changed; free some space and try again."
+msgstr "O disco ficou cheio durante a gravação do backup (%(free)s livres em %(dir)s). Nada foi alterado; libere espaço e tente novamente."

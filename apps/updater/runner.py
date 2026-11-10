@@ -20,10 +20,13 @@ class SubprocessRunner:
     def _manage(self, *args) -> str:
         env = {**os.environ, "PYTHONDONTWRITEBYTECODE": "1"}
         r = subprocess.run([self.python, str(self.root / "manage.py"), *args], cwd=self.root, env=env, capture_output=True, text=True, timeout=self.timeout)
-        out = sanitize((r.stdout or "") + (r.stderr or ""), 6000)
+        full = (r.stdout or "") + (r.stderr or "")
         if r.returncode != 0:
-            raise UpdateError((gettext("manage.py %(args)s failed:\n%(out)s") % {"args": args[0], "out": out}))
-        return out
+            # the reason is at the END of the output (the traceback); the start is only "Operations to perform: Apply all migrations…"
+            text = sanitize(full, 20000)
+            shown = text if len(text) <= 1500 else "…" + text[-1500:]
+            raise UpdateError((gettext("manage.py %(args)s failed:\n%(out)s") % {"args": args[0], "out": shown}))
+        return sanitize(full, 6000)
 
     def migrate(self) -> str:
         return self._manage("migrate", "--noinput")

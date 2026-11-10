@@ -14429,3 +14429,11 @@ msgstr "ببینید چه چیزی تغییر می‌کند و به‌روزرس
 #, python-format
 msgid "PermissionError: this user may not connect to the web service's socket %(path)s (the executor needs the socket's group)."
 msgstr "PermissionError: این کاربر اجازهٔ اتصال به سوکت سرویس وب (%(path)s) را ندارد (اجراکننده به گروهِ این سوکت نیاز دارد)."
+
+#, python-format
+msgid "Not enough free disk space for the backup in %(dir)s: about %(need)s are needed and %(free)s are free. Free some space (for example delete old backups in that folder) and try again. Nothing was changed."
+msgstr "فضای خالی دیسک برای پشتیبان در %(dir)s کافی نیست: حدود %(need)s لازم است و %(free)s خالی است. کمی فضا آزاد کنید (مثلاً پشتیبان‌های قدیمی همین پوشه را پاک کنید) و دوباره امتحان کنید. چیزی تغییر نکرد."
+
+#, python-format
+msgid "The disk became full while the backup was being written (%(free)s free in %(dir)s). Nothing was changed; free some space and try again."
+msgstr "هنگام نوشتن پشتیبان دیسک پر شد (%(free)s خالی در %(dir)s). چیزی تغییر نکرد؛ کمی فضا آزاد کنید و دوباره امتحان کنید."

@@ -820,3 +820,69 @@ class PreflightExecutorTests(TestCase):
         text = self.run_preflight(RAVIX_UPDATE_EXECUTOR="systemd", RAVIX_VENV_LINK=str(tmp / "venv"), RAVIX_UPDATE_JOBS_DIR=tmp / "jobs", RAVIX_HOSTING=False)
         self.assertNotIn("not exist; run install.sh", text)
         self.assertNotIn("cannot write", text)
+
+
+# ----------------------------------------------------------------------------------------------------------------------- clear messages
+@override_settings(RAVIX_UPDATE_HEARTBEAT_SECONDS=0)
+class ClearMessageTests(UpdaterCase):
+    def setUp(self):
+        super().setUp()
+        self.jobs = self.base / "jobs"
+        ov = override_settings(RAVIX_UPDATE_EXECUTOR="systemd", RAVIX_UPDATE_JOBS_DIR=self.jobs, RAVIX_UPDATE_HEARTBEAT_SECONDS=0)
+        ov.enable()
+        self.addCleanup(ov.disable)
+
+    def backup_dir(self):
+        from apps.updater import backup as backups
+
+        return backups.backup_dir()
+
+    def test_a_backup_folder_that_is_too_small_is_reported_before_anything_is_written(self):
+        from apps.updater import backup as backups
+        from apps.updater.errors import UpdateBlocked
+
+        with mock.patch.object(backups.shutil, "disk_usage", return_value=mock.Mock(free=2 * 1024 * 1024)):
+            with self.assertRaises(UpdateBlocked) as ctx:
+                backups.create_backup("core-test", self.root, self.db)
+        text = str(ctx.exception)
+        self.assertIn(str(self.backup_dir()), text)
+        self.assertNotIn("unexpected", text.lower())
+        self.assertEqual([p for p in self.backup_dir().iterdir()], [])  # nothing was created
+
+    def test_a_disk_that_fills_up_while_writing_names_the_problem_and_leaves_nothing_behind(self):
+        import errno
+
+        from apps.updater import backup as backups
+        from apps.updater.errors import UpdateError
+
+        with mock.patch.object(backups, "make_files_archive", side_effect=OSError(errno.ENOSPC, "No space left on device")):
+            with self.assertRaises(UpdateError) as ctx:
+                backups.create_backup("core-test", self.root, self.db)
+        self.assertIn(str(self.backup_dir()), str(ctx.exception))
+        self.assertNotIn("unexpected", str(ctx.exception).lower())
+        self.assertEqual([p for p in self.backup_dir().iterdir()], [])  # the half-written backup is removed
+
+    def test_a_full_disk_ends_the_job_as_failed_with_that_message_and_the_site_untouched(self):
+        import errno
+
+        from apps.updater import backup as backups
+
+        self.publish("0.7.0")
+        job = jobs.enqueue("0.7.0", self.admin)
+        with mock.patch.object(backups, "make_files_archive", side_effect=OSError(errno.ENOSPC, "No space left on device")):
+            jobs.run_pending(lifecycle=FakeLife(), runner=self.runner, db_backend=self.db, root=self.root)
+        job.refresh_from_db()
+        self.assertEqual(job.status, "failed")
+        self.assertIn(str(self.backup_dir()), job.message)
+        self.assertEqual(self.disk(), SITE_VERSION)
+
+    def test_a_failed_migrate_shows_the_end_of_the_output_where_the_reason_is(self):
+        from apps.updater.runner import SubprocessRunner
+
+        root = self.base / "fakesite"
+        root.mkdir()
+        (root / "manage.py").write_text("import sys\nprint('Operations to perform:\\n  Apply all migrations: ' + 'x' * 3000)\nsys.stderr.write('RuntimeError: the real reason')\nsys.exit(1)\n")
+        with self.assertRaises(UpdateError) as ctx:
+            SubprocessRunner(root, 60).migrate()
+        self.assertIn("the real reason", str(ctx.exception))
+        self.assertLess(len(str(ctx.exception)), 1700)

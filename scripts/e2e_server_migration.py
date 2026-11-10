@@ -299,7 +299,7 @@ def current_version() -> str:
 
 
 def newest_job() -> dict:
-    r = site("manage.py shell -c \"from apps.updater.models import UpdateJob as J; j=J.objects.order_by('-pk').first(); print(j.pk, j.status, (j.message or '')[:120].replace('|',' ')) if j else print('none')\"", check_rc=False)
+    r = site("manage.py shell -c \"from apps.updater.models import UpdateJob as J; j=J.objects.order_by('-pk').first(); print(j.pk, j.status, ' '.join((j.message or '').split())[:600]) if j else print('none')\"", check_rc=False)
     if r.returncode != 0 or not r.stdout.strip():
         return {"id": "", "status": "?", "message": "the site did not answer (restarting?)"}
     out = r.stdout.strip().splitlines()[-1]
@@ -483,6 +483,8 @@ def run(tmp: Path, args):
     queue_update("0.10.2")
     job = wait_job()
     check(job["status"] in ("rolled_back", "failed"), f"a failing migration ends as rolled back ({job})")
+    check("migration exploded" in job["message"], "the job message names the real reason (the end of the migrate output), not just its first lines")
+    check("S3CR3TPASS" not in job["message"], "the secret inside the error text is masked in the job message")
     check(healthy() and current_version() == "0.10.1", "the site is healthy and still on 0.10.1")
     code_is(good_code, "the program files are exactly as before the failed update")
     check("S3CR3TPASS" not in sh("journalctl -u ravix-update.service --no-pager", check_rc=False).stdout, "the secret inside the error text is not in the executor's log")
@@ -508,6 +510,7 @@ def run(tmp: Path, args):
     finally:
         sh(["umount", str(backups)], check_rc=False)
     check(job["status"] in ("failed", "rolled_back"), f"a full backup disk stops the update ({job})")
+    check(str(backups) in job["message"] and "unexpected" not in job["message"].lower(), "the message names the full folder (not \"an unexpected error\")")
     check(healthy() and current_version() == "0.10.1", "the site is healthy on 0.10.1")
     code_is(good_code, "nothing was changed on the site")
 
