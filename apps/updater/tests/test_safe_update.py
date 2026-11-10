@@ -886,3 +886,41 @@ class ClearMessageTests(UpdaterCase):
             SubprocessRunner(root, 60).migrate()
         self.assertIn("the real reason", str(ctx.exception))
         self.assertLess(len(str(ctx.exception)), 1700)
+
+
+class JobMessageKeepsTheEndTests(SimpleTestCase):
+    """The reason a job failed is the LAST line of the traceback: it must survive the length cap, and secrets must not."""
+
+    def traceback(self):
+        frames = "".join(
+            f'  File "/srv/ravix/venv/lib/python3.13/site-packages/django/db/migrations/executor.py", line {n}, in apply_migration\n    state = migration.apply(state, schema_editor)\n'
+            for n in range(60)
+        )
+        return "Operations to perform:\n  Apply all migrations: " + "a, " * 300 + "\nTraceback (most recent call last):\n" + frames + "RuntimeError: migration exploded postgres://ravix:S3CR3TPASS@db/ravix\n"
+
+    def test_final_exception_line_is_found(self):
+        from apps.updater.logs import final_error_line
+
+        self.assertTrue(final_error_line(self.traceback()).startswith("RuntimeError: migration exploded"))
+
+    def test_the_cap_removes_the_middle_not_the_end_and_masks_the_secret(self):
+        from apps.updater.logs import compact
+
+        msg = compact("The upgrade failed (x): manage.py migrate failed:\n" + self.traceback(), 1500)
+        self.assertLessEqual(len(msg), 1500)
+        self.assertIn("RuntimeError: migration exploded", msg)
+        self.assertTrue(msg.endswith("@db/ravix") or "migration exploded" in msg[-120:])
+        self.assertNotIn("S3CR3TPASS", msg)
+        self.assertNotIn("\n", msg)
+        self.assertTrue(msg.startswith("The upgrade failed"))
+
+    def test_runner_and_job_keep_the_exception(self):
+        from apps.updater.runner import SubprocessRunner
+
+        d = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, d, True)
+        (d / "manage.py").write_text("import sys\nsys.stderr.write(" + repr(self.traceback()) + ")\nsys.exit(1)\n")
+        with self.assertRaises(UpdateError) as cm:
+            SubprocessRunner(d)._manage("migrate")
+        self.assertIn("migration exploded", str(cm.exception))
+        self.assertNotIn("S3CR3TPASS", str(cm.exception))

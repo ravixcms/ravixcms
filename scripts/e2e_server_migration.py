@@ -299,7 +299,7 @@ def current_version() -> str:
 
 
 def newest_job() -> dict:
-    r = site("manage.py shell -c \"from apps.updater.models import UpdateJob as J; j=J.objects.order_by('-pk').first(); print(j.pk, j.status, ' '.join((j.message or '').split())[:600]) if j else print('none')\"", check_rc=False)
+    r = site("manage.py shell -c \"from apps.updater.models import UpdateJob as J; j=J.objects.order_by('-pk').first(); print(j.pk, j.status, ' '.join((j.message or '').split())) if j else print('none')\"", check_rc=False)
     if r.returncode != 0 or not r.stdout.strip():
         return {"id": "", "status": "?", "message": "the site did not answer (restarting?)"}
     out = r.stdout.strip().splitlines()[-1]

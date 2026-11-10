@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 from .errors import UpdateError
-from .logs import sanitize
+from .logs import compact, sanitize
 
 
 class SubprocessRunner:
@@ -23,8 +23,7 @@ class SubprocessRunner:
         full = (r.stdout or "") + (r.stderr or "")
         if r.returncode != 0:
             # the reason is at the END of the output (the traceback); the start is only "Operations to perform: Apply all migrations…"
-            text = sanitize(full, 20000)
-            shown = text if len(text) <= 1500 else "…" + text[-1500:]
+            shown = compact(full, 1300)
             raise UpdateError((gettext("manage.py %(args)s failed:\n%(out)s") % {"args": args[0], "out": shown}))
         return sanitize(full, 6000)
 

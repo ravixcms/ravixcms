@@ -31,3 +31,34 @@ def sanitize(text, limit: int = 4000) -> str:
     if len(text) > limit:
         text = (gettext("%(text)s\n… (truncated)") % {"text": text[:limit]})
     return text
+
+
+_FINAL_ERROR = re.compile(r"^\s*(?:[A-Za-z_][\w.]*\.)?[A-Za-z_]\w*(?:Error|Exception|Exit|Interrupt|Warning|Failed)\b.*$|^\s*[A-Za-z_][\w.]*: \S.*$")
+
+
+def final_error_line(text) -> str:
+    """The last line shaped like ``SomeError: …`` (the end of a traceback); else the last non-empty line."""
+    lines = [ln for ln in str(text or "").splitlines() if ln.strip()]
+    for ln in reversed(lines):
+        if _FINAL_ERROR.match(ln) and not ln.lstrip().startswith(("File ", "Traceback")):
+            return ln.strip()
+    return lines[-1].strip() if lines else ""
+
+
+def compact(text, limit: int = 1500) -> str:
+    """Mask secrets, put the text on one line, then cap the length KEEPING THE END.
+
+    The reason for a failure is its final exception line, so when space is short the middle of the traceback goes, never the end.
+    """
+    text = sanitize(text, 10**9)
+    final = " ".join(final_error_line(text).split())
+    body = " ".join(text.split())
+    if len(body) <= limit:
+        return body
+    final = final if len(final) <= limit // 2 else final[: limit // 2 - 1] + "…"
+    before = body[: body.rfind(final)].rstrip() if final in body else body
+    marker = " … "
+    room = max(limit - len(final) - 2 * len(marker), 0)
+    head_n = room * 2 // 5
+    tail_n = room - head_n
+    return body[:head_n] + marker + (before[-tail_n:] if tail_n else "") + marker.rstrip() + " " + final

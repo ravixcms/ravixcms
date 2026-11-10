@@ -23,7 +23,7 @@ from django.utils.translation import gettext
 from . import lifecycle as lifecycle_mod
 from . import pipeline
 from .errors import UpdateBlocked, UpdateBusy, UpdateError
-from .logs import sanitize
+from .logs import compact
 from .models import UpdateJob, UpdateLock, UpdateRun
 
 QUEUE_NAME = "queue"
@@ -152,7 +152,7 @@ def claim_next() -> UpdateJob | None:
 
 
 def _finish(job: UpdateJob, status: str, message: str = "") -> None:
-    UpdateJob.objects.filter(pk=job.pk).update(status=status, message=sanitize(message, 1500), finished_at=_now())
+    UpdateJob.objects.filter(pk=job.pk).update(status=status, message=compact(message, 1500), finished_at=_now())
     job.refresh_from_db()
 
 
