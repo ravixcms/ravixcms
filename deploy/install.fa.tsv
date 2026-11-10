@@ -63,7 +63,6 @@ Update the code in %s (rsync without deleting)?	به‌روزرسانی کد د�
 Copy the code from %s to %s?	کپی کد از %s به %s؟
 The code is required.	کد لازم است.
 The code was not updated	کد به‌روز نشد
-virtualenv and dependencies	virtualenv و وابستگی‌ها
 The dependencies are required.	وابستگی‌ها لازم‌اند.
 PostgreSQL	PostgreSQL
 PostgreSQL is not running and there is no systemd; start it yourself (e.g. pg_ctlcluster).	PostgreSQL در حال اجرا نیست و systemd نداریم؛ آن را خودتان بالا بیاورید (مثلاً pg_ctlcluster).
@@ -147,4 +146,11 @@ The version of the code could not be read from apps/core/version.py.	نسخهٔ 
 The dependencies match the lock file (%s)	وابستگی‌ها با فایل قفل می‌خوانند (%s)
   The virtualenv is a plain folder. It is moved to the versioned layout (venv-%s and a symlink); the old folder is kept as %s.legacy-… until you delete it.	  virtualenv یک پوشهٔ ساده است. به چیدمان نسخه‌دار (venv-%s و یک symlink) منتقل می‌شود؛ پوشهٔ قدیمی با نام %s.legacy-… می‌ماند تا خودتان پاکش کنید.
 Build the virtualenv %s and install the pinned, hash-checked dependencies?	virtualenv «%s» ساخته شود و وابستگی‌های قفل‌شده (با بررسی هش) نصب شوند؟
-The new virtualenv cannot run the code; the old one was left in place.	virtualenv تازه نمی‌تواند کد را اجرا کند؛ قدیمی سر جایش ماند.
+virtualenv and dependencies (built before any code is changed)	محیط پایتون و وابستگی‌ها (پیش از تغییر هر کدی ساخته می‌شود)
+The Python packages could not be installed (see the pip message above). NOTHING WAS CHANGED: the code in %s and the virtualenv %s are exactly as they were. Fix the cause and run install.sh again.	بسته‌های پایتون نصب نشد (پیام pip را بالا ببین). هیچ چیز تغییر نکرد: کد در %s و محیط %s دقیقاً مثل قبل است. علت را درست کن و install.sh را دوباره اجرا کن.
+A copy of the current code could not be made (disk full?); nothing was changed.	از کد فعلی نسخهٔ پشتیبان ساخته نشد (دیسک پر است؟)؛ هیچ چیز تغییر نکرد.
+A copy of the current code was saved: %s	از کد فعلی یک نسخه ذخیره شد: %s
+The previous code was put back (the rejected code is in %s)	کد قبلی برگردانده شد (کد ردشده در %s است)
+Putting the previous code back failed; restore it from %s	برگرداندن کد قبلی انجام نشد؛ آن را از %s بازیابی کن
+The new code cannot run in the new virtualenv. The previous code was put back and the old virtualenv was left in place; the site was not touched.	کد جدید در محیط تازه اجرا نمی‌شود. کد قبلی برگردانده شد و محیط قدیمی سر جایش ماند؛ به سایت دست نخورد.
+Line %s of %s (%s): the value has spaces or characters such as < > & ; without quotes. Ravix reads it correctly, but a shell that runs “source” on the file stops with a syntax error. Put the value in double quotes: %s=\"…\"	خط %s از %s (%s): مقدار فاصله یا نویسه‌هایی مثل < > & ; دارد و گیومه ندارد. Ravix آن را درست می‌خواند، اما شلی که فایل را با «source» اجرا کند با خطای نحو می‌ایستد. مقدار را در گیومهٔ دوتایی بگذار: %s=\"…\"

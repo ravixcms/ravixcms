@@ -66,13 +66,14 @@ DJANGO_CSRF_TRUSTED_ORIGINS=https://example.com,https://www.example.com
 DATABASE_URL=postgres://ravix:رمز@127.0.0.1:5432/ravix
 RAVIX_SITE_URL=https://example.com
 EMAIL_HOST=...  EMAIL_HOST_USER=...  EMAIL_HOST_PASSWORD=...     # SMTP واقعی شما
+DEFAULT_FROM_EMAIL="Ravix <noreply@example.com>"           # ⚠ مقدار دارای فاصله یا < > حتماً در گیومه
 ```
 رمز عبور در `DATABASE_URL` را اگر نویسهٔ ویژه دارد URL-encode کنید. فایل `.env` یا این فایل را هرگز در مخزن کد نگذارید.
 
 ## ۶. مهاجرت، استاتیک، مدیرکل
 ```bash
 cd /srv/ravix/app
-sudo -u ravix bash -c 'set -a; . /etc/ravix/ravix.env; set +a;
+sudo -u ravix bash -c '. /srv/ravix/app/deploy/_envfile.sh; rav_load_env /etc/ravix/ravix.env;
   /srv/ravix/venv/bin/python manage.py migrate &&
   /srv/ravix/venv/bin/python manage.py collectstatic --noinput &&
   /srv/ravix/venv/bin/python manage.py createsuperuser &&
@@ -150,7 +151,7 @@ cd /var/backups/ravix
 sudo -u ravix /srv/ravix/app/deploy/restore.sh ravix-STAMP.dump ravix-STAMP.media.tar.gz ravix-STAMP.shop_private.tar.gz
 # ابتدا sha256 بررسی می‌شود (ناهمخوانی = خروج با کد ۲ و بدون هیچ تغییری)، سپس تأیید تایپی می‌گیرد
 # (غیرتعاملی: RAVIX_RESTORE_YES=1). دیتابیس با pg_restore --clean --single-transaction جایگزین می‌شود.
-sudo -u ravix bash -c 'set -a; . /etc/ravix/ravix.env; set +a; /srv/ravix/venv/bin/python manage.py migrate'
+sudo -u ravix /srv/ravix/app/deploy/manage.sh migrate
 sudo systemctl start ravix
 ```
 **هر ماه یک بار بازیابی را روی یک سرور/دیتابیس آزمایشی تمرین کنید**؛ پشتیبانِ بازیابی‌نشده تضمین نیست.
@@ -167,7 +168,7 @@ E2E_PG_URL='postgresql://USER:PASS@127.0.0.1:5432' python scripts/e2e_backup_res
 sudo -u ravix /srv/ravix/app/deploy/backup.sh                       # ۱) همیشه پیش از به‌روزرسانی
 cd /srv/ravix/app && sudo -u ravix git pull                         # ۲) کد جدید
 sudo -u ravix /srv/ravix/venv/bin/pip install -r requirements.txt   # ۳)
-sudo -u ravix bash -c 'set -a; . /etc/ravix/ravix.env; set +a; /srv/ravix/venv/bin/python manage.py migrate && /srv/ravix/venv/bin/python manage.py collectstatic --noinput && /srv/ravix/venv/bin/python manage.py ravix_preflight'
+sudo -u ravix bash -c 'cd /srv/ravix/app/deploy && ./manage.sh migrate && ./manage.sh collectstatic --noinput && ./manage.sh ravix_preflight'
 sudo systemctl reload ravix
 ```
 بازگشت: کد قبلی را checkout کنید و در صورت مهاجرت ناسازگار، پشتیبانِ مرحلهٔ ۱ را بازیابی کنید.

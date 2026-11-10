@@ -857,3 +857,23 @@ class CronStartsTheUpdateExecutorTests(TestCase):
             from apps.core.models import CronRun
 
             self.assertEqual(CronRun.objects.latest("pk").summary["updates"], "started, check=skipped")  # the new-version check is the second half of this step; it is skipped without an official source
+
+
+class UnquotedEnvLineTests(SimpleTestCase):
+    """DEFAULT_FROM_EMAIL=Ravix <a@b.c> (no quotes) broke every script that ran `source ravix.env`. Ravix itself reads it fine."""
+
+    def test_finds_values_a_shell_would_choke_on_without_returning_them(self):
+        from apps.core import hosting
+
+        text = 'A=plain/path:1,2\nDEFAULT_FROM_EMAIL=Ravix <ravixcms@gmail.com>\nB="x y"\n# C=a b\nD=\'q r\'\nPASS=se cret;x\n'
+        found = hosting.unquoted_env_lines(text)
+        self.assertEqual(found, [(2, "DEFAULT_FROM_EMAIL"), (6, "PASS")])
+        self.assertNotIn("cret", str(found))
+
+    def test_what_the_writer_produces_is_never_reported(self):
+        from apps.core import hosting
+
+        values = {"DEFAULT_FROM_EMAIL": "Ravix <a@b.c>", "X": 'q"uo\\te', "Y": "plain"}
+        text = "".join(f"{k}={hosting.quote_env(v)}\n" for k, v in values.items())
+        self.assertEqual(hosting.unquoted_env_lines(text), [])
+        self.assertEqual(hosting.parse_env(text), values)

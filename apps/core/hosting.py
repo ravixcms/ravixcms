@@ -99,6 +99,24 @@ def parse_env(text: str) -> dict[str, str]:
     return values
 
 
+_SHELL_SPECIAL = re.compile(r"[\s<>&|;()$`\\\"'*?!{}\[\]]")
+
+
+def unquoted_env_lines(text: str) -> list[tuple[int, str]]:
+    """``[(line number, KEY), …]`` for settings whose value has spaces or shell characters (``< > & ; $`` …) and no quotes. Ravix and systemd read such a
+    line fine, but a shell that runs ``source`` on the file stops with a syntax error. Values are never returned (they may be secrets)."""
+    out = []
+    for number, line in enumerate(text.splitlines(), 1):
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, raw = line.partition("=")
+        key, raw = key.strip(), raw.strip()
+        if _KEY.match(key) and raw and raw[0] not in "\"'" and _SHELL_SPECIAL.search(raw):
+            out.append((number, key))
+    return out
+
+
 def quote_env(value: str) -> str:
     if value == "" or re.fullmatch(r"[A-Za-z0-9_@%+=:,./-]+", value):
         return value

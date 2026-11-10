@@ -58,6 +58,14 @@ class DepsTests(SimpleTestCase):
         for name, (_version, found) in deps.parse_hash_lock(hashes).items():
             self.assertTrue(all(re.fullmatch(r"[0-9a-f]{64}", h) for h in found), name)
 
+    def test_the_lock_has_the_conditional_dependencies_every_supported_python_needs(self):
+        """The owner's server (Ubuntu 24.04, Python 3.12) refused the lock: psycopg needs typing-extensions on Python < 3.13, and under --require-hashes
+        every dependency must be pinned with hashes. The lock pins it for every Python, and the CI job "hash-lock" installs it on 3.11, 3.12 and 3.13."""
+        pinned = deps.parse_hash_lock((ROOT / "requirements.hashes.lock").read_text(encoding="utf-8"))
+        for needed in ("typing-extensions", "tzdata", "psycopg", "psycopg-binary", "asgiref", "sqlparse"):
+            self.assertIn(needed, pinned)
+            self.assertTrue(pinned[needed][1], f"{needed} has no hashes")
+
     def test_the_hash_script_pins_the_same_packages(self):
         spec = importlib.util.spec_from_file_location("make_hash_lock", ROOT / "scripts" / "make_hash_lock.py")
         mod = importlib.util.module_from_spec(spec)

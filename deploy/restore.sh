@@ -5,9 +5,9 @@
 set -euo pipefail
 DUMP="${1:?مسیر فایل .dump را بدهید}"; shift || true
 . "$(dirname "${BASH_SOURCE[0]}")/_legacy.sh"
+. "$(dirname "${BASH_SOURCE[0]}")/_envfile.sh"
 ENV_FILE="$(rav_env_file)"
-# shellcheck source=/dev/null
-[ -r "$ENV_FILE" ] && set -a && . "$ENV_FILE" && set +a
+rav_load_env "$ENV_FILE"   # خواندن تحت‌اللفظی، نه source (مقدار بدون گیومه با < > نمی‌شکند)
 rav_legacy_vars
 : "${DATABASE_URL:?DATABASE_URL تنظیم نشده}"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

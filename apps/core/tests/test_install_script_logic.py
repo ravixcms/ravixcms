@@ -641,10 +641,61 @@ class VersionedVirtualenvTests(SimpleTestCase):
             self.assertNotEqual(self.run_fn(f'venv_activate {tmp}/venv venv-0.10.0').returncode, 0)
             self.assertTrue((base / "venv").is_dir() and not (base / "venv").is_symlink())  # the working one is untouched
 
-    def test_the_install_step_builds_with_hashes_checks_the_new_environment_and_switches_last(self):
-        step = SCRIPT[SCRIPT.index('step "virtualenv and dependencies"'):SCRIPT.index("# ----------------------------------------------------------------- 5. PostgreSQL")]
+    def test_the_install_builds_the_new_environment_first_and_switches_it_last(self):
+        pip = SCRIPT.index('step "virtualenv and dependencies (built before any code is changed)"')
+        code = SCRIPT.index('step "Application code"')
+        switch = SCRIPT.index('run venv_activate "$VENV"')
+        rsync = SCRIPT.index("run rsync")
+        check = SCRIPT.index("manage.py check")
+        step = SCRIPT[pip:code]
         self.assertIn('--require-hashes', step)
-        self.assertLess(step.index('pip" install'), step.index("manage.py check"))
-        self.assertLess(step.index("manage.py check"), step.index('venv_activate "$VENV"'))
         self.assertIn("as_deploy", step)  # built by the user that will own it later updates
-        self.assertNotIn("rm -rf \"$VENV\"", step)  # the old environment is never deleted by the installer
+        self.assertNotIn("rm -rf \"$VENV\"", SCRIPT)  # the old environment is never deleted by the installer
+        # the order that makes a failed pip harmless: packages → (verified) → code → check with the new code → switch
+        self.assertLess(SCRIPT.index('pip" install'), rsync)
+        self.assertLess(rsync, check)
+        self.assertLess(check, switch)
+
+    def test_a_failed_pip_stops_before_any_code_is_copied_and_removes_the_half_built_environment(self):
+        step = SCRIPT[SCRIPT.index('step "virtualenv and dependencies (built before any code is changed)"'):SCRIPT.index('step "Application code"')]
+        self.assertIn("|| BUILD_OK=0", step)
+        self.assertIn("NOTHING WAS CHANGED", step)
+        self.assertIn('rm -rf "$NEW_VENV"', step)
+        self.assertNotIn("rsync", step)
+        self.assertNotIn("venv_activate", step)
+
+    def test_the_lock_is_read_from_a_copy_the_deploy_user_can_open(self):
+        step = SCRIPT[SCRIPT.index('step "virtualenv and dependencies (built before any code is changed)"'):SCRIPT.index('step "Application code"')]
+        self.assertIn('-o "$DEPLOY_USER"', step)
+        self.assertNotIn('$APP_DIR/$LOCK_NAME', step)
+
+
+class EnvFileLoaderTests(SimpleTestCase):
+    """ravix.env is read literally. The owner's server had  DEFAULT_FROM_EMAIL=Ravix <ravixcms@gmail.com>  and `source` died on it (backup.sh, restore.sh, install.sh)."""
+
+    def load(self, text: str, expr: str) -> str:
+        with tempfile.TemporaryDirectory() as tmp:
+            env = Path(tmp) / "ravix.env"
+            env.write_text(text, encoding="utf-8")
+            r = subprocess.run(["bash", "-c", f'. "{ROOT}/deploy/_envfile.sh"; rav_load_env "{env}"; {expr}'], capture_output=True, text=True, timeout=30)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        return r.stdout
+
+    def test_a_value_with_spaces_and_angle_brackets_is_read_as_is(self):
+        out = self.load("DEFAULT_FROM_EMAIL=Ravix <ravixcms@gmail.com>\n", 'printf "%s" "$DEFAULT_FROM_EMAIL"')
+        self.assertEqual(out, "Ravix <ravixcms@gmail.com>")
+
+    def test_quotes_are_removed_and_nothing_is_executed(self):
+        marker = Path(tempfile.gettempdir()) / "ravix-env-marker-should-not-exist"
+        marker.unlink(missing_ok=True)
+        text = f'A="a b & c;d \\"x\\" \\\\ $HOME"\nB=\'single $x\'\nC=$(touch {marker})\nD=`touch {marker}`\n# E=skip\nexport F=plain\nG=\n'
+        out = self.load(text, 'printf "%s|%s|%s|%s|%s|%s" "$A" "$B" "$C" "$D" "$F" "${E-unset}"')
+        self.assertEqual(out, f'a b & c;d "x" \\ $HOME|single $x|$(touch {marker})|`touch {marker}`|plain|unset')
+        self.assertFalse(marker.exists())
+
+    def test_the_scripts_use_the_loader_not_source(self):
+        for name in ("deploy/backup.sh", "deploy/restore.sh", "deploy/manage.sh"):
+            body = (ROOT / name).read_text(encoding="utf-8")
+            self.assertIn("rav_load_env", body, name)
+            self.assertNotIn('. "$ENV_FILE"', body, name)
+        self.assertNotIn('. "$1"; set +a', SCRIPT)

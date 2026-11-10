@@ -36,6 +36,17 @@ FAILED: list[str] = []
 SEEN_KEYS: set[str] = set()
 
 
+# install.sh picks python3.13/3.12/3.11 from PATH. On the owner's Ubuntu 24.04 that is /usr/bin/python3.12. The GitHub runner has its own
+# Python 3.13 first in PATH (setup-python), which hid a lock-file problem that only shows on 3.12. install.sh therefore runs with the system PATH only.
+SYSTEM_PATH = "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+SYSTEM_ENV = {"PATH": SYSTEM_PATH, "HOME": "/root", "LANG": "C.UTF-8"}
+
+
+def install_sh(src: Path, *, check_rc=True):
+    """The install.sh of a source folder, the way the owner runs it (system Python only, no -E leftovers)."""
+    return sh(["bash", str(src / "install.sh"), "--domain", DOMAIN, "--no-ssl", "--no-www", "--source", str(src), "-y"], timeout=2400, env=SYSTEM_ENV, check_rc=check_rc)
+
+
 def say(msg):
     print(msg, flush=True)
 
@@ -58,7 +69,7 @@ def sh(cmd, *, check_rc=True, timeout=1800, env=None, input_text=None):
 
 def site(args: str, *, user="ravix", input_text=None, check_rc=True, timeout=600):
     """Runs `manage.py ...` (or any python args) the way the service does: the service user, ravix.env loaded, the real virtualenv."""
-    script = f'set -a; . {ENV_FILE}; set +a; cd {APP}; exec {BASE}/venv/bin/python {args}'
+    script = f'. {APP}/deploy/_envfile.sh; rav_load_env {ENV_FILE}; cd {APP}; exec {BASE}/venv/bin/python {args}'
     return sh(["runuser", "-u", user, "--", "bash", "-c", script], input_text=input_text, check_rc=check_rc, timeout=timeout)
 
 
@@ -376,13 +387,79 @@ def main():
     say("\n✔ the real-server migration test passed")
 
 
+def copy_source(tmp: Path, name: str) -> Path:
+    dst = tmp / name
+    shutil.copytree(ROOT, dst, ignore=shutil.ignore_patterns(".git", ".venv", "venv", "__pycache__", "node_modules", "*.pyc"), symlinks=True)
+    return dst
+
+
+def nothing_changed(label: str, app_before: str, env_before: str, nginx_before: str, out: str):
+    """After an install that failed: the program code and the virtualenv are exactly as they were and the site still answers."""
+    check("NOTHING WAS CHANGED" in out or "put back" in out, f"{label}: the message tells the operator what state the server is in")
+    check(tree_hash(APP) == app_before, f"{label}: /srv/ravix/app is byte-identical to before")
+    venv = BASE / "venv"
+    check(venv.is_dir() and not venv.is_symlink(), f"{label}: the active virtualenv is still the old plain folder")
+    check(not list(BASE.glob("venv.legacy-*")), f"{label}: the old virtualenv was not moved")
+    check(ENV_FILE.read_text() == env_before, f"{label}: ravix.env is unchanged")
+    check(SITE_FILE.read_text() == nginx_before, f"{label}: the nginx site is unchanged")
+    check(unit_active("ravix.service") and healthy(), f"{label}: the site is still healthy")
+    check(mcp_status() == "200", f"{label}: the MCP token still works")
+
+
+def failed_installs(tmp: Path, before: dict, data0: dict):
+    """The new install.sh must be transactional: the Python environment is built first, and only a good one lets the code change."""
+    say("۲ب) install.sh that cannot finish must leave the server exactly as it was")
+    app_before, env_before, nginx_before = tree_hash(APP), ENV_FILE.read_text(), SITE_FILE.read_text()
+    sys_py = tuple(int(x) for x in sh(["/usr/bin/python3", "-c", "import sys; print(*sys.version_info[:2])"]).stdout.split())
+    say(f"   (system Python: {sys_py[0]}.{sys_py[1]})")
+
+    # (a) a wrong hash: pip refuses the package, on every Python
+    bad = copy_source(tmp, "bad-hash")
+    lock = bad / "requirements.hashes.lock"
+    lock.write_text(re.sub(r"^asgiref==[^\n]*\n(?:[ \t]+[^\n]*\n)*", lambda m: re.sub(r"[0-9a-f]{64}", "0" * 64, m.group(0)), lock.read_text(), count=1, flags=re.M))
+    r = install_sh(bad, check_rc=False)
+    check(r.returncode != 0, f"a lock file with a wrong hash makes install.sh fail (exit {r.returncode})")
+    nothing_changed("wrong hash", app_before, env_before, nginx_before, r.stdout + r.stderr)
+    check(not list(BASE.glob("venv-*")), "wrong hash: the half-built virtualenv was removed")
+
+    # (b) the owner's real failure: a dependency missing from the lock (typing-extensions, needed by psycopg on Python < 3.13)
+    if sys_py < (3, 13):
+        miss = copy_source(tmp, "missing-dep")
+        lock = miss / "requirements.hashes.lock"
+        lock.write_text(re.sub(r"^typing-extensions==[^\n]*\n(?:[ \t]+[^\n]*\n)*", "", lock.read_text(), flags=re.M))
+        r = install_sh(miss, check_rc=False)
+        check(r.returncode != 0, f"a lock file without typing-extensions makes install.sh fail on Python {sys_py[0]}.{sys_py[1]} (exit {r.returncode})")
+        nothing_changed("missing dependency", app_before, env_before, nginx_before, r.stdout + r.stderr)
+    else:
+        say(f"   - SKIPPED: the missing-typing-extensions case only fails on Python < 3.13 (this system has {sys_py[0]}.{sys_py[1]})")
+
+    # (c) the packages install, but the new code cannot start: the previous code is put back by install.sh itself
+    broken = copy_source(tmp, "bad-code")
+    with (broken / "config" / "settings" / "production.py").open("a", encoding="utf-8") as f:
+        f.write('\nraise RuntimeError("e2e: broken settings")\n')
+    r = install_sh(broken, check_rc=False)
+    check(r.returncode != 0, f"code that cannot start makes install.sh fail (exit {r.returncode})")
+    nothing_changed("broken code", app_before, env_before, nginx_before, r.stdout + r.stderr)
+    check(bool(list(BASE.glob("app.failed-*"))), "broken code: the rejected code was kept as app.failed-*")
+    check(bool(list((BASE / "update_backups").glob("code-before-install-*.tar.gz"))), "broken code: a copy of the previous code was saved before it was replaced")
+
+    # what is left now looks like the owner's server after his failed install: a half-built venv-<version>, app.failed-*, jobs, update_*, ravix-deploy
+    ver = re.search(r'RAVIX_VERSION\s*=\s*"([^"]+)"', (ROOT / "apps" / "core" / "version.py").read_text()).group(1)
+    half = BASE / f"venv-{ver}"
+    shutil.rmtree(half, ignore_errors=True)
+    sh(["runuser", "-u", "ravix-deploy", "--", "/usr/bin/python3", "-m", "venv", str(half)])
+    check((half / "bin" / "python").exists(), f"a half-built {half.name} is on the server (as after the owner's failed install)")
+    check(not list(BASE.glob(".install-lock.*")), "no temporary lock copy is left in /srv/ravix")
+    check(tree_hash(APP) == app_before, "the code is still the old one")
+
+
 def run(tmp: Path, args):
     old = tmp / "old"
     old.mkdir()
     say(f"۱) installing the OLD release {args.old_ref} with its own install.sh (real PostgreSQL, nginx and systemd)")
     sh(f"git -C {ROOT} cat-file -e {args.old_ref}^{{commit}}")
     sh(f"git -C {ROOT} archive {args.old_ref} | tar -x -C {old}")
-    sh(["bash", str(old / "install.sh"), "--domain", DOMAIN, "--no-ssl", "--no-www", "--source", str(old), "-y"], timeout=2400)
+    install_sh(old)
     check(unit_active("ravix.service"), "the old install runs ravix.service")
     check(not (BASE / "jobs").exists() or not unit_active("ravix-update.path"), "the old install has no update executor yet (this is the pre-migration state)")
     check(sh(["id", "ravix-deploy"], check_rc=False).returncode != 0, "the user ravix-deploy does not exist yet")
@@ -395,7 +472,7 @@ def run(tmp: Path, args):
     seed_external(old_version)
     add_manual_nginx_block()
     with ENV_FILE.open("a", encoding="utf-8") as f:
-        f.write("\nEMAIL_HOST=smtp.example.org\nEMAIL_PORT=587\nEMAIL_HOST_USER=mailer\nEMAIL_HOST_PASSWORD=smtp-secret-123\nEMAIL_USE_TLS=true\n")
+        f.write("\nEMAIL_HOST=smtp.example.org\nEMAIL_PORT=587\nEMAIL_HOST_USER=mailer\nEMAIL_HOST_PASSWORD=smtp-secret-123\nEMAIL_USE_TLS=true\nDEFAULT_FROM_EMAIL=Ravix <ravixcms@gmail.com>\n")
     check(healthy(), "the old site answers /healthz")
     check(mcp_status() == "200", f"the MCP token works before the migration (HTTP {mcp_status()})")
 
@@ -410,8 +487,11 @@ def run(tmp: Path, args):
     additive0 = additive_rows()
     say(f"   (snapshot: {len(data0)} tables, {sum(v['count'] for v in data0.values())} rows)")
 
+    failed_installs(tmp, before, data0)
+
     say("۳) the NEW install.sh over the old installation (the migration)")
-    sh(["bash", str(ROOT / "install.sh"), "--domain", DOMAIN, "--no-ssl", "--no-www", "--source", str(ROOT), "-y"], timeout=2400)
+    r = install_sh(ROOT)
+    check("syntax error" not in (r.stdout + r.stderr), "install.sh reads a ravix.env whose value has spaces and < > without quotes (the owner's DEFAULT_FROM_EMAIL)")
     check(sh(["id", "ravix-deploy"], check_rc=False).returncode == 0, "the user ravix-deploy was created")
     link = BASE / "venv"
     check(link.is_symlink() and re.match(r"^venv-[0-9.]+", os.readlink(link) or ""), f"venv is now a symlink to a versioned folder ({os.readlink(link) if link.is_symlink() else 'not a link'})")
@@ -445,6 +525,14 @@ def run(tmp: Path, args):
     check(sh(["runuser", "-u", "ravix", "--", "test", "-w", str(APP / "apps")], check_rc=False).returncode != 0, "the web user cannot write the program code")
     check(sh(["runuser", "-u", "ravix-deploy", "--", "test", "-w", str(APP / "apps")], check_rc=False).returncode == 0, "the deploy user can write the program code")
     preflight("after the migration")
+    sys_ver = sh(["/usr/bin/python3", "-V"]).stdout.split()[1].rsplit(".", 1)[0]
+    venv_ver = sh([str(BASE / "venv" / "bin" / "python"), "-V"]).stdout.split()[1].rsplit(".", 1)[0]
+    check(venv_ver == sys_ver, f"the new virtualenv was built with the system Python {sys_ver}, like on the owner's server (got {venv_ver})")
+    pf = site("manage.py ravix_preflight", check_rc=False).stdout
+    check("DEFAULT_FROM_EMAIL" in pf and "double quotes" in pf, "preflight names the unquoted ravix.env value (key and line, not the value) and says how to fix it")
+    check("ravixcms@gmail.com" not in pf, "preflight does not print the value")
+    bk = sh(["runuser", "-u", "ravix", "--", "bash", str(APP / "deploy" / "backup.sh")], check_rc=False)
+    check(bk.returncode == 0, f"deploy/backup.sh works with the unquoted DEFAULT_FROM_EMAIL line in ravix.env (exit {bk.returncode}) {bk.stderr[-300:]}")
 
     # ---------------------------------------------------------------- real updates
     say("۴) a real update through the real executor (systemd path unit)")
@@ -552,7 +640,7 @@ def run(tmp: Path, args):
 
     say("۶) running install.sh again changes nothing (idempotent)")
     pre_env, pre_nginx = ENV_FILE.read_text(), SITE_FILE.read_text()
-    sh(["bash", str(ROOT / "install.sh"), "--domain", DOMAIN, "--no-ssl", "--no-www", "--source", str(ROOT), "-y"], timeout=2400)
+    install_sh(ROOT)
     check(len(re.findall(r"location\s+(\^~\s+)?/_plugin_files/\s*\{", SITE_FILE.read_text())) == 1, "still exactly one /_plugin_files/ block after a second install.sh")
     check({k: env_pairs().get(k) for k in before["env"]} == before["env"], "ravix.env old keys unchanged after a second install.sh")
     check("RAVIX_INSTALL_TOKEN" not in env_pairs(), "an installed site never gets a new install token from a second install.sh")

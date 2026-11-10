@@ -91,9 +91,9 @@ step() {
 must() { step "$@"; [ "$FAILED" = 0 ] || { echo "مرحلهٔ ضروری شکست خورد؛ ادامه بی‌معنی است. گزارش: $LOG"; summary; exit 1; }; }
 summary() { echo; echo "──────── خلاصه ────────"; printf '%s\n' "${RESULTS[@]}" | tee -a "$LOG"; echo "گزارش کامل: $LOG"; }
 # اجرای دستور به‌عنوان کاربر سرویس با محیط برنامه (متغیرهای محرمانه فقط از فایل خوانده می‌شوند، نه از آرگومان)
-as_ravix() { sudo -u ravix bash -c "set -a; . $ENVF; set +a; cd $APP; $*"; }
+as_ravix() { sudo -u ravix bash -c ". $APP/deploy/_envfile.sh; rav_load_env $ENVF; cd $APP; $*"; }
 # اجرای کد پایتون از stdin در shell جنگو (کد و مقادیر تصادفی داخل پایتون ساخته می‌شوند؛ هیچ رمزی در آرگومان پروسه نیست)
-dj_shell() { sudo -u ravix bash -c "set -a; . $ENVF; set +a; cd $APP; $PY manage.py shell"; }
+dj_shell() { sudo -u ravix bash -c ". $APP/deploy/_envfile.sh; rav_load_env $ENVF; cd $APP; $PY manage.py shell"; }
 export -f as_ravix dj_shell
 export ENVF APP PY
 

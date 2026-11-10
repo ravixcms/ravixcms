@@ -1175,3 +1175,10 @@ msgstr "محیط پایتون یک پوشهٔ ساده است؛ یک بار «su
 
 msgid "The Python environment is versioned (an update switches it atomically)"
 msgstr "محیط پایتون نسخه‌دار است (به‌روزرسانی آن را اتمیک عوض می‌کند)"
+
+#, python-format
+msgid "Line %(a1)s of %(a2)s (%(a3)s): the value has spaces or characters such as < > & ; without quotes. Ravix reads it correctly, but a shell that runs “source” on the file stops with a syntax error. Put the value in double quotes."
+msgstr "خط %(a1)s از %(a2)s (%(a3)s): مقدار فاصله یا نویسه‌هایی مثل < > & ; دارد و گیومه ندارد. Ravix آن را درست می‌خواند، اما شلی که فایل را با «source» اجرا کند با خطای نحو می‌ایستد. مقدار را در گیومهٔ دوتایی بگذار."
+
+msgid "The settings file can be read by a shell (values with spaces or < > are quoted)"
+msgstr "فایل تنظیمات را شل هم می‌تواند بخواند (مقدارهای دارای فاصله یا < > گیومه دارند)"

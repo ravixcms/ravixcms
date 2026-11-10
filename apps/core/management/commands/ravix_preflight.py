@@ -8,6 +8,8 @@ from django.core.management.base import BaseCommand
 from django.db import connection
 from django.db.migrations.executor import MigrationExecutor
 
+from apps.core import hosting
+
 
 _ENABLED_OK = {"enabled", "enabled-runtime", "static", "alias", "indirect", "generated"}
 
@@ -313,6 +315,16 @@ class Command(BaseCommand):
                 errors.append(cli_gettext("Registry signing key: %(exc)s") % {"exc": exc})
         advise(not settings.RAVIX_PLUGINS_SAFE_MODE, cli_gettext("Plugin safe mode is off"), cli_gettext("Plugin safe mode is on (no plugin runs)"))
 
+        # a settings value with spaces or < > & ; and no quotes breaks any shell that runs "source" on the file (Ravix and systemd read it fine)
+        env_path = Path(getattr(settings, "RAVIX_ENV_FILE", "") or os.environ.get("RAVIX_ENV_FILE", "") or "/etc/ravix/ravix.env")
+        try:
+            loose = hosting.unquoted_env_lines(env_path.read_text(encoding="utf-8")) if env_path.is_file() else []
+        except OSError:
+            loose = []
+        for number, key in loose[:5]:
+            warns.append(cli_gettext("Line %(a1)s of %(a2)s (%(a3)s): the value has spaces or characters such as < > & ; without quotes. Ravix reads it correctly, but a shell that runs “source” on the file stops with a syntax error. Put the value in double quotes.") % {"a1": number, "a2": env_path, "a3": key})
+        if env_path.is_file() and not loose:
+            oks.append(cli_gettext("The settings file can be read by a shell (values with spaces or < > are quoted)"))
         for m in oks:
             self.stdout.write(self.style.SUCCESS("  ✔ " + m))
         for m in warns:

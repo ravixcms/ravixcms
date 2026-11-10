@@ -211,6 +211,29 @@ jobs:
       - run: python scripts/e2e_backup_restore.py
       - run: python scripts/e2e_updater.py
 
+  hash-lock:
+    name: "قفل هش‌دار روی پایتون ${{ matrix.python }} (نصب تمیز با --require-hashes)"
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ matrix.python }}" }
+      - name: venv تمیز + دقیقاً دستوری که install.sh اجرا می‌کند
+        run: |
+          python -m venv /tmp/lockvenv
+          /tmp/lockvenv/bin/pip install --disable-pip-version-check --no-cache-dir --require-hashes -r requirements.hashes.lock
+          /tmp/lockvenv/bin/pip check
+      - name: نصب فقط‌چرخ (همان دستور به‌روزرسانی امن)
+        run: |
+          python -m venv /tmp/lockvenv2
+          /tmp/lockvenv2/bin/pip install --disable-pip-version-check --no-cache-dir --require-hashes --only-binary=:all: -r requirements.hashes.lock
+      - name: همهٔ بسته‌ها بارگذاری می‌شوند
+        run: /tmp/lockvenv/bin/python -c "import django, rest_framework, psycopg, PIL, cryptography, argon2, nh3, markdown, jdatetime, whitenoise, pymysql, dotenv, gunicorn, typing_extensions; print('imports ok')"
+
   server-migration:
     name: "مهاجرت سرور واقعی (systemd، PostgreSQL، nginx؛ install.sh قدیمی ← جدید)"
     runs-on: ubuntu-24.04

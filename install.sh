@@ -129,17 +129,27 @@ ask() {  # ask VAR "question" [default]
 rand_hex() { openssl rand -hex "$1"; }
 as_app() { runuser -u "$APP_USER" -- "$@"; }
 as_deploy() { runuser -u "$DEPLOY_USER" -- "$@"; }
+# The settings file is read literally (deploy/_envfile.sh), never run as shell code: a value like  DEFAULT_FROM_EMAIL=Ravix <a@b.c>  must not break the install.
+# shellcheck source=deploy/_envfile.sh
+. "$HERE/deploy/_envfile.sh"
 envsh() {  # run a command as the service user with the variables of ravix.env
-  runuser -u "$APP_USER" -- bash -c 'set -a; . "$1"; set +a; shift; cd '"$APP_DIR"'; exec "$@"' _ "$ENV_FILE" "$@"
+  runuser -u "$APP_USER" -- bash -c "$(declare -f rav_load_env)"'; rav_load_env "$1"; shift; cd '"$APP_DIR"'; exec "$@"' _ "$ENV_FILE" "$@"
 }
 envsh_deploy() {  # like envsh, but as the deploy user (the code, the virtualenvs and staticfiles are its)
-  runuser -u "$DEPLOY_USER" -- bash -c 'set -a; . "$1"; set +a; shift; cd '"$APP_DIR"'; exec "$@"' _ "$ENV_FILE" "$@"
+  runuser -u "$DEPLOY_USER" -- bash -c "$(declare -f rav_load_env)"'; rav_load_env "$1"; shift; cd '"$APP_DIR"'; exec "$@"' _ "$ENV_FILE" "$@"
 }
 env_get() { if [ -r "$ENV_FILE" ]; then grep -E "^$1=" "$ENV_FILE" | head -1 | cut -d= -f2- || true; fi; return 0; }
+env_quote() {  # a value that is safe in a settings file: plain when it only has harmless characters, otherwise in double quotes (same rule as apps/core/hosting.py)
+  if [[ "$1" =~ ^[A-Za-z0-9_@%+=:,./-]*$ ]]; then printf '%s' "$1"; else local v="${1//\\/\\\\}"; v="${v//\"/\\\"}"; printf '"%s"' "$v"; fi
+}
+env_unquoted() {  # env_unquoted FILE → "LINE KEY" for every value that has spaces or shell characters (< > & ; $ ...) and no quotes (the value itself is never printed)
+  awk '/^[ \t]*#/ { next } /^[A-Za-z_][A-Za-z0-9_]*[ ]*=/ { i = index($0, "="); k = substr($0, 1, i - 1); v = substr($0, i + 1); sub(/^[ \t]+/, "", v)
+       if (v !~ /^["\047]/ && v ~ /[][ <>&|;()$`\\"\047*?!{}]/) { sub(/[ \t]+$/, "", k); print NR, k } }' "$1"
+}
 env_set() {  # env_set KEY VALUE — adds the key only if missing; never changes an existing value
   if [ -n "$(env_get "$1")" ]; then return 0; fi
   [ "$DRY_RUN" = 1 ] && { printf '  [dry-run] '; t "%s ← (would be set)" "$1"; echo; return 0; }
-  printf '%s=%s\n' "$1" "$2" >> "$ENV_FILE"; CHANGES=$((CHANGES + 1))
+  printf '%s=%s\n' "$1" "$(env_quote "$2")" >> "$ENV_FILE"; CHANGES=$((CHANGES + 1))
 }
 have_systemd() {
   case "$SYSTEMD" in no) return 1;; esac
@@ -357,8 +367,45 @@ if [ "$DRY_RUN" = 0 ]; then
   chown root:"$APP_USER" "$ENV_DIR"; chmod 750 "$ENV_DIR"
 fi
 
-# ----------------------------------------------------------------- 3. code
+# ----------------------------------------------------------------- 3. virtualenv and dependencies (built FIRST: a failure here changes nothing)
+# The order is deliberate: the new Python environment is built and verified before any file of the site is touched. If pip fails, the code in
+# /srv/ravix/app and the active virtualenv are exactly what they were. Only then is the code copied, and only after the code runs in the new environment
+# is the "venv" symlink switched.
+step "virtualenv and dependencies (built before any code is changed)"
+RAVIX_VER="$(sed -n 's/^RAVIX_VERSION *= *"\([^"]*\)".*/\1/p' "$SRC/apps/core/version.py" | head -1)"
+venv_version_ok "$RAVIX_VER" || die "The version of the code could not be read from apps/core/version.py."
+LOCK_NAME=requirements.hashes.lock; [ -f "$SRC/$LOCK_NAME" ] || LOCK_NAME=requirements.lock
+LOCK_SUM="$(sha256sum "$SRC/$LOCK_NAME" | cut -c1-64)"
+LAYOUT="$(venv_layout "$VENV")"
+CUR_SUM=""; [ -f "$VENV/.requirements.sha256" ] && CUR_SUM="$(cat "$VENV/.requirements.sha256")"
+NEW_VENV="$BASE/venv-$RAVIX_VER"
+SWITCH_VENV=0
+if [ "$LAYOUT" = link ] && [ "$CUR_SUM" = "$LOCK_SUM" ]; then ok "The dependencies match the lock file (%s)" "$(readlink "$VENV")"
+else
+  if [ "$LAYOUT" = dir ]; then t "  The virtualenv is a plain folder. It is moved to the versioned layout (venv-%s and a symlink); the old folder is kept as %s.legacy-… until you delete it." "$RAVIX_VER" "$VENV"; echo; fi
+  confirm "Build the virtualenv %s and install the pinned, hash-checked dependencies?" "$NEW_VENV" || die "The dependencies are required."
+  if [ -d "$NEW_VENV" ] && [ "$(readlink -f "$VENV" 2>/dev/null || true)" != "$(readlink -f "$NEW_VENV")" ]; then run rm -rf "$NEW_VENV"; fi   # a leftover of an interrupted or failed run
+  # pip reads a copy of the lock that the deploy user can open (the folder of the new code may be private, e.g. under /root)
+  LOCK_TMP="$BASE/.install-lock.$$"
+  run install -m 640 -o "$DEPLOY_USER" -g "$APP_USER" "$SRC/$LOCK_NAME" "$LOCK_TMP"
+  PIP_ARGS=(--disable-pip-version-check --no-cache-dir -r "$LOCK_TMP")
+  [ "$LOCK_NAME" = requirements.hashes.lock ] && PIP_ARGS=(--require-hashes "${PIP_ARGS[@]}")   # every wheel is checked against its SHA-256
+  BUILD_OK=1
+  [ -x "$NEW_VENV/bin/python" ] || run as_deploy "$PYBIN" -m venv "$NEW_VENV" || BUILD_OK=0
+  if [ "$BUILD_OK" = 1 ]; then run as_deploy "$NEW_VENV/bin/pip" install "${PIP_ARGS[@]}" || BUILD_OK=0; fi
+  if [ "$BUILD_OK" = 1 ] && [ "$DRY_RUN" = 0 ]; then as_deploy "$NEW_VENV/bin/pip" check || BUILD_OK=0; fi
+  rm -f "$LOCK_TMP"
+  if [ "$BUILD_OK" = 0 ]; then
+    [ "$(readlink -f "$VENV" 2>/dev/null || true)" = "$(readlink -f "$NEW_VENV" 2>/dev/null || true)" ] || rm -rf "$NEW_VENV"   # never the active one
+    die "The Python packages could not be installed (see the pip message above). NOTHING WAS CHANGED: the code in %s and the virtualenv %s are exactly as they were. Fix the cause and run install.sh again." "$APP_DIR" "$VENV"
+  fi
+  [ "$DRY_RUN" = 1 ] || echo "$LOCK_SUM" | as_deploy tee "$NEW_VENV/.requirements.sha256" >/dev/null
+  if [ "$(readlink -f "$VENV" 2>/dev/null || true)" != "$(readlink -f "$NEW_VENV" 2>/dev/null || true)" ]; then SWITCH_VENV=1; fi
+fi
+
+# ----------------------------------------------------------------- 4. code
 step "Application code"
+CODE_SNAP=""   # a copy of the current code, made just before it is replaced (used to put it back if the new code cannot start)
 if [ "$SRC" = "$APP_DIR" ]; then ok "The code is already in %s" "$APP_DIR"
 else
   do_sync=0
@@ -369,6 +416,12 @@ else
     confirm "Copy the code from %s to %s?" "$SRC" "$APP_DIR" && do_sync=1
   fi
   if [ "$do_sync" = 1 ]; then
+    if [ -f "$APP_DIR/manage.py" ] && [ "$DRY_RUN" = 0 ]; then
+      CODE_SNAP="$BASE/update_backups/code-before-install-$(date +%Y%m%d-%H%M%S).tar.gz"
+      if ! tar -czf "$CODE_SNAP" -C "$BASE" app; then rm -f "$CODE_SNAP"; die "A copy of the current code could not be made (disk full?); nothing was changed."; fi
+      chmod 600 "$CODE_SNAP"
+      ok "A copy of the current code was saved: %s" "$CODE_SNAP"
+    fi
     run rsync -a --exclude='.git' --exclude='.github' --exclude='.venv' --exclude='venv' --exclude='__pycache__' --exclude='*.pyc' \
       --exclude='db.sqlite3' --exclude='*.sqlite3' --exclude='.env' --exclude='.env.*' --exclude='/media' --exclude='/staticfiles' \
       --exclude='/shop_private' --exclude='/plugin_data' --exclude='/plugins_installed' --exclude='/plugin_backups' --exclude='/themes_installed' \
@@ -389,30 +442,20 @@ fi
 
 CODE="$APP_DIR"; [ -d "$APP_DIR/deploy" ] || CODE="$SRC"   # in dry-run the code has not been copied yet
 
-# ----------------------------------------------------------------- 4. virtualenv and dependencies
-step "virtualenv and dependencies"
-RAVIX_VER="$(sed -n 's/^RAVIX_VERSION *= *"\([^"]*\)".*/\1/p' "$SRC/apps/core/version.py" | head -1)"
-venv_version_ok "$RAVIX_VER" || die "The version of the code could not be read from apps/core/version.py."
-LOCK_NAME=requirements.hashes.lock; [ -f "$SRC/$LOCK_NAME" ] || LOCK_NAME=requirements.lock
-LOCK_SUM="$(sha256sum "$SRC/$LOCK_NAME" | cut -c1-64)"
-PIP_ARGS=(--disable-pip-version-check --no-cache-dir -r "$APP_DIR/$LOCK_NAME")
-[ "$LOCK_NAME" = requirements.hashes.lock ] && PIP_ARGS=(--require-hashes "${PIP_ARGS[@]}")   # every wheel is checked against its SHA-256
-LAYOUT="$(venv_layout "$VENV")"
-CUR_SUM=""; [ -f "$VENV/.requirements.sha256" ] && CUR_SUM="$(cat "$VENV/.requirements.sha256")"
-NEW_VENV="$BASE/venv-$RAVIX_VER"
-if [ "$LAYOUT" = link ] && [ "$CUR_SUM" = "$LOCK_SUM" ]; then ok "The dependencies match the lock file (%s)" "$(readlink "$VENV")"
-else
-  if [ "$LAYOUT" = dir ]; then t "  The virtualenv is a plain folder. It is moved to the versioned layout (venv-%s and a symlink); the old folder is kept as %s.legacy-… until you delete it." "$RAVIX_VER" "$VENV"; echo; fi
-  confirm "Build the virtualenv %s and install the pinned, hash-checked dependencies?" "$NEW_VENV" || die "The dependencies are required."
-  if [ -d "$NEW_VENV" ] && [ "$(readlink -f "$VENV" 2>/dev/null || true)" != "$(readlink -f "$NEW_VENV")" ]; then run rm -rf "$NEW_VENV"; fi   # a leftover of an interrupted run
-  [ -x "$NEW_VENV/bin/python" ] || run as_deploy "$PYBIN" -m venv "$NEW_VENV"
-  run as_deploy "$NEW_VENV/bin/pip" install "${PIP_ARGS[@]}"
-  [ "$DRY_RUN" = 1 ] || echo "$LOCK_SUM" | as_deploy tee "$NEW_VENV/.requirements.sha256" >/dev/null
-  if [ "$(readlink -f "$VENV" 2>/dev/null || true)" != "$(readlink -f "$NEW_VENV")" ]; then
-    # the new environment has to run the code that is on disk before the service is pointed at it (only when there is a settings file to check with)
-    if [ "$DRY_RUN" = 0 ] && [ "$LAYOUT" != none ] && [ -r "$ENV_FILE" ]; then envsh_deploy "$NEW_VENV/bin/python" manage.py check >/dev/null || die "The new virtualenv cannot run the code; the old one was left in place."; fi
-    run venv_activate "$VENV" "venv-$RAVIX_VER"
+# ----------------------------------------------------------------- 4b. switch the virtualenv (only after the new code runs in it)
+if [ "$SWITCH_VENV" = 1 ]; then
+  # the new environment has to run the code that is on disk before the service is pointed at it (only when there is a settings file to check with)
+  if [ "$DRY_RUN" = 0 ] && [ "$LAYOUT" != none ] && [ -r "$ENV_FILE" ]; then
+    if ! envsh_deploy "$NEW_VENV/bin/python" manage.py check >/dev/null; then
+      if [ -n "$CODE_SNAP" ] && [ -f "$CODE_SNAP" ]; then
+        FAILED_APP="$BASE/app.failed-$(date +%Y%m%d-%H%M%S)"
+        if mv "$APP_DIR" "$FAILED_APP" && tar -xzf "$CODE_SNAP" -C "$BASE"; then ok "The previous code was put back (the rejected code is in %s)" "$FAILED_APP"
+        else warn "Putting the previous code back failed; restore it from %s" "$CODE_SNAP"; fi
+      fi
+      die "The new code cannot run in the new virtualenv. The previous code was put back and the old virtualenv was left in place; the site was not touched."
+    fi
   fi
+  run venv_activate "$VENV" "venv-$RAVIX_VER"
 fi
 
 # ----------------------------------------------------------------- 5. PostgreSQL
@@ -449,6 +492,12 @@ else ok "The database %s exists" "$DB_NAME"; fi
 
 # ----------------------------------------------------------------- 6. environment settings
 step "Settings (%s)" "$ENV_FILE"
+if [ -r "$ENV_FILE" ]; then
+  while read -r UQ_LINE UQ_KEY; do
+    [ -n "$UQ_KEY" ] || continue
+    warn "Line %s of %s (%s): the value has spaces or characters such as < > & ; without quotes. Ravix reads it correctly, but a shell that runs “source” on the file stops with a syntax error. Put the value in double quotes: %s=\"…\"" "$UQ_LINE" "$ENV_FILE" "$UQ_KEY" "$UQ_KEY"
+  done < <(env_unquoted "$ENV_FILE")
+fi
 if [ ! -f "$ENV_FILE" ]; then
   confirm "Create %s (mode 640, random secrets)?" "$ENV_FILE" || die "The settings file is required."
   [ "$DRY_RUN" = 1 ] || { install -m 640 -o root -g "$APP_USER" /dev/null "$ENV_FILE"; printf '# created by install.sh — never put secrets in the code repository\n' >> "$ENV_FILE"; }

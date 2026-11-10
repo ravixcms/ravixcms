@@ -17,4 +17,6 @@ pycparser==3.11
 pymysql==1.2.3
 python-dotenv==1.2.4
 sqlparse==0.6.0
+typing-extensions==4.16.0   # needed by psycopg on Python < 3.13; pinned for every Python so --require-hashes works on 3.11, 3.12 and 3.13
+tzdata==2026.6   # needed by Django on Windows; harmless elsewhere
 whitenoise==6.12.0
