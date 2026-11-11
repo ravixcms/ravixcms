@@ -234,6 +234,50 @@ jobs:
       - name: همهٔ بسته‌ها بارگذاری می‌شوند
         run: /tmp/lockvenv/bin/python -c "import django, rest_framework, psycopg, PIL, cryptography, argon2, nh3, markdown, jdatetime, whitenoise, pymysql, dotenv, gunicorn, typing_extensions; print('imports ok')"
 
+  # Ravix must start on a developer's Windows laptop (python manage.py runserver). Linux-only modules (fcntl, pwd, grp) once stopped it.
+  # This job installs, migrates SQLite, runs check, starts the real runserver and asks /healthz, and runs a base set of tests there.
+  windows:
+    name: "ویندوز (نصب، migrate، check، runserver، تست‌های پایه)"
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.13", cache: pip, cache-dependency-path: requirements.lock }
+      - name: pip install
+        shell: pwsh
+        run: |
+          python -m pip install -r requirements.lock
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python -m pip check
+          exit $LASTEXITCODE
+      - name: check و migrate روی SQLite
+        shell: pwsh
+        run: |
+          python manage.py check
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python manage.py migrate --noinput -v 0
+          exit $LASTEXITCODE
+      - name: runserver واقعی و /healthz
+        shell: pwsh
+        run: |
+          $p = Start-Process -FilePath python -ArgumentList "manage.py","runserver","--noreload","127.0.0.1:8123" -PassThru -RedirectStandardOutput runserver.out -RedirectStandardError runserver.err
+          $ok = $false
+          foreach ($i in 1..40) {
+            Start-Sleep -Seconds 2
+            try { $r = Invoke-WebRequest -UseBasicParsing -Uri http://127.0.0.1:8123/healthz; if ($r.StatusCode -eq 200) { $ok = $true; break } } catch { }
+            if ($p.HasExited) { break }
+          }
+          Get-Content runserver.err -ErrorAction SilentlyContinue | Select-Object -Last 30
+          if (-not $p.HasExited) { Stop-Process -Id $p.Id -Force }
+          if (-not $ok) { Write-Error "runserver did not answer /healthz with 200"; exit 1 }
+          if ((Get-Content runserver.err -Raw) -match "Traceback") { Write-Error "Traceback in runserver output"; exit 1 }
+      - name: تست‌های پایه (قفل فایل، حساب‌ها، امضا)
+        shell: pwsh
+        run: |
+          python manage.py test apps.core.tests.test_filelock apps.accounts apps.updater.tests.test_sources --verbosity 1
+          exit $LASTEXITCODE
+
   server-migration:
     name: "مهاجرت سرور واقعی (systemd، PostgreSQL، nginx؛ install.sh قدیمی ← جدید)"
     runs-on: ubuntu-24.04

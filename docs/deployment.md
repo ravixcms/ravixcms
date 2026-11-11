@@ -173,6 +173,18 @@ sudo systemctl reload ravix
 ```
 بازگشت: کد قبلی را checkout کنید و در صورت مهاجرت ناسازگار، پشتیبانِ مرحلهٔ ۱ را بازیابی کنید.
 
+## اجرای محلی روی ویندوز (فقط برای توسعه)
+ویندوز هدف سرور نیست (سرور: لینوکس)، ولی برای دیدن و توسعهٔ محلی کار می‌کند. در PowerShell، داخل پوشهٔ پروژه:
+```
+py -3.13 -m venv .venv
+.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.lock
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+```
+بعد http://127.0.0.1:8000 را باز کنید. پایگاه‌داده SQLite است و نیازی به PostgreSQL نیست. به‌روزرسانی امن (executor و سرویس‌ها) فقط روی سرور لینوکس است.
+
 ## ۱۲. اتصال درگاه پرداخت واقعی (وقتی اطلاعات مرچنت دارید)
 نگاه کنید به [`docs/shop.md`](shop.md). تا آن زمان `ravix_preflight` هشدار می‌دهد و ثبت سفارش در حالت production غیرفعال است.
 

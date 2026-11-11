@@ -5,6 +5,10 @@
 
 ## [0.10.0] - 2026-11-11
 
+### Windows
+- Fix: `python manage.py runserver` failed on Windows with `ModuleNotFoundError: No module named 'fcntl'` (the theme installer imported it at start-up). All file locks (theme install, update executor, cron) now go through one cross-platform layer, `apps/core/filelock.py`: `fcntl.flock` on Linux and macOS (unchanged), `msvcrt.locking` on Windows; the platform modules are imported inside `try`, so nothing fails to load. The preflight no longer needs `os.geteuid` either.
+- A new CI job on `windows-latest` installs the requirements, runs `check` and `migrate` on SQLite, starts the real `runserver` and asks `/healthz`, and runs the file-lock, accounts and update-source tests. A test also refuses any module-level import of a Linux-only module (`fcntl`, `pwd`, `grp`, …).
+
 ### Safe update — stage 5 (guide and release notes)
 - «How to update Ravix» guide in the panel (Updates → How to update), in all ten languages: update from the panel, shared hosting (cron), your own server, what to do when an update fails or needs recovery, what an update never replaces, and what to check afterwards.
 - The changelog now has a `[0.10.0]` section (the release workflow refuses a tag whose version has none).

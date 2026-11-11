@@ -15,6 +15,7 @@ from django.core.management import call_command
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
+from apps.core import filelock
 from apps.core.clilang import cli_gettext
 
 BUDGET_SECONDS = 240  # cron fires every 5 minutes; a run never plans work past this
@@ -35,14 +36,7 @@ class RunLock:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self.fh = open(self.path, "a+")
         try:
-            if os.name == "posix":
-                import fcntl
-
-                fcntl.flock(self.fh.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
-            else:  # pragma: no cover - Windows is not a hosting target
-                import msvcrt
-
-                msvcrt.locking(self.fh.fileno(), msvcrt.LK_NBLCK, 1)
+            filelock.try_lock(self.fh.fileno())
         except OSError:
             self.fh.close()
             raise Locked() from None

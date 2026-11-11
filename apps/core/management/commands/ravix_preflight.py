@@ -173,7 +173,7 @@ class Command(BaseCommand):
         for d in settings.RAVIX_PLUGIN_DIRS:
             if settings.RAVIX_PLUGIN_WEB_INSTALL and Path(d) == install_dir:
                 continue  # پوشهٔ نصب خودکار عمداً قابل‌نوشتن است
-            advise(not os.access(str(d), os.W_OK) or os.geteuid() == 0, cli_gettext("The plugin folder %(d)s is read-only for this user") % {"d": d}, cli_gettext("The plugin folder %(d)s is writable for the service user (recommended: read-only)") % {"d": d})
+            advise(not os.access(str(d), os.W_OK) or getattr(os, "geteuid", lambda: -1)() == 0, cli_gettext("The plugin folder %(d)s is read-only for this user") % {"d": d}, cli_gettext("The plugin folder %(d)s is writable for the service user (recommended: read-only)") % {"d": d})
         # پوشه‌های کد (فقط‌خواندنی، مثلاً root:ravix 750) باید با گروه‌های واقعیِ همین فرایند خوانده و فهرست شوند، نه فقط «نوشتنی نباشند»
         from apps.core import fsaccess
 

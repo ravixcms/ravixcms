@@ -20,6 +20,8 @@ from django.db import connection
 from django.utils import timezone
 from django.utils.translation import gettext
 
+from apps.core import filelock
+
 from . import lifecycle as lifecycle_mod
 from . import pipeline
 from .errors import UpdateBlocked, UpdateBusy, UpdateError
@@ -226,10 +228,8 @@ class ExecutorLock:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self.fh = open(self.path, "a+")  # noqa: SIM115
         try:
-            import fcntl
-
-            fcntl.flock(self.fh.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
-        except (OSError, ImportError):
+            filelock.try_lock(self.fh.fileno())
+        except OSError:
             self.fh.close()
             self.fh = None
             raise UpdateBusy(gettext("Another update executor is already running.")) from None

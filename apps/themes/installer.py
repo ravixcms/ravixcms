@@ -12,7 +12,6 @@
 """
 from apps.core.clilang import cli_gettext
 from django.utils.translation import gettext, gettext_lazy
-import fcntl
 import logging
 import os
 import shutil
@@ -28,6 +27,7 @@ from django.apps import apps as django_apps
 from django.conf import settings
 
 from apps.audit.models import AuditLog
+from apps.core import filelock
 from apps.audit.services import log_event
 
 from . import package, registry
@@ -146,7 +146,7 @@ def _install_lock(root: Path):
         raise ThemeInstallError(gettext("The install lock file could not be created; check the install folder permissions.")) from None
     try:
         try:
-            fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            filelock.try_lock(fd)
         except BlockingIOError:
             raise ThemeInstallError(gettext("Another install is in progress right now; try again shortly.")) from None
         except OSError:
