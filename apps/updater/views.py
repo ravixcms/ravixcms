@@ -91,6 +91,12 @@ class HomeView(ViewMixin, TemplateView):
         return ctx
 
 
+class GuideView(ViewMixin, TemplateView):
+    """«How to update Ravix» in the language of the panel."""
+
+    template_name = "updater/guide.html"
+
+
 class QueueMixin(CapabilityRequiredMixin):
     """Asking for an update: allowed to whoever may manage updates when a separate executor does the work (it has its own rights, so this does not need
     RAVIX_UPDATE_WEB_APPLY, which is for applying inside the web process)."""

@@ -3,6 +3,12 @@
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-11-11
+
+### Safe update — stage 5 (guide and release notes)
+- «How to update Ravix» guide in the panel (Updates → How to update), in all ten languages: update from the panel, shared hosting (cron), your own server, what to do when an update fails or needs recovery, what an update never replaces, and what to check afterwards.
+- The changelog now has a `[0.10.0]` section (the release workflow refuses a tag whose version has none).
+
 ### Safe update — stage 4 (real-server migration test)
 - Fix found by the real-server job: the update executor could not open Gunicorn's socket (group `www-data`, mode 660) to health-check the site after a restart, so every update ended in "PermissionError" and a failed rollback. `ravix-update.service` now has `SupplementaryGroups=www-data` (only for that service); the probe names a permission problem clearly. A test keeps the executor's groups in line with the socket's group.
 - Clear messages: a backup folder that is too small is reported before anything is written (needed vs. free space and the folder), a disk that fills up while writing says so and the half-written backup is removed, and a failed `migrate` shows the end of its output (the real reason) instead of its first lines. The migration job's job-status reader no longer breaks on multi-line messages.

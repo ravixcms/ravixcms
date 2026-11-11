@@ -6,6 +6,7 @@ app_name = "updater"
 
 urlpatterns = [
     path("updates/", views.HomeView.as_view(), name="home"),
+    path("updates/guide/", views.GuideView.as_view(), name="guide"),
     path("updates/check/", views.CheckView.as_view(), name="check"),
     path("updates/run/<int:pk>/", views.RunDetailView.as_view(), name="run"),
     path("updates/run/<int:pk>/rollback/", views.RollbackView.as_view(), name="rollback"),

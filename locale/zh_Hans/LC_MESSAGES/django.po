@@ -14025,3 +14025,72 @@ msgstr "%(dir)s 中没有足够的可用磁盘空间来备份：大约需要 %(n
 #, python-format
 msgid "The disk became full while the backup was being written (%(free)s free in %(dir)s). Nothing was changed; free some space and try again."
 msgstr "写入备份时磁盘已满（%(dir)s 中剩余 %(free)s）。未做任何更改；请释放空间后重试。"
+
+msgid "How to update Ravix"
+msgstr "如何更新 Ravix"
+
+msgid "Updating takes a few clicks. Ravix checks the package, makes a backup, switches to the new version and, if anything goes wrong, goes back to the old version by itself."
+msgstr "更新只需点几下。Ravix 会校验更新包、先做备份、切换到新版本；如果出现任何问题，会自动回到旧版本。"
+
+msgid "Before you start"
+msgstr "开始之前"
+
+msgid "You do not need to prepare anything: a backup of the files and the database is made automatically before every update. If you want an extra copy of your own, make it first."
+msgstr "无需任何准备：每次更新前都会自动备份文件和数据库。如果想另存一份自己的备份，请先做好。"
+
+msgid "Update from the panel"
+msgstr "在后台面板更新"
+
+msgid "Open Updates in the panel. When a newer version exists, this page and the dashboard show it."
+msgstr "在面板中打开“更新”。有新版本时，此页面和仪表盘都会显示。"
+
+msgid "Read the notes of the new version, then press “Update now”."
+msgstr "阅读新版本的说明，然后点击“立即更新”。"
+
+msgid "Stay on the progress page or close it. The steps are: download and check, backup, new files, database, switch, restart. The site may show a short maintenance message while it runs."
+msgstr "可以停留在进度页面，也可以关闭它。步骤依次为：下载并校验、备份、新文件、数据库、切换、重启。运行期间网站可能会短暂显示维护提示。"
+
+msgid "When it ends with “Succeeded”, the new version is running. Check the version on the dashboard and open your site."
+msgstr "状态变为“成功”后，新版本即已运行。请在仪表盘确认版本并打开您的网站。"
+
+msgid "Shared hosting (cPanel)"
+msgstr "共享主机（cPanel）"
+
+msgid "The scheduled job (cron) that was set up when you installed Ravix carries out the update, so it can take a minute or two to start. Keep that job active; if it was removed, add it again as the installation guide says."
+msgstr "更新由安装 Ravix 时设置的计划任务（cron）执行，因此可能要一两分钟才会开始。请保持该任务有效；如果被删除，请按安装指南重新添加。"
+
+msgid "Your own server (VPS)"
+msgstr "自有服务器（VPS）"
+
+msgid "A system service does the work in the background; the panel only asks for it. From the command line you can run the installer again from the new version’s folder. It is safe to repeat, and if the new Python packages cannot be installed it changes nothing."
+msgstr "后台由系统服务完成工作，面板只是向它发出请求。您也可以在命令行中从新版本所在文件夹再次运行安装程序。重复运行是安全的；如果新的 Python 包无法安装，它不会改动任何内容。"
+
+msgid "If something goes wrong"
+msgstr "如果出现问题"
+
+msgid "the site is back on the old version with all its data. Open the update to read the reason, fix it and try again."
+msgstr "网站已带着全部数据回到旧版本。打开该次更新查看原因，修复后再试一次。"
+
+msgid "wait two minutes: an interrupted update is recovered automatically and ends as rolled back. If it does not, open the update and follow the recovery command shown there."
+msgstr "请等待两分钟：被中断的更新会自动恢复，并以“已回滚”结束。如果没有，请打开该次更新并执行其中显示的恢复命令。"
+
+msgid "A maintenance page that stays for a long time: wait a few minutes, then reload. Your data is safe."
+msgstr "如果维护页面长时间不消失：请等待几分钟后刷新。您的数据是安全的。"
+
+msgid "Every update keeps its backup, so a manual restore is always possible."
+msgstr "每次更新都会保留其备份，因此始终可以手动恢复。"
+
+msgid "What an update never replaces"
+msgstr "更新绝不会替换的内容"
+
+msgid "Your pages and posts, users, uploaded media, installed themes and plugins, plugin data and the settings file stay as they are."
+msgstr "您的页面和文章、用户、上传的媒体、已安装的主题和插件、插件数据以及设置文件都会原样保留。"
+
+msgid "After the update"
+msgstr "更新之后"
+
+msgid "Open the site and the panel and check the version on the dashboard. On your own server, run the health check:"
+msgstr "打开网站和面板，在仪表盘确认版本。在自有服务器上，请运行健康检查："
+
+msgid "How to update"
+msgstr "更新指南"

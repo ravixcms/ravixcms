@@ -14621,3 +14621,72 @@ msgstr "Недостаточно свободного места на диске
 #, python-format
 msgid "The disk became full while the backup was being written (%(free)s free in %(dir)s). Nothing was changed; free some space and try again."
 msgstr "Диск переполнился во время записи резервной копии (свободно %(free)s в %(dir)s). Ничего не изменено; освободите место и повторите."
+
+msgid "How to update Ravix"
+msgstr "Как обновить Ravix"
+
+msgid "Updating takes a few clicks. Ravix checks the package, makes a backup, switches to the new version and, if anything goes wrong, goes back to the old version by itself."
+msgstr "Обновление занимает несколько щелчков. Ravix проверяет пакет, делает резервную копию, переключается на новую версию, а при любой ошибке сам возвращается к старой."
+
+msgid "Before you start"
+msgstr "Перед началом"
+
+msgid "You do not need to prepare anything: a backup of the files and the database is made automatically before every update. If you want an extra copy of your own, make it first."
+msgstr "Ничего готовить не нужно: перед каждым обновлением автоматически создаётся резервная копия файлов и базы данных. Если хотите собственную дополнительную копию, сделайте её заранее."
+
+msgid "Update from the panel"
+msgstr "Обновление из панели"
+
+msgid "Open Updates in the panel. When a newer version exists, this page and the dashboard show it."
+msgstr "Откройте «Обновления» в панели. Если есть более новая версия, она отображается на этой странице и на главной панели."
+
+msgid "Read the notes of the new version, then press “Update now”."
+msgstr "Прочитайте заметки о новой версии и нажмите «Обновить сейчас»."
+
+msgid "Stay on the progress page or close it. The steps are: download and check, backup, new files, database, switch, restart. The site may show a short maintenance message while it runs."
+msgstr "Можно остаться на странице хода работ или закрыть её. Этапы: загрузка и проверка, резервная копия, новые файлы, база данных, переключение, перезапуск. Во время работы сайт может ненадолго показать сообщение о техобслуживании."
+
+msgid "When it ends with “Succeeded”, the new version is running. Check the version on the dashboard and open your site."
+msgstr "Когда статус станет «Успешна», новая версия уже работает. Проверьте версию на главной панели и откройте сайт."
+
+msgid "Shared hosting (cPanel)"
+msgstr "Виртуальный хостинг (cPanel)"
+
+msgid "The scheduled job (cron) that was set up when you installed Ravix carries out the update, so it can take a minute or two to start. Keep that job active; if it was removed, add it again as the installation guide says."
+msgstr "Обновление выполняет задание планировщика (cron), созданное при установке Ravix, поэтому оно может начаться через минуту-две. Держите это задание включённым; если его удалили, добавьте снова, как описано в руководстве по установке."
+
+msgid "Your own server (VPS)"
+msgstr "Собственный сервер (VPS)"
+
+msgid "A system service does the work in the background; the panel only asks for it. From the command line you can run the installer again from the new version’s folder. It is safe to repeat, and if the new Python packages cannot be installed it changes nothing."
+msgstr "Работу в фоне выполняет системная служба; панель лишь запрашивает её. Из командной строки можно снова запустить установщик из папки новой версии. Повторный запуск безопасен, а если новые пакеты Python не установятся, ничего не изменится."
+
+msgid "If something goes wrong"
+msgstr "Если что-то пошло не так"
+
+msgid "the site is back on the old version with all its data. Open the update to read the reason, fix it and try again."
+msgstr "сайт вернулся к прежней версии со всеми данными. Откройте обновление, прочитайте причину, устраните её и повторите попытку."
+
+msgid "wait two minutes: an interrupted update is recovered automatically and ends as rolled back. If it does not, open the update and follow the recovery command shown there."
+msgstr "подождите две минуты: прерванное обновление восстанавливается автоматически и завершается откатом. Если этого не произошло, откройте обновление и выполните показанную там команду восстановления."
+
+msgid "A maintenance page that stays for a long time: wait a few minutes, then reload. Your data is safe."
+msgstr "Если страница техобслуживания не исчезает долго: подождите несколько минут и обновите страницу. Ваши данные в безопасности."
+
+msgid "Every update keeps its backup, so a manual restore is always possible."
+msgstr "Каждое обновление сохраняет свою резервную копию, поэтому ручное восстановление всегда возможно."
+
+msgid "What an update never replaces"
+msgstr "Что обновление никогда не заменяет"
+
+msgid "Your pages and posts, users, uploaded media, installed themes and plugins, plugin data and the settings file stay as they are."
+msgstr "Ваши страницы и записи, пользователи, загруженные файлы, установленные темы и плагины, данные плагинов и файл настроек остаются без изменений."
+
+msgid "After the update"
+msgstr "После обновления"
+
+msgid "Open the site and the panel and check the version on the dashboard. On your own server, run the health check:"
+msgstr "Откройте сайт и панель и проверьте версию на главной панели. На собственном сервере выполните проверку состояния:"
+
+msgid "How to update"
+msgstr "Как обновлять"

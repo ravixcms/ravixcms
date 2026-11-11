@@ -238,3 +238,45 @@ class AutoCheckTests(UpdaterCase):
 
         with mock.patch.object(sources, "has_source", return_value=True), mock.patch.object(sources, "cached_index", side_effect=UpdateError("down")):
             self.assertEqual(sources.auto_check(), "unavailable")
+
+
+class UpdateGuideTests(UpdaterCase):
+    """«How to update Ravix» is a panel page in the ten languages and is reachable from the Updates page."""
+
+    LANGS = ["en", "fa", "ar", "de", "es", "fr", "pt-br", "ru", "tr", "zh-hans"]
+
+    def test_the_guide_opens_for_a_viewer_and_the_updates_page_links_to_it(self):
+        self.client.force_login(self.admin)
+        response = self.client.get(reverse("updater:guide"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "install.sh --domain")
+        self.assertContains(response, "deploy/manage.sh ravix_preflight")
+        self.assertContains(self.client.get(reverse("updater:home")), reverse("updater:guide"))
+
+    def test_the_guide_needs_a_login(self):
+        response = Client().get(reverse("updater:guide"))
+        self.assertIn(response.status_code, (302, 403))
+
+    def test_every_language_has_its_own_text_not_english(self):
+        from apps.updater.views import GuideView
+
+        english = {}
+        for lang in self.LANGS:
+            with translation.override(lang):
+                html = GuideView.as_view()(self.request_for(lang)).render().content.decode("utf-8")
+            english[lang] = html
+        base = english["en"]
+        self.assertIn("How to update Ravix", base)
+        for lang in self.LANGS[1:]:
+            self.assertNotIn("Updating takes a few clicks", english[lang], lang)
+            self.assertNotIn("Before you start", english[lang], lang)
+            self.assertNotIn("If something goes wrong", english[lang], lang)
+            self.assertNotEqual(english[lang], base, lang)
+
+    def request_for(self, lang):
+        from django.test import RequestFactory
+
+        request = RequestFactory().get(reverse("updater:guide"))
+        request.user = self.admin
+        request.LANGUAGE_CODE = lang
+        return request

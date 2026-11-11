@@ -14601,3 +14601,72 @@ msgstr "%(dir)s içinde yedek için yeterli boş disk alanı yok: yaklaşık %(n
 #, python-format
 msgid "The disk became full while the backup was being written (%(free)s free in %(dir)s). Nothing was changed; free some space and try again."
 msgstr "Yedek yazılırken disk doldu (%(dir)s içinde %(free)s boş). Hiçbir şey değiştirilmedi; yer açıp yeniden deneyin."
+
+msgid "How to update Ravix"
+msgstr "Ravix nasıl güncellenir"
+
+msgid "Updating takes a few clicks. Ravix checks the package, makes a backup, switches to the new version and, if anything goes wrong, goes back to the old version by itself."
+msgstr "Güncelleme birkaç tıklamayla yapılır. Ravix paketi denetler, yedek alır, yeni sürüme geçer ve bir sorun olursa kendiliğinden eski sürüme döner."
+
+msgid "Before you start"
+msgstr "Başlamadan önce"
+
+msgid "You do not need to prepare anything: a backup of the files and the database is made automatically before every update. If you want an extra copy of your own, make it first."
+msgstr "Hiçbir hazırlık yapmanız gerekmez: her güncellemeden önce dosyaların ve veritabanının yedeği otomatik alınır. Kendi ek yedeğinizi isterseniz önceden alın."
+
+msgid "Update from the panel"
+msgstr "Panelden güncelleme"
+
+msgid "Open Updates in the panel. When a newer version exists, this page and the dashboard show it."
+msgstr "Panelde «Güncellemeler»i açın. Daha yeni bir sürüm varsa bu sayfa ve pano onu gösterir."
+
+msgid "Read the notes of the new version, then press “Update now”."
+msgstr "Yeni sürümün notlarını okuyun, ardından «Şimdi güncelle»ye basın."
+
+msgid "Stay on the progress page or close it. The steps are: download and check, backup, new files, database, switch, restart. The site may show a short maintenance message while it runs."
+msgstr "İlerleme sayfasında kalabilir ya da kapatabilirsiniz. Adımlar: indirme ve denetim, yedekleme, yeni dosyalar, veritabanı, geçiş, yeniden başlatma. Bu sırada site kısa bir bakım mesajı gösterebilir."
+
+msgid "When it ends with “Succeeded”, the new version is running. Check the version on the dashboard and open your site."
+msgstr "«Başarılı» ile bittiğinde yeni sürüm çalışıyordur. Sürümü panoda kontrol edin ve sitenizi açın."
+
+msgid "Shared hosting (cPanel)"
+msgstr "Paylaşımlı hosting (cPanel)"
+
+msgid "The scheduled job (cron) that was set up when you installed Ravix carries out the update, so it can take a minute or two to start. Keep that job active; if it was removed, add it again as the installation guide says."
+msgstr "Güncellemeyi Ravix kurulurken oluşturulan zamanlanmış görev (cron) yapar; bu yüzden başlaması bir iki dakika sürebilir. O görevi etkin tutun; silindiyse kurulum kılavuzundaki gibi yeniden ekleyin."
+
+msgid "Your own server (VPS)"
+msgstr "Kendi sunucunuz (VPS)"
+
+msgid "A system service does the work in the background; the panel only asks for it. From the command line you can run the installer again from the new version’s folder. It is safe to repeat, and if the new Python packages cannot be installed it changes nothing."
+msgstr "İşi arka planda bir sistem hizmeti yapar; panel yalnızca onu ister. Komut satırından yükleyiciyi yeni sürümün klasöründen yeniden çalıştırabilirsiniz. Tekrarlamak güvenlidir ve yeni Python paketleri kurulamazsa hiçbir şeyi değiştirmez."
+
+msgid "If something goes wrong"
+msgstr "Bir şey ters giderse"
+
+msgid "the site is back on the old version with all its data. Open the update to read the reason, fix it and try again."
+msgstr "site tüm verileriyle eski sürüme döndü. Nedenini okumak için güncellemeyi açın, sorunu giderin ve yeniden deneyin."
+
+msgid "wait two minutes: an interrupted update is recovered automatically and ends as rolled back. If it does not, open the update and follow the recovery command shown there."
+msgstr "iki dakika bekleyin: yarıda kalan güncelleme otomatik olarak kurtarılır ve geri alındı olarak biter. Olmazsa güncellemeyi açın ve orada gösterilen kurtarma komutunu uygulayın."
+
+msgid "A maintenance page that stays for a long time: wait a few minutes, then reload. Your data is safe."
+msgstr "Bakım sayfası uzun süre kalırsa: birkaç dakika bekleyip sayfayı yenileyin. Verileriniz güvendedir."
+
+msgid "Every update keeps its backup, so a manual restore is always possible."
+msgstr "Her güncelleme kendi yedeğini saklar; bu yüzden elle geri yükleme her zaman mümkündür."
+
+msgid "What an update never replaces"
+msgstr "Güncellemenin asla değiştirmedikleri"
+
+msgid "Your pages and posts, users, uploaded media, installed themes and plugins, plugin data and the settings file stay as they are."
+msgstr "Sayfalarınız ve yazılarınız, kullanıcılar, yüklenen medya, kurulu temalar ve eklentiler, eklenti verileri ve ayar dosyası olduğu gibi kalır."
+
+msgid "After the update"
+msgstr "Güncellemeden sonra"
+
+msgid "Open the site and the panel and check the version on the dashboard. On your own server, run the health check:"
+msgstr "Siteyi ve paneli açıp sürümü panoda kontrol edin. Kendi sunucunuzda sağlık denetimini çalıştırın:"
+
+msgid "How to update"
+msgstr "Güncelleme rehberi"

@@ -5,7 +5,8 @@
 {% block page_title %}{% trans "Updates" %}{% endblock %}
 {% block content %}
 <div class="page-head"><div><h1>{% trans "Updates" %}</h1><p>{% trans "Core, theme and plugin versions, checking for a new version from the official source, and the upgrade history. No file is replaced without a SHA-256 check and a digital signature." %}</p></div>
-  <form method="post" action="{% url 'updater:check' %}">{% csrf_token %}<button class="btn" type="submit" {% if not has_source %}disabled{% endif %}>{% trans "Check for a new version" %}</button></form></div>
+  <div class="actions"><a class="btn" href="{% url 'updater:guide' %}">{% trans "How to update" %}</a>
+  <form method="post" action="{% url 'updater:check' %}" style="display:inline">{% csrf_token %}<button class="btn" type="submit" {% if not has_source %}disabled{% endif %}>{% trans "Check for a new version" %}</button></form></div></div>
 
 {% if v.core.restart_pending %}<div class="form-errors warn" role="status"><p>{% trans "The code on disk (" %}<span class="ltr">{{ v.core.disk }}</span>{% trans ") is newer than the running process (" %}<span class="ltr">{{ v.core.running }}</span>{% trans "). Restart the web service." %}</p></div>{% endif %}
 {% if lock %}<div class="form-errors warn" role="status"><p>{% trans "An upgrade is in progress:" %} <span class="ltr">{{ lock.operation }}</span> {% blocktrans trimmed with since=lock.since|jalali_datetime %}(since {{ since }}). No other upgrade is possible until it finishes.{% endblocktrans %}</p></div>{% endif %}

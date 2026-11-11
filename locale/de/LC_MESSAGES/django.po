@@ -14898,3 +14898,72 @@ msgstr "Nicht genug freier Speicherplatz für die Sicherung in %(dir)s: Es werde
 #, python-format
 msgid "The disk became full while the backup was being written (%(free)s free in %(dir)s). Nothing was changed; free some space and try again."
 msgstr "Der Datenträger ist beim Schreiben der Sicherung voll geworden (%(free)s frei in %(dir)s). Es wurde nichts geändert; schaffen Sie Platz und versuchen Sie es erneut."
+
+msgid "How to update Ravix"
+msgstr "So aktualisieren Sie Ravix"
+
+msgid "Updating takes a few clicks. Ravix checks the package, makes a backup, switches to the new version and, if anything goes wrong, goes back to the old version by itself."
+msgstr "Ein Update braucht nur ein paar Klicks. Ravix prüft das Paket, legt eine Sicherung an, wechselt zur neuen Version und kehrt bei einem Fehler selbstständig zur alten Version zurück."
+
+msgid "Before you start"
+msgstr "Bevor Sie beginnen"
+
+msgid "You do not need to prepare anything: a backup of the files and the database is made automatically before every update. If you want an extra copy of your own, make it first."
+msgstr "Sie müssen nichts vorbereiten: Vor jedem Update wird automatisch eine Sicherung der Dateien und der Datenbank angelegt. Wenn Sie eine zusätzliche eigene Kopie möchten, erstellen Sie diese vorher."
+
+msgid "Update from the panel"
+msgstr "Update über das Panel"
+
+msgid "Open Updates in the panel. When a newer version exists, this page and the dashboard show it."
+msgstr "Öffnen Sie im Panel „Updates“. Gibt es eine neuere Version, zeigen diese Seite und das Dashboard sie an."
+
+msgid "Read the notes of the new version, then press “Update now”."
+msgstr "Lesen Sie die Hinweise zur neuen Version und klicken Sie dann auf „Jetzt aktualisieren“."
+
+msgid "Stay on the progress page or close it. The steps are: download and check, backup, new files, database, switch, restart. The site may show a short maintenance message while it runs."
+msgstr "Sie können auf der Fortschrittsseite bleiben oder sie schließen. Die Schritte: Herunterladen und prüfen, Sicherung, neue Dateien, Datenbank, Umschalten, Neustart. Währenddessen kann die Website kurz eine Wartungsmeldung zeigen."
+
+msgid "When it ends with “Succeeded”, the new version is running. Check the version on the dashboard and open your site."
+msgstr "Endet es mit „Erfolgreich“, läuft die neue Version. Prüfen Sie die Version im Dashboard und öffnen Sie Ihre Website."
+
+msgid "Shared hosting (cPanel)"
+msgstr "Shared Hosting (cPanel)"
+
+msgid "The scheduled job (cron) that was set up when you installed Ravix carries out the update, so it can take a minute or two to start. Keep that job active; if it was removed, add it again as the installation guide says."
+msgstr "Den Update führt der Cron-Job aus, der bei der Installation von Ravix eingerichtet wurde; der Start kann daher ein bis zwei Minuten dauern. Lassen Sie diesen Job aktiv; wurde er entfernt, richten Sie ihn wie in der Installationsanleitung beschrieben neu ein."
+
+msgid "Your own server (VPS)"
+msgstr "Eigener Server (VPS)"
+
+msgid "A system service does the work in the background; the panel only asks for it. From the command line you can run the installer again from the new version’s folder. It is safe to repeat, and if the new Python packages cannot be installed it changes nothing."
+msgstr "Ein Systemdienst erledigt die Arbeit im Hintergrund; das Panel fordert ihn nur an. Über die Kommandozeile können Sie das Installationsskript erneut aus dem Ordner der neuen Version starten. Das ist gefahrlos wiederholbar, und wenn sich die neuen Python-Pakete nicht installieren lassen, ändert es nichts."
+
+msgid "If something goes wrong"
+msgstr "Wenn etwas schiefgeht"
+
+msgid "the site is back on the old version with all its data. Open the update to read the reason, fix it and try again."
+msgstr "Die Website ist mit allen Daten wieder auf der alten Version. Öffnen Sie das Update, lesen Sie die Ursache, beheben Sie sie und versuchen Sie es erneut."
+
+msgid "wait two minutes: an interrupted update is recovered automatically and ends as rolled back. If it does not, open the update and follow the recovery command shown there."
+msgstr "Warten Sie zwei Minuten: Ein unterbrochenes Update wird automatisch wiederhergestellt und endet als zurückgesetzt. Falls nicht, öffnen Sie das Update und führen Sie den dort angezeigten Wiederherstellungsbefehl aus."
+
+msgid "A maintenance page that stays for a long time: wait a few minutes, then reload. Your data is safe."
+msgstr "Wenn die Wartungsseite lange stehen bleibt: Warten Sie einige Minuten und laden Sie die Seite neu. Ihre Daten sind sicher."
+
+msgid "Every update keeps its backup, so a manual restore is always possible."
+msgstr "Jedes Update behält seine Sicherung, sodass eine manuelle Wiederherstellung immer möglich ist."
+
+msgid "What an update never replaces"
+msgstr "Was ein Update nie ersetzt"
+
+msgid "Your pages and posts, users, uploaded media, installed themes and plugins, plugin data and the settings file stay as they are."
+msgstr "Ihre Seiten und Beiträge, Benutzer, hochgeladene Medien, installierte Themes und Plugins, Plugin-Daten und die Einstellungsdatei bleiben unverändert."
+
+msgid "After the update"
+msgstr "Nach dem Update"
+
+msgid "Open the site and the panel and check the version on the dashboard. On your own server, run the health check:"
+msgstr "Öffnen Sie Website und Panel und prüfen Sie die Version im Dashboard. Auf dem eigenen Server führen Sie die Systemprüfung aus:"
+
+msgid "How to update"
+msgstr "Anleitung zum Update"
