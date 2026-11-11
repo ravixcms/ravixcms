@@ -877,3 +877,31 @@ class UnquotedEnvLineTests(SimpleTestCase):
         text = "".join(f"{k}={hosting.quote_env(v)}\n" for k, v in values.items())
         self.assertEqual(hosting.unquoted_env_lines(text), [])
         self.assertEqual(hosting.parse_env(text), values)
+
+
+class PreflightUnreadableEnvFileTests(TestCase):
+    """The person who runs the preflight may not be allowed into /etc/ravix (it belongs to the service user); that must not crash the report."""
+
+    def test_an_env_file_the_user_may_not_open_is_skipped_not_fatal(self):
+        import io
+        from pathlib import Path
+        from unittest import mock
+
+        from django.core.management import call_command
+        from django.test import override_settings
+
+        real = Path.is_file
+
+        def denied(self, *a, **k):
+            if str(self) == "/nonexistent-ravix/ravix.env":
+                raise PermissionError(13, "Permission denied", str(self))
+            return real(self, *a, **k)
+
+        out = io.StringIO()
+        with override_settings(RAVIX_ENV_FILE="/nonexistent-ravix/ravix.env"), mock.patch.object(Path, "is_file", denied):
+            try:
+                call_command("ravix_preflight", "--ci", stdout=out, stderr=io.StringIO())
+            except SystemExit:
+                pass  # a failing report is fine; a Python traceback is not
+        self.assertIn("✔", out.getvalue())  # the report was written to the end (the language of the report does not matter here)
+        self.assertNotIn("Traceback", out.getvalue())

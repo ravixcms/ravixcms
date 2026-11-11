@@ -317,13 +317,16 @@ class Command(BaseCommand):
 
         # a settings value with spaces or < > & ; and no quotes breaks any shell that runs "source" on the file (Ravix and systemd read it fine)
         env_path = Path(getattr(settings, "RAVIX_ENV_FILE", "") or os.environ.get("RAVIX_ENV_FILE", "") or "/etc/ravix/ravix.env")
-        try:
-            loose = hosting.unquoted_env_lines(env_path.read_text(encoding="utf-8")) if env_path.is_file() else []
+        loose, env_readable = [], False
+        try:  # the user who runs this may not be allowed into /etc/ravix (it is for the service user): then the check is skipped, not crashed
+            if env_path.is_file():
+                loose = hosting.unquoted_env_lines(env_path.read_text(encoding="utf-8"))
+                env_readable = True
         except OSError:
-            loose = []
+            loose, env_readable = [], False
         for number, key in loose[:5]:
             warns.append(cli_gettext("Line %(a1)s of %(a2)s (%(a3)s): the value has spaces or characters such as < > & ; without quotes. Ravix reads it correctly, but a shell that runs “source” on the file stops with a syntax error. Put the value in double quotes.") % {"a1": number, "a2": env_path, "a3": key})
-        if env_path.is_file() and not loose:
+        if env_readable and not loose:
             oks.append(cli_gettext("The settings file can be read by a shell (values with spaces or < > are quoted)"))
         for m in oks:
             self.stdout.write(self.style.SUCCESS("  ✔ " + m))
