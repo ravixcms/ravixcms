@@ -545,7 +545,9 @@ def publish(request, api):
         self.install_activate("notes")
         self.assertIsNotNone(registry.get("notes"))  # the old code is now imported in this process
         new_fp = self.upgrade_on_disk("notes", with_models=True)
-        with self.assertRaises(PluginError) as cm:
+        from django.utils import translation
+
+        with translation.override("en"), self.assertRaises(PluginError) as cm:
             services.run_migrations("notes", self.tmp / "notes", new_fp)
         self.assertIn("Restart the server", str(cm.exception))
         self.assertNotIn("not callable", str(cm.exception))
