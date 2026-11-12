@@ -60,6 +60,8 @@ docker compose up -d --build
 docker compose logs ravix | grep "توکن نصب"      # یا: docker compose exec ravix python manage.py ravix_install_token
 # مرورگر: http://localhost/install/
 ```
+
+> **هشدار:** این حالت برای آزمایش روی کامپیوتر خودتان است و رمز دیتابیس‌اش پیش‌فرض (`ravix`) است. پورت دیتابیس بیرون منتشر نمی‌شود، ولی روی سرور واقعی از بخش «سرور واقعی» (با `docker/init-env.sh`، رمز تصادفی) استفاده کنید یا `POSTGRES_PASSWORD` را قبل از اولین `up` عوض کنید؛ بعد از ساخته‌شدن volume عوض‌کردنش در `.env` رمز داخل دیتابیس را عوض نمی‌کند.
 بدون هیچ پیکربندی بالا می‌آید: کلید Django یک‌بار ساخته و در volume نگه داشته می‌شود، و رمز دیتابیس پیش‌فرضِ داخلیِ compose است (بیرون منتشر نمی‌شود). **برای سرور واقعی از پیش‌فرض‌ها استفاده نکنید** — پایین را ببینید.
 
 ### سرور واقعی با HTTPS
@@ -77,7 +79,7 @@ docker compose -f docker-compose.yml -f docker-compose.tls.yml up -d --build
 |---|---|---|
 | `RAVIX_DOMAIN` | `localhost` | نام میزبان (ALLOWED_HOSTS و server_name) |
 | `RAVIX_PUBLIC_URL` | `http://localhost` | آدرس عمومی (CSRF، sitemap) |
-| `POSTGRES_PASSWORD` | `ravix` | فقط هنگام ساخت اولیهٔ volume دیتابیس اعمال می‌شود |
+| `POSTGRES_PASSWORD` | `ravix` | فقط هنگام ساخت اولیهٔ volume دیتابیس اعمال می‌شود. **روی سرور واقعی حتماً عوضش کنید** (یا با `docker/init-env.sh` رمز تصادفی بسازید) |
 | `DJANGO_SECRET_KEY` | ساخت خودکار | خالی ⇒ در `/data/secret_key` نگه داشته می‌شود |
 | `RAVIX_INSTALL_TOKEN` | تصادفی | توکن صفحهٔ نصب |
 | `RAVIX_HTTP_PORT` / `RAVIX_HTTPS_PORT` | 80 / 443 | پورت‌های میزبان |

@@ -255,7 +255,7 @@ def mcp_status() -> str:
 
 
 def seed_external(old_site_version: str):
-    """A theme and a plugin that are NOT part of the repository (like ravixcms-site / ravix_releases on the real server)."""
+    """A theme and a plugin that are NOT part of the repository (like the private theme and plugin a real site installs from its own ZIP files)."""
     theme = BASE / "themes_installed" / "e2e-theme"
     shutil.copytree(ROOT / "themes/default", theme, ignore=shutil.ignore_patterns("__pycache__"))
     m = json.loads((theme / "theme.json").read_text())

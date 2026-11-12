@@ -3,6 +3,7 @@
 #   آزمایش محلی (بدون پیکربندی):   docker compose up -d --build   →   http://localhost/install/
 #   سرور واقعی:                    ./docker/init-env.sh example.com --tls   (رمزهای تصادفی در .env)
 #                                  docker compose -f docker-compose.yml -f docker-compose.tls.yml up -d --build
+# هشدار: رمز دیتابیس در حالت «آزمایش محلی» پیش‌فرض (ravix) است؛ روی سرور واقعی POSTGRES_PASSWORD را عوض کنید (docker/init-env.sh رمز تصادفی می‌سازد).
 # راهنمای کامل: docs/installer.md
 
 name: ravix

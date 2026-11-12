@@ -19,7 +19,7 @@
 git clone https://github.com/ravixcms/ravixcms.git && cd ravixcms
 docker compose up -d --build
 ```
-سپس `http://localhost/install/` را باز کنید: نام سایت و مدیرکل را وارد کنید، تمام. (کد امنیتی نصب: `docker compose exec ravix python manage.py ravix_install_token`.)
+سپس `http://localhost/install/` را باز کنید: نام سایت و مدیرکل را وارد کنید، تمام. (کد امنیتی نصب: `docker compose exec ravix python manage.py ravix_install_token`.) این حالت برای آزمایش روی کامپیوتر خودتان است؛ رمز دیتابیسش پیش‌فرض است، پس روی سرور واقعی از `install.sh` یا `docker/init-env.sh` استفاده کنید و `POSTGRES_PASSWORD` را عوض کنید.
 
 سرور اوبونتو ۲۲/۲۴ با دامنه و HTTPS رایگان: `sudo ./install.sh` — پیش از هر تغییر می‌پرسد و اجرای دوباره‌اش بی‌خطر است. جزئیات و سرور واقعی با Docker: [`docs/installer.md`](docs/installer.md).
 
