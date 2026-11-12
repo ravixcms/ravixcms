@@ -14690,3 +14690,6 @@ msgstr "Откройте сайт и панель и проверьте верс
 
 msgid "How to update"
 msgstr "Как обновлять"
+
+msgid "The server still runs the previous version of this plugin. Restart the server (for example: sudo systemctl restart ravix), then try again."
+msgstr "Сервер всё ещё выполняет предыдущую версию этого плагина. Перезапустите сервер (например: sudo systemctl restart ravix) и повторите попытку."

@@ -14670,3 +14670,6 @@ msgstr "Siteyi ve paneli açıp sürümü panoda kontrol edin. Kendi sunucunuzda
 
 msgid "How to update"
 msgstr "Güncelleme rehberi"
+
+msgid "The server still runs the previous version of this plugin. Restart the server (for example: sudo systemctl restart ravix), then try again."
+msgstr "Sunucu bu eklentinin önceki sürümünü hâlâ çalıştırıyor. Sunucuyu yeniden başlatın (örneğin: sudo systemctl restart ravix) ve tekrar deneyin."

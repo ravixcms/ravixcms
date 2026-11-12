@@ -163,6 +163,8 @@ def run_migrations(slug, root, fp, *, target=None):
     """مهاجرت‌های افزونه را (پس از اعتبارسنجی ایستا) اجرا می‌کند. فقط جدول‌های plugin_<slug>_* را لمس می‌کنند."""
     try:
         registry.load_for_install(slug, root, fp)
+    except registry.PluginRestartRequired as exc:
+        raise PluginError(str(exc))
     except Exception as exc:  # noqa: BLE001
         raise PluginError((gettext("Loading the plugin models failed: %(exc)s") % {"exc": exc}))
     label = f"plugin_{slug}"

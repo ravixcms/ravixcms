@@ -14977,3 +14977,6 @@ msgstr "Ouvrez le site et le panneau, puis vérifiez la version sur le tableau d
 
 msgid "How to update"
 msgstr "Guide de mise à jour"
+
+msgid "The server still runs the previous version of this plugin. Restart the server (for example: sudo systemctl restart ravix), then try again."
+msgstr "Le serveur exécute encore la version précédente de ce plugin. Redémarrez le serveur (par exemple : sudo systemctl restart ravix), puis réessayez."

@@ -10,6 +10,10 @@
 - GitHub Actions are pinned to full commit SHAs (Dependabot keeps them current).
 - The Docker Compose docs and the compose file now warn that the default database password is for local trials only.
 
+### Plugins
+- Updating a plugin that adds a page, route or hook while the server still runs its previous code no longer fails with “… is not callable” (and no longer disables the plugin): the panel says to restart the server (`sudo systemctl restart ravix`), in all ten languages. A plugin without models simply loads the new code.
+- A plugin's translations are registered as soon as the plugin is active and its files match the approved fingerprint, not only after its first page is opened, so the menu and page titles of a freshly started worker are in the panel's language instead of English.
+
 ### Windows
 - Fix: `python manage.py runserver` failed on Windows with `ModuleNotFoundError: No module named 'fcntl'` (the theme installer imported it at start-up). All file locks (theme install, update executor, cron) now go through one cross-platform layer, `apps/core/filelock.py`: `fcntl.flock` on Linux and macOS (unchanged), `msvcrt.locking` on Windows; the platform modules are imported inside `try`, so nothing fails to load. The preflight no longer needs `os.geteuid` either.
 - A new CI job on `windows-latest` installs the requirements, runs `check` and `migrate` on SQLite, starts the real `runserver` and asks `/healthz`, and runs the file-lock, accounts and update-source tests. A test also refuses any module-level import of a Linux-only module (`fcntl`, `pwd`, `grp`, …).

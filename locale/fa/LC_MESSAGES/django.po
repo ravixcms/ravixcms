@@ -14506,3 +14506,6 @@ msgstr "سایت و پنل را باز کنید و نسخه را در داشبو
 
 msgid "How to update"
 msgstr "راهنمای به‌روزرسانی"
+
+msgid "The server still runs the previous version of this plugin. Restart the server (for example: sudo systemctl restart ravix), then try again."
+msgstr "سرور هنوز نسخهٔ قبلی این افزونه را اجرا می‌کند. سرور را ری‌استارت کنید (مثلاً: sudo systemctl restart ravix) و دوباره امتحان کنید."

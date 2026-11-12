@@ -14094,3 +14094,6 @@ msgstr "打开网站和面板，在仪表盘确认版本。在自有服务器上
 
 msgid "How to update"
 msgstr "更新指南"
+
+msgid "The server still runs the previous version of this plugin. Restart the server (for example: sudo systemctl restart ravix), then try again."
+msgstr "服务器仍在运行此插件的旧版本。请重启服务器（例如：sudo systemctl restart ravix），然后重试。"

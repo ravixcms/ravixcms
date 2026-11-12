@@ -37,6 +37,7 @@ _loaded: dict[str, "Loaded"] = {}
 _dev_slugs: set[str] = set()
 _module_fp: dict[str, str] = {}  # slug -> اثرانگشتی که ماژول‌های فعلی در حافظه با آن import شده‌اند
 _warned: set[str] = set()
+_catalog_fp: dict[str, str] = {}  # slug -> fingerprint whose translations are registered (they are needed before the plugin's code is ever loaded)
 
 
 @dataclass
@@ -57,6 +58,11 @@ class Loaded:
 
 class PluginLoadError(Exception):
     pass
+
+
+class PluginRestartRequired(PluginLoadError):
+    """The approved code on disk is newer than what this process imported and cannot be swapped without a restart (the plugin has models, so its
+    modules stay in memory). It is not a defect of the plugin: it must never disable it, and the message tells the administrator what to do."""
 
 
 # ------------------------------------------------------------------ یابنده و بارگذار منبع‌محض
@@ -167,11 +173,13 @@ def locate(slug):
     return None
 
 
-def _resolve(pkg_name, ref):
+def _resolve(pkg_name, ref, stale=False):
     module_name, attr = ref.split(":")
     module = importlib.import_module(f"{pkg_name}.{module_name}")
     fn = getattr(module, attr, None)
     if not callable(fn):
+        if stale:  # the new manifest names code that only the new files have, and this process still holds the old ones
+            raise PluginRestartRequired(gettext("The server still runs the previous version of this plugin. Restart the server (for example: sudo systemctl restart ravix), then try again."))
         raise PluginLoadError((gettext("“%(ref)s” is not callable.") % {"ref": ref}))
     return fn
 
@@ -180,8 +188,14 @@ def _do_load(slug, info, root, fp) -> Loaded:
     from .api import PluginAPI
 
     _install_finder()
-    _roots[slug] = (root, fp)
     pkg_name = f"{NAMESPACE}.{slug}"
+    old = _module_fp.get(slug)
+    stale = old is not None and old != fp  # this process still holds an older approved version of the code
+    if stale and app_config(slug) is None:
+        _purge_modules(slug)  # no models: the old modules can simply be dropped and read again
+        _module_fp.pop(slug, None)
+        stale = False
+    _roots[slug] = (root, fp)
     pkg = importlib.import_module(pkg_name)
     _module_fp[slug] = fp
     label = ""
@@ -196,18 +210,39 @@ def _do_load(slug, info, root, fp) -> Loaded:
     m = info.manifest
     loaded = Loaded(slug=slug, info=info, root=root, fingerprint=fp, api=api, verified_at=time.monotonic(), app_label=label)
     for p in m.admin_pages:
-        loaded.pages[p["key"]] = _resolve(pkg_name, p["view"])
+        loaded.pages[p["key"]] = _resolve(pkg_name, p["view"], stale)
     for r in m.public_routes:
-        loaded.routes[r["path"]] = _resolve(pkg_name, r["view"])
+        loaded.routes[r["path"]] = _resolve(pkg_name, r["view"], stale)
     for r in m.site_routes:
-        loaded.site_routes[(r["path"], r["language_prefix"])] = _resolve(pkg_name, r["view"])
+        loaded.site_routes[(r["path"], r["language_prefix"])] = _resolve(pkg_name, r["view"], stale)
     for h in m.hooks:
-        loaded.hooks.setdefault(h["name"], []).append((h["priority"], _resolve(pkg_name, h["handler"])))
+        loaded.hooks.setdefault(h["name"], []).append((h["priority"], _resolve(pkg_name, h["handler"], stale)))
     for w in m.studio_widgets:
-        loaded.studio_widgets[w["type"]] = _resolve(pkg_name, w["render"])
+        loaded.studio_widgets[w["type"]] = _resolve(pkg_name, w["render"], stale)
     for fns in loaded.hooks.values():
         fns.sort(key=lambda x: x[0])
     return loaded
+
+
+def ensure_catalogs(infos) -> None:
+    """Registers the translations of the active plugins in this process. The menu and the plugin pages show titles from the manifest long before
+    any plugin code is loaded (that happens on the first request to a plugin), so without this a freshly started worker shows them in English.
+    Only a plugin whose files still match the approved fingerprint contributes a catalog, exactly as when its code is loaded."""
+    from apps.core import catalogs
+
+    for slug, info in list(infos.items()):
+        if _catalog_fp.get(slug) == info.fingerprint:
+            continue
+        try:
+            root = locate(slug)
+            if root is None or fingerprint(root) != info.fingerprint:
+                continue
+            locale_dir = root / "locale"
+            if locale_dir.is_dir() and not locale_dir.is_symlink():
+                catalogs.register(f"plugin:{slug}", locale_dir)
+            _catalog_fp[slug] = info.fingerprint
+        except Exception:  # noqa: BLE001 - a broken plugin folder must never break the panel; get() reports it
+            continue
 
 
 def get(slug) -> Loaded | None:
@@ -217,6 +252,7 @@ def get(slug) -> Loaded | None:
         from apps.core import catalogs
 
         catalogs.unregister(f"plugin:{slug}")  # a disabled plugin contributes no translations
+        _catalog_fp.pop(slug, None)
         return None
     cur = _loaded.get(slug)
     now = time.monotonic()
@@ -258,6 +294,12 @@ def get(slug) -> Loaded | None:
             loaded = _do_load(slug, info, root, fp)
             _loaded[slug] = loaded
             return loaded
+        except PluginRestartRequired as exc:  # not a defect of the plugin: keep it enabled, say what to do
+            if slug not in _warned:
+                _warned.add(slug)
+                events.log_event(slug, "restart_required", str(exc), level="warning")
+            _loaded.pop(slug, None)
+            return None
         except Exception as exc:  # noqa: BLE001 - خطای افزونه مهار می‌شود
             _purge_modules(slug)
             _module_fp.pop(slug, None)
@@ -275,8 +317,10 @@ def load_for_install(slug, root, fp):
     manifest = read_manifest(root, expected_slug=slug)
     info = state.ActiveInfo(slug=slug, manifest=manifest, fingerprint=fp, config={})
     with _lock:
-        if slug in _loaded:
-            return _loaded[slug]
+        cur = _loaded.get(slug)
+        if cur is not None and cur.fingerprint == fp:
+            return cur
+        _loaded.pop(slug, None)  # an older approved version is loaded here: _do_load swaps it (no models) or asks for a restart (models)
         loaded = _do_load(slug, info, root, fp)
         _loaded[slug] = loaded
         return loaded
@@ -302,6 +346,7 @@ def unload(slug):
     from apps.core import catalogs
 
     catalogs.unregister(f"plugin:{slug}")
+    _catalog_fp.pop(slug, None)
     with _lock:
         _loaded.pop(slug, None)
         if app_config(slug) is None:
@@ -327,4 +372,5 @@ def reset_for_tests():
         _dev_slugs.clear()
         _module_fp.clear()
         _warned.clear()
+        _catalog_fp.clear()
         state.invalidate()

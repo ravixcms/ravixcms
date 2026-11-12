@@ -14967,3 +14967,6 @@ msgstr "Öffnen Sie Website und Panel und prüfen Sie die Version im Dashboard. 
 
 msgid "How to update"
 msgstr "Anleitung zum Update"
+
+msgid "The server still runs the previous version of this plugin. Restart the server (for example: sudo systemctl restart ravix), then try again."
+msgstr "Der Server führt noch die vorherige Version dieses Plugins aus. Starten Sie den Server neu (zum Beispiel: sudo systemctl restart ravix) und versuchen Sie es erneut."

@@ -58,6 +58,9 @@ def _load() -> dict[str, ActiveInfo]:
             continue  # snapshot خراب: افزونه فعال حساب نمی‌شود
         config, _errors = clean_all(manifest.settings, row.config or {})
         data[row.slug] = ActiveInfo(slug=row.slug, manifest=manifest, fingerprint=row.fingerprint, config=config)
+    from . import registry
+
+    registry.ensure_catalogs(data)  # menu and page titles are translated before any plugin code runs
     return data
 
 

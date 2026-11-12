@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 
@@ -506,3 +507,95 @@ class TemplateLoaderTests(PluginTestCase):
         self.install_activate("demo")
         self.assertNotEqual(get_template("base.html").render({}), "HIJACKED")
         self.assertNotIn("HIJACKED", get_template("layouts/panel.html").template.source)
+
+
+class UpdatedCodeInOldProcessTests(PluginTestCase):
+    """An updated plugin whose new manifest names a view the old, still imported module does not have used to fail with “… is not callable” and
+    the plugin was disabled. It must say clearly that a restart is needed and must not disable anything."""
+
+    MODEL = MigrationControlTests.MODEL
+    MIG = MigrationControlTests.MIG
+    model_plugin = MigrationControlTests.model_plugin
+
+    NEW_VIEWS = '''from django.http import HttpResponse
+
+
+def home(request, api):
+    return HttpResponse("HOME")
+
+
+def ping(request, api):
+    return HttpResponse("PONG")
+
+
+def publish(request, api):
+    return HttpResponse("PUBLISH")
+'''
+
+    def upgrade_on_disk(self, slug, with_models):
+        manifest = base_manifest(slug, version="1.1.0", models=with_models)
+        manifest["admin_pages"].append({"key": "publish", "title": "Publish", "view": "views:publish", "capability": f"{slug}.use"})
+        root = self.tmp / slug
+        (root / "plugin.json").write_text(json.dumps(manifest, ensure_ascii=False), encoding="utf-8")
+        (root / "views.py").write_text(self.NEW_VIEWS, encoding="utf-8")
+        return self.fp(slug)
+
+    def test_plugin_with_models_asks_for_a_restart_and_stays_enabled(self):
+        self.model_plugin("notes")
+        self.install_activate("notes")
+        self.assertIsNotNone(registry.get("notes"))  # the old code is now imported in this process
+        new_fp = self.upgrade_on_disk("notes", with_models=True)
+        with self.assertRaises(PluginError) as cm:
+            services.run_migrations("notes", self.tmp / "notes", new_fp)
+        self.assertIn("Restart the server", str(cm.exception))
+        self.assertNotIn("not callable", str(cm.exception))
+        self.assertTrue(PluginRecord.objects.get(slug="notes").is_active)
+        self.assertFalse(PluginEvent.objects.filter(slug="notes", kind="load_failed").exists())
+
+    def test_plugin_without_models_simply_loads_the_new_code(self):
+        self.write_plugin("demo")
+        self.install_activate("demo")
+        self.assertIsNotNone(registry.get("demo"))
+        new_fp = self.upgrade_on_disk("demo", with_models=False)
+        loaded = registry.load_for_install("demo", self.tmp / "demo", new_fp)
+        self.assertIn("publish", loaded.pages)
+
+
+class MenuTranslationTests(PluginTestCase):
+    """The panel menu names a plugin's pages from its manifest. A freshly started worker has not loaded any plugin yet, and still has to show them
+    in the language of the panel (they were shown in English until the plugin's own page was opened)."""
+
+    def test_menu_titles_are_translated_before_any_plugin_code_is_loaded(self):
+        from django.utils import translation
+
+        from apps.core import catalogs
+        from apps.plugins import state
+
+        manifest = base_manifest("notes", admin_pages=[{"key": "home", "title": "Release notes", "view": "views:home", "capability": "notes.use", "menu": True}])
+        root = self.write_plugin("notes", manifest=manifest)
+        (root / "locale" / "fa" / "LC_MESSAGES").mkdir(parents=True)
+        catalogs.write_mo(root / "locale" / "fa" / "LC_MESSAGES" / "django.mo", {"Release notes": "یادداشت‌های انتشار"}, "fa")
+        self.install_activate("notes")
+        registry.reset_for_tests()  # a new worker: nothing loaded, no catalog registered
+        state.invalidate()
+        with translation.override("fa"):
+            labels = [str(i.label) for i in state.nav_items() if i.key == "plugin.notes.home"]
+        self.assertEqual(labels, ["یادداشت‌های انتشار"])
+        self.assertNotIn("notes", registry.loaded_slugs())  # the code was not loaded to get there
+
+    def test_a_plugin_that_changed_after_approval_contributes_no_catalog(self):
+        from apps.core import catalogs
+        from apps.plugins import state
+
+        root = self.write_plugin("notes")
+        (root / "locale" / "fa" / "LC_MESSAGES").mkdir(parents=True)
+        catalogs.write_mo(root / "locale" / "fa" / "LC_MESSAGES" / "django.mo", {"x": "y"}, "fa")
+        self.install_activate("notes")
+        registry.reset_for_tests()
+        (root / "views.py").write_text(DEFAULT_VIEWS_TAMPERED, encoding="utf-8")
+        state.invalidate()
+        state.active_plugins()
+        self.assertNotIn("plugin:notes", catalogs.registered())
+
+
+DEFAULT_VIEWS_TAMPERED = "from django.http import HttpResponse\n\n\ndef home(request, api):\n    return HttpResponse('tampered')\n"
