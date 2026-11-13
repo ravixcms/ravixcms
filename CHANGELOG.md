@@ -3,7 +3,9 @@
 
 ## [Unreleased]
 
-## [0.10.0] - 2026-11-11
+## [0.10.1] - 2026-11-13
+
+A fix release on top of 0.10.0 (the `v0.10.0` tag is unchanged): the browser CI job, the plugin restart message and the translation of plugin menus.
 
 ### CI and repository
 - The browser job no longer fails or stalls when an apt mirror is down: system libraries and the Chromium download are separate steps with a short limit (4 minutes) and 3 tries each (`scripts/ci_install_browser.sh`); if apt stays unreachable the run goes on and only fails if Chromium really cannot start. Every step of the job has its own time limit. Pages use the fonts shipped in `static/fonts/`, not fonts from apt.
@@ -13,6 +15,8 @@
 ### Plugins
 - Updating a plugin that adds a page, route or hook while the server still runs its previous code no longer fails with “… is not callable” (and no longer disables the plugin): the panel says to restart the server (`sudo systemctl restart ravix`), in all ten languages. A plugin without models simply loads the new code.
 - A plugin's translations are registered as soon as the plugin is active and its files match the approved fingerprint, not only after its first page is opened, so the menu and page titles of a freshly started worker are in the panel's language instead of English.
+
+## [0.10.0] - 2026-11-11
 
 ### Windows
 - Fix: `python manage.py runserver` failed on Windows with `ModuleNotFoundError: No module named 'fcntl'` (the theme installer imported it at start-up). All file locks (theme install, update executor, cron) now go through one cross-platform layer, `apps/core/filelock.py`: `fcntl.flock` on Linux and macOS (unchanged), `msvcrt.locking` on Windows; the platform modules are imported inside `try`, so nothing fails to load. The preflight no longer needs `os.geteuid` either.

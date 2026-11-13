@@ -7,7 +7,7 @@
 
 # Ravix (راویکس)
 
-**سیستم مدیریت محتوای فارسی و راست‌چین** برای وبلاگ، سایت شرکتی و فروشگاه کوچک — با Python و Django. نسخهٔ `0.10.0`.
+**سیستم مدیریت محتوای فارسی و راست‌چین** برای وبلاگ، سایت شرکتی و فروشگاه کوچک — با Python و Django. نسخهٔ `0.10.1`.
 
 [ravixcms.com](https://ravixcms.com) · [مستندات](https://ravixcms.com/docs) · [کد منبع در GitHub](https://github.com/ravixcms/ravixcms) · [به‌روزرسانی‌ها](https://updates.ravixcms.com) · [افزونه‌ها و قالب‌ها](https://plugins.ravixcms.com)
 
