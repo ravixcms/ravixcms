@@ -588,14 +588,17 @@ def run(tmp: Path, args):
     sh(["systemctl", "restart", "ravix.service"])
     check(healthy(), "the site is healthy after the settings of the test source were added")
     base_version = current_version()
+    # target versions are computed from the installed one (patch + 1 ... + 5), so the test works with any RAVIX_VERSION
+    _major, _minor, _patch = (int(x) for x in re.match(r"(\d+)\.(\d+)\.(\d+)", base_version).groups())
+    v1, v2, v3, v4, v5 = (f"{_major}.{_minor}.{_patch + n}" for n in range(1, 6))
 
     # A: a good update with a real migration
-    build_release(tmp, "0.10.1", note_migration=True, key=key)
-    queue_update("0.10.1")
+    build_release(tmp, v1, note_migration=True, key=key)
+    queue_update(v1)
     job = wait_job()
-    check(job["status"] == "succeeded", f"update to 0.10.1 succeeded through the executor ({job})")
+    check(job["status"] == "succeeded", f"update to {v1} succeeded through the executor ({job})")
     check(healthy(), "the site is healthy after the update (restart + health check by the executor)")
-    check(current_version() == "0.10.1", f"the site runs 0.10.1 (was {base_version})")
+    check(current_version() == v1, f"the site runs {v1} (was {base_version})")
     check(tree_hash(BASE / "themes_installed" / "e2e-theme") == before["theme"] and tree_hash(BASE / "plugins_installed" / "e2e_plugin") == before["plugin"],
           "the external theme and plugin are still byte-identical after a real update")
     check(tree_hash(BASE / "media") == before["media"] and tree_hash(BASE / "plugin_data") == before["plugin_data"], "media and plugin_data are byte-identical after the update")
@@ -609,59 +612,59 @@ def run(tmp: Path, args):
     good_link = os.readlink(BASE / "venv")
 
     # B: a migration that fails in the middle
-    build_release(tmp, "0.10.2", note_migration=True, boom="raise", key=key)
-    queue_update("0.10.2")
+    build_release(tmp, v2, note_migration=True, boom="raise", key=key)
+    queue_update(v2)
     job = wait_job()
     check(job["status"] in ("rolled_back", "failed"), f"a failing migration ends as rolled back ({job})")
     check("migration exploded" in job["message"], "the job message names the real reason (the end of the migrate output), not just its first lines")
     check("S3CR3TPASS" not in job["message"], "the secret inside the error text is masked in the job message")
-    check(healthy() and current_version() == "0.10.1", "the site is healthy and still on 0.10.1")
+    check(healthy() and current_version() == v1, f"the site is healthy and still on {v1}")
     code_is(good_code, "the program files are exactly as before the failed update")
     check("S3CR3TPASS" not in sh("journalctl -u ravix-update.service --no-pager", check_rc=False).stdout, "the secret inside the error text is not in the executor's log")
     compare_data(data0, data_fingerprint(data0), "after the failed migration")
 
     # C: the new code starts but /healthz is unhealthy
-    build_release(tmp, "0.10.3", bad_health=True, key=key)
-    queue_update("0.10.3")
+    build_release(tmp, v3, bad_health=True, key=key)
+    queue_update(v3)
     job = wait_job(timeout=900)
     check(job["status"] in ("rolled_back", "failed"), f"an unhealthy site after the restart is rolled back automatically ({job})")
-    check(healthy() and current_version() == "0.10.1", "the site is healthy again on 0.10.1")
+    check(healthy() and current_version() == v1, f"the site is healthy again on {v1}")
     code_is(good_code, "the program files are back to the previous version")
     check(os.readlink(BASE / "venv") == good_link, "the virtualenv link is back to the previous version")
 
     # D: a full disk (the backup folder cannot take the backup)
-    build_release(tmp, "0.10.4", key=key)
+    build_release(tmp, v4, key=key)
     backups = Path(env_pairs().get("RAVIX_UPDATE_BACKUP_DIR") or APP / "update_backups")
     backups.mkdir(parents=True, exist_ok=True)
     sh(["mount", "-t", "tmpfs", "-o", f"size=2m,uid={int(sh(['id', '-u', 'ravix-deploy']).stdout)},gid={int(sh(['id', '-g', 'ravix']).stdout)},mode=2750", "tmpfs", str(backups)])
     try:
-        queue_update("0.10.4")
+        queue_update(v4)
         job = wait_job(timeout=600)
     finally:
         sh(["umount", str(backups)], check_rc=False)
     check(job["status"] in ("failed", "rolled_back"), f"a full backup disk stops the update ({job})")
     check(str(backups) in job["message"] and "unexpected" not in job["message"].lower(), "the message names the full folder (not \"an unexpected error\")")
-    check(healthy() and current_version() == "0.10.1", "the site is healthy on 0.10.1")
+    check(healthy() and current_version() == v1, f"the site is healthy on {v1}")
     code_is(good_code, "nothing was changed on the site")
 
     # E: a tampered package
-    pkg = next(DIST.glob("ravix-core-0.10.4*.zip"), None)
+    pkg = next(DIST.glob(f"ravix-core-{v4}*.zip"), None)
     if pkg is not None:
         with pkg.open("ab") as f:
             f.write(b"tampered")
-        queue_update("0.10.4")
+        queue_update(v4)
         job = wait_job(timeout=300)
         check(job["status"] in ("failed", "rolled_back"), f"a tampered package is refused ({job})")
-        check(healthy() and current_version() == "0.10.1", "the site is healthy on 0.10.1")
+        check(healthy() and current_version() == v1, f"the site is healthy on {v1}")
         code_is(good_code, "nothing was changed on the site")
     else:
-        check(False, "the 0.10.4 package was not found to tamper with")
+        check(False, f"the {v4} package was not found to tamper with")
 
     # F: kill -9 of the whole executor in the middle of an update
     if not args.skip_kill:
         say("۵) kill -9 of the executor in the middle of an update (recovered by the timer)")
-        build_release(tmp, "0.10.5", note_migration=True, boom="sleep", key=key)
-        queue_update("0.10.5")
+        build_release(tmp, v5, note_migration=True, boom="sleep", key=key)
+        queue_update(v5)
         end = time.time() + 300
         in_migrate = False
         while time.time() < end and not in_migrate:
@@ -674,8 +677,8 @@ def run(tmp: Path, args):
         job = wait_job(done=("rolled_back", "failed", "succeeded", "cancelled"), timeout=540)
         check(job["status"] == "rolled_back", f"the killed update was recovered automatically ({job})")
         check(healthy(timeout=120), "the site answers again after the recovery")
-        check(current_version() == "0.10.1", "the site runs 0.10.1 again")
-        code_is(good_code, "files are back to 0.10.1 exactly")
+        check(current_version() == v1, f"the site runs {v1} again")
+        code_is(good_code, f"files are back to {v1} exactly")
         compare_data(data0, data_fingerprint(data0), "after the kill -9 recovery")
         check(tree_hash(BASE / "themes_installed" / "e2e-theme") == before["theme"] and tree_hash(BASE / "plugins_installed" / "e2e_plugin") == before["plugin"], "the external theme and plugin are still byte-identical")
         check(mcp_status() == "200", "the MCP token still works after the recovery")

@@ -10,6 +10,7 @@ A fix release on top of 0.10.0 (the `v0.10.0` tag is unchanged): the browser CI 
 ### CI and repository
 - The browser job no longer fails or stalls when an apt mirror is down: system libraries and the Chromium download are separate steps with a short limit (4 minutes) and 3 tries each (`scripts/ci_install_browser.sh`); if apt stays unreachable the run goes on and only fails if Chromium really cannot start. Every step of the job has its own time limit. Pages use the fonts shipped in `static/fonts/`, not fonts from apt.
 - GitHub Actions are pinned to full commit SHAs (Dependabot keeps them current).
+- The real-server migration test (`scripts/e2e_server_migration.py`) computes the versions it updates to from the installed `RAVIX_VERSION` (patch + 1 …) instead of fixed numbers, so it keeps working with every release; a test guards against fixed numbers coming back.
 - The Docker Compose docs and the compose file now warn that the default database password is for local trials only.
 
 ### Plugins
